@@ -27,6 +27,7 @@ package org.blockartistry.mod.BetterRain.data;
 import org.blockartistry.mod.BetterRain.BetterRain;
 
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldSavedData;
 
@@ -34,61 +35,54 @@ import net.minecraft.world.WorldSavedData;
  * Per world save data for rain status
  */
 public final class RainData extends WorldSavedData {
-	
+
+	public final static float MIN_STRENGTH = 0.0F;
+	public final static float MAX_STRENGTH = 1.0F;
+
 	private final static String IDENTIFIER = BetterRain.MOD_ID;
-	
+
 	private final class NBT {
 		public final static String STRENGTH = "s";
-		public final static String STRENGTH_SAVED = "ss";
 	};
-	
+
 	public RainData() {
 		this(IDENTIFIER);
 	}
-	
+
 	public RainData(final String id) {
 		super(id);
 	}
-	
-	private float strength;
-	private float strengthSaved;
-	
+
+	private float strength = 0.0F;
+
 	public static RainData get(final World world) {
-		RainData data = (RainData)world.loadItemData(RainData.class, IDENTIFIER);
-		if(data == null) {
+		RainData data = (RainData) world.loadItemData(RainData.class, IDENTIFIER);
+		if (data == null) {
 			data = new RainData();
 			world.setItemData(IDENTIFIER, data);
 		}
 		return data;
 	}
-	
+
 	public float getRainStrength() {
 		return this.strength;
 	}
-	
-	public void setRainStrength(final float strength) {
-		this.strength = strength;
-		this.markDirty();
-	}
-	
-	public float getRainStrengthSaved() {
-		return this.strengthSaved;
-	}
-	
-	public void setRainStrengthSaved(final float strength) {
-		this.strengthSaved = strength;
-		this.markDirty();
+
+	public void setRainStrength(float strength) {
+		strength = MathHelper.clamp_float(strength, MIN_STRENGTH, MAX_STRENGTH);
+		if (this.strength != strength) {
+			this.strength = strength;
+			this.markDirty();
+		}
 	}
 
 	@Override
 	public void readFromNBT(final NBTTagCompound nbt) {
-		this.strength = nbt.getFloat(NBT.STRENGTH);
-		this.strengthSaved = nbt.getFloat(NBT.STRENGTH_SAVED);
+		this.strength = MathHelper.clamp_float(nbt.getFloat(NBT.STRENGTH), MIN_STRENGTH, MAX_STRENGTH);
 	}
 
 	@Override
-	public void writeToNBT(NBTTagCompound nbt) {
+	public void writeToNBT(final NBTTagCompound nbt) {
 		nbt.setFloat(NBT.STRENGTH, this.strength);
-		nbt.setFloat(NBT.STRENGTH_SAVED, this.strengthSaved);
 	}
 }

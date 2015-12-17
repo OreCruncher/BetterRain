@@ -27,14 +27,16 @@ package org.blockartistry.mod.BetterRain.server;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
+import net.minecraft.world.World;
+
 import java.util.Random;
 
 import org.blockartistry.mod.BetterRain.data.RainData;
 import org.blockartistry.mod.BetterRain.network.Network;
 
 public class RainHandler {
-	
-	private static final Random rand = new Random();
+
+	private static final Random random = new Random();
 
 	public static void initialize() {
 		FMLCommonHandler.instance().bus().register(new RainHandler());
@@ -43,24 +45,23 @@ public class RainHandler {
 	@SubscribeEvent
 	public void tickEvent(final TickEvent.WorldTickEvent event) {
 
-		if (event.world.provider.dimensionId != 0)
+		final World world = event.world;
+
+		// Only handle things that are classified as surface
+		// worlds.
+		if (!world.provider.isSurfaceWorld())
 			return;
 
-		final RainData data = RainData.get(event.world);
-		if (data.getRainStrengthSaved() == 0.0F) {
-			if (event.world.getRainStrength(1.0F) > 0.0F) {
-				if (data.getRainStrength() == 0.0F) {
-					float f1 = rand.nextFloat();
-					data.setRainStrength(f1 * (0.55F + f1 * 0.45F));
-				}
-			} else {
-				data.setRainStrength(0.0F);
+		final RainData data = RainData.get(world);
+		if (world.getRainStrength(1.0F) > 0.0F) {
+			if (data.getRainStrength() == 0.0F) {
+				float f1 = random.nextFloat();
+				data.setRainStrength(f1 * (0.55F + f1 * 0.45F));
 			}
 		} else {
-			data.setRainStrength(data.getRainStrengthSaved());
-			data.setRainStrengthSaved(0.0F);
+			data.setRainStrength(0.0F);
 		}
 
-		Network.sendRainStrength(data.getRainStrength(), event.world.provider.dimensionId);
+		Network.sendRainStrength(data.getRainStrength(), world.provider.dimensionId);
 	}
 }

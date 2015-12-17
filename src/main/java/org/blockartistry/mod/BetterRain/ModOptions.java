@@ -38,6 +38,10 @@ public final class ModOptions {
 	protected static final String CONFIG_ENABLE_ONLINE_VERSION_CHECK = "Enable Online Version Check";
 	protected static boolean enableVersionChecking = true;
 
+	protected static final String CATEGORY_RAIN = "rain";
+	protected static final String CONFIG_RAIN_VOLUME = "Sound Level";
+	protected static float soundLevel = 1.0F;
+
 	public static void load(final Configuration config) {
 
 		// CATEGORY: Logging
@@ -49,6 +53,9 @@ public final class ModOptions {
 		enableVersionChecking = config.getBoolean(CONFIG_ENABLE_ONLINE_VERSION_CHECK, CATEGORY_LOGGING_CONTROL,
 				enableVersionChecking, comment);
 
+		// CATEGORY: Rain
+		comment = "Factor to apply to rain sound level to adjust";
+		soundLevel = config.getFloat(CONFIG_RAIN_VOLUME, CATEGORY_RAIN, soundLevel, 0.0F, 1.0F, comment);
 	}
 
 	public static boolean getEnableDebugLogging() {
@@ -57,5 +64,9 @@ public final class ModOptions {
 
 	public static boolean getOnlineVersionChecking() {
 		return enableVersionChecking;
+	}
+
+	public static float getSoundLevel() {
+		return soundLevel;
 	}
 }

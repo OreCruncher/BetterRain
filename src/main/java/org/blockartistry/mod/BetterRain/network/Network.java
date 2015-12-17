@@ -39,6 +39,7 @@ public class Network {
 	}
 
 	public static void sendRainStrength(final float strength, final int dimension) {
-		network.sendToAll(new PacketRainStrength(strength, dimension));
+		// Route packet to players in the dimension.
+		network.sendToDimension(new PacketRainStrength(strength, dimension), dimension);
 	}
 }

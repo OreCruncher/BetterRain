@@ -27,18 +27,18 @@ package org.blockartistry.mod.BetterRain.network;
 import org.blockartistry.mod.BetterRain.client.ClientRainHandler;
 
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
+import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 
-public class PacketRainStrength
-		implements IMessage, cpw.mods.fml.common.network.simpleimpl.IMessageHandler<PacketRainStrength, IMessage> {
-	
+public class PacketRainStrength implements IMessage, IMessageHandler<PacketRainStrength, IMessage> {
+
 	/**
 	 * Strength of rainfall
 	 */
 	private float strength;
-	
+
 	/**
 	 * Dimension where the rainfall is occurring
 	 */
@@ -53,8 +53,8 @@ public class PacketRainStrength
 	}
 
 	public void fromBytes(final ByteBuf buf) {
-		this.strength = Float.valueOf(buf.readFloat());
-		this.dimension = Integer.valueOf(buf.readInt());
+		this.strength = buf.readFloat();
+		this.dimension = buf.readInt();
 	}
 
 	public void toBytes(final ByteBuf buf) {
@@ -64,7 +64,7 @@ public class PacketRainStrength
 
 	public IMessage onMessage(final PacketRainStrength message, final MessageContext ctx) {
 		if (message.dimension == Minecraft.getMinecraft().thePlayer.dimension) {
-			ClientRainHandler.strength = message.strength;
+			ClientRainHandler.setRainStrength(message.strength);
 		}
 
 		return null;
