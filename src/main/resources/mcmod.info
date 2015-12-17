@@ -1,0 +1,16 @@
+[
+{
+  "modid": "betterrain",
+  "name": "BetterRain",
+  "description": "Improves on Minecraft rain",
+  "version": "$version",
+  "mcversion": "$mcversion",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["OreCruncher"],
+  "credits": "Wisbro for the original BetterRain mod",
+  "logoFile": "assets/betterrain/textures/logo.png",
+  "screenshots": [],
+  "dependencies": []
+}
+]

@@ -1,0 +1,137 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        maven {
+            name = "forge"
+            url = "http://files.minecraftforge.net/maven"
+        }
+        maven {
+            name = "sonatype"
+            url = "https://oss.sonatype.org/content/repositories/snapshots/"
+        }
+    }
+    dependencies {
+        classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT'
+    }
+}
+
+repositories {
+
+    maven {
+        name = "chickenbones"
+        url = "http://chickenbones.net/maven/"
+    }
+    
+    maven {
+        name "Mobius Repo"
+        url "http://mobiusstrip.eu/maven"
+    }
+    
+    maven {
+		name = "ic2-and-forestry"
+		url = "http://maven.ic2.player.to/"
+	}
+
+    ivy {
+        name "BuildCraft"
+        artifactPattern "http://www.mod-buildcraft.com/releases/BuildCraft/[revision]/[module]-[revision]-[classifier].[ext]"
+    }
+    
+    ivy {
+        name "MineTweaker3"
+        artifactPattern "http://minetweaker3.powerofbytes.com/download/[module]-[revision].[ext]"
+    }
+}
+
+apply plugin: 'forge'
+
+ext.config = parseConfig(file('build.properties'))
+
+ext.modVersion = "${config.version.mod.major}.${config.version.mod.minor}.${config.version.mod.revis}${config.version.mod.patch}"
+version = "${config.version.minecraft}-${modVersion}"
+group= "${config.group}"
+archivesBaseName = "${config.archive}"
+
+minecraft {
+    version = "${config.version.minecraft}-${config.version.forge}"
+    runDir = "eclipse"
+    
+    replace '@VERSION@', project.ext.modVersion
+}
+
+dependencies {
+
+	// http://files.minecraftforge.net/CodeChickenLib/
+    // compile "codechicken:CodeChickenLib:1.7.10-1.1.3.140:dev"
+
+    // http://chickenbones.net/maven
+    // compile "codechicken:CodeChickenCore:1.7.10-1.0.7.46:dev"
+    // compile "codechicken:NotEnoughItems:1.7.10-1.0.5.111:dev"
+    
+    // compile "mcp.mobius.waila:Waila:1.5.10_1.7.10:dev"
+    // compile 'net.sengir.forestry:forestry_1.7.10:3.6.3.20:dev'
+    // compile name: "buildcraft", version: "7.0.21", classifier: "dev"
+    // compile name: 'MineTweaker3', version: "Dev-1.7.10-3.0.9C", ext: 'jar'
+    
+    // you may put jars on which you depend on in ./libs
+    // or you may define them like so..
+    //compile "some.group:artifact:version:classifier"
+    //compile "some.group:artifact:version"
+      
+    // real examples
+    //compile 'com.googlecode.efficient-java-matrix-library:ejml:0.24' // adds ejml to the dev env
+
+    // for more info...
+    // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
+    // http://www.gradle.org/docs/current/userguide/dependency_management.html
+
+}
+
+processResources
+{
+    // this will ensure that this task is redone when the versions change.
+    inputs.property "version", project.version
+    inputs.property "mcversion", project.minecraft.version
+
+    // replace stuff in mcmod.info, nothing else
+    from(sourceSets.main.resources.srcDirs) {
+        include 'mcmod.info'
+                
+        // replace version and mcversion
+        expand 'version':project.ext.modVersion, 'mcversion':project.minecraft.version
+    }
+        
+    // copy everything else, thats not the mcmod.info
+    from(sourceSets.main.resources.srcDirs) {
+        exclude 'mcmod.info'
+    }
+}
+
+jar {
+    
+    manifest {
+        	attributes 'FMLAT': 'betterrain_at.cfg'
+    }
+}
+
+def parseConfig(File config) {
+    config.withReader {
+        def prop = new Properties()
+        prop.load(it)
+        return (new ConfigSlurper().parse(prop))
+    }
+}
+
+task deobfJar(type: Jar) {
+    from sourceSets.main.output
+    classifier = 'dev'
+    
+    manifest {
+        	attributes 'FMLAT': 'betterrain_at.cfg'
+    }
+    
+}
+
+artifacts {
+    archives deobfJar
+}

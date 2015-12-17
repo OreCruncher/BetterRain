@@ -1,0 +1,11 @@
+{
+  "rain_calm": {
+    "category": "weather",
+    "sounds": [
+      "ambient/weather/rain_calm1",
+      "ambient/weather/rain_calm2",
+      "ambient/weather/rain_calm3",
+      "ambient/weather/rain_calm4"
+    ]
+  }
+}
