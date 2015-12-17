@@ -1,12 +1,8 @@
 ###Build Status
-Master Branch: [![Master Branch](https://travis-ci.org/OreCruncher/Pathways.svg?branch=master)](https://travis-ci.org/OreCruncher/Pathways)
+Master Branch: [![Master Branch](https://travis-ci.org/OreCruncher/BetterRain.svg?branch=master)](https://travis-ci.org/OreCruncher/BetterRain)
 
-### Pathways
-Server side Forge mod that provides transportation services for players using:
-
-* Warps to transport to specific locations
-* Random teleport to the wild
-* Sign support for executing warp and random teleport activites
+### BetterRain
+Minecraft mod that improves the rain experience.
 
 ###License
 The MIT License (MIT)
