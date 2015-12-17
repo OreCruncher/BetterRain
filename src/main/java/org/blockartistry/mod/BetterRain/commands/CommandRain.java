@@ -24,13 +24,22 @@
 
 package org.blockartistry.mod.BetterRain.commands;
 
+import java.util.List;
+
 import org.blockartistry.mod.BetterRain.data.RainData;
 
+import com.google.common.collect.ImmutableList;
+
 import net.minecraft.command.CommandBase;
+import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.util.ChatComponentText;
+import net.minecraft.world.World;
 
-public class CommandRainStrength extends CommandBase {
+public class CommandRain extends CommandBase {
+
+	private static final List<String> ALIAS = ImmutableList.<String> builder().add("r", "br", "betterrain").build();
 
 	@Override
 	public int getRequiredPermissionLevel() {
@@ -43,18 +52,36 @@ public class CommandRainStrength extends CommandBase {
 	}
 
 	@Override
+	public List<String> getCommandAliases() {
+		return ALIAS;
+	}
+
+	@Override
 	public String getCommandUsage(final ICommandSender p_71518_1_) {
-		return "/rain <1-100>";
+		return "/rain <status> | <1-100>";
 	}
 
 	@Override
 	public void processCommand(final ICommandSender sender, final String[] parms) {
+		final EntityPlayerMP player = getCommandSenderAsPlayer(sender);
+
 		if (parms.length == 1) {
-			double d = parseDoubleBounded(sender, parms[0], 0.0D, 100.0D) / 100.0D;
-			if (sender instanceof EntityPlayerMP) {
-				final EntityPlayerMP player = (EntityPlayerMP) sender;
-				RainData.get(player.worldObj).setRainStrength((float) d);
+			final World world = player.worldObj;
+			if ("status".compareToIgnoreCase(parms[0]) == 0) {
+				// Dump out some diagnostics for the current dimension
+				final float minutes = (world.getWorldInfo().getRainTime() / 20.0F) / 60.0F;
+				final StringBuilder builder = new StringBuilder();
+				builder.append("isRaining: ").append(Boolean.toString(world.isRaining()));
+				builder.append("; strength: ").append(world.getRainStrength(1.0F));
+				builder.append("; intensity: ").append(RainData.get(world).getRainStrength());
+				builder.append("; timer: ").append(minutes).append(" minutes");
+				player.addChatMessage(new ChatComponentText(builder.toString()));
+			} else {
+				final double d = parseDoubleBounded(sender, parms[0], 0.0D, 100.0D) / 100.0D;
+				RainData.get(world).setRainStrength((float) d);
 			}
+		} else {
+			throw new CommandException(getCommandUsage(sender));
 		}
 	}
 }

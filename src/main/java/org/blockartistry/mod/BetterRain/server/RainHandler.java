@@ -31,13 +31,14 @@ import net.minecraft.world.World;
 
 import java.util.Random;
 
+import org.blockartistry.mod.BetterRain.ModLog;
 import org.blockartistry.mod.BetterRain.data.RainData;
 import org.blockartistry.mod.BetterRain.network.Network;
 
 public class RainHandler {
 
 	private static final Random random = new Random();
-
+	
 	public static void initialize() {
 		FMLCommonHandler.instance().bus().register(new RainHandler());
 	}
@@ -55,10 +56,12 @@ public class RainHandler {
 		final RainData data = RainData.get(world);
 		if (world.getRainStrength(1.0F) > 0.0F) {
 			if (data.getRainStrength() == 0.0F) {
-				float f1 = random.nextFloat();
-				data.setRainStrength(f1 * (0.55F + f1 * 0.45F));
+				final float str = 0.05F + (0.90F * random.nextFloat());
+				data.setRainStrength(str);
+				ModLog.info(String.format("Rain strength set to %f", data.getRainStrength()));
 			}
-		} else {
+		} else if(data.getRainStrength() > 0.0F) {
+			ModLog.info("Rain is stopping");
 			data.setRainStrength(0.0F);
 		}
 

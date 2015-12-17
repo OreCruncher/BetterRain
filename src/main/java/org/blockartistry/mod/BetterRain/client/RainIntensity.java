@@ -62,16 +62,16 @@ public enum RainIntensity {
 		return this.rainSound;
 	}
 	
-	public static void setIntensity(final float level) {
+	public static void setIntensity(final float strength) {
 		
 		RainIntensity intensity = null;
-		if(level <= NONE.level)
+		if(strength <= NONE.level)
 			intensity = NONE;
-		else if(level < CALM.level)
+		else if(strength < CALM.level)
 			intensity = CALM;
-		else if(level < LIGHT.level)
+		else if(strength < LIGHT.level)
 			intensity = LIGHT;
-		else if(level < NORMAL.level)
+		else if(strength < NORMAL.level)
 			intensity = NORMAL;
 		else
 			intensity = HEAVY;

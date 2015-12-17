@@ -25,7 +25,7 @@
 package org.blockartistry.mod.BetterRain.proxy;
 
 import org.blockartistry.mod.BetterRain.VersionCheck;
-import org.blockartistry.mod.BetterRain.commands.CommandRainStrength;
+import org.blockartistry.mod.BetterRain.commands.CommandRain;
 import org.blockartistry.mod.BetterRain.network.Network;
 import org.blockartistry.mod.BetterRain.server.RainHandler;
 
@@ -62,6 +62,6 @@ public class Proxy {
 		final MinecraftServer server = MinecraftServer.getServer();
 		final ICommandManager command = server.getCommandManager();
 		final ServerCommandManager serverCommand = (ServerCommandManager) command;
-		serverCommand.registerCommand(new CommandRainStrength());
+		serverCommand.registerCommand(new CommandRain());
 	}
 }
