@@ -5,7 +5,7 @@
   "description": "Improves on Minecraft rain",
   "version": "$version",
   "mcversion": "$mcversion",
-  "url": "",
+  "url": "https://github.com/OreCruncher/BetterRain/wiki",
   "updateUrl": "",
   "authorList": ["OreCruncher"],
   "credits": "Wisbro for the original BetterRain mod",
