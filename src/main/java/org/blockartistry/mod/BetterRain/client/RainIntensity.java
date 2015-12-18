@@ -40,7 +40,13 @@ public enum RainIntensity {
 	NORMAL(0.66F, "rain_normal", "snow_normal", "rain_calm"),
 	HEAVY(1.0F, "rain_heavy", "snow_heavy", "rain_calm");
 
-	private static RainIntensity current = NONE;
+	private static float lastLevel = 0.0F;
+	private static RainIntensity intensity = NONE;
+	
+	@SuppressWarnings("unused")
+	private static ResourceLocation originalRain = EntityRenderer.locationRainPng;
+	@SuppressWarnings("unused")
+	private static ResourceLocation originalSnow = EntityRenderer.locationSnowPng;
 	
 	private final float level;
 	private final ResourceLocation rainTexture;
@@ -55,7 +61,7 @@ public enum RainIntensity {
 	}
 	
 	public static RainIntensity getIntensity() {
-		return current;
+		return intensity;
 	}
 	
 	public String getRainSound() {
@@ -64,24 +70,22 @@ public enum RainIntensity {
 	
 	public static void setIntensity(final float strength) {
 		
-		RainIntensity intensity = null;
-		if(strength <= NONE.level)
-			intensity = NONE;
-		else if(strength < CALM.level)
-			intensity = CALM;
-		else if(strength < LIGHT.level)
-			intensity = LIGHT;
-		else if(strength < NORMAL.level)
-			intensity = NORMAL;
-		else
-			intensity = HEAVY;
-		
-		// If the intensity changed, change the PNG
-		if(current != intensity) {
-			current = intensity;
-			// AT transform removed final and made public.
-			EntityRenderer.locationRainPng = current.rainTexture;
-			EntityRenderer.locationSnowPng = current.snowTexture;
+		if(strength != lastLevel) {
+			lastLevel = strength;
+			if(strength <= NONE.level)
+				intensity = NONE;
+			else if(strength < CALM.level)
+				intensity = CALM;
+			else if(strength < LIGHT.level)
+				intensity = LIGHT;
+			else if(strength < NORMAL.level)
+				intensity = NORMAL;
+			else
+				intensity = HEAVY;
 		}
+		
+		// AT transform removed final and made public.
+		EntityRenderer.locationRainPng = intensity.rainTexture;
+		EntityRenderer.locationSnowPng = intensity.snowTexture;
 	}
 }

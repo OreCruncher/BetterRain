@@ -71,7 +71,9 @@ public class CommandRain extends CommandBase {
 				// Dump out some diagnostics for the current dimension
 				final float minutes = (world.getWorldInfo().getRainTime() / 20.0F) / 60.0F;
 				final StringBuilder builder = new StringBuilder();
+				builder.append("dim ").append(world.provider.dimensionId).append(": ");
 				builder.append("isRaining: ").append(Boolean.toString(world.isRaining()));
+				builder.append("; isSurface: ").append(Boolean.toString(world.provider.isSurfaceWorld()));
 				builder.append("; strength: ").append(world.getRainStrength(1.0F));
 				builder.append("; intensity: ").append(RainData.get(world).getRainStrength());
 				builder.append("; timer: ").append(minutes).append(" minutes");

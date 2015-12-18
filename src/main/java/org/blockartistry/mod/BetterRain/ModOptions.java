@@ -24,6 +24,8 @@
 
 package org.blockartistry.mod.BetterRain;
 
+import org.blockartistry.mod.BetterRain.util.MyUtils;
+
 import net.minecraftforge.common.config.Configuration;
 
 public final class ModOptions {
@@ -42,6 +44,12 @@ public final class ModOptions {
 	protected static final String CONFIG_RAIN_VOLUME = "Sound Level";
 	protected static float soundLevel = 1.0F;
 
+	protected static final String CATEGORY_GENERAL = "general";
+	protected static final String CONFIG_DIMENSION_LIST = "Dimensions";
+	protected static int[] dimensions = {};
+	protected static final String CONFIG_DIMENSION_BLACKLIST = "Black List";
+	protected static boolean dimensionListAsBlacklist = true;
+
 	public static void load(final Configuration config) {
 
 		// CATEGORY: Logging
@@ -56,6 +64,15 @@ public final class ModOptions {
 		// CATEGORY: Rain
 		comment = "Factor to apply to rain sound level to adjust";
 		soundLevel = config.getFloat(CONFIG_RAIN_VOLUME, CATEGORY_RAIN, soundLevel, 0.0F, 1.0F, comment);
+
+		// CATEGORY: General
+		comment = "Comma separated dimension ID list";
+		String temp = config.getString(CONFIG_DIMENSION_LIST, CATEGORY_GENERAL, "1,-1", comment);
+		dimensions = MyUtils.splitToInts(temp, ',');
+
+		comment = "Treat dimension ID list as a black list";
+		dimensionListAsBlacklist = config.getBoolean(CONFIG_DIMENSION_BLACKLIST, CATEGORY_GENERAL,
+				dimensionListAsBlacklist, comment);
 	}
 
 	public static boolean getEnableDebugLogging() {
@@ -68,5 +85,13 @@ public final class ModOptions {
 
 	public static float getSoundLevel() {
 		return soundLevel;
+	}
+
+	public static int[] getDimensionList() {
+		return dimensions;
+	}
+
+	public static boolean getDimensionListAsBlacklist() {
+		return dimensionListAsBlacklist;
 	}
 }

@@ -25,6 +25,7 @@
 package org.blockartistry.mod.BetterRain.client;
 
 import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.eventhandler.EventPriority;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.relauncher.Side;
@@ -88,7 +89,10 @@ public class ClientRainHandler {
 			event.entity.setDead();
 	}
 
-	@SubscribeEvent
+	// Lowest priority.  Another mod may have done something
+	// with the textures so we want to override to do what
+	// we want.
+	@SubscribeEvent(priority = EventPriority.LOWEST)
 	public void tickEvent(final TickEvent.ClientTickEvent event) {
 		if (event.phase != TickEvent.Phase.START)
 			return;
@@ -106,7 +110,8 @@ public class ClientRainHandler {
 			return;
 
 		// Set the intensity based on the strength we
-		// have from the server.
+		// have from the server.  This will cause the
+		// precipitation textures to be changed.
 		RainIntensity.setIntensity(strength);
 
 		// Get the world rain strength. If it is 0 there is

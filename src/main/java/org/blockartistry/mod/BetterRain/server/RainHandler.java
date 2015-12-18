@@ -32,13 +32,20 @@ import net.minecraft.world.World;
 import java.util.Random;
 
 import org.blockartistry.mod.BetterRain.ModLog;
+import org.blockartistry.mod.BetterRain.ModOptions;
 import org.blockartistry.mod.BetterRain.data.RainData;
 import org.blockartistry.mod.BetterRain.network.Network;
+import org.blockartistry.mod.BetterRain.util.ElementRule;
+import org.blockartistry.mod.BetterRain.util.ElementRule.Rule;
 
 public class RainHandler {
 
 	private static final Random random = new Random();
-	
+
+	private static final ElementRule rule = new ElementRule(
+			ModOptions.getDimensionListAsBlacklist() ? Rule.MUST_NOT_BE_IN : Rule.MUST_BE_IN,
+			ModOptions.getDimensionList());
+
 	public static void initialize() {
 		FMLCommonHandler.instance().bus().register(new RainHandler());
 	}
@@ -52,15 +59,19 @@ public class RainHandler {
 		// worlds.
 		if (!world.provider.isSurfaceWorld())
 			return;
+		
+		// Make sure it matches the dimension rules
+		if(!rule.isOk(world.provider.dimensionId))
+			return;
 
 		final RainData data = RainData.get(world);
 		if (world.getRainStrength(1.0F) > 0.0F) {
 			if (data.getRainStrength() == 0.0F) {
-				final float str = 0.05F + (0.90F * random.nextFloat());
-				data.setRainStrength(str);
+				final float strength = 0.05F + (0.90F * random.nextFloat());
+				data.setRainStrength(strength);
 				ModLog.info(String.format("Rain strength set to %f", data.getRainStrength()));
 			}
-		} else if(data.getRainStrength() > 0.0F) {
+		} else if (data.getRainStrength() > 0.0F) {
 			ModLog.info("Rain is stopping");
 			data.setRainStrength(0.0F);
 		}
