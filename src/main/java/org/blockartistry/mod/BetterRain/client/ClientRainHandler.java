@@ -33,6 +33,8 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 import java.util.Random;
 
+import org.blockartistry.mod.BetterRain.ModOptions;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
@@ -62,6 +64,8 @@ public class ClientRainHandler {
 
 	private static final float MIN_STRENGTH_FOR_PARTICLE_SPAWN = 0.1F;
 	private static final int RANGE_FACTOR = 10;
+
+	private static final boolean ALWAYS_OVERRIDE_SOUND = ModOptions.getAlwaysOverrideSound();
 
 	public static int rainSoundCounter = 0;
 
@@ -97,12 +101,13 @@ public class ClientRainHandler {
 	}
 
 	/*
-	 * Intercept the sound events and patch up the rain sound. Use our sound and
-	 * intensity.
+	 * Intercept the sound events and patch up the rain sound. If the rain
+	 * experience is to be Vanilla let it just roll on through.
 	 */
 	@SubscribeEvent
 	public void soundEvent(final PlaySoundEvent17 event) {
-		if ("ambient.weather.rain".equals(event.name)) {
+		if ((ALWAYS_OVERRIDE_SOUND || RainIntensity.getIntensity() != RainIntensity.VANILLA)
+				&& "ambient.weather.rain".equals(event.name)) {
 			final ISound sound = event.sound;
 			event.result = new PositionedSoundRecord(RainIntensity.getCurrentRainSound(),
 					RainIntensity.getCurrentRainVolume(), sound.getPitch(), sound.getXPosF(), sound.getYPosF(),

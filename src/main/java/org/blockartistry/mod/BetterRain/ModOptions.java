@@ -43,6 +43,8 @@ public final class ModOptions {
 	protected static final String CATEGORY_RAIN = "rain";
 	protected static final String CONFIG_RAIN_VOLUME = "Sound Level";
 	protected static float soundLevel = 1.0F;
+	protected static final String CONFIG_ALWAYS_OVERRIDE_SOUND = "Always Override Sound";
+	protected static boolean alwaysOverrideSound = true;
 
 	protected static final String CATEGORY_GENERAL = "general";
 	protected static final String CONFIG_DIMENSION_LIST = "Dimensions";
@@ -65,6 +67,10 @@ public final class ModOptions {
 		comment = "Factor to apply to rain sound level to adjust";
 		soundLevel = config.getFloat(CONFIG_RAIN_VOLUME, CATEGORY_RAIN, soundLevel, 0.0F, 1.0F, comment);
 
+		comment = "Always override Vanilla rain sound even when dimension is blacklisted";
+		alwaysOverrideSound = config.getBoolean(CONFIG_ALWAYS_OVERRIDE_SOUND, CATEGORY_RAIN,
+				alwaysOverrideSound, comment);
+
 		// CATEGORY: General
 		comment = "Comma separated dimension ID list";
 		String temp = config.getString(CONFIG_DIMENSION_LIST, CATEGORY_GENERAL, "1,-1", comment);
@@ -85,6 +91,10 @@ public final class ModOptions {
 
 	public static float getSoundLevel() {
 		return soundLevel;
+	}
+	
+	public static boolean getAlwaysOverrideSound() {
+		return alwaysOverrideSound;
 	}
 
 	public static int[] getDimensionList() {
