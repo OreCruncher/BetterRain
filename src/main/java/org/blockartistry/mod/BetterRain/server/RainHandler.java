@@ -41,6 +41,7 @@ import org.blockartistry.mod.BetterRain.util.ElementRule.Rule;
 public class RainHandler {
 
 	private static final Random random = new Random();
+	private static final float RESET = -10.0F;
 
 	private static final ElementRule rule = new ElementRule(
 			ModOptions.getDimensionListAsBlacklist() ? Rule.MUST_NOT_BE_IN : Rule.MUST_BE_IN,
@@ -53,29 +54,27 @@ public class RainHandler {
 	@SubscribeEvent
 	public void tickEvent(final TickEvent.WorldTickEvent event) {
 
+		float sendStrength = RESET;
 		final World world = event.world;
 
-		// Only handle things that are classified as surface
-		// worlds.
-		if (!world.provider.isSurfaceWorld())
-			return;
-		
-		// Make sure it matches the dimension rules
-		if(!rule.isOk(world.provider.dimensionId))
-			return;
-
-		final RainData data = RainData.get(world);
-		if (world.getRainStrength(1.0F) > 0.0F) {
-			if (data.getRainStrength() == 0.0F) {
-				final float strength = 0.05F + (0.90F * random.nextFloat());
-				data.setRainStrength(strength);
-				ModLog.info(String.format("Rain strength set to %f", data.getRainStrength()));
+		// Have to be a surface world and match the dimension rule
+		if (world.provider.isSurfaceWorld() && rule.isOk(world.provider.dimensionId)) {
+			final RainData data = RainData.get(world);
+			if (world.getRainStrength(1.0F) > 0.0F) {
+				if (data.getRainStrength() == 0.0F) {
+					final float strength = 0.05F + (0.90F * random.nextFloat());
+					data.setRainStrength(strength);
+					ModLog.info(String.format("Rain strength set to %f", data.getRainStrength()));
+				}
+			} else if (data.getRainStrength() > 0.0F) {
+				ModLog.info("Rain is stopping");
+				data.setRainStrength(0.0F);
 			}
-		} else if (data.getRainStrength() > 0.0F) {
-			ModLog.info("Rain is stopping");
-			data.setRainStrength(0.0F);
+			sendStrength = data.getRainStrength();
 		}
 
-		Network.sendRainStrength(data.getRainStrength(), world.provider.dimensionId);
+		// Set the rain strength for all players in the current
+		// dimension.
+		Network.sendRainStrength(sendStrength, world.provider.dimensionId);
 	}
 }

@@ -24,7 +24,7 @@
 
 package org.blockartistry.mod.BetterRain.network;
 
-import org.blockartistry.mod.BetterRain.client.ClientRainHandler;
+import org.blockartistry.mod.BetterRain.client.RainIntensity;
 
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
@@ -63,10 +63,10 @@ public class PacketRainStrength implements IMessage, IMessageHandler<PacketRainS
 	}
 
 	public IMessage onMessage(final PacketRainStrength message, final MessageContext ctx) {
-		if (message.dimension == Minecraft.getMinecraft().thePlayer.dimension) {
-			ClientRainHandler.setRainStrength(message.strength);
-		}
-
+		// If the player is in the dimension set the intensity.  Otherwise
+		// ignore.
+		if (message.dimension == Minecraft.getMinecraft().thePlayer.dimension)
+			RainIntensity.setIntensity(message.strength);
 		return null;
 	}
 }
