@@ -75,6 +75,6 @@ public final class RainData {
 	}
 	
 	public static RainData get(final World world) {
-		return RainDataFile.getRainData(world);
+		return RainDataFile.get(world);
 	}
 }

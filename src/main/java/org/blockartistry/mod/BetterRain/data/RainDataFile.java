@@ -24,8 +24,8 @@
 
 package org.blockartistry.mod.BetterRain.data;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.blockartistry.mod.BetterRain.BetterRain;
 
@@ -43,7 +43,7 @@ public class RainDataFile extends WorldSavedData {
 		public final static String ENTRIES = "e";
 	};
 
-	private final List<RainData> dataList = new ArrayList<RainData>();
+	private final Map<Integer, RainData> dataList = new HashMap<Integer, RainData>();
 
 	public RainDataFile() {
 		this(IDENTIFIER);
@@ -53,7 +53,7 @@ public class RainDataFile extends WorldSavedData {
 		super(id);
 	}
 
-	public static RainDataFile get(final World world) {
+	private static RainDataFile getFile(final World world) {
 		RainDataFile data = (RainDataFile) world.loadItemData(RainDataFile.class, IDENTIFIER);
 		if (data == null) {
 			data = new RainDataFile();
@@ -62,18 +62,18 @@ public class RainDataFile extends WorldSavedData {
 		data.markDirty();
 		return data;
 	}
-	
-	public RainData get(final int dimensionId) {
-		for(final RainData data: this.dataList)
-			if(data.getDimensionId() == dimensionId)
-				return data;
-		final RainData data = new RainData(dimensionId);
-		this.dataList.add(data);
+
+	private RainData getData(final int dimensionId) {
+		RainData data = this.dataList.get(dimensionId);
+		if (data != null)
+			return data;
+		data = new RainData(dimensionId);
+		this.dataList.put(dimensionId, data);
 		return data;
 	}
-	
-	public static RainData getRainData(final World world) {
-		return get(world).get(world.provider.dimensionId);
+
+	public static RainData get(final World world) {
+		return getFile(world).getData(world.provider.dimensionId);
 	}
 
 	@Override
@@ -83,14 +83,14 @@ public class RainDataFile extends WorldSavedData {
 			final NBTTagCompound tag = list.getCompoundTagAt(i);
 			final RainData data = new RainData();
 			data.readFromNBT(tag);
-			this.dataList.add(data);
+			this.dataList.put(data.getDimensionId(), data);
 		}
 	}
 
 	@Override
 	public void writeToNBT(final NBTTagCompound nbt) {
 		final NBTTagList list = new NBTTagList();
-		for (final RainData data : this.dataList) {
+		for (final RainData data : this.dataList.values()) {
 			final NBTTagCompound tag = new NBTTagCompound();
 			data.writeToNBT(tag);
 			list.appendTag(tag);
