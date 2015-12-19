@@ -67,8 +67,6 @@ public class ClientRainHandler {
 
 	private static final boolean ALWAYS_OVERRIDE_SOUND = ModOptions.getAlwaysOverrideSound();
 
-	public static int rainSoundCounter = 0;
-
 	private ClientRainHandler() {
 	}
 
@@ -93,6 +91,8 @@ public class ClientRainHandler {
 	 */
 	@SubscribeEvent
 	public void entityEvent(final EntityEvent.EntityConstructing event) {
+		if (RainIntensity.doVanillaRain())
+			return;
 		final float strength = RainIntensity.getStrength();
 		if (event.entity instanceof EntityRainFX && (!generateParticle() || strength < random.nextFloat()))
 			event.entity.setDead();
@@ -101,13 +101,19 @@ public class ClientRainHandler {
 	}
 
 	/*
+	 * Determines if the sound needs to be replaced by the event handler.
+	 */
+	private static boolean replaceRainSound(final String name) {
+		return "ambient.weather.rain".equals(name);
+	}
+
+	/*
 	 * Intercept the sound events and patch up the rain sound. If the rain
 	 * experience is to be Vanilla let it just roll on through.
 	 */
 	@SubscribeEvent
 	public void soundEvent(final PlaySoundEvent17 event) {
-		if ((ALWAYS_OVERRIDE_SOUND || RainIntensity.getIntensity() != RainIntensity.VANILLA)
-				&& "ambient.weather.rain".equals(event.name)) {
+		if ((ALWAYS_OVERRIDE_SOUND || !RainIntensity.doVanillaRain()) && replaceRainSound(event.name)) {
 			final ISound sound = event.sound;
 			event.result = new PositionedSoundRecord(RainIntensity.getCurrentRainSound(),
 					RainIntensity.getCurrentRainVolume(), sound.getPitch(), sound.getXPosF(), sound.getYPosF(),
@@ -143,11 +149,11 @@ public class ClientRainHandler {
 
 		// If we want to let Vanilla handle, or if conditions don't
 		// require particle generation then return.
-		if (RainIntensity.getIntensity() == RainIntensity.VANILLA || !generateParticle())
+		if (RainIntensity.doVanillaRain() || !generateParticle())
 			return;
 
 		// If for some reason the focus of the client UI
-		// is not in game don't do the textures or sound.
+		// is not in game don't do the textures.
 		final Minecraft mc = Minecraft.getMinecraft();
 		if (mc.isSingleplayer() && mc.currentScreen != null && mc.currentScreen.doesGuiPauseGame()
 				&& !mc.getIntegratedServer().getPublic())
@@ -166,9 +172,13 @@ public class ClientRainHandler {
 
 		// Determine the number of particle effects
 		// that need to be spawned.
-		worldRainStrengthFactor *= worldRainStrengthFactor;
 		final int particleCount = (int) (((mc.gameSettings.particleSetting == PARTICLE_SETTING_ALL) ? 100.0F : 50.0F)
-				* worldRainStrengthFactor);
+				* worldRainStrengthFactor * worldRainStrengthFactor);
+
+		// Bail if no particles are to generate
+		if (particleCount == 0)
+			return;
+
 		final EntityLivingBase entitylivingbase = mc.renderViewEntity;
 		final int playerX = MathHelper.floor_double(entitylivingbase.posX);
 		final int playerY = MathHelper.floor_double(entitylivingbase.posY);
@@ -209,11 +219,9 @@ public class ClientRainHandler {
 			EntityFX particle = null;
 			if (block.getMaterial() == Material.lava) {
 				// Rain hitting lava gives off smoke particle effects.
-				// Only generate if the rain is strong enough.
 				particle = new EntitySmokeFX(world, spawnX, spawnY, spawnZ, 0.0D, 0.0D, 0.0D);
 			} else {
-				// Spawn extra splash particles if the minimum strength
-				// rain is present.
+				// Spawn extra splash particles.
 				particle = new EntityRainFX(world, spawnX, spawnY, spawnZ);
 			}
 

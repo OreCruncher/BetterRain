@@ -80,12 +80,15 @@ public enum RainIntensity {
 	}
 
 	public static float getCurrentRainVolume() {
-		final float base = intensity != VANILLA ? strength : 0.66F;
-		return base * SOUND_LEVEL;
+		return (doVanillaRain() ? 0.66F : strength) * SOUND_LEVEL;
 	}
-	
+
 	public static ResourceLocation getCurrentRainSound() {
 		return new ResourceLocation(intensity.rainSound);
+	}
+
+	public static boolean doVanillaRain() {
+		return intensity == VANILLA;
 	}
 
 	/**
