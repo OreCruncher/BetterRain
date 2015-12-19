@@ -24,44 +24,36 @@
 
 package org.blockartistry.mod.BetterRain.data;
 
-import org.blockartistry.mod.BetterRain.BetterRain;
-
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldSavedData;
 
 /**
  * Per world save data for rain status
  */
-public final class RainData extends WorldSavedData {
-
+public final class RainData {
+	
 	public final static float MIN_STRENGTH = 0.0F;
 	public final static float MAX_STRENGTH = 1.0F;
 
-	private final static String IDENTIFIER = BetterRain.MOD_ID;
-
 	private final class NBT {
+		public final static String DIMENSION = "d";
 		public final static String STRENGTH = "s";
 	};
 
-	public RainData() {
-		this(IDENTIFIER);
-	}
-
-	public RainData(final String id) {
-		super(id);
-	}
-
+	private int dimensionId = 0;
 	private float strength = 0.0F;
 
-	public static RainData get(final World world) {
-		RainData data = (RainData) world.loadItemData(RainData.class, IDENTIFIER);
-		if (data == null) {
-			data = new RainData();
-			world.setItemData(IDENTIFIER, data);
-		}
-		return data;
+	public RainData() {
+	}
+	
+	public RainData(final int dimensionId) {
+		this.dimensionId = dimensionId;
+		this.strength = 0.0F;
+	}
+
+	public int getDimensionId() {
+		return dimensionId;
 	}
 
 	public float getRainStrength() {
@@ -69,20 +61,20 @@ public final class RainData extends WorldSavedData {
 	}
 
 	public void setRainStrength(float strength) {
-		strength = MathHelper.clamp_float(strength, MIN_STRENGTH, MAX_STRENGTH);
-		if (this.strength != strength) {
-			this.strength = strength;
-			this.markDirty();
-		}
+		this.strength = MathHelper.clamp_float(strength, MIN_STRENGTH, MAX_STRENGTH);
 	}
 
-	@Override
 	public void readFromNBT(final NBTTagCompound nbt) {
-		this.strength = MathHelper.clamp_float(nbt.getFloat(NBT.STRENGTH), MIN_STRENGTH, MAX_STRENGTH);
+		this.dimensionId = nbt.getInteger(NBT.DIMENSION);
+		setRainStrength(nbt.getFloat(NBT.STRENGTH));
 	}
 
-	@Override
 	public void writeToNBT(final NBTTagCompound nbt) {
+		nbt.setInteger(NBT.DIMENSION, this.dimensionId);
 		nbt.setFloat(NBT.STRENGTH, this.strength);
+	}
+	
+	public static RainData get(final World world) {
+		return RainDataFile.getRainData(world);
 	}
 }

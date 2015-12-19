@@ -127,11 +127,6 @@ public class ClientRainHandler {
 		if (event.phase != TickEvent.Phase.START)
 			return;
 
-		// If we want to let Vanilla handle, or if conditions don't
-		// require particle generation then return.
-		if (RainIntensity.getIntensity() == RainIntensity.VANILLA || !generateParticle())
-			return;
-
 		// For some reason this ticks when the client loads but
 		// without a world loaded. Also, if the loaded world
 		// is not a surface world return.
@@ -145,6 +140,11 @@ public class ClientRainHandler {
 		// mod may have done something with the textures and
 		// they need to be put back. :)
 		RainIntensity.setTextures();
+
+		// If we want to let Vanilla handle, or if conditions don't
+		// require particle generation then return.
+		if (RainIntensity.getIntensity() == RainIntensity.VANILLA || !generateParticle())
+			return;
 
 		// If for some reason the focus of the client UI
 		// is not in game don't do the textures or sound.

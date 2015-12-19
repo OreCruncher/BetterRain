@@ -65,8 +65,9 @@ public class PacketRainStrength implements IMessage, IMessageHandler<PacketRainS
 	public IMessage onMessage(final PacketRainStrength message, final MessageContext ctx) {
 		// If the player is in the dimension set the intensity.  Otherwise
 		// ignore.
-		if (message.dimension == Minecraft.getMinecraft().thePlayer.dimension)
+		if (message.dimension == Minecraft.getMinecraft().thePlayer.dimension) {
 			RainIntensity.setIntensity(message.strength);
+		}
 		return null;
 	}
 }

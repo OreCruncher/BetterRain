@@ -27,6 +27,7 @@ package org.blockartistry.mod.BetterRain.server;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
+import cpw.mods.fml.common.gameevent.TickEvent.Phase;
 import net.minecraft.world.World;
 
 import java.util.Random;
@@ -54,20 +55,25 @@ public class RainHandler {
 	@SubscribeEvent
 	public void tickEvent(final TickEvent.WorldTickEvent event) {
 
+		if (event.phase != Phase.START)
+			return;
+
 		float sendStrength = RESET;
 		final World world = event.world;
+		final int dimensionId = world.provider.dimensionId;
 
 		// Have to be a surface world and match the dimension rule
-		if (world.provider.isSurfaceWorld() && rule.isOk(world.provider.dimensionId)) {
+		if (world.provider.isSurfaceWorld() && rule.isOk(dimensionId)) {
 			final RainData data = RainData.get(world);
-			if (world.getRainStrength(1.0F) > 0.0F) {
+			if (world.isRaining()) {
 				if (data.getRainStrength() == 0.0F) {
 					final float strength = 0.05F + (0.90F * random.nextFloat());
 					data.setRainStrength(strength);
-					ModLog.info(String.format("Rain strength set to %f", data.getRainStrength()));
+					ModLog.info(String.format("dim %d rain strength set to %f", dimensionId,
+							data.getRainStrength()));
 				}
 			} else if (data.getRainStrength() > 0.0F) {
-				ModLog.info("Rain is stopping");
+				ModLog.info(String.format("dim %d rain is stopping", dimensionId));
 				data.setRainStrength(0.0F);
 			}
 			sendStrength = data.getRainStrength();
@@ -75,6 +81,6 @@ public class RainHandler {
 
 		// Set the rain strength for all players in the current
 		// dimension.
-		Network.sendRainStrength(sendStrength, world.provider.dimensionId);
+		Network.sendRainStrength(sendStrength, dimensionId);
 	}
 }
