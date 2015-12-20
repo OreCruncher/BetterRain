@@ -58,7 +58,7 @@ public class CommandRain extends CommandBase {
 
 	@Override
 	public String getCommandUsage(final ICommandSender p_71518_1_) {
-		return "/rain <status> | <1-100>";
+		return "/rain <status | reset> | <1-100>";
 	}
 
 	@Override
@@ -78,6 +78,8 @@ public class CommandRain extends CommandBase {
 				builder.append("; intensity: ").append(RainData.get(world).getRainStrength());
 				builder.append("; timer: ").append(minutes).append(" minutes");
 				player.addChatMessage(new ChatComponentText(builder.toString()));
+			} else if("reset".compareToIgnoreCase(parms[0]) == 0) {
+				world.provider.resetRainAndThunder();
 			} else {
 				final double d = parseDoubleBounded(sender, parms[0], 0.0D, 100.0D) / 100.0D;
 				RainData.get(world).setRainStrength((float) d);
