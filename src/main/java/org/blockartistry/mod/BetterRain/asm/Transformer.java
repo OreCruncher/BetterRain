@@ -57,11 +57,11 @@ public class Transformer implements IClassTransformer {
 		String names[] = null;
 
 		if (TransformLoader.runtimeDeobEnabled)
-			names = new String[] { "func_78474_d" };
+			names = new String[] { "func_78474_d", "func_78484_h" };
 		else
-			names = new String[] { "renderRainSnow" };
+			names = new String[] { "renderRainSnow", "addRainParticles" };
 
-		final String targetName[] = new String[] { "renderRainSnow" };
+		final String targetName[] = new String[] { "renderRainSnow", "addRainParticles" };
 
 		final ClassReader cr = new ClassReader(classBytes);
 		final ClassNode cn = new ClassNode(ASM5);
@@ -74,10 +74,17 @@ public class Transformer implements IClassTransformer {
 				m.instructions.add(new VarInsnNode(ALOAD, 0));
 				m.instructions.add(new VarInsnNode(FLOAD, 1));
 				final String sig = "(Lnet/minecraft/client/renderer/EntityRenderer;F)V";
-				m.instructions.add(new MethodInsnNode(INVOKESTATIC, "org/blockartistry/mod/BetterRain/client/EntityRendererHelper",
+				m.instructions.add(new MethodInsnNode(INVOKESTATIC, "org/blockartistry/mod/BetterRain/client/RenderWeather",
 						targetName[0], sig, false));
 				m.instructions.add(new InsnNode(RETURN));
-				break;
+			} else if(m.name.equals(names[1])) {
+				m.localVariables = null;
+				m.instructions.clear();
+				m.instructions.add(new VarInsnNode(ALOAD, 0));
+				final String sig = "(Lnet/minecraft/client/renderer/EntityRenderer;)V";
+				m.instructions.add(new MethodInsnNode(INVOKESTATIC, "org/blockartistry/mod/BetterRain/client/RenderWeather",
+						targetName[1], sig, false));
+				m.instructions.add(new InsnNode(RETURN));
 			}
 		}
 

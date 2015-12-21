@@ -28,7 +28,11 @@ import org.blockartistry.mod.BetterRain.BetterRain;
 import org.blockartistry.mod.BetterRain.ModOptions;
 import org.lwjgl.opengl.GL11;
 
+import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
 import net.minecraft.client.multiplayer.WorldClient;
+import net.minecraft.client.particle.EntityRainFX;
+import net.minecraft.client.particle.EntitySmokeFX;
 import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
@@ -39,15 +43,106 @@ import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.biome.BiomeGenDesert;
 import net.minecraftforge.client.IRenderHandler;
 
-public final class EntityRendererHelper {
+public final class RenderWeather {
 	
 	private static final boolean DESERT_DUST = ModOptions.getAllowDesertDust();
 	
-	// Dust in the desert
     public static ResourceLocation locationRainPng = new ResourceLocation("textures/environment/rain.png");
     public static ResourceLocation locationSnowPng = new ResourceLocation("textures/environment/snow.png");
 	public static ResourceLocation locationDustPng = new ResourceLocation(BetterRain.MOD_ID, "textures/environment/dust.png");
+
+	private static boolean desertCheck(final BiomeGenBase biome) {
+		return DESERT_DUST && biome instanceof BiomeGenDesert && !RainIntensity.doVanillaRain();
+	}
 	
+    public static void addRainParticles(final EntityRenderer theThis)
+    {
+        float f = theThis.mc.theWorld.getRainStrength(1.0F);
+
+        if (!theThis.mc.gameSettings.fancyGraphics)
+        {
+            f /= 2.0F;
+        }
+
+        if (f != 0.0F)
+        {
+        	theThis.random.setSeed((long)theThis.rendererUpdateCount * 312987231L);
+            EntityLivingBase entitylivingbase = theThis.mc.renderViewEntity;
+            WorldClient worldclient = theThis.mc.theWorld;
+            int i = MathHelper.floor_double(entitylivingbase.posX);
+            int j = MathHelper.floor_double(entitylivingbase.posY);
+            int k = MathHelper.floor_double(entitylivingbase.posZ);
+            byte b0 = 10;
+            double d0 = 0.0D;
+            double d1 = 0.0D;
+            double d2 = 0.0D;
+            int l = 0;
+            int i1 = (int)(100.0F * f * f);
+
+            if (theThis.mc.gameSettings.particleSetting == 1)
+            {
+                i1 >>= 1;
+            }
+            else if (theThis.mc.gameSettings.particleSetting == 2)
+            {
+                i1 = 0;
+            }
+
+            for (int j1 = 0; j1 < i1; ++j1)
+            {
+                int k1 = i + theThis.random.nextInt(b0) - theThis.random.nextInt(b0);
+                int l1 = k + theThis.random.nextInt(b0) - theThis.random.nextInt(b0);
+                int i2 = worldclient.getPrecipitationHeight(k1, l1);
+                Block block = worldclient.getBlock(k1, i2 - 1, l1);
+                BiomeGenBase biome = worldclient.getBiomeGenForCoords(k1, l1);
+                final boolean isDesert = desertCheck(biome);
+
+                if (i2 <= j + b0 && i2 >= j - b0 && (isDesert || (biome.canSpawnLightningBolt() && biome.getFloatTemperature(k1, i2, l1) >= 0.15F)))
+                {
+                    float f1 = theThis.random.nextFloat();
+                    float f2 = theThis.random.nextFloat();
+
+                    if (block.getMaterial() == Material.lava)
+                    {
+                    	if(!isDesert)
+                    		theThis.mc.effectRenderer.addEffect(new EntitySmokeFX(worldclient, (double)((float)k1 + f1), (double)((float)i2 + 0.1F) - block.getBlockBoundsMinY(), (double)((float)l1 + f2), 0.0D, 0.0D, 0.0D));
+                    }
+                    else if (block.getMaterial() != Material.air)
+                    {
+                        ++l;
+
+                        if (theThis.random.nextInt(l) == 0)
+                        {
+                            d0 = (double)((float)k1 + f1);
+                            d1 = (double)((float)i2 + 0.1F) - block.getBlockBoundsMinY();
+                            d2 = (double)((float)l1 + f2);
+                        }
+
+                        if(!isDesert)
+                        	theThis.mc.effectRenderer.addEffect(new EntityRainFX(worldclient, (double)((float)k1 + f1), (double)((float)i2 + 0.1F) - block.getBlockBoundsMinY(), (double)((float)l1 + f2)));
+                    }
+                }
+            }
+
+            if (l > 0 && theThis.random.nextInt(3) < theThis.rainSoundCounter++)
+            {
+            	theThis.rainSoundCounter = 0;
+
+                final boolean isDesert = desertCheck(worldclient.getBiomeGenForCoords((int)d0, (int)d2));
+            	final String sound = isDesert ? RainIntensity.getIntensity().getDustSound() : RainIntensity.getIntensity().getRainSound();
+            	final float volume = RainIntensity.getCurrentRainVolume();
+                if (d1 > entitylivingbase.posY + 1.0D && worldclient.getPrecipitationHeight(MathHelper.floor_double(entitylivingbase.posX), MathHelper.floor_double(entitylivingbase.posZ)) > MathHelper.floor_double(entitylivingbase.posY))
+                {
+                	theThis.mc.theWorld.playSound(d0, d1, d2, sound, volume, 0.5F, false);
+                }
+                else
+                {
+                	theThis.mc.theWorld.playSound(d0, d1, d2, sound, volume, 1.0F, false);
+                }
+            }
+        }
+    }
+
     /**
      * Render rain and snow
      */
@@ -123,10 +218,10 @@ public final class EntityRendererHelper {
                     int j1 = (l - i3 + 16) * 32 + i1 - k2 + 16;
                     float f6 = theThis.rainXCoords[j1] * 0.5F;
                     float f7 = theThis.rainYCoords[j1] * 0.5F;
-                    final BiomeGenBase biomegenbase = worldclient.getBiomeGenForCoords(i1, l);
-                    final boolean isDesert = DESERT_DUST && biomegenbase instanceof BiomeGenDesert && !RainIntensity.doVanillaRain();
+                    final BiomeGenBase biome = worldclient.getBiomeGenForCoords(i1, l);
+                    final boolean isDesert = desertCheck(biome);
 
-                    if (isDesert || biomegenbase.canSpawnLightningBolt() || biomegenbase.getEnableSnow())
+                    if (isDesert || biome.canSpawnLightningBolt() || biome.getEnableSnow())
                     {
                         int k1 = worldclient.getPrecipitationHeight(i1, l);
                         int l1 = l2 - b0;
@@ -153,7 +248,7 @@ public final class EntityRendererHelper {
                         if (l1 != i2)
                         {
                             theThis.random.setSeed((long)(i1 * i1 * 3121 + i1 * 45238971 ^ l * l * 418711 + l * 13761));
-                            float f9 = biomegenbase.getFloatTemperature(i1, l1, l);
+                            float f9 = biome.getFloatTemperature(i1, l1, l);
                             float f10;
                             double d4;
 

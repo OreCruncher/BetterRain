@@ -7,5 +7,11 @@
       "ambient/weather/rain_calm3",
       "ambient/weather/rain_calm4"
     ]
+  },
+  "dust" : {
+    "category": "weather",
+    "sounds": [
+      "ambient/weather/dust"
+    ]
   }
 }

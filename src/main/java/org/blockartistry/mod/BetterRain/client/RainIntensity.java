@@ -38,11 +38,11 @@ import net.minecraft.util.ResourceLocation;
 public enum RainIntensity {
 
 	VANILLA,
-	NONE(0.0F, "calm", "rain", "dust"),
-	CALM(0.1F, "calm", "rain", "dust"),
-	LIGHT(0.33F, "light", "rain", "dust"),
-	NORMAL(0.66F, "normal", "rain", "dust"),
-	HEAVY(1.0F, "heavy", "rain", "dust");
+	NONE(0.0F, "calm"),
+	CALM(0.1F, "calm"),
+	LIGHT(0.33F, "light"),
+	NORMAL(0.66F, "normal"),
+	HEAVY(1.0F, "heavy");
 
 	private static final float SOUND_LEVEL = ModOptions.getSoundLevel();
 
@@ -65,7 +65,7 @@ public enum RainIntensity {
 		this.dustSound = String.format("%s:%s", BetterRain.MOD_ID, "dust");
 	}
 
-	private RainIntensity(final float level, final String intensity, final String rainSound, final String dustSound) {
+	private RainIntensity(final float level, final String intensity) {
 		this.level = level;
 		this.rainTexture = new ResourceLocation(BetterRain.MOD_ID,
 				String.format("textures/environment/rain_%s.png", intensity));
@@ -73,8 +73,8 @@ public enum RainIntensity {
 				String.format("textures/environment/snow_%s.png", intensity));
 		this.dustTexture = new ResourceLocation(BetterRain.MOD_ID,
 				String.format("textures/environment/dust_%s.png", intensity));
-		this.rainSound = String.format("%s:%s", BetterRain.MOD_ID, rainSound);
-		this.dustSound = String.format("%s:%s", BetterRain.MOD_ID, dustSound);
+		this.rainSound = String.format("%s:%s", BetterRain.MOD_ID, "rain");
+		this.dustSound = String.format("%s:%s", BetterRain.MOD_ID, "dust");
 	}
 
 	public static RainIntensity getIntensity() {
@@ -99,6 +99,10 @@ public enum RainIntensity {
 
 	public static ResourceLocation getCurrentRainSound() {
 		return new ResourceLocation(intensity.rainSound);
+	}
+	
+	public static ResourceLocation getCurrentDustSound() {
+		return new ResourceLocation(intensity.dustSound);
 	}
 
 	public static boolean doVanillaRain() {
@@ -145,8 +149,8 @@ public enum RainIntensity {
 	 */
 	public static void setTextures() {
 		// AT transform removed final and made public.
-		EntityRendererHelper.locationRainPng = intensity.rainTexture;
-		EntityRendererHelper.locationSnowPng = intensity.snowTexture;
-		EntityRendererHelper.locationDustPng = intensity.dustTexture;
+		RenderWeather.locationRainPng = intensity.rainTexture;
+		RenderWeather.locationSnowPng = intensity.snowTexture;
+		RenderWeather.locationDustPng = intensity.dustTexture;
 	}
 }
