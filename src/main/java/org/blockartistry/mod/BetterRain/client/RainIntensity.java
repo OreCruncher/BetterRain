@@ -37,9 +37,12 @@ import net.minecraft.util.ResourceLocation;
 @SideOnly(Side.CLIENT)
 public enum RainIntensity {
 
-	VANILLA, NONE(0.0F, "rain_calm", "snow_calm", "rain_calm"), CALM(0.1F, "rain_calm", "snow_calm",
-			"rain_calm"), LIGHT(0.33F, "rain_light", "snow_light", "rain_calm"), NORMAL(0.66F, "rain_normal",
-					"snow_normal", "rain_calm"), HEAVY(1.0F, "rain_heavy", "snow_heavy", "rain_calm");
+	VANILLA,
+	NONE(0.0F, "calm", "rain", "dust"),
+	CALM(0.1F, "calm", "rain", "dust"),
+	LIGHT(0.33F, "light", "rain", "dust"),
+	NORMAL(0.66F, "normal", "rain", "dust"),
+	HEAVY(1.0F, "heavy", "rain", "dust");
 
 	private static final float SOUND_LEVEL = ModOptions.getSoundLevel();
 
@@ -49,22 +52,29 @@ public enum RainIntensity {
 	private final float level;
 	private final ResourceLocation rainTexture;
 	private final ResourceLocation snowTexture;
+	private final ResourceLocation dustTexture;
 	private final String rainSound;
+	private final String dustSound;
 
 	private RainIntensity() {
 		this.level = -10.0F;
 		this.rainTexture = EntityRenderer.locationRainPng;
 		this.snowTexture = EntityRenderer.locationSnowPng;
-		this.rainSound = String.format("%s:%s", BetterRain.MOD_ID, "rain_calm");
+		this.dustTexture = new ResourceLocation(BetterRain.MOD_ID, "textures/environment/dust_calm.png");
+		this.rainSound = String.format("%s:%s", BetterRain.MOD_ID, "rain");
+		this.dustSound = String.format("%s:%s", BetterRain.MOD_ID, "dust");
 	}
 
-	private RainIntensity(final float level, final String rainResource, final String snowResource, final String sound) {
+	private RainIntensity(final float level, final String intensity, final String rainSound, final String dustSound) {
 		this.level = level;
 		this.rainTexture = new ResourceLocation(BetterRain.MOD_ID,
-				String.format("textures/environment/%s.png", rainResource));
+				String.format("textures/environment/rain_%s.png", intensity));
 		this.snowTexture = new ResourceLocation(BetterRain.MOD_ID,
-				String.format("textures/environment/%s.png", snowResource));
-		this.rainSound = String.format("%s:%s", BetterRain.MOD_ID, sound);
+				String.format("textures/environment/snow_%s.png", intensity));
+		this.dustTexture = new ResourceLocation(BetterRain.MOD_ID,
+				String.format("textures/environment/dust_%s.png", intensity));
+		this.rainSound = String.format("%s:%s", BetterRain.MOD_ID, rainSound);
+		this.dustSound = String.format("%s:%s", BetterRain.MOD_ID, dustSound);
 	}
 
 	public static RainIntensity getIntensity() {
@@ -77,6 +87,10 @@ public enum RainIntensity {
 
 	public String getRainSound() {
 		return this.rainSound;
+	}
+	
+	public String getDustSound() {
+		return this.dustSound;
 	}
 
 	public static float getCurrentRainVolume() {
@@ -131,7 +145,8 @@ public enum RainIntensity {
 	 */
 	public static void setTextures() {
 		// AT transform removed final and made public.
-		EntityRenderer.locationRainPng = intensity.rainTexture;
-		EntityRenderer.locationSnowPng = intensity.snowTexture;
+		EntityRendererHelper.locationRainPng = intensity.rainTexture;
+		EntityRendererHelper.locationSnowPng = intensity.snowTexture;
+		EntityRendererHelper.locationDustPng = intensity.dustTexture;
 	}
 }

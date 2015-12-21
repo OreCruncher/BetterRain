@@ -48,6 +48,8 @@ public final class ModOptions {
 	protected static float soundLevel = 1.0F;
 	protected static final String CONFIG_ALWAYS_OVERRIDE_SOUND = "Always Override Sound";
 	protected static boolean alwaysOverrideSound = true;
+	protected static final String CONFIG_ALLOW_DESERT_DUST = "Desert Dust";
+	protected static boolean allowDesertDust = true;
 
 	protected static final String CATEGORY_GENERAL = "general";
 	protected static final String CONFIG_DIMENSION_LIST = "Dimensions";
@@ -76,6 +78,10 @@ public final class ModOptions {
 
 		comment = "Always override Vanilla rain sound even when dimension is blacklisted";
 		alwaysOverrideSound = config.getBoolean(CONFIG_ALWAYS_OVERRIDE_SOUND, CATEGORY_RAIN, alwaysOverrideSound,
+				comment);
+
+		comment = "Allow desert dust when raining";
+		allowDesertDust = config.getBoolean(CONFIG_ALLOW_DESERT_DUST, CATEGORY_RAIN, allowDesertDust,
 				comment);
 
 		// CATEGORY: General
@@ -111,6 +117,10 @@ public final class ModOptions {
 
 	public static boolean getAlwaysOverrideSound() {
 		return alwaysOverrideSound;
+	}
+	
+	public static boolean getAllowDesertDust() {
+		return allowDesertDust;
 	}
 
 	public static int[] getDimensionList() {
