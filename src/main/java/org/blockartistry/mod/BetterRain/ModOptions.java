@@ -24,8 +24,11 @@
 
 package org.blockartistry.mod.BetterRain;
 
+import org.blockartistry.mod.BetterRain.util.ElementRule;
 import org.blockartistry.mod.BetterRain.util.MyUtils;
+import org.blockartistry.mod.BetterRain.util.ElementRule.Rule;
 
+import net.minecraft.util.MathHelper;
 import net.minecraftforge.common.config.Configuration;
 
 public final class ModOptions {
@@ -51,6 +54,10 @@ public final class ModOptions {
 	protected static int[] dimensions = {};
 	protected static final String CONFIG_DIMENSION_BLACKLIST = "Black List";
 	protected static boolean dimensionListAsBlacklist = true;
+	protected static final String CONFIG_MIN_RAIN_STRENGTH = "Default Minimum Rain Strength";
+	protected static float defaultMinRainStrength = 0.0F;
+	protected static final String CONFIG_MAX_RAIN_STRENGTH = "Default Maximum Rain Strength";
+	protected static float defaultMaxRainStrength = 1.0F;
 
 	public static void load(final Configuration config) {
 
@@ -68,8 +75,8 @@ public final class ModOptions {
 		soundLevel = config.getFloat(CONFIG_RAIN_VOLUME, CATEGORY_RAIN, soundLevel, 0.0F, 1.0F, comment);
 
 		comment = "Always override Vanilla rain sound even when dimension is blacklisted";
-		alwaysOverrideSound = config.getBoolean(CONFIG_ALWAYS_OVERRIDE_SOUND, CATEGORY_RAIN,
-				alwaysOverrideSound, comment);
+		alwaysOverrideSound = config.getBoolean(CONFIG_ALWAYS_OVERRIDE_SOUND, CATEGORY_RAIN, alwaysOverrideSound,
+				comment);
 
 		// CATEGORY: General
 		comment = "Comma separated dimension ID list";
@@ -79,6 +86,15 @@ public final class ModOptions {
 		comment = "Treat dimension ID list as a black list";
 		dimensionListAsBlacklist = config.getBoolean(CONFIG_DIMENSION_BLACKLIST, CATEGORY_GENERAL,
 				dimensionListAsBlacklist, comment);
+
+		comment = "Default minimum rain strength for a dimension";
+		defaultMinRainStrength = MathHelper.clamp_float(config.getFloat(CONFIG_MIN_RAIN_STRENGTH, CATEGORY_GENERAL,
+				defaultMinRainStrength, 0.0F, 1.0F, comment), 0.0F, 1.0F);
+
+		comment = "Default maximum rain strength for a dimension";
+		defaultMaxRainStrength = MathHelper.clamp_float(config.getFloat(CONFIG_MAX_RAIN_STRENGTH, CATEGORY_GENERAL,
+				defaultMaxRainStrength, 0.0F, 1.0F, comment), defaultMinRainStrength, 1.0F);
+
 	}
 
 	public static boolean getEnableDebugLogging() {
@@ -92,7 +108,7 @@ public final class ModOptions {
 	public static float getSoundLevel() {
 		return soundLevel;
 	}
-	
+
 	public static boolean getAlwaysOverrideSound() {
 		return alwaysOverrideSound;
 	}
@@ -103,5 +119,17 @@ public final class ModOptions {
 
 	public static boolean getDimensionListAsBlacklist() {
 		return dimensionListAsBlacklist;
+	}
+
+	public static ElementRule getDimensionRule() {
+		return new ElementRule(dimensionListAsBlacklist ? Rule.MUST_NOT_BE_IN : Rule.MUST_BE_IN, dimensions);
+	}
+
+	public static float getDefaultMinRainIntensity() {
+		return defaultMinRainStrength;
+	}
+
+	public static float getDefaultMaxRainIntensity() {
+		return defaultMaxRainStrength;
 	}
 }

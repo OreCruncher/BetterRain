@@ -26,6 +26,8 @@ package org.blockartistry.mod.BetterRain.util;
 import org.apache.commons.lang3.StringUtils;
 
 public final class MyUtils {
+	
+	private static final int[] EMPTY = {};
 
 	private MyUtils() {
 	}
@@ -34,7 +36,7 @@ public final class MyUtils {
 
 		final String[] tokens = StringUtils.split(str, splitChar);
 		if (tokens == null || tokens.length == 0)
-			return new int[] {};
+			return EMPTY;
 
 		final int[] result = new int[tokens.length];
 		for (int i = 0; i < tokens.length; i++) {

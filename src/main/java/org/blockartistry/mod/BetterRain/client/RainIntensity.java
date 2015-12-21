@@ -108,7 +108,7 @@ public enum RainIntensity {
 			return;
 		}
 
-		level = MathHelper.clamp_float(level, RainData.MIN_STRENGTH, RainData.MAX_STRENGTH);
+		level = MathHelper.clamp_float(level, RainData.MIN_INTENSITY, RainData.MAX_INTENSITY);
 
 		if (strength != level) {
 			strength = level;

@@ -30,27 +30,21 @@ import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.common.gameevent.TickEvent.Phase;
 import net.minecraft.world.World;
 
-import java.util.Random;
-
 import org.blockartistry.mod.BetterRain.ModLog;
 import org.blockartistry.mod.BetterRain.ModOptions;
 import org.blockartistry.mod.BetterRain.data.RainData;
 import org.blockartistry.mod.BetterRain.network.Network;
 import org.blockartistry.mod.BetterRain.util.ElementRule;
-import org.blockartistry.mod.BetterRain.util.ElementRule.Rule;
 
 public class RainHandler {
 
-	private static final Random random = new Random();
 	private static final float RESET = -10.0F;
-
-	private static final ElementRule rule = new ElementRule(
-			ModOptions.getDimensionListAsBlacklist() ? Rule.MUST_NOT_BE_IN : Rule.MUST_BE_IN,
-			ModOptions.getDimensionList());
 
 	public static void initialize() {
 		FMLCommonHandler.instance().bus().register(new RainHandler());
 	}
+
+	private final ElementRule rule = ModOptions.getDimensionRule();
 
 	@SubscribeEvent
 	public void tickEvent(final TickEvent.WorldTickEvent event) {
@@ -66,17 +60,15 @@ public class RainHandler {
 		if (world.provider.isSurfaceWorld() && rule.isOk(dimensionId)) {
 			final RainData data = RainData.get(world);
 			if (world.isRaining()) {
-				if (data.getRainStrength() == 0.0F) {
-					final float strength = 0.05F + (0.90F * random.nextFloat());
-					data.setRainStrength(strength);
-					ModLog.info(String.format("dim %d rain strength set to %f", dimensionId,
-							data.getRainStrength()));
+				if (data.getRainIntensity() == 0.0F) {
+					data.randomize();
+					ModLog.info(String.format("dim %d rain strength set to %f", dimensionId, data.getRainIntensity()));
 				}
-			} else if (data.getRainStrength() > 0.0F) {
+			} else if (data.getRainIntensity() > 0.0F) {
 				ModLog.info(String.format("dim %d rain is stopping", dimensionId));
-				data.setRainStrength(0.0F);
+				data.setRainIntensity(0.0F);
 			}
-			sendStrength = data.getRainStrength();
+			sendStrength = data.getRainIntensity();
 		}
 
 		// Set the rain strength for all players in the current

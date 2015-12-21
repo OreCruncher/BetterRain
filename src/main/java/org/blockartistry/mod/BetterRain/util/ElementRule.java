@@ -33,6 +33,10 @@ public final class ElementRule {
 	private final int[] elements;
 	private final boolean contains;
 
+	public ElementRule(final Rule rule, final String tokens) {
+		this(rule, MyUtils.splitToInts(tokens, ','));
+	}
+	
 	public ElementRule(final Rule rule, final int[] list) {
 		this.contains = rule == Rule.MUST_BE_IN;
 		this.elements = new int[list.length];
