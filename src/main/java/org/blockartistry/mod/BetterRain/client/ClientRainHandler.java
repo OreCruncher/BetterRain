@@ -34,6 +34,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 import java.util.Random;
 
 import org.blockartistry.mod.BetterRain.ModOptions;
+import org.blockartistry.mod.BetterRain.data.EffectType;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -187,16 +188,16 @@ public class ClientRainHandler {
 		for (int i = 0; i < particleCount; i++) {
 			final int locX = playerX + random.nextInt(RANGE_FACTOR) - random.nextInt(RANGE_FACTOR);
 			final int locZ = playerZ + random.nextInt(RANGE_FACTOR) - random.nextInt(RANGE_FACTOR);
-			final BiomeGenBase biomegenbase = world.getBiomeGenForCoords(locX, locZ);
+			final BiomeGenBase biome = world.getBiomeGenForCoords(locX, locZ);
 
 			// If a lightening bolt can't spawn at the location
 			// it is not eligible for what we need.
-			if (!biomegenbase.canSpawnLightningBolt())
+			if (!EffectType.hasPrecipitation(biome))
 				continue;
 
 			// If it is freezing it is not what we need.
 			final int locY = world.getPrecipitationHeight(locX, locZ);
-			if (biomegenbase.getFloatTemperature(locX, locY, locZ) < 0.15F)
+			if (biome.getFloatTemperature(locX, locY, locZ) < 0.15F)
 				continue;
 
 			// If the Y location happens to be outside the range we

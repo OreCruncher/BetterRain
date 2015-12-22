@@ -31,7 +31,7 @@ import cpw.mods.fml.relauncher.Side;
 
 public class Network {
 
-	private static SimpleNetworkWrapper network;
+	public static SimpleNetworkWrapper network;
 
 	public static void initialize() {
 		network = NetworkRegistry.INSTANCE.newSimpleChannel(BetterRain.MOD_ID);

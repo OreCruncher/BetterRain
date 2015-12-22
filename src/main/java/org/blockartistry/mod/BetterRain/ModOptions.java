@@ -60,7 +60,15 @@ public final class ModOptions {
 	protected static float defaultMinRainStrength = 0.0F;
 	protected static final String CONFIG_MAX_RAIN_STRENGTH = "Default Maximum Rain Strength";
 	protected static float defaultMaxRainStrength = 1.0F;
-
+	
+	protected static final String CATEGORTY_OVERRIDE = "biomes.override";
+	protected static final String CONFIG_DUST_BIOMES = "Dust";
+	protected static String dustBiomes = "";
+	protected static final String CONFIG_PRECIPITATION_BIOMES = "Precipitation";
+	protected static String precipitationBiomes = "";
+	protected static final String CONFIG_NONE_BIOMES = "None";
+	protected static String noneBiomes = "";
+	
 	public static void load(final Configuration config) {
 
 		// CATEGORY: Logging
@@ -100,7 +108,16 @@ public final class ModOptions {
 		comment = "Default maximum rain strength for a dimension";
 		defaultMaxRainStrength = MathHelper.clamp_float(config.getFloat(CONFIG_MAX_RAIN_STRENGTH, CATEGORY_GENERAL,
 				defaultMaxRainStrength, 0.0F, 1.0F, comment), defaultMinRainStrength, 1.0F);
+		
+		// CATEGORY: Biome Overrides
+		comment = "Comma separated biome names to apply dust weather effect";
+		dustBiomes = config.getString(CONFIG_DUST_BIOMES, CATEGORTY_OVERRIDE, dustBiomes, comment);
 
+		comment = "Comma separated biome names to apply rain/snow weather effect";
+		precipitationBiomes = config.getString(CONFIG_PRECIPITATION_BIOMES, CATEGORTY_OVERRIDE, precipitationBiomes, comment);
+
+		comment = "Comma separated biome names to apply NO weather effect";
+		noneBiomes = config.getString(CONFIG_NONE_BIOMES, CATEGORTY_OVERRIDE, noneBiomes, comment);
 	}
 
 	public static boolean getEnableDebugLogging() {
@@ -141,5 +158,17 @@ public final class ModOptions {
 
 	public static float getDefaultMaxRainIntensity() {
 		return defaultMaxRainStrength;
+	}
+	
+	public static String getDustBiomes() {
+		return dustBiomes;
+	}
+	
+	public static String getPrecipitationBiomes() {
+		return precipitationBiomes;
+	}
+	
+	public static String getNoneBiomes() {
+		return noneBiomes;
 	}
 }

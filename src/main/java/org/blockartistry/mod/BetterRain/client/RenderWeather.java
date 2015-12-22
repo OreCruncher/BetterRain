@@ -26,6 +26,7 @@ package org.blockartistry.mod.BetterRain.client;
 
 import org.blockartistry.mod.BetterRain.BetterRain;
 import org.blockartistry.mod.BetterRain.ModOptions;
+import org.blockartistry.mod.BetterRain.data.EffectType;
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.block.Block;
@@ -40,7 +41,6 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.biome.BiomeGenBase;
-import net.minecraft.world.biome.BiomeGenDesert;
 import net.minecraftforge.client.IRenderHandler;
 
 public final class RenderWeather {
@@ -52,7 +52,7 @@ public final class RenderWeather {
 	public static ResourceLocation locationDustPng = new ResourceLocation(BetterRain.MOD_ID, "textures/environment/dust.png");
 
 	private static boolean desertCheck(final BiomeGenBase biome) {
-		return DESERT_DUST && biome instanceof BiomeGenDesert && !RainIntensity.doVanillaRain();
+		return DESERT_DUST && EffectType.hasDust(biome) && !RainIntensity.doVanillaRain();
 	}
 	
     public static void addRainParticles(final EntityRenderer theThis)
@@ -97,7 +97,7 @@ public final class RenderWeather {
                 BiomeGenBase biome = worldclient.getBiomeGenForCoords(k1, l1);
                 final boolean isDesert = desertCheck(biome);
 
-                if (i2 <= j + b0 && i2 >= j - b0 && (isDesert || (biome.canSpawnLightningBolt() && biome.getFloatTemperature(k1, i2, l1) >= 0.15F)))
+                if (i2 <= j + b0 && i2 >= j - b0 && (isDesert || (EffectType.hasPrecipitation(biome) && biome.getFloatTemperature(k1, i2, l1) >= 0.15F)))
                 {
                     float f1 = theThis.random.nextFloat();
                     float f2 = theThis.random.nextFloat();
@@ -221,7 +221,7 @@ public final class RenderWeather {
                     final BiomeGenBase biome = worldclient.getBiomeGenForCoords(i1, l);
                     final boolean isDesert = desertCheck(biome);
 
-                    if (isDesert || biome.canSpawnLightningBolt() || biome.getEnableSnow())
+                    if (isDesert || EffectType.hasPrecipitation(biome))
                     {
                         int k1 = worldclient.getPrecipitationHeight(i1, l);
                         int l1 = l2 - b0;
@@ -329,5 +329,4 @@ public final class RenderWeather {
             theThis.disableLightmap((double)particleTicks);
         }
     }
-
 }
