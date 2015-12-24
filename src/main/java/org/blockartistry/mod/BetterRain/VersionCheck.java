@@ -253,7 +253,7 @@ public final class VersionCheck implements Runnable {
 			ModLog.warn("Version check failed");
 			break;
 		case CURRENT:
-			ModLog.info("BetterRain version [%s] is the same or newer than the current version [%s]", modVersion,
+			ModLog.info("BetterRain version [%s] is the same or newer than the currentAurora version [%s]", modVersion,
 					currentVersion);
 			break;
 		case OUTDATED:

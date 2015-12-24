@@ -1,4 +1,5 @@
-/* This file is part of BetterRain, licensed under the MIT License (MIT).
+/*
+ * This file is part of BetterRain, licensed under the MIT License (MIT).
  *
  * Copyright (c) OreCruncher
  *
@@ -21,28 +22,25 @@
  * THE SOFTWARE.
  */
 
-package org.blockartistry.mod.BetterRain.util;
+package org.blockartistry.mod.BetterRain.aurora;
 
-import org.apache.commons.lang3.StringUtils;
+import java.util.ArrayList;
+import java.util.List;
 
-public final class MyUtils {
+import net.minecraft.world.World;
+
+public abstract class EntityEnvEffect {
 	
-	private static final int[] EMPTY = {};
+	protected List<Node[]> nodeList = new ArrayList<Node[]>();
 
-	private MyUtils() {
+	public EntityEnvEffect(final World world) {
 	}
 
-	public static int[] splitToInts(final String str, final char splitChar) {
+	protected void addNodeArray(final Node[] array) {
+		this.nodeList.add(array);
+	}
 
-		final String[] tokens = StringUtils.split(str, splitChar);
-		if (tokens == null || tokens.length == 0)
-			return EMPTY;
-
-		final int[] result = new int[tokens.length];
-		for (int i = 0; i < tokens.length; i++) {
-			result[i] = Integer.parseInt(tokens[i]);
-		}
-
-		return result;
+	protected void removeNodeArray(final Node[] array) {
+		this.nodeList.remove(array);
 	}
 }

@@ -1,0 +1,98 @@
+/*
+ * This file is part of BetterRain, licensed under the MIT License (MIT).
+ *
+ * Copyright (c) OreCruncher
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
+package org.blockartistry.mod.BetterRain.data;
+
+import org.blockartistry.mod.BetterRain.util.INBTSerialization;
+
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.nbt.NBTTagCompound;
+
+public final class AuroraData implements INBTSerialization {
+
+	private static final class NBT {
+		public static final String DIMENSION = "d";
+		public static final String XCOORD = "x";
+		public static final String ZCOORD = "z";
+		public static final String TIME = "t";
+		public static final String COLOR_SET = "s";
+	}
+
+	public int dimensionId;
+	public int posX;
+	public int posZ;
+	public long time;
+	public int colorSet;
+
+	public AuroraData() {
+	}
+
+	public AuroraData(final EntityPlayer player, final int zOffset, final int colorSet) {
+		this(player.worldObj.provider.dimensionId, (int) player.posX, (int) player.posZ + zOffset,
+				player.worldObj.getWorldTime(), colorSet);
+	}
+
+	public AuroraData(final int dimensionId, final int x, final int z, final long t, final int colorSet) {
+		this.dimensionId = dimensionId;
+		this.posX = x;
+		this.posZ = z;
+		this.time = t;
+		this.colorSet = colorSet;
+	}
+
+	@Override
+	public void readFromNBT(NBTTagCompound nbt) {
+		this.dimensionId = nbt.getInteger(NBT.DIMENSION);
+		this.posX = nbt.getInteger(NBT.XCOORD);
+		this.posZ = nbt.getInteger(NBT.ZCOORD);
+		this.time = nbt.getLong(NBT.TIME);
+		this.colorSet = nbt.getInteger(NBT.COLOR_SET);
+	}
+
+	@Override
+	public void writeToNBT(NBTTagCompound nbt) {
+		nbt.setInteger(NBT.DIMENSION, this.dimensionId);
+		nbt.setInteger(NBT.XCOORD, this.posX);
+		nbt.setInteger(NBT.ZCOORD, this.posZ);
+		nbt.setLong(NBT.TIME, this.time);
+		nbt.setInteger(NBT.COLOR_SET, this.colorSet);
+	}
+
+	@Override
+	public boolean equals(final Object anObj) {
+		if (!(anObj instanceof AuroraData))
+			return false;
+		final AuroraData a = (AuroraData) anObj;
+		return (this.time == a.time) && (this.posX == a.posX) && (this.posZ == a.posZ);
+	}
+
+	@Override
+	public String toString() {
+		final StringBuilder builder = new StringBuilder();
+		builder.append("[x: ").append(this.posX).append(", z: ").append(this.posZ).append(']');
+		builder.append(" color: ").append(this.colorSet);
+		builder.append(" time: ").append(this.time);
+		return builder.toString();
+	}
+}

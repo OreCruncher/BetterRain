@@ -22,32 +22,47 @@
  * THE SOFTWARE.
  */
 
-package org.blockartistry.mod.BetterRain.util;
+package org.blockartistry.mod.BetterRain.aurora;
 
-public final class ElementRule {
+import gnu.trove.map.hash.TIntObjectHashMap;
 
-	public static enum Rule {
-		MUST_BE_IN, MUST_NOT_BE_IN
+public enum EnumColors {
+	RED(255, 0, 0), ORANGE(255, 127, 0), YELLOW(255, 255, 0), LGREEN(127, 255, 0), GREEN(0, 255, 0), TURQOISE(0, 255,
+			127), CYAN(0, 255, 255), AUQUAMARINE(0, 127, 255), BLUE(0, 0, 255), VIOLET(127, 0, 255), MAGENTA(255, 0,
+					255), RASPBERRY(255, 0, 127);
+
+	public final int red;
+	public final int green;
+	public final int blue;
+	public final Color color;
+
+	private static final TIntObjectHashMap<EnumColors> lookup = new TIntObjectHashMap<EnumColors>();
+
+	static {
+		for (final EnumColors c : EnumColors.values())
+			lookup.put(c.ordinal(), c);
 	}
 
-	private final int[] elements;
-	private final boolean contains;
-
-	public ElementRule(final Rule rule, final String tokens) {
-		this(rule, MyUtils.splitToInts(tokens, ','));
-	}
-	
-	public ElementRule(final Rule rule, final int[] list) {
-		this.contains = rule == Rule.MUST_BE_IN;
-		this.elements = new int[list.length];
-		System.arraycopy(list, 0, this.elements, 0, list.length);
+	private EnumColors(final int red, final int green, final int blue) {
+		this.red = red;
+		this.green = green;
+		this.blue = blue;
+		this.color = new Color(this);
 	}
 
-	public boolean isOk(final int e) {
-		final int len = elements.length;
-		for(int i = 0; i < len; i++)
-			if(elements[i] == e)
-				return contains;
-		return !contains;
+	public int[] rgbValues() {
+		return new int[] { this.red, this.green, this.blue };
+	}
+
+	public int getRGB() {
+		return this.red << 16 | this.blue << 8 | this.green;
+	}
+
+	public Color asColor() {
+		return this.color;
+	}
+
+	public static EnumColors get(final int i) {
+		return lookup.get(i);
 	}
 }

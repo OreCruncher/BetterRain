@@ -69,6 +69,16 @@ public final class ModOptions {
 	protected static final String CONFIG_NONE_BIOMES = "None";
 	protected static String noneBiomes = "";
 	
+	protected static final String CATEGORY_AURORA = "aurora";
+	protected static final String CONFIG_AURORA_ENABLED = "Enabled";
+	protected static boolean auroraEnable = true;
+	protected static final String CONFIG_Y_TRANSLATION = "Y Translation";
+	protected static boolean auroraYTranslation = true;
+	protected static final String CONFIG_ALLOW_MULTIPLES = "Allow Multiples";
+	protected static boolean auroraAllowMultiples = true;
+	protected static final String CONFIG_AURORA_BIOME_LIST = "Affected Biomes";
+	protected static String auroraAffectedBiomes = "";
+	
 	public static void load(final Configuration config) {
 
 		// CATEGORY: Logging
@@ -118,6 +128,22 @@ public final class ModOptions {
 
 		comment = "Comma separated biome names to apply NO weather effect";
 		noneBiomes = config.getString(CONFIG_NONE_BIOMES, CATEGORTY_OVERRIDE, noneBiomes, comment);
+		
+		// CATEGORY: Aurora
+		comment = "Whether to enable Aurora processing on server/client";
+		auroraEnable = config.getBoolean(CONFIG_AURORA_ENABLED, CATEGORY_AURORA,
+				auroraEnable, comment);
+
+		comment = "true to keep the aurora at a height above player; false to fix it to an altitude";
+		auroraYTranslation = config.getBoolean(CONFIG_Y_TRANSLATION, CATEGORY_AURORA,
+				auroraYTranslation, comment);
+
+		comment = "Allow Auroras with multiple bands";
+		auroraAllowMultiples = config.getBoolean(CONFIG_ALLOW_MULTIPLES, CATEGORY_AURORA,
+				auroraAllowMultiples, comment);
+
+		comment = "Comma separated biome names where Auroras can occur";
+		auroraAffectedBiomes = config.getString(CONFIG_AURORA_BIOME_LIST, CATEGORY_AURORA, auroraAffectedBiomes, comment);
 	}
 
 	public static boolean getEnableDebugLogging() {
@@ -170,5 +196,21 @@ public final class ModOptions {
 	
 	public static String getNoneBiomes() {
 		return noneBiomes;
+	}
+	
+	public static boolean getAuroraYTranslation() {
+		return auroraYTranslation;
+	}
+
+	public static boolean getAuroraAllowMultiples() {
+		return auroraAllowMultiples;
+	}
+
+	public static String getAuroraAffectedBiomes() {
+		return auroraAffectedBiomes;
+	}
+	
+	public static boolean getAuroraEnable() {
+		return auroraEnable;
 	}
 }

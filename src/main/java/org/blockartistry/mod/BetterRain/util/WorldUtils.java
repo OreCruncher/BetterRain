@@ -23,26 +23,35 @@
 
 package org.blockartistry.mod.BetterRain.util;
 
-import org.apache.commons.lang3.StringUtils;
+import net.minecraft.world.World;
 
-public final class MyUtils {
+public final class WorldUtils {
+
+	private WorldUtils() {}
 	
-	private static final int[] EMPTY = {};
-
-	private MyUtils() {
+	public static long getWorldTime(final World world) {
+		long time = world.getWorldTime();
+		for (; time > 24000L; time -= 24000L);
+		return time;
 	}
-
-	public static int[] splitToInts(final String str, final char splitChar) {
-
-		final String[] tokens = StringUtils.split(str, splitChar);
-		if (tokens == null || tokens.length == 0)
-			return EMPTY;
-
-		final int[] result = new int[tokens.length];
-		for (int i = 0; i < tokens.length; i++) {
-			result[i] = Integer.parseInt(tokens[i]);
-		}
-
-		return result;
+	
+	public static boolean isDaytime(final World world) {
+		return !isNighttime(world);
+	}
+	
+	public static boolean isDaytime(final long time) {
+		return !isNighttime(time);
+	}
+	
+	public static boolean isNighttime(final World world) {
+		return isNighttime(getWorldTime(world));
+	}
+	
+	public static boolean isNighttime(final long time) {
+		return time >= 13000L && time <= 23500L;
+	}
+	
+	public static boolean hasSky(final World world) {
+		return !world.provider.hasNoSky;
 	}
 }

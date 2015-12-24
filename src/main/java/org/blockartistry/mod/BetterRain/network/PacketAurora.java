@@ -24,50 +24,56 @@
 
 package org.blockartistry.mod.BetterRain.network;
 
-import org.blockartistry.mod.BetterRain.client.RainIntensity;
+import org.blockartistry.mod.BetterRain.client.ClientEffectHandler;
+import org.blockartistry.mod.BetterRain.data.AuroraData;
 
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.client.Minecraft;
 
-public class PacketRainStrength implements IMessage, IMessageHandler<PacketRainStrength, IMessage> {
+public final class PacketAurora implements IMessage, IMessageHandler<PacketAurora, IMessage> {
 
-	/**
-	 * Strength of rainfall
-	 */
-	private float strength;
-
-	/**
-	 * Dimension where the rainfall is occurring
-	 */
 	private int dimension;
+	private long time;
+	private int posX;
+	private int posZ;
+	private int colorSet;
 
-	public PacketRainStrength() {
+	public PacketAurora() {
 	}
 
-	public PacketRainStrength(final float strength, final int dimension) {
-		this.strength = strength;
-		this.dimension = dimension;
+	public PacketAurora(final AuroraData data) {
+		this(data.dimensionId, data.time, data.posX, data.posZ, data.colorSet);
+	}
+
+	public PacketAurora(final int dimensionId, final long time, final int posX, final int posZ, final int colorSet) {
+		this.dimension = dimensionId;
+		this.time = time;
+		this.posX = posX;
+		this.posZ = posZ;
+		this.colorSet = colorSet;
 	}
 
 	public void fromBytes(final ByteBuf buf) {
-		this.strength = buf.readFloat();
 		this.dimension = buf.readInt();
+		this.time = buf.readLong();
+		this.posX = buf.readInt();
+		this.posZ = buf.readInt();
+		this.colorSet = buf.readByte();
 	}
 
 	public void toBytes(final ByteBuf buf) {
-		buf.writeFloat(this.strength);
 		buf.writeInt(this.dimension);
+		buf.writeLong(this.time);
+		buf.writeInt(this.posX);
+		buf.writeInt(this.posZ);
+		buf.writeByte(this.colorSet);
 	}
 
-	public IMessage onMessage(final PacketRainStrength message, final MessageContext ctx) {
-		// If the player is in the dimension set the intensity.  Otherwise
-		// ignore.
-		if (message.dimension == Minecraft.getMinecraft().thePlayer.dimension) {
-			RainIntensity.setIntensity(message.strength);
-		}
+	@Override
+	public IMessage onMessage(final PacketAurora message, final MessageContext ctx) {
+		ClientEffectHandler.addAurora(new AuroraData(message.dimension, message.posX, message.posZ, message.time, message.colorSet));
 		return null;
 	}
 }

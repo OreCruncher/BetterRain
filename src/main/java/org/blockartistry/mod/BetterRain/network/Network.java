@@ -25,21 +25,32 @@
 package org.blockartistry.mod.BetterRain.network;
 
 import org.blockartistry.mod.BetterRain.BetterRain;
+import org.blockartistry.mod.BetterRain.data.AuroraData;
+
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import cpw.mods.fml.relauncher.Side;
 
-public class Network {
+public final class Network {
+	
+	private static int discriminator = 0;
+	
+	private Network() {
+	}
 
 	public static SimpleNetworkWrapper network;
 
 	public static void initialize() {
 		network = NetworkRegistry.INSTANCE.newSimpleChannel(BetterRain.MOD_ID);
-		network.registerMessage(PacketRainStrength.class, PacketRainStrength.class, 1, Side.CLIENT);
+		network.registerMessage(PacketRainIntensity.class, PacketRainIntensity.class, ++discriminator, Side.CLIENT);
+		network.registerMessage(PacketAurora.class, PacketAurora.class, ++discriminator, Side.CLIENT);
 	}
 
-	public static void sendRainStrength(final float strength, final int dimension) {
-		// Route packet to players in the dimension.
-		network.sendToDimension(new PacketRainStrength(strength, dimension), dimension);
+	public static void sendRainIntensity(final float intensity, final int dimension) {
+		network.sendToDimension(new PacketRainIntensity(intensity, dimension), dimension);
+	}
+	
+	public static void sendAurora(final AuroraData data, final int dimension) {
+		network.sendToDimension(new PacketAurora(data), dimension);
 	}
 }

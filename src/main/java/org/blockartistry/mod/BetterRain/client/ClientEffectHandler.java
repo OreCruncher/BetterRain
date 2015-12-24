@@ -24,23 +24,32 @@
 
 package org.blockartistry.mod.BetterRain.client;
 
+import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.eventhandler.EventPriority;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
+import cpw.mods.fml.common.gameevent.TickEvent.Phase;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-
+import java.util.HashSet;
 import java.util.Random;
+import java.util.Set;
 
 import org.blockartistry.mod.BetterRain.ModOptions;
+import org.blockartistry.mod.BetterRain.aurora.Aurora;
+import org.blockartistry.mod.BetterRain.data.AuroraData;
 import org.blockartistry.mod.BetterRain.data.EffectType;
+import org.blockartistry.mod.BetterRain.util.PlayerUtils;
+import org.blockartistry.mod.BetterRain.util.WorldUtils;
+import org.blockartistry.mod.BetterRain.util.XorShiftRandom;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.ISound;
 import net.minecraft.client.audio.PositionedSoundRecord;
+import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.client.particle.EntityFX;
 import net.minecraft.client.particle.EntityRainFX;
 import net.minecraft.client.particle.EntitySmokeFX;
@@ -54,9 +63,9 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.EntityEvent;
 
 @SideOnly(Side.CLIENT)
-public class ClientRainHandler {
+public final class ClientEffectHandler {
 
-	private static final Random random = new Random();
+	private static final Random random = new XorShiftRandom();
 
 	private static final int PARTICLE_SETTING_ALL = 0;
 	@SuppressWarnings("unused")
@@ -68,11 +77,29 @@ public class ClientRainHandler {
 
 	private static final boolean ALWAYS_OVERRIDE_SOUND = ModOptions.getAlwaysOverrideSound();
 
-	private ClientRainHandler() {
+	// Aurora information
+	private static final boolean AURORA_ENABLE = ModOptions.getAuroraEnable();
+	private static int auroraDimension = 0;
+	private static final Set<AuroraData> auroras = new HashSet<AuroraData>();
+	public static Aurora currentAurora;
+
+	public static void addAurora(final AuroraData data) {
+		if (!AURORA_ENABLE)
+			return;
+
+		if (auroraDimension != data.dimensionId || PlayerUtils.getClientPlayerDimension() != data.dimensionId) {
+			auroras.clear();
+			currentAurora = null;
+			auroraDimension = data.dimensionId;
+		}
+		auroras.add(data);
+	}
+
+	private ClientEffectHandler() {
 	}
 
 	public static void initialize() {
-		final ClientRainHandler handler = new ClientRainHandler();
+		final ClientEffectHandler handler = new ClientEffectHandler();
 		MinecraftForge.EVENT_BUS.register(handler);
 		FMLCommonHandler.instance().bus().register(handler);
 	}
@@ -122,6 +149,62 @@ public class ClientRainHandler {
 		}
 	}
 
+	private Aurora getClosestAurora(final TickEvent.ClientTickEvent event) {
+		if(auroraDimension != PlayerUtils.getClientPlayerDimension()) { 
+			auroras.clear();
+			currentAurora = null;
+		}
+		
+		if (auroras.size() == 0) {
+			currentAurora = null;
+			return null;
+		}
+
+		final World world = FMLClientHandler.instance().getClient().theWorld;
+		final EntityClientPlayerMP player = FMLClientHandler.instance().getClient().thePlayer;
+		final int playerX = (int) player.posX;
+		final int playerZ = (int) player.posZ;
+		boolean started = false;
+		int distanceSq = 0;
+		AuroraData ad = null;
+		for (final AuroraData data : auroras) {
+			final int deltaX = data.posX - playerX;
+			final int deltaZ = data.posZ - playerZ;
+			final int d = deltaX * deltaX + deltaZ * deltaZ;
+			if (!started || distanceSq > d) {
+				started = true;
+				distanceSq = d;
+				ad = data;
+			}
+		}
+
+		if (ad == null) {
+			currentAurora = null;
+		} else if (currentAurora == null || (currentAurora.posX != ad.posX && currentAurora.posZ != ad.posZ)) {
+			currentAurora = new Aurora(world, ad.posX, ad.posZ, ad.time, ad.colorSet);
+		}
+
+		return currentAurora;
+	}
+
+	protected void processAurora(final TickEvent.ClientTickEvent event) {
+		final World world = FMLClientHandler.instance().getClient().theWorld;
+		if (world != null && auroras.size() > 0) {
+			final long time = WorldUtils.getWorldTime(world);
+			if (WorldUtils.isDaytime(time)) {
+				auroras.clear();
+				currentAurora = null;
+			} else {
+				final Aurora aurora = getClosestAurora(event);
+				aurora.update();
+				if (time < 23500L && time >= 22220L && aurora.terminate) {
+					aurora.terminate = false;
+					aurora.fadeTimer = 0;
+				}
+			}
+		}
+	}
+
 	/*
 	 * Lowest priority. Another mod may have done something with the textures so
 	 * we want to override to do what we want.
@@ -131,8 +214,11 @@ public class ClientRainHandler {
 	 */
 	@SubscribeEvent(priority = EventPriority.LOWEST)
 	public void tickEvent(final TickEvent.ClientTickEvent event) {
-		if (event.phase != TickEvent.Phase.START)
+		if (event.phase == Phase.END) {
+			if (AURORA_ENABLE)
+				processAurora(event);
 			return;
+		}
 
 		// For some reason this ticks when the client loads but
 		// without a world loaded. Also, if the loaded world
@@ -141,7 +227,7 @@ public class ClientRainHandler {
 		if (world == null)
 			return;
 
-		// Set the textures for the current intensity. This
+		// Set the textures for the currentAurora intensity. This
 		// occurs now because rendering is about to take place.
 		// Also, it has to occur repeatedly because another
 		// mod may have done something with the textures and

@@ -35,7 +35,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldSavedData;
 import net.minecraftforge.common.util.Constants;
 
-public class RainDataFile extends WorldSavedData {
+public final class DimensionEffectDataFile extends WorldSavedData {
 
 	private final static String IDENTIFIER = BetterRain.MOD_ID;
 
@@ -43,36 +43,36 @@ public class RainDataFile extends WorldSavedData {
 		public final static String ENTRIES = "e";
 	};
 
-	private final Map<Integer, RainData> dataList = new HashMap<Integer, RainData>();
+	private final Map<Integer, DimensionEffectData> dataList = new HashMap<Integer, DimensionEffectData>();
 
-	public RainDataFile() {
+	public DimensionEffectDataFile() {
 		this(IDENTIFIER);
 	}
 
-	public RainDataFile(final String id) {
+	public DimensionEffectDataFile(final String id) {
 		super(id);
 	}
 
-	private static RainDataFile getFile(final World world) {
-		RainDataFile data = (RainDataFile) world.loadItemData(RainDataFile.class, IDENTIFIER);
+	private static DimensionEffectDataFile getFile(final World world) {
+		DimensionEffectDataFile data = (DimensionEffectDataFile) world.loadItemData(DimensionEffectDataFile.class, IDENTIFIER);
 		if (data == null) {
-			data = new RainDataFile();
+			data = new DimensionEffectDataFile();
 			world.setItemData(IDENTIFIER, data);
 		}
 		data.markDirty();
 		return data;
 	}
 
-	private RainData getData(final int dimensionId) {
-		RainData data = this.dataList.get(dimensionId);
+	private DimensionEffectData getData(final int dimensionId) {
+		DimensionEffectData data = this.dataList.get(dimensionId);
 		if (data != null)
 			return data;
-		data = new RainData(dimensionId);
+		data = new DimensionEffectData(dimensionId);
 		this.dataList.put(dimensionId, data);
 		return data;
 	}
 
-	public static RainData get(final World world) {
+	public static DimensionEffectData get(final World world) {
 		return getFile(world).getData(world.provider.dimensionId);
 	}
 
@@ -81,7 +81,7 @@ public class RainDataFile extends WorldSavedData {
 		final NBTTagList list = nbt.getTagList(NBT.ENTRIES, Constants.NBT.TAG_COMPOUND);
 		for (int i = 0; i < list.tagCount(); i++) {
 			final NBTTagCompound tag = list.getCompoundTagAt(i);
-			final RainData data = new RainData();
+			final DimensionEffectData data = new DimensionEffectData();
 			data.readFromNBT(tag);
 			this.dataList.put(data.getDimensionId(), data);
 		}
@@ -90,7 +90,7 @@ public class RainDataFile extends WorldSavedData {
 	@Override
 	public void writeToNBT(final NBTTagCompound nbt) {
 		final NBTTagList list = new NBTTagList();
-		for (final RainData data : this.dataList.values()) {
+		for (final DimensionEffectData data : this.dataList.values()) {
 			final NBTTagCompound tag = new NBTTagCompound();
 			data.writeToNBT(tag);
 			list.appendTag(tag);

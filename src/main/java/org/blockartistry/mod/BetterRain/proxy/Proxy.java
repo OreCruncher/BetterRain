@@ -28,7 +28,7 @@ import org.blockartistry.mod.BetterRain.VersionCheck;
 import org.blockartistry.mod.BetterRain.commands.CommandRain;
 import org.blockartistry.mod.BetterRain.data.EffectType;
 import org.blockartistry.mod.BetterRain.network.Network;
-import org.blockartistry.mod.BetterRain.server.RainHandler;
+import org.blockartistry.mod.BetterRain.server.ServerEffectHandler;
 
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
@@ -48,7 +48,7 @@ public class Proxy {
 
 	public void init(FMLInitializationEvent event) {
 		Network.initialize();
-		RainHandler.initialize();
+		ServerEffectHandler.initialize();
 	}
 
 	public void postInit(FMLPostInitializationEvent event) {

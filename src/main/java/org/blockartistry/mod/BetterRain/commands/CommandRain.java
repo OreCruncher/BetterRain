@@ -27,7 +27,7 @@ package org.blockartistry.mod.BetterRain.commands;
 import java.text.DecimalFormat;
 import java.util.List;
 
-import org.blockartistry.mod.BetterRain.data.RainData;
+import org.blockartistry.mod.BetterRain.data.DimensionEffectData;
 
 import com.google.common.collect.ImmutableList;
 
@@ -39,7 +39,7 @@ import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
 
-public class CommandRain extends CommandBase {
+public final class CommandRain extends CommandBase {
 
 	private static final List<String> ALIAS = ImmutableList.<String> builder().add("r", "br", "betterrain").build();
 	private static final DecimalFormat FORMATTER = new DecimalFormat("0.0");
@@ -69,11 +69,11 @@ public class CommandRain extends CommandBase {
 
 		final EntityPlayerMP player = getCommandSenderAsPlayer(sender);
 		final World world = player.worldObj;
-		final RainData data = RainData.get(world);
+		final DimensionEffectData data = DimensionEffectData.get(world);
 
 		if (parms.length == 1) {
 			if ("status".compareToIgnoreCase(parms[0]) == 0) {
-				// Dump out some diagnostics for the current dimension
+				// Dump out some diagnostics for the currentAurora dimension
 				final float minutes = (world.getWorldInfo().getRainTime() / 20.0F) / 60.0F;
 				final StringBuilder builder = new StringBuilder();
 				builder.append(data.toString());

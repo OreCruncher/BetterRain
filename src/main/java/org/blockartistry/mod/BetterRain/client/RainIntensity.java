@@ -26,7 +26,7 @@ package org.blockartistry.mod.BetterRain.client;
 
 import org.blockartistry.mod.BetterRain.BetterRain;
 import org.blockartistry.mod.BetterRain.ModOptions;
-import org.blockartistry.mod.BetterRain.data.RainData;
+import org.blockartistry.mod.BetterRain.data.DimensionEffectData;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -126,7 +126,7 @@ public enum RainIntensity {
 			return;
 		}
 
-		level = MathHelper.clamp_float(level, RainData.MIN_INTENSITY, RainData.MAX_INTENSITY);
+		level = MathHelper.clamp_float(level, DimensionEffectData.MIN_INTENSITY, DimensionEffectData.MAX_INTENSITY);
 
 		if (strength != level) {
 			strength = level;
@@ -144,7 +144,7 @@ public enum RainIntensity {
 	}
 
 	/**
-	 * Set precipitation textures based on the current intensity. This is
+	 * Set precipitation textures based on the currentAurora intensity. This is
 	 * invoked before rendering takes place.
 	 */
 	public static void setTextures() {

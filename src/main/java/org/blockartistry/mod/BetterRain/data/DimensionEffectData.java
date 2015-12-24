@@ -25,18 +25,23 @@
 package org.blockartistry.mod.BetterRain.data;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import org.blockartistry.mod.BetterRain.ModOptions;
+import org.blockartistry.mod.BetterRain.util.INBTSerialization;
 
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.Constants;
 
 /**
- * Per world save data for rain status
+ * Per world effect data for better rain effects
  */
-public final class RainData {
+public final class DimensionEffectData implements INBTSerialization {
 
 	private static final Random random = new Random();
 	private static final DecimalFormat FORMATTER = new DecimalFormat("0");
@@ -49,17 +54,19 @@ public final class RainData {
 		public final static String INTENSITY = "s";
 		public final static String MIN_INTENSITY = "min";
 		public final static String MAX_INTENSITY = "max";
+		public final static String AURORA_LIST = "al";
 	};
 
 	private int dimensionId = 0;
 	private float intensity = 0.0F;
 	private float minIntensity = ModOptions.getDefaultMinRainIntensity();
 	private float maxIntensity = ModOptions.getDefaultMaxRainIntensity();
+	private List<AuroraData> auroras = new ArrayList<AuroraData>();
 
-	public RainData() {
+	public DimensionEffectData() {
 	}
 
-	public RainData(final int dimensionId) {
+	public DimensionEffectData(final int dimensionId) {
 		this.dimensionId = dimensionId;
 	}
 
@@ -90,11 +97,16 @@ public final class RainData {
 	public void setMaxRainIntensity(final float intensity) {
 		this.maxIntensity = MathHelper.clamp_float(intensity, this.minIntensity, MAX_INTENSITY);
 	}
+	
+	public List<AuroraData> getAuroraList() {
+		return this.auroras;
+	}
 
-	public void randomize() {
+	public void randomizeRain() {
 		setRainIntensity(MathHelper.randomFloatClamp(random, this.minIntensity, this.maxIntensity));
 	}
 
+	@Override
 	public void readFromNBT(final NBTTagCompound nbt) {
 		this.dimensionId = nbt.getInteger(NBT.DIMENSION);
 		this.intensity = MathHelper.clamp_float(nbt.getFloat(NBT.INTENSITY), MIN_INTENSITY, MAX_INTENSITY);
@@ -103,28 +115,44 @@ public final class RainData {
 		if (nbt.hasKey(NBT.MAX_INTENSITY))
 			this.maxIntensity = MathHelper.clamp_float(nbt.getFloat(NBT.MAX_INTENSITY), this.minIntensity,
 					MAX_INTENSITY);
+		final NBTTagList list = nbt.getTagList(NBT.AURORA_LIST, Constants.NBT.TAG_COMPOUND);
+		for (int i = 0; i < list.tagCount(); i++) {
+			final NBTTagCompound tag = list.getCompoundTagAt(i);
+			final AuroraData data = new AuroraData();
+			data.readFromNBT(tag);
+			this.auroras.add(data);
+		}
 	}
 
+	@Override
 	public void writeToNBT(final NBTTagCompound nbt) {
 		nbt.setInteger(NBT.DIMENSION, this.dimensionId);
 		nbt.setFloat(NBT.INTENSITY, this.intensity);
 		nbt.setFloat(NBT.MIN_INTENSITY, this.minIntensity);
 		nbt.setFloat(NBT.MAX_INTENSITY, this.maxIntensity);
+		final NBTTagList list = new NBTTagList();
+		for (final AuroraData data : this.auroras) {
+			final NBTTagCompound tag = new NBTTagCompound();
+			data.writeToNBT(tag);
+			list.appendTag(tag);
+		}
+		nbt.setTag(NBT.AURORA_LIST, list);
 	}
 
-	public static RainData get(final World world) {
-		return RainDataFile.get(world);
+	public static DimensionEffectData get(final World world) {
+		return DimensionEffectDataFile.get(world);
 	}
 
 	@Override
 	public String toString() {
-		// Dump out some diagnostics for the current dimension
+		// Dump out some diagnostics for the currentAurora dimension
 		final StringBuilder builder = new StringBuilder();
 		builder.append("dim ").append(this.dimensionId).append(": ");
 		builder.append("intensity: ").append(FORMATTER.format(this.intensity * 100));
 		builder.append(" [").append(FORMATTER.format(this.minIntensity * 100));
 		builder.append(",").append(FORMATTER.format(this.maxIntensity * 100));
 		builder.append("]");
+		builder.append(", auroras: ").append(this.auroras.size());
 		return builder.toString();
 	}
 }

@@ -1,4 +1,5 @@
-/* This file is part of BetterRain, licensed under the MIT License (MIT).
+/*
+ * This file is part of BetterRain, licensed under the MIT License (MIT).
  *
  * Copyright (c) OreCruncher
  *
@@ -23,26 +24,17 @@
 
 package org.blockartistry.mod.BetterRain.util;
 
-import org.apache.commons.lang3.StringUtils;
+import net.minecraft.nbt.NBTTagCompound;
 
-public final class MyUtils {
-	
-	private static final int[] EMPTY = {};
+public interface INBTSerialization {
 
-	private MyUtils() {
-	}
+	/**
+	 * Used to deserialize data from an NBT structure
+	 */
+	public void readFromNBT(final NBTTagCompound nbt);
 
-	public static int[] splitToInts(final String str, final char splitChar) {
-
-		final String[] tokens = StringUtils.split(str, splitChar);
-		if (tokens == null || tokens.length == 0)
-			return EMPTY;
-
-		final int[] result = new int[tokens.length];
-		for (int i = 0; i < tokens.length; i++) {
-			result[i] = Integer.parseInt(tokens[i]);
-		}
-
-		return result;
-	}
+	/**
+	 * Used to serialize data into an NBT structure;
+	 */
+	public void writeToNBT(final NBTTagCompound nbt);
 }
