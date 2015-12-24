@@ -45,6 +45,11 @@ public final class Aurora {
 
 	private static final float ANGLE1 = MathStuff.PI_F / 16.0F;
 	private static final float ANGLE2 = MathStuff.toRadians(90.0F / 7.0F);
+	private static final float COS_DEG90_FACTOR = MathStuff.cos(MathStuff.PI_F / 2.0F);
+	private static final float COS_DEG270_FACTOR = MathStuff.cos(MathStuff.PI_F / 2.0F + MathStuff.PI_F);
+	private static final float SIN_DEG90_FACTOR = MathStuff.sin(MathStuff.PI_F / 2.0F);
+	private static final float SIN_DEG270_FACTOR = MathStuff.sin(MathStuff.PI_F / 2.0F + MathStuff.PI_F);
+
 	private static final int FADE_LIMIT = 1280;
 
 	public static final float AURORA_SPEED = 0.75F;
@@ -68,6 +73,8 @@ public final class Aurora {
 	private final Color color1;
 	// Fade color of the aurora
 	private final Color color2;
+	// Alpha setting of the aurora for fade
+	private int alpha = 1;
 
 	public Aurora(final AuroraData data) {
 		this(data.posX, data.posZ, data.time, data.colorSet, data.preset);
@@ -79,7 +86,7 @@ public final class Aurora {
 		this.posZ = z;
 
 		setPreset(preset);
-		
+
 		final ColorPair pair = ColorPair.get(colorSet);
 		this.color1 = pair.first;
 		this.color2 = pair.second;
@@ -113,6 +120,10 @@ public final class Aurora {
 		return this.color2;
 	}
 
+	public int getAlpha() {
+		return this.alpha;
+	}
+
 	public boolean isAlive() {
 		return this.isAlive;
 	}
@@ -126,8 +137,8 @@ public final class Aurora {
 
 	public void update() {
 		if (this.fadeTimer < FADE_LIMIT) {
-			if (this.fadeTimer % 10 == 0)
-				fade(this.nodeList, this.isAlive);
+			if (this.fadeTimer % 10 == 0 && this.alpha > 0)
+				this.alpha += this.isAlive ? 1 : -1;
 			this.fadeTimer++;
 		}
 
@@ -142,20 +153,13 @@ public final class Aurora {
 		final Node[] tet = new Node[nodeList.length];
 		for (int i = 0; i < nodeList.length; i++) {
 			final Node node = nodeList[i];
-			final float rads = MathStuff.toRadians(90.0F + node.getAngle());
+			final float rads = MathStuff.toRadians(90.0F + node.angle);
 			final float posX = node.posX + MathStuff.cos(rads) * offset;
 			final float posZ = node.posZ + MathStuff.sin(rads) * offset;
-			tet[i] = new Node(posX, node.posY - 2.0F, posZ, node.getAngle());
+			tet[i] = new Node(posX, node.posY - 2.0F, posZ, node.angle);
 		}
 
 		return alterWidths(tet, 10.0F);
-	}
-
-	private static void fade(final List<Node[]> nodeList, final boolean fadeIn) {
-		final int adjustment = fadeIn ? 1 : -1;
-		for (final Node[] nodes : nodeList)
-			for (int j = 0; j < nodes.length; j++)
-				nodes[j].addA(adjustment);
 	}
 
 	private Node[] populateNodeListFromCenterAlt() {
@@ -183,7 +187,7 @@ public final class Aurora {
 						y = 10.0F + nodeRand.nextFloat() * 5.0F;
 
 					final Node node = nodeList[i * 8 + k + 1];
-					final float subAngle = node.getAngle() + angle;
+					final float subAngle = node.angle + angle;
 					final float subAngleRads = MathStuff.toRadians(subAngle);
 					final float z = node.posZ - (MathStuff.sin(subAngleRads) * this.nodeLength);
 					final float x = node.posX - (MathStuff.cos(subAngleRads) * this.nodeLength);
@@ -209,7 +213,7 @@ public final class Aurora {
 					y = 10.0F + nodeRand.nextFloat() * 5.0F;
 
 				final Node node = nodeList[j * 8 + h - 1];
-				final float subAngle = node.getAngle() + angle;
+				final float subAngle = node.angle + angle;
 				final float subAngleRads = MathStuff.toRadians(subAngle);
 				final float z = node.posZ + (MathStuff.sin(subAngleRads) * this.nodeLength);
 				final float x = node.posX + (MathStuff.cos(subAngleRads) * this.nodeLength);
@@ -219,20 +223,6 @@ public final class Aurora {
 		}
 
 		return alterWidths(nodeList, this.nodeWidth);
-	}
-
-	public void translateArrays(final float partialTick) {
-		final float c = this.ticker + AURORA_SPEED * partialTick;
-		for (final Node[] nodeList : this.nodeList) {
-			for (int i = 0; i < nodeList.length; i++) {
-				final float f = MathStuff.sin(MathStuff.toRadians(AURORA_WAVELENGTH * i + c));
-				final Node node = nodeList[i];
-				node.setModZ(f * AURORA_AMPLITUDE);
-				node.setModY(f * 3.0F);
-			}
-
-			findAngles(nodeList);
-		}
 	}
 
 	private static Node[] alterWidths(final Node[] nodeList, final float widthMax) {
@@ -252,35 +242,42 @@ public final class Aurora {
 		return nodeList;
 	}
 
+	/*
+	 * Calculates the next "frame" of the aurora if it is being
+	 * animated.
+	 */
+	public void translate(final float partialTick) {
+		final float c = this.ticker + AURORA_SPEED * partialTick;
+		for (final Node[] nodeList : this.nodeList) {
+			for (int i = 0; i < nodeList.length; i++) {
+				final float f = MathStuff.sin(MathStuff.toRadians(AURORA_WAVELENGTH * i + c));
+				final Node node = nodeList[i];
+				node.setModZ(f * AURORA_AMPLITUDE);
+				node.setModY(f * 3.0F);
+			}
+
+			findAngles(nodeList);
+		}
+	}
+
 	private static void findAngles(final Node[] nodeList) {
 		for (int i = 0; i < nodeList.length; i++) {
 			final Node node = nodeList[i];
-			float angle = 0.0F;
-			float x = 0.0F;
-			float x2 = 0.0F;
-			float z = 0.0F;
-			float z2 = 0.0F;
 
-			if (i == 0 || i == nodeList.length - 1) {
-				x = node.posX;
-				x2 = x;
-				z = node.getModdedZ();
-				z2 = z;
-			} else {
-				angle = MathStuff.atan2(node.getModdedZ() - nodeList[i + 1].getModdedZ(),
-						node.posX - nodeList[i + 1].posX);
+			node.tetX = node.tetX2 = node.posX;
+			node.tetZ = node.tetZ2 = node.getModdedZ();
+			node.angle = 0.0F;
 
-				final float deg90 = angle + MathStuff.PI_F / 2.0F;
-				final float deg270 = deg90 + MathStuff.PI_F;
-
-				x = node.posX + MathStuff.cos(deg90) * node.width;
-				x2 = node.posX + MathStuff.cos(deg270) * node.width;
-				z = node.getModdedZ() + MathStuff.sin(deg90) * node.width;
-				z2 = node.getModdedZ() + MathStuff.sin(deg270) * node.width;
+			if (i > 0 && i < nodeList.length - 1) {
+				final Node nodePlus = nodeList[i + 1];
+				// TODO: calculate and cache width factors
+				final float w = node.width;
+				node.angle = MathStuff.atan2(node.getModdedZ() - nodePlus.getModdedZ(), node.posX - nodePlus.posX);
+				node.tetX += COS_DEG90_FACTOR * w;
+				node.tetX2 += COS_DEG270_FACTOR * w;
+				node.tetZ += SIN_DEG90_FACTOR * w;
+				node.tetZ2 += SIN_DEG270_FACTOR * w;
 			}
-
-			node.setAngle(angle);
-			node.setTet(x, x2, z, z2);
 		}
 	}
 }

@@ -29,44 +29,26 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
 public final class Node {
-	private float angle;
-	public float posX = 1.0F;
-	public float posZ = 1.0F;
-	public float posY = 7.0F;
+	
 	private float modZ = 0.0F;
 	private float modX = 0.0F;
 	private float modY = 0.0F;
-	private float tetX = 0.0F;
-	private float tetX2 = 0.0F;
-	private float tetZ = 0.0F;
-	private float tetZ2 = 0.0F;
-	public float width = 30.0F;
-	public int alpha = 1;
 
-	public Node(float x, float z, float theta) {
+	public float angle;
+	public float posX = 1.0F;
+	public float posZ = 1.0F;
+	public float posY = 7.0F;
+	public float tetX = 0.0F;
+	public float tetX2 = 0.0F;
+	public float tetZ = 0.0F;
+	public float tetZ2 = 0.0F;
+	public float width = 30.0F;
+
+	public Node(final float x, final float y, final float z, final float theta) {
 		this.posX = x;
 		this.posZ = z;
 		this.angle = theta;
-	}
-
-	public Node(float x, float y, float z, float theta) {
-		this(x, z, theta);
 		this.posY = y;
-	}
-
-	public void setTet(float x, float x2, float z, float z2) {
-		this.tetX = x;
-		this.tetX2 = x2;
-		this.tetZ = z;
-		this.tetZ2 = z2;
-	}
-
-	public float[] getTet() {
-		return new float[] { this.tetX, this.tetX2, this.tetZ, this.tetZ2 };
-	}
-	
-	public float[] getTet2() {
-		return new float[] { this.posX, this.posX, getModdedZ(), getModdedZ() };
 	}
 
 	public void setModZ(float f) {
@@ -95,19 +77,5 @@ public final class Node {
 			y = 0.0F;
 		}
 		return y;
-	}
-
-	public void setAngle(float f) {
-		this.angle = f;
-	}
-
-	public float getAngle() {
-		return this.angle;
-	}
-
-	public void addA(final int a) {
-		if (this.alpha > 0) {
-			this.alpha += a;
-		}
 	}
 }

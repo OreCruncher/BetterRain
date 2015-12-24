@@ -68,9 +68,13 @@ public final class AuroraRenderer {
 
 		double var10 = aurora.posZ - (minecraft.thePlayer.lastTickPosZ
 				+ (minecraft.thePlayer.posZ - minecraft.thePlayer.lastTickPosZ) * partialTick);
-		
-		if(ANIMATE)
-			aurora.translateArrays(partialTick);
+
+		if (ANIMATE)
+			aurora.translate(partialTick);
+
+		final int alpha = aurora.getAlpha();
+		final double lowY = 0.0D;
+		final double lowY2 = 0.0D;
 
 		for (final Node[] array : aurora.getNodeList()) {
 
@@ -90,31 +94,32 @@ public final class AuroraRenderer {
 			for (int i = 0; i < array.length - 1; i++) {
 
 				final Node node = array[i];
-				final float[] tet = node.getTet();
-				float[] tet2 = null;
 
-				double posY2 = 0.0D;
+				final double posY = node.getModdedY();
+
+				final double posX = node.tetX;
+				final double posZ = node.tetZ;
+				final double tetX = node.tetX2;
+				final double tetZ = node.tetZ2;
+
+				final double posX2;
+				final double posZ2;
+				final double tetX2;
+				final double tetZ2;
+				final double posY2;
+				
 				if (i < array.length - 2) {
 					final Node nodePlus = array[i + 1];
-					tet2 = nodePlus.getTet();
+					posX2 = nodePlus.tetX;
+					posZ2 = nodePlus.tetZ;
+					tetX2 = nodePlus.tetX2;
+					tetZ2 = nodePlus.tetZ2;
 					posY2 = nodePlus.getModdedY();
 				} else {
-					tet2 = node.getTet2();
+					posX2 = tetX2 = node.posX;
+					posZ2 = tetZ2 = node.getModdedZ();
+					posY2 = 0.0D;
 				}
-
-				double posX = tet[0];
-				double posX2 = tet2[0];
-				double posZ = tet[2];
-				double posZ2 = tet2[2];
-				double posY = node.getModdedY();
-
-				double lowY = 0.0D;
-				double lowY2 = 0.0D;
-
-				double tetX = tet[1];
-				double tetX2 = tet2[1];
-				double tetZ = tet[3];
-				double tetZ2 = tet2[3];
 
 				Color color1 = null;
 				Color color2 = null;
@@ -129,36 +134,31 @@ public final class AuroraRenderer {
 				}
 
 				tess.startDrawing(GL11.GL_TRIANGLE_FAN);
-				setColor(color1, node.alpha);
+				setColor(color1, alpha);
 				tess.addVertex(posX, lowY, posZ);
 				setColor(color2, 0);
 				tess.addVertex(posX, posY, posZ);
 				tess.addVertex(posX2, posY2, posZ2);
-				setColor(color1, node.alpha);
+				setColor(color1, alpha);
 				tess.addVertex(posX2, lowY2, posZ2);
 				tess.draw();
 
 				tess.startDrawing(GL11.GL_TRIANGLE_FAN);
-				setColor(color1, node.alpha);
+				setColor(color1, alpha);
 				tess.addVertex(posX, lowY, posZ);
 				tess.addVertex(posX2, lowY2, posZ2);
 				tess.addVertex(tetX2, lowY2, tetZ2);
 				tess.addVertex(tetX, lowY, tetZ);
 				tess.draw();
 
-				posX = tetX;
-				posX2 = tetX2;
-				posZ = tetZ;
-				posZ2 = tetZ2;
-
 				tess.startDrawing(GL11.GL_TRIANGLE_FAN);
-				setColor(color1, node.alpha);
-				tess.addVertex(posX, lowY, posZ);
+				setColor(color1, alpha);
+				tess.addVertex(tetX, lowY, tetZ);
 				setColor(color2, 0);
-				tess.addVertex(posX, posY, posZ);
-				tess.addVertex(posX2, posY2, posZ2);
-				setColor(color1, node.alpha);
-				tess.addVertex(posX2, lowY2, posZ2);
+				tess.addVertex(tetX, posY, tetZ);
+				tess.addVertex(tetX2, posY2, tetZ2);
+				setColor(color1, alpha);
+				tess.addVertex(tetX2, lowY2, tetZ2);
 				tess.draw();
 			}
 
