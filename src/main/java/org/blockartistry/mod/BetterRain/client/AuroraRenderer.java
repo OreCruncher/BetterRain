@@ -37,8 +37,8 @@ import org.lwjgl.opengl.GL11;
 @SideOnly(Side.CLIENT)
 public final class AuroraRenderer {
 
-	private static final boolean ANIMATE = true;
-	private static final boolean FIXED_HEIGHT = ModOptions.getAuroraYTranslation();
+	private static final boolean ANIMATE = ModOptions.getAuroraAnimate();
+	private static final boolean HEIGHT_PLAYER_RELATIVE = ModOptions.getAuroraHeightPlayerRelative();
 
 	public static void render(final float partialTick) {
 		if (ClientEffectHandler.currentAurora != null) {
@@ -54,7 +54,7 @@ public final class AuroraRenderer {
 		final Tessellator tess = Tessellator.instance;
 		final Minecraft minecraft = FMLClientHandler.instance().getClient();
 		float var12 = 0.0F;
-		if (FIXED_HEIGHT) {
+		if (HEIGHT_PLAYER_RELATIVE) {
 			// Fix height above player
 			var12 = 128.33F - 64.0F;
 		} else {

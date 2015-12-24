@@ -45,10 +45,6 @@ public final class Aurora {
 
 	private static final float ANGLE1 = MathStuff.PI_F / 16.0F;
 	private static final float ANGLE2 = MathStuff.toRadians(90.0F / 7.0F);
-	private static final float COS_DEG90_FACTOR = MathStuff.cos(MathStuff.PI_F / 2.0F);
-	private static final float COS_DEG270_FACTOR = MathStuff.cos(MathStuff.PI_F / 2.0F + MathStuff.PI_F);
-	private static final float SIN_DEG90_FACTOR = MathStuff.sin(MathStuff.PI_F / 2.0F);
-	private static final float SIN_DEG270_FACTOR = MathStuff.sin(MathStuff.PI_F / 2.0F + MathStuff.PI_F);
 
 	private static final int FADE_LIMIT = 1280;
 
@@ -98,6 +94,8 @@ public final class Aurora {
 			this.nodeList.add(formBand(baseArray, this.bandOffset));
 			this.nodeList.add(formBand(baseArray, -this.bandOffset));
 		}
+		
+		translate(0);
 	}
 
 	public List<Node[]> getNodeList() {
@@ -237,7 +235,7 @@ public final class Aurora {
 				x = MathStuff.sin((float) (MathStuff.PI_F / (nodeList.length / 4) * count)) * widthMax;
 				count--;
 			}
-			nodeList[i].width = x;
+			nodeList[i].setWidth(x);
 		}
 		return nodeList;
 	}
@@ -262,21 +260,19 @@ public final class Aurora {
 
 	private static void findAngles(final Node[] nodeList) {
 		for (int i = 0; i < nodeList.length; i++) {
-			final Node node = nodeList[i];
 
+			final Node node = nodeList[i];
 			node.tetX = node.tetX2 = node.posX;
 			node.tetZ = node.tetZ2 = node.getModdedZ();
 			node.angle = 0.0F;
 
 			if (i > 0 && i < nodeList.length - 1) {
 				final Node nodePlus = nodeList[i + 1];
-				// TODO: calculate and cache width factors
-				final float w = node.width;
 				node.angle = MathStuff.atan2(node.getModdedZ() - nodePlus.getModdedZ(), node.posX - nodePlus.posX);
-				node.tetX += COS_DEG90_FACTOR * w;
-				node.tetX2 += COS_DEG270_FACTOR * w;
-				node.tetZ += SIN_DEG90_FACTOR * w;
-				node.tetZ2 += SIN_DEG270_FACTOR * w;
+				node.tetX += node.cosDeg90;
+				node.tetX2 += node.cosDeg270;
+				node.tetZ += node.sinDeg90;
+				node.tetZ2 += node.sinDeg270;
 			}
 		}
 	}

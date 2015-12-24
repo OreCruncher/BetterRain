@@ -72,12 +72,14 @@ public final class ModOptions {
 	protected static final String CATEGORY_AURORA = "aurora";
 	protected static final String CONFIG_AURORA_ENABLED = "Enabled";
 	protected static boolean auroraEnable = true;
-	protected static final String CONFIG_Y_TRANSLATION = "Y Translation";
-	protected static boolean auroraYTranslation = true;
+	protected static final String CONFIG_Y_PLAYER_RELATIVE = "Height Player Relative";
+	protected static boolean auroraHeightPlayerRelative = true;
 	protected static final String CONFIG_ALLOW_MULTIPLES = "Allow Multiples";
 	protected static boolean auroraAllowMultiples = true;
 	protected static final String CONFIG_AURORA_BIOME_LIST = "Affected Biomes";
 	protected static String auroraAffectedBiomes = "";
+	protected static final String CONFIG_AURORA_ANIMATE = "Animate";
+	protected static boolean auroraAnimate = true;
 	
 	public static void load(final Configuration config) {
 
@@ -135,8 +137,8 @@ public final class ModOptions {
 				auroraEnable, comment);
 
 		comment = "true to keep the aurora at a height above player; false to fix it to an altitude";
-		auroraYTranslation = config.getBoolean(CONFIG_Y_TRANSLATION, CATEGORY_AURORA,
-				auroraYTranslation, comment);
+		auroraHeightPlayerRelative = config.getBoolean(CONFIG_Y_PLAYER_RELATIVE, CATEGORY_AURORA,
+				auroraHeightPlayerRelative, comment);
 
 		comment = "Allow Auroras with multiple bands";
 		auroraAllowMultiples = config.getBoolean(CONFIG_ALLOW_MULTIPLES, CATEGORY_AURORA,
@@ -144,6 +146,10 @@ public final class ModOptions {
 
 		comment = "Comma separated biome names where Auroras can occur";
 		auroraAffectedBiomes = config.getString(CONFIG_AURORA_BIOME_LIST, CATEGORY_AURORA, auroraAffectedBiomes, comment);
+
+		comment = "Animate Aurora";
+		auroraAnimate = config.getBoolean(CONFIG_AURORA_ANIMATE, CATEGORY_AURORA,
+				auroraAnimate, comment);
 	}
 
 	public static boolean getEnableDebugLogging() {
@@ -198,8 +204,8 @@ public final class ModOptions {
 		return noneBiomes;
 	}
 	
-	public static boolean getAuroraYTranslation() {
-		return auroraYTranslation;
+	public static boolean getAuroraHeightPlayerRelative() {
+		return auroraHeightPlayerRelative;
 	}
 
 	public static boolean getAuroraAllowMultiples() {
@@ -212,5 +218,9 @@ public final class ModOptions {
 	
 	public static boolean getAuroraEnable() {
 		return auroraEnable;
+	}
+	
+	public static boolean getAuroraAnimate() {
+		return auroraAnimate;
 	}
 }

@@ -24,15 +24,27 @@
 
 package org.blockartistry.mod.BetterRain.client;
 
+import org.blockartistry.mod.BetterRain.util.MathStuff;
+
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
 public final class Node {
-	
+
+	private static final float COS_DEG90_FACTOR = MathStuff.cos(MathStuff.PI_F / 2.0F);
+	private static final float COS_DEG270_FACTOR = MathStuff.cos(MathStuff.PI_F / 2.0F + MathStuff.PI_F);
+	private static final float SIN_DEG90_FACTOR = MathStuff.sin(MathStuff.PI_F / 2.0F);
+	private static final float SIN_DEG270_FACTOR = MathStuff.sin(MathStuff.PI_F / 2.0F + MathStuff.PI_F);
+
 	private float modZ = 0.0F;
 	private float modX = 0.0F;
 	private float modY = 0.0F;
+
+	public float cosDeg90 = 0.0F;
+	public float cosDeg270 = 0.0F;
+	public float sinDeg90 = 0.0F;
+	public float sinDeg270 = 0.0F;
 
 	public float angle;
 	public float posX = 1.0F;
@@ -42,7 +54,6 @@ public final class Node {
 	public float tetX2 = 0.0F;
 	public float tetZ = 0.0F;
 	public float tetZ2 = 0.0F;
-	public float width = 30.0F;
 
 	public Node(final float x, final float y, final float z, final float theta) {
 		this.posX = x;
@@ -77,5 +88,12 @@ public final class Node {
 			y = 0.0F;
 		}
 		return y;
+	}
+
+	public void setWidth(final float w) {
+		this.cosDeg270 = COS_DEG270_FACTOR * w;
+		this.cosDeg90 = COS_DEG90_FACTOR * w;
+		this.sinDeg270 = SIN_DEG270_FACTOR * w;
+		this.sinDeg90 = SIN_DEG90_FACTOR * w;
 	}
 }

@@ -33,7 +33,6 @@ import cpw.mods.fml.common.gameevent.TickEvent.Phase;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import java.util.HashSet;
-import java.util.Random;
 import java.util.Set;
 
 import org.blockartistry.mod.BetterRain.ModLog;
@@ -65,7 +64,7 @@ import net.minecraftforge.event.entity.EntityEvent;
 @SideOnly(Side.CLIENT)
 public final class ClientEffectHandler {
 
-	private static final Random random = new XorShiftRandom();
+	private static final XorShiftRandom random = XorShiftRandom.shared;
 
 	private static final int PARTICLE_SETTING_ALL = 0;
 	@SuppressWarnings("unused")
