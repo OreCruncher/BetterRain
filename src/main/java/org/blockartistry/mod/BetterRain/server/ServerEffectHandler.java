@@ -36,7 +36,8 @@ import java.util.List;
 
 import org.blockartistry.mod.BetterRain.ModLog;
 import org.blockartistry.mod.BetterRain.ModOptions;
-import org.blockartistry.mod.BetterRain.aurora.Aurora;
+import org.blockartistry.mod.BetterRain.aurora.AuroraPreset;
+import org.blockartistry.mod.BetterRain.aurora.ColorPair;
 import org.blockartistry.mod.BetterRain.data.AuroraData;
 import org.blockartistry.mod.BetterRain.data.DimensionEffectData;
 import org.blockartistry.mod.BetterRain.data.EffectType;
@@ -48,9 +49,9 @@ import org.blockartistry.mod.BetterRain.util.WorldUtils;
 public final class ServerEffectHandler {
 
 	private static final float RESET = -10.0F;
-	
+
 	private static final boolean AURORA_ENABLE = ModOptions.getAuroraEnable();
-	
+
 	// Offset from the player location so they can see it
 	// without looking straight up.
 	private static final int Z_OFFSET = -150;
@@ -68,7 +69,7 @@ public final class ServerEffectHandler {
 	public void tickEvent(final TickEvent.WorldTickEvent event) {
 
 		if (event.phase == Phase.END) {
-			if(AURORA_ENABLE)
+			if (AURORA_ENABLE)
 				processAuroras(event);
 			return;
 		}
@@ -135,10 +136,10 @@ public final class ServerEffectHandler {
 				if (isAuroraInRange(player, data))
 					continue;
 
-				final int colorSet = world.rand.nextInt(Aurora.COLOR1_SET.length);
-				final int preset = world.rand.nextInt(Aurora.PRESETS.length);
-				//final int colorSet = Aurora.COLOR1_SET.length - 1;
-				//final int preset = Aurora.PRESETS.length - 1;
+				final int colorSet = ColorPair.randomId();
+				final int preset = AuroraPreset.randomId();
+				// final int colorSet = ColorPair.testId();
+				// final int preset = AuroraPreset.testId();
 				data.add(new AuroraData(player, Z_OFFSET, colorSet, preset));
 			}
 

@@ -38,7 +38,6 @@ import java.util.Set;
 
 import org.blockartistry.mod.BetterRain.ModLog;
 import org.blockartistry.mod.BetterRain.ModOptions;
-import org.blockartistry.mod.BetterRain.aurora.Aurora;
 import org.blockartistry.mod.BetterRain.data.AuroraData;
 import org.blockartistry.mod.BetterRain.data.EffectType;
 import org.blockartistry.mod.BetterRain.util.PlayerUtils;
@@ -161,7 +160,6 @@ public final class ClientEffectHandler {
 			return null;
 		}
 
-		final World world = FMLClientHandler.instance().getClient().theWorld;
 		final EntityClientPlayerMP player = FMLClientHandler.instance().getClient().thePlayer;
 		final int playerX = (int) player.posX;
 		final int playerZ = (int) player.posZ;
@@ -183,12 +181,16 @@ public final class ClientEffectHandler {
 			currentAurora = null;
 		} else if (currentAurora == null || (currentAurora.posX != ad.posX && currentAurora.posZ != ad.posZ)) {
 			ModLog.info("New aurora: " + ad.toString());
-			currentAurora = new Aurora(world, ad);
+			currentAurora = new Aurora(ad);
 		}
 
 		return currentAurora;
 	}
 
+	private static boolean auroraTimeToDie(final long time) {
+		return time >= 22220L && time < 23500L; 
+	}
+	
 	protected void processAurora(final TickEvent.ClientTickEvent event) {
 		final World world = FMLClientHandler.instance().getClient().theWorld;
 		if (world != null && auroras.size() > 0) {
@@ -199,9 +201,9 @@ public final class ClientEffectHandler {
 			} else {
 				final Aurora aurora = getClosestAurora(event);
 				aurora.update();
-				if (time < 23500L && time >= 22220L && aurora.terminate) {
-					aurora.terminate = false;
-					aurora.fadeTimer = 0;
+				if (aurora.isAlive() && auroraTimeToDie(time)) {
+					ModLog.info("Aurora fade...");
+					aurora.die();
 				}
 			}
 		}

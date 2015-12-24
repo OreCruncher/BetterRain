@@ -22,106 +22,83 @@
  * THE SOFTWARE.
  */
 
-package org.blockartistry.mod.BetterRain.aurora;
+package org.blockartistry.mod.BetterRain.client;
 
-import java.util.Random;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.blockartistry.mod.BetterRain.ModOptions;
+import org.blockartistry.mod.BetterRain.aurora.AuroraPreset;
+import org.blockartistry.mod.BetterRain.aurora.Color;
+import org.blockartistry.mod.BetterRain.aurora.ColorPair;
 import org.blockartistry.mod.BetterRain.data.AuroraData;
 import org.blockartistry.mod.BetterRain.util.MathStuff;
 import org.blockartistry.mod.BetterRain.util.XorShiftRandom;
 
-import net.minecraft.util.MathHelper;
-import net.minecraft.world.World;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
-public final class Aurora extends EntityEnvEffect {
+@SideOnly(Side.CLIENT)
+public final class Aurora {
 
 	private static final boolean MULTIPLES = ModOptions.getAuroraAllowMultiples();
 
 	private static final float ANGLE1 = MathStuff.PI_F / 16.0F;
 	private static final float ANGLE2 = MathStuff.toRadians(90.0F / 7.0F);
+	private static final int FADE_LIMIT = 1280;
 
 	public static final float AURORA_SPEED = 0.75F;
 	public static final float AURORA_AMPLITUDE = 18.0F;
 	public static final float AURORA_WAVELENGTH = 8.0F;
 
-	public static final Color[] COLOR1_SET = new Color[] { new Color(0x0, 0xff, 0x99), Color.BLUE, Color.TURQOISE,
-			Color.YELLOW, Color.NAVY, Color.GREEN, Color.MAGENTA };
-	public static final Color[] COLOR2_SET = new Color[] { new Color(0x33, 0xff, 0x00), Color.GREEN, Color.LGREEN,
-			Color.RED, Color.INDIGO, Color.YELLOW, Color.GREEN };
-
-	public static class Preset {
-		public final int length;
-		public final float nodeLength;
-		public final float nodeWidth;
-		public final int bandOffset;
-
-		public Preset(final int length, final float nodeLength, final float nodeWidth, final int bandOffset) {
-			this.length = length;
-			this.nodeLength = nodeLength;
-			this.nodeWidth = nodeWidth;
-			this.bandOffset = bandOffset;
-		}
-	}
-
-	public static final Preset[] PRESETS = new Preset[] {
-			// Default
-			new Preset(128, 30.0F, 30.0F, 90),
-			new Preset(128, 30.0F, 30.0F, 45),
-
-			new Preset(128, 15.0F, 15.0F, 90),
-			new Preset(128, 15.0F, 15.0F, 45),
-
-			new Preset(64, 30.0F, 30.0F, 90),
-			new Preset(64, 30.0F, 30.0F, 45),
-
-			new Preset(64, 15.0F, 15.0F, 90),
-			new Preset(64, 15.0F, 15.0F, 45),
-
-			// Original Original
-			// new Preset(256, 7.0F, 30.0F, 60),
-	};
-
 	private long time;
-	public long ticksExisted;
 	public float posX;
 	public float posZ;
-	public float ticker = 0.0F;
+	private float ticker = 0.0F;
 	public int fadeTimer = 0;
-	public boolean terminate = true;
+	public boolean isAlive = true;
+	protected List<Node[]> nodeList = new ArrayList<Node[]>();
 
 	private int length;
 	private float nodeLength;
 	private float nodeWidth;
 	private int bandOffset;
 
-	private int colorSet = 0;
+	// Base color of the aurora
+	private final Color color1;
+	// Fade color of the aurora
+	private final Color color2;
 
-	public Aurora(final World world, final AuroraData data) {
-		this(world, data.posX, data.posZ, data.time, data.colorSet, data.preset);
+	public Aurora(final AuroraData data) {
+		this(data.posX, data.posZ, data.time, data.colorSet, data.preset);
 	}
 
-	public Aurora(final World world, final float x, final float z, final long t, final int colorSet, final int preset) {
-		super(world);
+	public Aurora(final float x, final float z, final long t, final int colorSet, final int preset) {
 		this.time = t;
-		this.colorSet = colorSet;
 		this.posX = x;
 		this.posZ = z;
-		this.ticksExisted = 0L;
 
 		setPreset(preset);
+		
+		final ColorPair pair = ColorPair.get(colorSet);
+		this.color1 = pair.first;
+		this.color2 = pair.second;
 
 		final Node[] baseArray = populateNodeListFromCenterAlt();
-		addNodeArray(baseArray);
+		this.nodeList.add(baseArray);
 
 		if (MULTIPLES) {
-			addNodeArray(formBand(baseArray, this.bandOffset));
-			addNodeArray(formBand(baseArray, -this.bandOffset));
+			this.nodeList.add(formBand(baseArray, this.bandOffset));
+			this.nodeList.add(formBand(baseArray, -this.bandOffset));
 		}
 	}
 
+	public List<Node[]> getNodeList() {
+		return this.nodeList;
+	}
+
 	private void setPreset(final int preset) {
-		final Preset p = PRESETS[MathHelper.clamp_int(preset, 0, PRESETS.length - 1)];
+		final AuroraPreset p = AuroraPreset.get(preset);
 		this.length = p.length;
 		this.nodeLength = p.nodeLength;
 		this.nodeWidth = p.nodeWidth;
@@ -129,19 +106,29 @@ public final class Aurora extends EntityEnvEffect {
 	}
 
 	public Color getColor1() {
-		return COLOR1_SET[colorSet];
+		return this.color1;
 	}
 
 	public Color getColor2() {
-		return COLOR2_SET[colorSet];
+		return this.color2;
+	}
+
+	public boolean isAlive() {
+		return this.isAlive;
+	}
+
+	public void die() {
+		if (this.isAlive) {
+			this.isAlive = false;
+			this.fadeTimer = 0;
+		}
 	}
 
 	public void update() {
-		if (this.fadeTimer < 1280) {
-			if (this.fadeTimer % 10 == 0) {
-				fade(this.terminate);
-			}
-			this.fadeTimer += 1;
+		if (this.fadeTimer < FADE_LIMIT) {
+			if (this.fadeTimer % 10 == 0)
+				fade(this.nodeList, this.isAlive);
+			this.fadeTimer++;
 		}
 
 		if (this.ticker < 360.0F) {
@@ -149,11 +136,9 @@ public final class Aurora extends EntityEnvEffect {
 		} else {
 			this.ticker = 0.0F;
 		}
-
-		this.ticksExisted += 1L;
 	}
 
-	private Node[] formBand(final Node[] nodeList, final int offset) {
+	private static Node[] formBand(final Node[] nodeList, final int offset) {
 		final Node[] tet = new Node[nodeList.length];
 		for (int i = 0; i < nodeList.length; i++) {
 			final Node node = nodeList[i];
@@ -166,16 +151,16 @@ public final class Aurora extends EntityEnvEffect {
 		return alterWidths(tet, 10.0F);
 	}
 
-	private void fade(final boolean boo) {
-		final int adjustment = boo ? 1 : -1;
-		for (final Node[] array : this.nodeList)
-			for (int j = 0; j < array.length; j++)
-				array[j].addA(adjustment);
+	private static void fade(final List<Node[]> nodeList, final boolean fadeIn) {
+		final int adjustment = fadeIn ? 1 : -1;
+		for (final Node[] nodes : nodeList)
+			for (int j = 0; j < nodes.length; j++)
+				nodes[j].addA(adjustment);
 	}
 
 	private Node[] populateNodeListFromCenterAlt() {
-		final Node[] nArray = new Node[this.length];
-		final Random nodeRand = new XorShiftRandom(this.time);
+		final Node[] nodeList = new Node[this.length];
+		final XorShiftRandom nodeRand = new XorShiftRandom(this.time);
 		float angleTotal = 0.0F;
 		for (int i = this.length / 8 / 2 - 1; i >= 0; i--) {
 			float angle = (nodeRand.nextFloat() - 0.5F) * 8.0F;
@@ -187,7 +172,7 @@ public final class Aurora extends EntityEnvEffect {
 
 			for (int k = 7; k >= 0; k--) {
 				if (i * 8 + k == this.length / 2 - 1) {
-					nArray[i * 8 + k] = new Node(0.0F, 7.0F + nodeRand.nextFloat(), 0.0F, angle);
+					nodeList[i * 8 + k] = new Node(0.0F, 7.0F + nodeRand.nextFloat(), 0.0F, angle);
 
 				} else {
 
@@ -197,13 +182,13 @@ public final class Aurora extends EntityEnvEffect {
 					else
 						y = 10.0F + nodeRand.nextFloat() * 5.0F;
 
-					final Node node = nArray[i * 8 + k + 1];
+					final Node node = nodeList[i * 8 + k + 1];
 					final float subAngle = node.getAngle() + angle;
 					final float subAngleRads = MathStuff.toRadians(subAngle);
 					final float z = node.posZ - (MathStuff.sin(subAngleRads) * this.nodeLength);
 					final float x = node.posX - (MathStuff.cos(subAngleRads) * this.nodeLength);
 
-					nArray[i * 8 + k] = new Node(x, y, z, subAngle);
+					nodeList[i * 8 + k] = new Node(x, y, z, subAngle);
 				}
 			}
 		}
@@ -223,32 +208,34 @@ public final class Aurora extends EntityEnvEffect {
 				else
 					y = 10.0F + nodeRand.nextFloat() * 5.0F;
 
-				final Node node = nArray[j * 8 + h - 1];
+				final Node node = nodeList[j * 8 + h - 1];
 				final float subAngle = node.getAngle() + angle;
 				final float subAngleRads = MathStuff.toRadians(subAngle);
 				final float z = node.posZ + (MathStuff.sin(subAngleRads) * this.nodeLength);
 				final float x = node.posX + (MathStuff.cos(subAngleRads) * this.nodeLength);
 
-				nArray[j * 8 + h] = new Node(x, y, z, subAngle);
+				nodeList[j * 8 + h] = new Node(x, y, z, subAngle);
 			}
 		}
 
-		return alterWidths(nArray, this.nodeWidth);
+		return alterWidths(nodeList, this.nodeWidth);
 	}
 
-	public Node[] translateNodeArray(final Node[] nodeList, final float partialTick) {
-		for (int i = 0; i < nodeList.length; i++) {
-			final Node node = nodeList[i];
-			final float f = MathStuff
-					.sin(MathStuff.toRadians(AURORA_WAVELENGTH * i + this.ticker + AURORA_SPEED * partialTick));
-			node.setModZ(f * AURORA_AMPLITUDE);
-			node.setModY(f * 3.0F);
+	public void translateArrays(final float partialTick) {
+		final float c = this.ticker + AURORA_SPEED * partialTick;
+		for (final Node[] nodeList : this.nodeList) {
+			for (int i = 0; i < nodeList.length; i++) {
+				final float f = MathStuff.sin(MathStuff.toRadians(AURORA_WAVELENGTH * i + c));
+				final Node node = nodeList[i];
+				node.setModZ(f * AURORA_AMPLITUDE);
+				node.setModY(f * 3.0F);
+			}
+
+			findAngles(nodeList);
 		}
-
-		return findAngles(nodeList);
 	}
 
-	private Node[] alterWidths(final Node[] nodeList, final float widthMax) {
+	private static Node[] alterWidths(final Node[] nodeList, final float widthMax) {
 		int count = 0;
 		for (int i = 0; i < nodeList.length; i++) {
 			float x = widthMax;
@@ -265,7 +252,7 @@ public final class Aurora extends EntityEnvEffect {
 		return nodeList;
 	}
 
-	private Node[] findAngles(final Node[] nodeList) {
+	private static void findAngles(final Node[] nodeList) {
 		for (int i = 0; i < nodeList.length; i++) {
 			final Node node = nodeList[i];
 			float angle = 0.0F;
@@ -295,7 +282,5 @@ public final class Aurora extends EntityEnvEffect {
 			node.setAngle(angle);
 			node.setTet(x, x2, z, z2);
 		}
-
-		return nodeList;
 	}
 }

@@ -31,9 +31,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Tessellator;
 
 import org.blockartistry.mod.BetterRain.ModOptions;
-import org.blockartistry.mod.BetterRain.aurora.Aurora;
 import org.blockartistry.mod.BetterRain.aurora.Color;
-import org.blockartistry.mod.BetterRain.aurora.Node;
 import org.lwjgl.opengl.GL11;
 
 @SideOnly(Side.CLIENT)
@@ -70,11 +68,11 @@ public final class AuroraRenderer {
 
 		double var10 = aurora.posZ - (minecraft.thePlayer.lastTickPosZ
 				+ (minecraft.thePlayer.posZ - minecraft.thePlayer.lastTickPosZ) * partialTick);
+		
+		if(ANIMATE)
+			aurora.translateArrays(partialTick);
 
 		for (final Node[] array : aurora.getNodeList()) {
-
-			if (ANIMATE)
-				aurora.translateNodeArray(array, partialTick);
 
 			GL11.glPushMatrix();
 			GL11.glTranslatef((float) var8, var12, (float) var10);
@@ -90,8 +88,8 @@ public final class AuroraRenderer {
 			GL11.glDepthMask(false);
 
 			for (int i = 0; i < array.length - 1; i++) {
-				final Node node = array[i];
 
+				final Node node = array[i];
 				final float[] tet = node.getTet();
 				float[] tet2 = null;
 

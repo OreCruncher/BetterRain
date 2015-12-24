@@ -22,8 +22,12 @@
  * THE SOFTWARE.
  */
 
-package org.blockartistry.mod.BetterRain.aurora;
+package org.blockartistry.mod.BetterRain.client;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
+@SideOnly(Side.CLIENT)
 public final class Node {
 	private float angle;
 	public float posX = 1.0F;
@@ -101,8 +105,8 @@ public final class Node {
 		return this.angle;
 	}
 
-	public void addA(int a) {
-		if (this.alpha >= 1) {
+	public void addA(final int a) {
+		if (this.alpha > 0) {
 			this.alpha += a;
 		}
 	}
