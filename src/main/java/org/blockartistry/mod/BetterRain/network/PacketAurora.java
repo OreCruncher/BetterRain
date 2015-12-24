@@ -39,20 +39,22 @@ public final class PacketAurora implements IMessage, IMessageHandler<PacketAuror
 	private int posX;
 	private int posZ;
 	private int colorSet;
+	private int preset;
 
 	public PacketAurora() {
 	}
 
 	public PacketAurora(final AuroraData data) {
-		this(data.dimensionId, data.time, data.posX, data.posZ, data.colorSet);
+		this(data.dimensionId, data.time, data.posX, data.posZ, data.colorSet, data.preset);
 	}
 
-	public PacketAurora(final int dimensionId, final long time, final int posX, final int posZ, final int colorSet) {
+	public PacketAurora(final int dimensionId, final long time, final int posX, final int posZ, final int colorSet, final int preset) {
 		this.dimension = dimensionId;
 		this.time = time;
 		this.posX = posX;
 		this.posZ = posZ;
 		this.colorSet = colorSet;
+		this.preset = preset;
 	}
 
 	public void fromBytes(final ByteBuf buf) {
@@ -61,6 +63,7 @@ public final class PacketAurora implements IMessage, IMessageHandler<PacketAuror
 		this.posX = buf.readInt();
 		this.posZ = buf.readInt();
 		this.colorSet = buf.readByte();
+		this.preset = buf.readByte();
 	}
 
 	public void toBytes(final ByteBuf buf) {
@@ -69,11 +72,12 @@ public final class PacketAurora implements IMessage, IMessageHandler<PacketAuror
 		buf.writeInt(this.posX);
 		buf.writeInt(this.posZ);
 		buf.writeByte(this.colorSet);
+		buf.writeByte(this.preset);
 	}
 
 	@Override
 	public IMessage onMessage(final PacketAurora message, final MessageContext ctx) {
-		ClientEffectHandler.addAurora(new AuroraData(message.dimension, message.posX, message.posZ, message.time, message.colorSet));
+		ClientEffectHandler.addAurora(new AuroraData(message.dimension, message.posX, message.posZ, message.time, message.colorSet, message.preset));
 		return null;
 	}
 }

@@ -136,8 +136,10 @@ public final class ServerEffectHandler {
 					continue;
 
 				final int colorSet = world.rand.nextInt(Aurora.COLOR1_SET.length);
+				final int preset = world.rand.nextInt(Aurora.PRESETS.length);
 				//final int colorSet = Aurora.COLOR1_SET.length - 1;
-				data.add(new AuroraData(player, Z_OFFSET, colorSet));
+				//final int preset = Aurora.PRESETS.length - 1;
+				data.add(new AuroraData(player, Z_OFFSET, colorSet, preset));
 			}
 
 			for (final AuroraData a : data) {

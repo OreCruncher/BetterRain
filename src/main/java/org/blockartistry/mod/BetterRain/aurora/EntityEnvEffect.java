@@ -36,6 +36,10 @@ public abstract class EntityEnvEffect {
 	public EntityEnvEffect(final World world) {
 	}
 
+	public List<Node[]> getNodeList() {
+		return this.nodeList;
+	}
+
 	protected void addNodeArray(final Node[] array) {
 		this.nodeList.add(array);
 	}

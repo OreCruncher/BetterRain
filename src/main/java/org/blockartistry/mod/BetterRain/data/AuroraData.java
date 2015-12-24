@@ -37,6 +37,7 @@ public final class AuroraData implements INBTSerialization {
 		public static final String ZCOORD = "z";
 		public static final String TIME = "t";
 		public static final String COLOR_SET = "s";
+		public static final String PRESET = "p";
 	}
 
 	public int dimensionId;
@@ -44,39 +45,43 @@ public final class AuroraData implements INBTSerialization {
 	public int posZ;
 	public long time;
 	public int colorSet;
+	public int preset;
 
 	public AuroraData() {
 	}
 
-	public AuroraData(final EntityPlayer player, final int zOffset, final int colorSet) {
+	public AuroraData(final EntityPlayer player, final int zOffset, final int colorSet, final int preset) {
 		this(player.worldObj.provider.dimensionId, (int) player.posX, (int) player.posZ + zOffset,
-				player.worldObj.getWorldTime(), colorSet);
+				player.worldObj.getWorldTime(), colorSet, preset);
 	}
 
-	public AuroraData(final int dimensionId, final int x, final int z, final long t, final int colorSet) {
+	public AuroraData(final int dimensionId, final int x, final int z, final long t, final int colorSet, final int preset) {
 		this.dimensionId = dimensionId;
 		this.posX = x;
 		this.posZ = z;
 		this.time = t;
 		this.colorSet = colorSet;
+		this.preset = preset;
 	}
 
 	@Override
-	public void readFromNBT(NBTTagCompound nbt) {
+	public void readFromNBT(final NBTTagCompound nbt) {
 		this.dimensionId = nbt.getInteger(NBT.DIMENSION);
 		this.posX = nbt.getInteger(NBT.XCOORD);
 		this.posZ = nbt.getInteger(NBT.ZCOORD);
 		this.time = nbt.getLong(NBT.TIME);
 		this.colorSet = nbt.getInteger(NBT.COLOR_SET);
+		this.preset = nbt.getInteger(NBT.PRESET);
 	}
 
 	@Override
-	public void writeToNBT(NBTTagCompound nbt) {
+	public void writeToNBT(final NBTTagCompound nbt) {
 		nbt.setInteger(NBT.DIMENSION, this.dimensionId);
 		nbt.setInteger(NBT.XCOORD, this.posX);
 		nbt.setInteger(NBT.ZCOORD, this.posZ);
 		nbt.setLong(NBT.TIME, this.time);
 		nbt.setInteger(NBT.COLOR_SET, this.colorSet);
+		nbt.setInteger(NBT.PRESET, this.preset);
 	}
 
 	@Override
@@ -92,6 +97,7 @@ public final class AuroraData implements INBTSerialization {
 		final StringBuilder builder = new StringBuilder();
 		builder.append("[x: ").append(this.posX).append(", z: ").append(this.posZ).append(']');
 		builder.append(" color: ").append(this.colorSet);
+		builder.append(" preset: ").append(this.preset);
 		builder.append(" time: ").append(this.time);
 		return builder.toString();
 	}

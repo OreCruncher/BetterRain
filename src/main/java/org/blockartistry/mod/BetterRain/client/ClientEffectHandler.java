@@ -36,6 +36,7 @@ import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 
+import org.blockartistry.mod.BetterRain.ModLog;
 import org.blockartistry.mod.BetterRain.ModOptions;
 import org.blockartistry.mod.BetterRain.aurora.Aurora;
 import org.blockartistry.mod.BetterRain.data.AuroraData;
@@ -181,7 +182,8 @@ public final class ClientEffectHandler {
 		if (ad == null) {
 			currentAurora = null;
 		} else if (currentAurora == null || (currentAurora.posX != ad.posX && currentAurora.posZ != ad.posZ)) {
-			currentAurora = new Aurora(world, ad.posX, ad.posZ, ad.time, ad.colorSet);
+			ModLog.info("New aurora: " + ad.toString());
+			currentAurora = new Aurora(world, ad);
 		}
 
 		return currentAurora;

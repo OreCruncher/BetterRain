@@ -51,6 +51,11 @@ public class MathStuff {
 	private static final float ATAN2_DIM_MINUS_1 = (ATAN2_DIM - 1);
 	private static final float[] ATAN2_TABLE = new float[ATAN2_COUNT];
 
+	private static final float RAD_TO_DEG = (float) (180.D / Math.PI);
+	private static final float DEG_TO_RAD = (float) (Math.PI / 180.0D);
+	
+	public static final float PI_F = (float)Math.PI;
+	
 	static {
 
 		for (int i = 0; i < SIN_COUNT; i++) {
@@ -90,10 +95,6 @@ public class MathStuff {
 		return SIN_TABLE[(int) ((tmp + COS_TO_SIN) * RAD_TO_INDEX) & SIN_MASK];
 	}
 
-	public static final double random() {
-		return XorShiftRandom.shared.nextDouble();
-	}
-
 	public static final float atan2(float y, float x) {
 		float add, mul;
 
@@ -108,7 +109,7 @@ public class MathStuff {
 				mul = -1.0f;
 			}
 
-			add = -3.141592653f;
+			add = -PI_F;
 		} else {
 			if (y < 0.0f) {
 				y = -y;
@@ -129,8 +130,26 @@ public class MathStuff {
 	}
 
 	public static final double atan2(final double y, final double x) {
-		final float tmp1 = (float)y;
-		final float tmp2 = (float)x;
+		final float tmp1 = (float) y;
+		final float tmp2 = (float) x;
 		return (double) atan2(tmp1, tmp2);
+	}
+
+	// Misc functions
+
+	public static final double random() {
+		return XorShiftRandom.shared.nextDouble();
+	}
+
+	public static final float toRadians(final float degrees) {
+		return degrees * DEG_TO_RAD;
+	}
+
+	public static final float toDegrees(final float radians) {
+		return radians * RAD_TO_DEG;
+	}
+	
+	public static final float abs(final float val) {
+		return val < 0.0F ? -val : val;
 	}
 }

@@ -24,18 +24,22 @@
 
 package org.blockartistry.mod.BetterRain.aurora;
 
-import java.util.List;
 import java.util.Random;
 
 import org.blockartistry.mod.BetterRain.ModOptions;
+import org.blockartistry.mod.BetterRain.data.AuroraData;
 import org.blockartistry.mod.BetterRain.util.MathStuff;
 import org.blockartistry.mod.BetterRain.util.XorShiftRandom;
 
+import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 
 public final class Aurora extends EntityEnvEffect {
 
 	private static final boolean MULTIPLES = ModOptions.getAuroraAllowMultiples();
+
+	private static final float ANGLE1 = MathStuff.PI_F / 16.0F;
+	private static final float ANGLE2 = MathStuff.toRadians(90.0F / 7.0F);
 
 	public static final float AURORA_SPEED = 0.75F;
 	public static final float AURORA_AMPLITUDE = 18.0F;
@@ -46,9 +50,39 @@ public final class Aurora extends EntityEnvEffect {
 	public static final Color[] COLOR2_SET = new Color[] { new Color(0x33, 0xff, 0x00), Color.GREEN, Color.LGREEN,
 			Color.RED, Color.INDIGO, Color.YELLOW, Color.GREEN };
 
-	private Random nodeRand;
+	public static class Preset {
+		public final int length;
+		public final float nodeLength;
+		public final float nodeWidth;
+		public final int bandOffset;
+
+		public Preset(final int length, final float nodeLength, final float nodeWidth, final int bandOffset) {
+			this.length = length;
+			this.nodeLength = nodeLength;
+			this.nodeWidth = nodeWidth;
+			this.bandOffset = bandOffset;
+		}
+	}
+
+	public static final Preset[] PRESETS = new Preset[] {
+			// Default
+			new Preset(128, 30.0F, 30.0F, 90),
+			new Preset(128, 30.0F, 30.0F, 45),
+
+			new Preset(128, 15.0F, 15.0F, 90),
+			new Preset(128, 15.0F, 15.0F, 45),
+
+			new Preset(64, 30.0F, 30.0F, 90),
+			new Preset(64, 30.0F, 30.0F, 45),
+
+			new Preset(64, 15.0F, 15.0F, 90),
+			new Preset(64, 15.0F, 15.0F, 45),
+
+			// Original Original
+			// new Preset(256, 7.0F, 30.0F, 60),
+	};
+
 	private long time;
-	public Node[] array;
 	public long ticksExisted;
 	public float posX;
 	public float posZ;
@@ -56,32 +90,42 @@ public final class Aurora extends EntityEnvEffect {
 	public int fadeTimer = 0;
 	public boolean terminate = true;
 
-	private int length = 256;
-	private float nodeLength = 7.0F;
-	private float nodeWidth = 30.0F;
-	private int bandOffset = 60;
+	private int length;
+	private float nodeLength;
+	private float nodeWidth;
+	private int bandOffset;
+
 	private int colorSet = 0;
 
-	static enum Preset {
-		NORMAL, PIXILED;
+	public Aurora(final World world, final AuroraData data) {
+		this(world, data.posX, data.posZ, data.time, data.colorSet, data.preset);
 	}
 
-	public Aurora(final World world, final float x, final float z, final long t, final int colorSet) {
+	public Aurora(final World world, final float x, final float z, final long t, final int colorSet, final int preset) {
 		super(world);
-		alterPresets(Preset.NORMAL);
 		this.time = t;
 		this.colorSet = colorSet;
 		this.posX = x;
 		this.posZ = z;
 		this.ticksExisted = 0L;
-		this.array = populateNodeListFromCenterAlt();
 
-		addNodeArray(this.array);
+		setPreset(preset);
+
+		final Node[] baseArray = populateNodeListFromCenterAlt();
+		addNodeArray(baseArray);
 
 		if (MULTIPLES) {
-			addNodeArray(formBand(this.array, this.bandOffset));
-			addNodeArray(formBand(this.array, -this.bandOffset));
+			addNodeArray(formBand(baseArray, this.bandOffset));
+			addNodeArray(formBand(baseArray, -this.bandOffset));
 		}
+	}
+
+	private void setPreset(final int preset) {
+		final Preset p = PRESETS[MathHelper.clamp_int(preset, 0, PRESETS.length - 1)];
+		this.length = p.length;
+		this.nodeLength = p.nodeLength;
+		this.nodeWidth = p.nodeWidth;
+		this.bandOffset = p.bandOffset;
 	}
 
 	public Color getColor1() {
@@ -105,38 +149,17 @@ public final class Aurora extends EntityEnvEffect {
 		} else {
 			this.ticker = 0.0F;
 		}
+
 		this.ticksExisted += 1L;
-	}
-
-	public List<Node[]> getNodeList() {
-		return this.nodeList;
-	}
-
-	public long getTime() {
-		return this.time;
-	}
-
-	public void translateNodeList() {
-	}
-
-	private void alterPresets(Preset pre) {
-		switch (pre) {
-		case NORMAL:
-		case PIXILED:
-			this.length = 128;
-			this.nodeWidth = 30.0F;
-			this.nodeLength = 30.0F;
-			this.bandOffset = 90;
-			return;
-		}
 	}
 
 	private Node[] formBand(final Node[] nodeList, final int offset) {
 		final Node[] tet = new Node[nodeList.length];
 		for (int i = 0; i < nodeList.length; i++) {
 			final Node node = nodeList[i];
-			final float posX = node.posX + MathStuff.cos((float) Math.toRadians(90.0F + node.getAngle())) * offset;
-			final float posZ = node.posZ + MathStuff.sin((float) Math.toRadians(90.0F + node.getAngle())) * offset;
+			final float rads = MathStuff.toRadians(90.0F + node.getAngle());
+			final float posX = node.posX + MathStuff.cos(rads) * offset;
+			final float posZ = node.posZ + MathStuff.sin(rads) * offset;
 			tet[i] = new Node(posX, node.posY - 2.0F, posZ, node.getAngle());
 		}
 
@@ -152,62 +175,61 @@ public final class Aurora extends EntityEnvEffect {
 
 	private Node[] populateNodeListFromCenterAlt() {
 		final Node[] nArray = new Node[this.length];
-		this.nodeRand = new XorShiftRandom(this.time);
+		final Random nodeRand = new XorShiftRandom(this.time);
 		float angleTotal = 0.0F;
 		for (int i = this.length / 8 / 2 - 1; i >= 0; i--) {
-			float angle = (this.nodeRand.nextFloat() - 0.5F) * 8.0F;
+			float angle = (nodeRand.nextFloat() - 0.5F) * 8.0F;
 			angleTotal += angle;
-			if (Math.abs(angleTotal) > 180.0F) {
+			if (MathStuff.abs(angleTotal) > 180.0F) {
 				angle = -angle;
 				angleTotal += angle;
 			}
 
 			for (int k = 7; k >= 0; k--) {
 				if (i * 8 + k == this.length / 2 - 1) {
-					nArray[(i * 8 + k)] = new Node(0.0F, 7.0F + this.nodeRand.nextFloat(), 0.0F, angle);
+					nArray[i * 8 + k] = new Node(0.0F, 7.0F + nodeRand.nextFloat(), 0.0F, angle);
 
 				} else {
 
-					float subAngle = nArray[(i * 8 + k + 1)].getAngle() + angle;
-					float y = 10.0F + this.nodeRand.nextFloat() * 5.0F;
+					float y;
+					if (i == 0)
+						y = MathStuff.sin(ANGLE1 * k) * 7.0F + nodeRand.nextFloat() / 2.0F;
+					else
+						y = 10.0F + nodeRand.nextFloat() * 5.0F;
 
-					if (i == 0) {
-						y = MathStuff.sin((float) (0.19634954084936207D * k)) * 7.0F + this.nodeRand.nextFloat() / 2.0F;
-					}
+					final Node node = nArray[i * 8 + k + 1];
+					final float subAngle = node.getAngle() + angle;
+					final float subAngleRads = MathStuff.toRadians(subAngle);
+					final float z = node.posZ - (MathStuff.sin(subAngleRads) * this.nodeLength);
+					final float x = node.posX - (MathStuff.cos(subAngleRads) * this.nodeLength);
 
-					float z = nArray[(i * 8 + k + 1)].posZ
-							- (MathStuff.sin((float) (subAngle / 56.26D)) * this.nodeLength);
-					float x = nArray[(i * 8 + k + 1)].posX
-							- (MathStuff.cos((float) (subAngle / 56.26D)) * this.nodeLength);
-
-					nArray[(i * 8 + k)] = new Node(x, y, z, subAngle);
+					nArray[i * 8 + k] = new Node(x, y, z, subAngle);
 				}
 			}
 		}
 
 		angleTotal = 0.0F;
 		for (int j = this.length / 8 / 2; j < this.length / 8; j++) {
-			float angle1 = (this.nodeRand.nextFloat() - 0.5F) * 8.0F;
-			angleTotal += angle1;
-			if (Math.abs(angleTotal) > 180.0F) {
-				angle1 = -angle1;
-				angleTotal += angle1;
+			float angle = (nodeRand.nextFloat() - 0.5F) * 8.0F;
+			angleTotal += angle;
+			if (MathStuff.abs(angleTotal) > 180.0F) {
+				angle = -angle;
+				angleTotal += angle;
 			}
 			for (int h = 0; h < 8; h++) {
-				float y = 10.0F + this.nodeRand.nextFloat() * 5.0F;
+				float y;
+				if (j == this.length / 8 - 1)
+					y = MathStuff.cos(ANGLE2 * h) * 7.0F + nodeRand.nextFloat() / 2.0F;
+				else
+					y = 10.0F + nodeRand.nextFloat() * 5.0F;
 
-				if (j == this.length / 8 - 1) {
-					y = MathStuff.cos((float) (0.2243994752564138D * h)) * 7.0F + this.nodeRand.nextFloat() / 2.0F;
-				}
+				final Node node = nArray[j * 8 + h - 1];
+				final float subAngle = node.getAngle() + angle;
+				final float subAngleRads = MathStuff.toRadians(subAngle);
+				final float z = node.posZ + (MathStuff.sin(subAngleRads) * this.nodeLength);
+				final float x = node.posX + (MathStuff.cos(subAngleRads) * this.nodeLength);
 
-				final float subAngle = nArray[(j * 8 + h - 1)].getAngle() + angle1;
-
-				final float z = nArray[(j * 8 + h - 1)].posZ
-						+ (MathStuff.sin((float) (subAngle / 57.26D)) * this.nodeLength);
-				final float x = nArray[(j * 8 + h - 1)].posX
-						+ (MathStuff.cos((float) (subAngle / 57.26D)) * this.nodeLength);
-
-				nArray[(j * 8 + h)] = new Node(x, y, z, subAngle);
+				nArray[j * 8 + h] = new Node(x, y, z, subAngle);
 			}
 		}
 
@@ -218,7 +240,7 @@ public final class Aurora extends EntityEnvEffect {
 		for (int i = 0; i < nodeList.length; i++) {
 			final Node node = nodeList[i];
 			final float f = MathStuff
-					.sin((float) ((AURORA_WAVELENGTH * i + this.ticker + AURORA_SPEED * partialTick) / 57.29577D));
+					.sin(MathStuff.toRadians(AURORA_WAVELENGTH * i + this.ticker + AURORA_SPEED * partialTick));
 			node.setModZ(f * AURORA_AMPLITUDE);
 			node.setModY(f * 3.0F);
 		}
@@ -231,11 +253,11 @@ public final class Aurora extends EntityEnvEffect {
 		for (int i = 0; i < nodeList.length; i++) {
 			float x = widthMax;
 			if (i <= nodeList.length / 8) {
-				x = MathStuff.sin((float) (3.141592653589793D / (nodeList.length / 4) * count)) * widthMax;
+				x = MathStuff.sin((float) (MathStuff.PI_F / (nodeList.length / 4) * count)) * widthMax;
 				count++;
 			}
 			if (i >= nodeList.length * 7 / 8) {
-				x = MathStuff.sin((float) (3.141592653589793D / (nodeList.length / 4) * count)) * widthMax;
+				x = MathStuff.sin((float) (MathStuff.PI_F / (nodeList.length / 4) * count)) * widthMax;
 				count--;
 			}
 			nodeList[i].width = x;
@@ -251,23 +273,25 @@ public final class Aurora extends EntityEnvEffect {
 			float x2 = 0.0F;
 			float z = 0.0F;
 			float z2 = 0.0F;
-			if ((i < nodeList.length - 1) && (i != 0)) {
+
+			if (i == 0 || i == nodeList.length - 1) {
+				x = node.posX;
+				x2 = x;
+				z = node.getModdedZ();
+				z2 = z;
+			} else {
 				angle = MathStuff.atan2(node.getModdedZ() - nodeList[i + 1].getModdedZ(),
 						node.posX - nodeList[i + 1].posX);
 
-				final float deg90 = angle + 1.5707964F;
-				final float deg270 = deg90 + 3.1415927F;
+				final float deg90 = angle + MathStuff.PI_F / 2.0F;
+				final float deg270 = deg90 + MathStuff.PI_F;
 
 				x = node.posX + MathStuff.cos(deg90) * node.width;
 				x2 = node.posX + MathStuff.cos(deg270) * node.width;
 				z = node.getModdedZ() + MathStuff.sin(deg90) * node.width;
 				z2 = node.getModdedZ() + MathStuff.sin(deg270) * node.width;
-			} else {
-				x = node.posX;
-				x2 = x;
-				z = node.getModdedZ();
-				z2 = z;
 			}
+
 			node.setAngle(angle);
 			node.setTet(x, x2, z, z2);
 		}
