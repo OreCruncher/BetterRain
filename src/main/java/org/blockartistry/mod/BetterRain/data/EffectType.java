@@ -108,7 +108,7 @@ public final class EffectType {
 		processBiomeList(ModOptions.getPrecipitationBiomes(), PRECIPITATION);
 		processBiomeList(ModOptions.getDustBiomes(), DUST);
 		processBiomeList(ModOptions.getNoneBiomes(), NONE);
-		processBiomeList(ModOptions.getAuroraAffectedBiomes(), AURORA);
+		processBiomeList(ModOptions.getAuroraTriggerBiomes(), AURORA);
 
 		for (final Entry<BiomeGenBase, Integer> entry : registry.entrySet()) {
 			final BiomeGenBase biome = entry.getKey();

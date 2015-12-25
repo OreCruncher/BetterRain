@@ -57,7 +57,7 @@ public final class ServerEffectHandler {
 	private static final int Z_OFFSET = -150;
 
 	// Minimum distance between auroras, squared
-	private static final long MIN_AURORA_DISTANCE_SQ = 500 * 500;
+	private static final long MIN_AURORA_DISTANCE_SQ = 400 * 400;
 
 	public static void initialize() {
 		FMLCommonHandler.instance().bus().register(new ServerEffectHandler());

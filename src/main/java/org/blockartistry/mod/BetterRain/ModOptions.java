@@ -74,10 +74,10 @@ public final class ModOptions {
 	protected static boolean auroraEnable = true;
 	protected static final String CONFIG_Y_PLAYER_RELATIVE = "Height Player Relative";
 	protected static boolean auroraHeightPlayerRelative = true;
-	protected static final String CONFIG_ALLOW_MULTIPLES = "Allow Multiples";
-	protected static boolean auroraAllowMultiples = true;
-	protected static final String CONFIG_AURORA_BIOME_LIST = "Affected Biomes";
-	protected static String auroraAffectedBiomes = "";
+	protected static final String CONFIG_MULTIPLE_BANDS = "Multiple Bands";
+	protected static boolean auroraMultipleBands = true;
+	protected static final String CONFIG_TRIGGER_BIOME_LIST = "Trigger Biomes";
+	protected static String auroraTriggerBiomes = "";
 	protected static final String CONFIG_AURORA_ANIMATE = "Animate";
 	protected static boolean auroraAnimate = true;
 	
@@ -141,11 +141,11 @@ public final class ModOptions {
 				auroraHeightPlayerRelative, comment);
 
 		comment = "Allow Auroras with multiple bands";
-		auroraAllowMultiples = config.getBoolean(CONFIG_ALLOW_MULTIPLES, CATEGORY_AURORA,
-				auroraAllowMultiples, comment);
+		auroraMultipleBands = config.getBoolean(CONFIG_MULTIPLE_BANDS, CATEGORY_AURORA,
+				auroraMultipleBands, comment);
 
-		comment = "Comma separated biome names where Auroras can occur";
-		auroraAffectedBiomes = config.getString(CONFIG_AURORA_BIOME_LIST, CATEGORY_AURORA, auroraAffectedBiomes, comment);
+		comment = "Comma separated biome names where Auroras can be triggered";
+		auroraTriggerBiomes = config.getString(CONFIG_TRIGGER_BIOME_LIST, CATEGORY_AURORA, auroraTriggerBiomes, comment);
 
 		comment = "Animate Aurora";
 		auroraAnimate = config.getBoolean(CONFIG_AURORA_ANIMATE, CATEGORY_AURORA,
@@ -208,12 +208,12 @@ public final class ModOptions {
 		return auroraHeightPlayerRelative;
 	}
 
-	public static boolean getAuroraAllowMultiples() {
-		return auroraAllowMultiples;
+	public static boolean getAuroraMultipleBands() {
+		return auroraMultipleBands;
 	}
 
-	public static String getAuroraAffectedBiomes() {
-		return auroraAffectedBiomes;
+	public static String getAuroraTriggerBiomes() {
+		return auroraTriggerBiomes;
 	}
 	
 	public static boolean getAuroraEnable() {
