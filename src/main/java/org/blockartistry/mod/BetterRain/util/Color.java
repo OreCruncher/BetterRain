@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package org.blockartistry.mod.BetterRain.aurora;
+package org.blockartistry.mod.BetterRain.util;
 
 /**
  * Holds an RGB triple. See: http://www.rapidtables.com/web/color/RGB_Color.htm

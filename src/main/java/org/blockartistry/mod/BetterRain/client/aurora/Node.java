@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package org.blockartistry.mod.BetterRain.client;
+package org.blockartistry.mod.BetterRain.client.aurora;
 
 import org.blockartistry.mod.BetterRain.util.MathStuff;
 
@@ -64,9 +64,17 @@ public final class Node {
 	public void setModZ(final float f) {
 		this.modZ = f;
 	}
+	
+	public float getModZ() {
+		return this.modZ;
+	}
 
 	public void setModY(final float f) {
 		this.modY = f;
+	}
+	
+	public float getModY() {
+		return this.modY;
 	}
 
 	public float getModdedZ() {

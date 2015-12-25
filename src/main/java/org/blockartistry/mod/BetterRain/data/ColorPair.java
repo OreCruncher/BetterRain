@@ -22,11 +22,12 @@
  * THE SOFTWARE.
  */
 
-package org.blockartistry.mod.BetterRain.aurora;
+package org.blockartistry.mod.BetterRain.data;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import org.blockartistry.mod.BetterRain.util.Color;
 import org.blockartistry.mod.BetterRain.util.XorShiftRandom;
 
 import net.minecraft.util.MathHelper;

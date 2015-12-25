@@ -22,10 +22,11 @@
  * THE SOFTWARE.
  */
 
-package org.blockartistry.mod.BetterRain.client;
+package org.blockartistry.mod.BetterRain.client.rain;
 
 import org.blockartistry.mod.BetterRain.BetterRain;
 import org.blockartistry.mod.BetterRain.ModOptions;
+import org.blockartistry.mod.BetterRain.client.RenderWeather;
 import org.blockartistry.mod.BetterRain.data.DimensionEffectData;
 
 import cpw.mods.fml.relauncher.Side;

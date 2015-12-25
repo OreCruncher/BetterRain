@@ -24,7 +24,7 @@
 
 package org.blockartistry.mod.BetterRain.network;
 
-import org.blockartistry.mod.BetterRain.client.RainIntensity;
+import org.blockartistry.mod.BetterRain.client.rain.RainIntensity;
 import org.blockartistry.mod.BetterRain.util.PlayerUtils;
 
 import cpw.mods.fml.common.network.simpleimpl.IMessage;

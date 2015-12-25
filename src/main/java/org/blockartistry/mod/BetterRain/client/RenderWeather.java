@@ -26,6 +26,8 @@ package org.blockartistry.mod.BetterRain.client;
 
 import org.blockartistry.mod.BetterRain.BetterRain;
 import org.blockartistry.mod.BetterRain.ModOptions;
+import org.blockartistry.mod.BetterRain.client.aurora.AuroraRenderer;
+import org.blockartistry.mod.BetterRain.client.rain.RainIntensity;
 import org.blockartistry.mod.BetterRain.data.EffectType;
 import org.lwjgl.opengl.GL11;
 

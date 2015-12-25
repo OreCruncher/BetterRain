@@ -36,9 +36,9 @@ import java.util.List;
 
 import org.blockartistry.mod.BetterRain.ModLog;
 import org.blockartistry.mod.BetterRain.ModOptions;
-import org.blockartistry.mod.BetterRain.aurora.AuroraPreset;
-import org.blockartistry.mod.BetterRain.aurora.ColorPair;
 import org.blockartistry.mod.BetterRain.data.AuroraData;
+import org.blockartistry.mod.BetterRain.data.AuroraPreset;
+import org.blockartistry.mod.BetterRain.data.ColorPair;
 import org.blockartistry.mod.BetterRain.data.DimensionEffectData;
 import org.blockartistry.mod.BetterRain.data.EffectType;
 import org.blockartistry.mod.BetterRain.network.Network;

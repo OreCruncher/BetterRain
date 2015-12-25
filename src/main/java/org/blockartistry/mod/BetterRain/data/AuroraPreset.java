@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package org.blockartistry.mod.BetterRain.aurora;
+package org.blockartistry.mod.BetterRain.data;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -37,6 +37,8 @@ import java.util.Set;
 
 import org.blockartistry.mod.BetterRain.ModLog;
 import org.blockartistry.mod.BetterRain.ModOptions;
+import org.blockartistry.mod.BetterRain.client.aurora.Aurora;
+import org.blockartistry.mod.BetterRain.client.rain.RainIntensity;
 import org.blockartistry.mod.BetterRain.data.AuroraData;
 import org.blockartistry.mod.BetterRain.data.EffectType;
 import org.blockartistry.mod.BetterRain.util.PlayerUtils;

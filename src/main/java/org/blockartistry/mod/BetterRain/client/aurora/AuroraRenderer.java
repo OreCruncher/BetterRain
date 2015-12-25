@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package org.blockartistry.mod.BetterRain.client;
+package org.blockartistry.mod.BetterRain.client.aurora;
 
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.relauncher.Side;
@@ -31,7 +31,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Tessellator;
 
 import org.blockartistry.mod.BetterRain.ModOptions;
-import org.blockartistry.mod.BetterRain.aurora.Color;
+import org.blockartistry.mod.BetterRain.client.ClientEffectHandler;
+import org.blockartistry.mod.BetterRain.util.Color;
 import org.lwjgl.opengl.GL11;
 
 @SideOnly(Side.CLIENT)
