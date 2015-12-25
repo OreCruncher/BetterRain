@@ -40,13 +40,13 @@ public final class ColorPair {
 	 * Color that forms the base of the aurora and is the
 	 * brightest.
 	 */
-	public final Color first;
+	public final Color baseColor;
 	
 	/**
 	 * Color that forms the top of the aurora and usually
 	 * fades to black.
 	 */
-	public final Color second;
+	public final Color fadeColor;
 
 	private static final List<ColorPair> PAIRS = new ArrayList<ColorPair>();
 
@@ -61,9 +61,9 @@ public final class ColorPair {
 		PAIRS.add(new ColorPair(Color.INDIGO, Color.GREEN));
 	}
 
-	private ColorPair(final Color first, final Color second) {
-		this.first = first;
-		this.second = second;
+	private ColorPair(final Color base, final Color fade) {
+		this.baseColor = base;
+		this.fadeColor = fade;
 	}
 
 	public static ColorPair get(final int id) {

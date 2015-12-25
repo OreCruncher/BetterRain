@@ -1,4 +1,4 @@
-/* This file is part of Jiffy, licensed under the MIT License (MIT).
+/* This file is part of BetterRain, licensed under the MIT License (MIT).
  *
  * Copyright (c) OreCruncher
  *

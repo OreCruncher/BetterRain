@@ -27,10 +27,9 @@ package org.blockartistry.mod.BetterRain.data;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
-
 import org.blockartistry.mod.BetterRain.ModOptions;
 import org.blockartistry.mod.BetterRain.util.INBTSerialization;
+import org.blockartistry.mod.BetterRain.util.XorShiftRandom;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -43,7 +42,7 @@ import net.minecraftforge.common.util.Constants;
  */
 public final class DimensionEffectData implements INBTSerialization {
 
-	private static final Random random = new Random();
+	private static final XorShiftRandom random = XorShiftRandom.shared;
 	private static final DecimalFormat FORMATTER = new DecimalFormat("0");
 
 	public final static float MIN_INTENSITY = 0.0F;

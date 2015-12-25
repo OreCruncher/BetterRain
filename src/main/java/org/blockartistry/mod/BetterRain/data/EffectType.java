@@ -41,9 +41,9 @@ public final class EffectType {
 	
 	private static final int AURORA = -1;
 	
-	public static final int NONE = 0;
-	public static final int DUST = 1;
-	public static final int PRECIPITATION = 2;
+	private static final int NONE = 0;
+	private static final int DUST = 1;
+	private static final int PRECIPITATION = 2;
 	private static final String[] names = new String[] { "NONE", "DUST", "PRECIPITATION" };
 
 	private static final Map<BiomeGenBase, Integer> registry = new IdentityHashMap<BiomeGenBase, Integer>();

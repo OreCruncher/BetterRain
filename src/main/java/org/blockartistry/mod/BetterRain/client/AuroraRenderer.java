@@ -53,7 +53,7 @@ public final class AuroraRenderer {
 	public static void renderAurora(final float partialTick, final Aurora aurora) {
 		final Tessellator tess = Tessellator.instance;
 		final Minecraft minecraft = FMLClientHandler.instance().getClient();
-		float var12 = 0.0F;
+		final float var12;
 		if (HEIGHT_PLAYER_RELATIVE) {
 			// Fix height above player
 			var12 = 128.33F - 64.0F;
@@ -63,10 +63,10 @@ public final class AuroraRenderer {
 					+ (minecraft.thePlayer.posY - minecraft.thePlayer.lastTickPosY) * partialTick);
 		}
 
-		double var8 = aurora.posX - (minecraft.thePlayer.lastTickPosX
+		final double var8 = aurora.posX - (minecraft.thePlayer.lastTickPosX
 				+ (minecraft.thePlayer.posX - minecraft.thePlayer.lastTickPosX) * partialTick);
 
-		double var10 = aurora.posZ - (minecraft.thePlayer.lastTickPosZ
+		final double var10 = aurora.posZ - (minecraft.thePlayer.lastTickPosZ
 				+ (minecraft.thePlayer.posZ - minecraft.thePlayer.lastTickPosZ) * partialTick);
 
 		if (ANIMATE)
@@ -76,27 +76,23 @@ public final class AuroraRenderer {
 		final double lowY = 0.0D;
 		final double lowY2 = 0.0D;
 
+		GL11.glPushMatrix();
+		GL11.glTranslatef((float) var8, var12, (float) var10);
+		GL11.glScaled(0.5D, 8.0D, 0.5D);
+		GL11.glDisable(GL11.GL_TEXTURE_2D);
+		GL11.glShadeModel(GL11.GL_SMOOTH);
+		GL11.glEnable(GL11.GL_BLEND);
+		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, 1);
+		GL11.glDisable(GL11.GL_ALPHA_TEST);
+		GL11.glDisable(GL11.GL_CULL_FACE);
+		GL11.glDepthMask(false);
+
 		for (final Node[] array : aurora.getNodeList()) {
-
-			GL11.glPushMatrix();
-			GL11.glTranslatef((float) var8, var12, (float) var10);
-
-			GL11.glScaled(0.5D, 8.0D, 0.5D);
-
-			GL11.glDisable(GL11.GL_TEXTURE_2D);
-			GL11.glShadeModel(GL11.GL_SMOOTH);
-			GL11.glEnable(GL11.GL_BLEND);
-			GL11.glBlendFunc(GL11.GL_SRC_ALPHA, 1);
-			GL11.glDisable(GL11.GL_ALPHA_TEST);
-			GL11.glDisable(GL11.GL_CULL_FACE);
-			GL11.glDepthMask(false);
-
 			for (int i = 0; i < array.length - 1; i++) {
 
 				final Node node = array[i];
 
 				final double posY = node.getModdedY();
-
 				final double posX = node.tetX;
 				final double posZ = node.tetZ;
 				final double tetX = node.tetX2;
@@ -121,30 +117,30 @@ public final class AuroraRenderer {
 					posY2 = 0.0D;
 				}
 
-				Color color1 = null;
-				Color color2 = null;
+				final Color base;
+				final Color fade;
 
 				if (i == 0) {
-					color1 = color2 = Color.WHITE;
+					base = fade = Color.WHITE;
 				} else if (i == array.length - 2) {
-					color1 = color2 = Color.YELLOW;
+					base = fade = Color.YELLOW;
 				} else {
-					color1 = aurora.getColor1();
-					color2 = aurora.getColor2();
+					base = aurora.getBaseColor();
+					fade = aurora.getFadeColor();
 				}
 
 				tess.startDrawing(GL11.GL_TRIANGLE_FAN);
-				setColor(color1, alpha);
+				setColor(base, alpha);
 				tess.addVertex(posX, lowY, posZ);
-				setColor(color2, 0);
+				setColor(fade, 0);
 				tess.addVertex(posX, posY, posZ);
 				tess.addVertex(posX2, posY2, posZ2);
-				setColor(color1, alpha);
+				setColor(base, alpha);
 				tess.addVertex(posX2, lowY2, posZ2);
 				tess.draw();
 
 				tess.startDrawing(GL11.GL_TRIANGLE_FAN);
-				setColor(color1, alpha);
+				setColor(base, alpha);
 				tess.addVertex(posX, lowY, posZ);
 				tess.addVertex(posX2, lowY2, posZ2);
 				tess.addVertex(tetX2, lowY2, tetZ2);
@@ -152,25 +148,25 @@ public final class AuroraRenderer {
 				tess.draw();
 
 				tess.startDrawing(GL11.GL_TRIANGLE_FAN);
-				setColor(color1, alpha);
+				setColor(base, alpha);
 				tess.addVertex(tetX, lowY, tetZ);
-				setColor(color2, 0);
+				setColor(fade, 0);
 				tess.addVertex(tetX, posY, tetZ);
 				tess.addVertex(tetX2, posY2, tetZ2);
-				setColor(color1, alpha);
+				setColor(base, alpha);
 				tess.addVertex(tetX2, lowY2, tetZ2);
 				tess.draw();
 			}
-
-			GL11.glScaled(3.5D, 25.0D, 3.5D);
-			GL11.glDepthMask(true);
-			GL11.glEnable(GL11.GL_CULL_FACE);
-			GL11.glDisable(GL11.GL_BLEND);
-			GL11.glShadeModel(GL11.GL_FLAT);
-			GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-			GL11.glEnable(GL11.GL_TEXTURE_2D);
-			GL11.glEnable(GL11.GL_ALPHA_TEST);
-			GL11.glPopMatrix();
 		}
+		
+		GL11.glScaled(3.5D, 25.0D, 3.5D);
+		GL11.glDepthMask(true);
+		GL11.glEnable(GL11.GL_CULL_FACE);
+		GL11.glDisable(GL11.GL_BLEND);
+		GL11.glShadeModel(GL11.GL_FLAT);
+		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+		GL11.glEnable(GL11.GL_TEXTURE_2D);
+		GL11.glEnable(GL11.GL_ALPHA_TEST);
+		GL11.glPopMatrix();
 	}
 }

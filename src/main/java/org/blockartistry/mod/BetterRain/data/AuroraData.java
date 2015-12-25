@@ -35,7 +35,7 @@ public final class AuroraData implements INBTSerialization {
 		public static final String DIMENSION = "d";
 		public static final String XCOORD = "x";
 		public static final String ZCOORD = "z";
-		public static final String TIME = "t";
+		public static final String SEED = "t";
 		public static final String COLOR_SET = "s";
 		public static final String PRESET = "p";
 	}
@@ -43,7 +43,7 @@ public final class AuroraData implements INBTSerialization {
 	public int dimensionId;
 	public int posX;
 	public int posZ;
-	public long time;
+	public long seed;
 	public int colorSet;
 	public int preset;
 
@@ -55,11 +55,11 @@ public final class AuroraData implements INBTSerialization {
 				player.worldObj.getWorldTime(), colorSet, preset);
 	}
 
-	public AuroraData(final int dimensionId, final int x, final int z, final long t, final int colorSet, final int preset) {
+	public AuroraData(final int dimensionId, final int x, final int z, final long seed, final int colorSet, final int preset) {
 		this.dimensionId = dimensionId;
 		this.posX = x;
 		this.posZ = z;
-		this.time = t;
+		this.seed = seed;
 		this.colorSet = colorSet;
 		this.preset = preset;
 	}
@@ -69,7 +69,7 @@ public final class AuroraData implements INBTSerialization {
 		this.dimensionId = nbt.getInteger(NBT.DIMENSION);
 		this.posX = nbt.getInteger(NBT.XCOORD);
 		this.posZ = nbt.getInteger(NBT.ZCOORD);
-		this.time = nbt.getLong(NBT.TIME);
+		this.seed = nbt.getLong(NBT.SEED);
 		this.colorSet = nbt.getInteger(NBT.COLOR_SET);
 		this.preset = nbt.getInteger(NBT.PRESET);
 	}
@@ -79,7 +79,7 @@ public final class AuroraData implements INBTSerialization {
 		nbt.setInteger(NBT.DIMENSION, this.dimensionId);
 		nbt.setInteger(NBT.XCOORD, this.posX);
 		nbt.setInteger(NBT.ZCOORD, this.posZ);
-		nbt.setLong(NBT.TIME, this.time);
+		nbt.setLong(NBT.SEED, this.seed);
 		nbt.setInteger(NBT.COLOR_SET, this.colorSet);
 		nbt.setInteger(NBT.PRESET, this.preset);
 	}
@@ -89,7 +89,7 @@ public final class AuroraData implements INBTSerialization {
 		if (!(anObj instanceof AuroraData))
 			return false;
 		final AuroraData a = (AuroraData) anObj;
-		return (this.time == a.time) && (this.posX == a.posX) && (this.posZ == a.posZ);
+		return (this.posX == a.posX) && (this.posZ == a.posZ);
 	}
 
 	@Override
@@ -98,7 +98,7 @@ public final class AuroraData implements INBTSerialization {
 		builder.append("[x: ").append(this.posX).append(", z: ").append(this.posZ).append(']');
 		builder.append(" color: ").append(this.colorSet);
 		builder.append(" preset: ").append(this.preset);
-		builder.append(" time: ").append(this.time);
+		builder.append(" seed: ").append(this.seed);
 		return builder.toString();
 	}
 }

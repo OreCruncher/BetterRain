@@ -38,13 +38,12 @@ public final class Node {
 	private static final float SIN_DEG270_FACTOR = MathStuff.sin(MathStuff.PI_F / 2.0F + MathStuff.PI_F);
 
 	private float modZ = 0.0F;
-	private float modX = 0.0F;
 	private float modY = 0.0F;
 
-	public float cosDeg90 = 0.0F;
-	public float cosDeg270 = 0.0F;
-	public float sinDeg90 = 0.0F;
-	public float sinDeg270 = 0.0F;
+	private float cosDeg90 = 0.0F;
+	private float cosDeg270 = 0.0F;
+	private float sinDeg90 = 0.0F;
+	private float sinDeg270 = 0.0F;
 
 	public float angle;
 	public float posX = 1.0F;
@@ -62,15 +61,11 @@ public final class Node {
 		this.posY = y;
 	}
 
-	public void setModZ(float f) {
+	public void setModZ(final float f) {
 		this.modZ = f;
 	}
 
-	public void setModX(float f) {
-		this.modX = f;
-	}
-
-	public void setModY(float f) {
+	public void setModY(final float f) {
 		this.modY = f;
 	}
 
@@ -78,16 +73,9 @@ public final class Node {
 		return this.posZ + this.modZ;
 	}
 
-	public float getModdedX() {
-		return this.posX + this.modX;
-	}
-
 	public float getModdedY() {
-		float y = this.posY + this.modY;
-		if (y < 0.0F) {
-			y = 0.0F;
-		}
-		return y;
+		final float y = this.posY + this.modY;
+		return y < 0.0F ? 0.0F : y;
 	}
 
 	public void setWidth(final float w) {
@@ -95,5 +83,18 @@ public final class Node {
 		this.cosDeg90 = COS_DEG90_FACTOR * w;
 		this.sinDeg270 = SIN_DEG270_FACTOR * w;
 		this.sinDeg90 = SIN_DEG90_FACTOR * w;
+	}
+	
+	public void findAngles(final Node next) {
+		this.tetX = this.tetX2 = this.posX;
+		this.tetZ = this.tetZ2 = this.getModdedZ();
+		this.angle = 0.0F;
+		if (next != null) {
+			this.angle = MathStuff.atan2(this.getModdedZ() - next.getModdedZ(), this.posX - next.posX);
+			this.tetX += this.cosDeg90;
+			this.tetX2 += this.cosDeg270;
+			this.tetZ += this.sinDeg90;
+			this.tetZ2 += this.sinDeg270;
+		}
 	}
 }

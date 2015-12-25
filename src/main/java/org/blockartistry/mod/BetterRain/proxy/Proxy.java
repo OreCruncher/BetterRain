@@ -42,7 +42,7 @@ public class Proxy {
 
 	public void preInit(FMLPreInitializationEvent event) {
 		// Register early to give the background process a good amount
-		// of time to get the mod version data
+		// of seed to get the mod version data
 		VersionCheck.register();
 	}
 

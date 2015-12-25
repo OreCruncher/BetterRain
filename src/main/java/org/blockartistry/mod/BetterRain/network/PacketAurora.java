@@ -35,7 +35,7 @@ import io.netty.buffer.ByteBuf;
 public final class PacketAurora implements IMessage, IMessageHandler<PacketAurora, IMessage> {
 
 	private int dimension;
-	private long time;
+	private long seed;
 	private int posX;
 	private int posZ;
 	private int colorSet;
@@ -45,12 +45,12 @@ public final class PacketAurora implements IMessage, IMessageHandler<PacketAuror
 	}
 
 	public PacketAurora(final AuroraData data) {
-		this(data.dimensionId, data.time, data.posX, data.posZ, data.colorSet, data.preset);
+		this(data.dimensionId, data.seed, data.posX, data.posZ, data.colorSet, data.preset);
 	}
 
-	public PacketAurora(final int dimensionId, final long time, final int posX, final int posZ, final int colorSet, final int preset) {
+	public PacketAurora(final int dimensionId, final long seed, final int posX, final int posZ, final int colorSet, final int preset) {
 		this.dimension = dimensionId;
-		this.time = time;
+		this.seed = seed;
 		this.posX = posX;
 		this.posZ = posZ;
 		this.colorSet = colorSet;
@@ -59,7 +59,7 @@ public final class PacketAurora implements IMessage, IMessageHandler<PacketAuror
 
 	public void fromBytes(final ByteBuf buf) {
 		this.dimension = buf.readInt();
-		this.time = buf.readLong();
+		this.seed = buf.readLong();
 		this.posX = buf.readInt();
 		this.posZ = buf.readInt();
 		this.colorSet = buf.readByte();
@@ -68,7 +68,7 @@ public final class PacketAurora implements IMessage, IMessageHandler<PacketAuror
 
 	public void toBytes(final ByteBuf buf) {
 		buf.writeInt(this.dimension);
-		buf.writeLong(this.time);
+		buf.writeLong(this.seed);
 		buf.writeInt(this.posX);
 		buf.writeInt(this.posZ);
 		buf.writeByte(this.colorSet);
@@ -77,7 +77,7 @@ public final class PacketAurora implements IMessage, IMessageHandler<PacketAuror
 
 	@Override
 	public IMessage onMessage(final PacketAurora message, final MessageContext ctx) {
-		ClientEffectHandler.addAurora(new AuroraData(message.dimension, message.posX, message.posZ, message.time, message.colorSet, message.preset));
+		ClientEffectHandler.addAurora(new AuroraData(message.dimension, message.posX, message.posZ, message.seed, message.colorSet, message.preset));
 		return null;
 	}
 }

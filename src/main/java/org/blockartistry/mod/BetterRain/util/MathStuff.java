@@ -1,5 +1,5 @@
 /*
- * This file is part of Jiffy, licensed under the MIT License (MIT).
+ * This file is part of BetterRain, licensed under the MIT License (MIT).
  *
  * Copyright (c) OreCruncher
  *
@@ -29,7 +29,7 @@ package org.blockartistry.mod.BetterRain.util;
  * the Riven method:
  * 
  * http://riven8192.blogspot.com/2009/08/fastmath-sincos-lookup-tables.html
- * http://riven8192.blogspot.com/2009/08/fastmath-ATAN2_TABLE-lookup-table.html
+ * http://riven8192.blogspot.com/2009/08/fastmath-atan2-lookup-table.html
  */
 public class MathStuff {
 
@@ -38,7 +38,7 @@ public class MathStuff {
 	private static final int SIN_COUNT = SIN_MASK + 1;
 	private static final float RAD_FULL = (float) (Math.PI * 2.0);
 	private static final float RAD_TO_INDEX = SIN_COUNT / RAD_FULL;
-	private static final float DEG_FULL = (float) (360.0);
+	private static final float DEG_FULL = 360.0F;
 	private static final float DEG_TO_INDEX = SIN_COUNT / DEG_FULL;
 	private final static float COS_TO_SIN = (float) (Math.PI / 2.0);
 	private static final float[] SIN_TABLE = new float[SIN_COUNT];
@@ -53,9 +53,9 @@ public class MathStuff {
 
 	private static final float RAD_TO_DEG = (float) (180.D / Math.PI);
 	private static final float DEG_TO_RAD = (float) (Math.PI / 180.0D);
-	
-	public static final float PI_F = (float)Math.PI;
-	
+
+	public static final float PI_F = (float) Math.PI;
+
 	static {
 
 		for (int i = 0; i < SIN_COUNT; i++) {
@@ -96,7 +96,7 @@ public class MathStuff {
 	}
 
 	public static final float atan2(float y, float x) {
-		float add, mul;
+		final float add, mul;
 
 		if (x < 0.0f) {
 			if (y < 0.0f) {
@@ -121,10 +121,9 @@ public class MathStuff {
 			add = 0.0f;
 		}
 
-		float invDiv = ATAN2_DIM_MINUS_1 / ((x < y) ? y : x);
-
-		int xi = (int) (x * invDiv);
-		int yi = (int) (y * invDiv);
+		final float invDiv = ATAN2_DIM_MINUS_1 / ((x < y) ? y : x);
+		final int xi = (int) (x * invDiv);
+		final int yi = (int) (y * invDiv);
 
 		return (ATAN2_TABLE[yi * ATAN2_DIM + xi] + add) * mul;
 	}
@@ -148,7 +147,7 @@ public class MathStuff {
 	public static final float toDegrees(final float radians) {
 		return radians * RAD_TO_DEG;
 	}
-	
+
 	public static final float abs(final float val) {
 		return val < 0.0F ? -val : val;
 	}

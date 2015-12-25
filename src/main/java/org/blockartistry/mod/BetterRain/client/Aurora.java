@@ -52,7 +52,7 @@ public final class Aurora {
 	public static final float AURORA_AMPLITUDE = 18.0F;
 	public static final float AURORA_WAVELENGTH = 8.0F;
 
-	private long time;
+	private long seed;
 	public float posX;
 	public float posZ;
 	private float ticker = 0.0F;
@@ -66,35 +66,36 @@ public final class Aurora {
 	private int bandOffset;
 
 	// Base color of the aurora
-	private final Color color1;
+	private final Color baseColor;
 	// Fade color of the aurora
-	private final Color color2;
+	private final Color fadeColor;
 	// Alpha setting of the aurora for fade
 	private int alpha = 1;
 
 	public Aurora(final AuroraData data) {
-		this(data.posX, data.posZ, data.time, data.colorSet, data.preset);
+		this(data.posX, data.posZ, data.seed, data.colorSet, data.preset);
 	}
 
-	public Aurora(final float x, final float z, final long t, final int colorSet, final int preset) {
-		this.time = t;
+	public Aurora(final float x, final float z, final long seed, final int colorSet, final int preset) {
+		this.seed = seed;
 		this.posX = x;
 		this.posZ = z;
 
 		setPreset(preset);
 
 		final ColorPair pair = ColorPair.get(colorSet);
-		this.color1 = pair.first;
-		this.color2 = pair.second;
+		this.baseColor = pair.baseColor;
+		this.fadeColor = pair.fadeColor;
 
 		final Node[] baseArray = populateNodeListFromCenterAlt();
 		this.nodeList.add(baseArray);
 
 		if (MULTIPLES) {
-			this.nodeList.add(formBand(baseArray, this.bandOffset));
-			this.nodeList.add(formBand(baseArray, -this.bandOffset));
+			this.nodeList.add(bandFromTemplate(baseArray, this.bandOffset));
+			this.nodeList.add(bandFromTemplate(baseArray, -this.bandOffset));
 		}
 		
+		// Initialize at least once for a non-animated aurora
 		translate(0);
 	}
 
@@ -110,12 +111,12 @@ public final class Aurora {
 		this.bandOffset = p.bandOffset;
 	}
 
-	public Color getColor1() {
-		return this.color1;
+	public Color getBaseColor() {
+		return this.baseColor;
 	}
 
-	public Color getColor2() {
-		return this.color2;
+	public Color getFadeColor() {
+		return this.fadeColor;
 	}
 
 	public int getAlpha() {
@@ -147,10 +148,10 @@ public final class Aurora {
 		}
 	}
 
-	private static Node[] formBand(final Node[] nodeList, final int offset) {
-		final Node[] tet = new Node[nodeList.length];
-		for (int i = 0; i < nodeList.length; i++) {
-			final Node node = nodeList[i];
+	private static Node[] bandFromTemplate(final Node[] template, final int offset) {
+		final Node[] tet = new Node[template.length];
+		for (int i = 0; i < template.length; i++) {
+			final Node node = template[i];
 			final float rads = MathStuff.toRadians(90.0F + node.angle);
 			final float posX = node.posX + MathStuff.cos(rads) * offset;
 			final float posZ = node.posZ + MathStuff.sin(rads) * offset;
@@ -162,7 +163,7 @@ public final class Aurora {
 
 	private Node[] populateNodeListFromCenterAlt() {
 		final Node[] nodeList = new Node[this.length];
-		final XorShiftRandom nodeRand = new XorShiftRandom(this.time);
+		final XorShiftRandom nodeRand = new XorShiftRandom(this.seed);
 		float angleTotal = 0.0F;
 		for (int i = this.length / 8 / 2 - 1; i >= 0; i--) {
 			float angle = (nodeRand.nextFloat() - 0.5F) * 8.0F;
@@ -225,14 +226,15 @@ public final class Aurora {
 
 	private static Node[] alterWidths(final Node[] nodeList, final float widthMax) {
 		int count = 0;
+		final float factor = MathStuff.PI_F / (nodeList.length / 4);
 		for (int i = 0; i < nodeList.length; i++) {
 			float x = widthMax;
 			if (i <= nodeList.length / 8) {
-				x = MathStuff.sin((float) (MathStuff.PI_F / (nodeList.length / 4) * count)) * widthMax;
+				x = MathStuff.sin(factor * count) * widthMax;
 				count++;
 			}
 			if (i >= nodeList.length * 7 / 8) {
-				x = MathStuff.sin((float) (MathStuff.PI_F / (nodeList.length / 4) * count)) * widthMax;
+				x = MathStuff.sin(factor * count) * widthMax;
 				count--;
 			}
 			nodeList[i].setWidth(x);
@@ -259,21 +261,9 @@ public final class Aurora {
 	}
 
 	private static void findAngles(final Node[] nodeList) {
-		for (int i = 0; i < nodeList.length; i++) {
-
-			final Node node = nodeList[i];
-			node.tetX = node.tetX2 = node.posX;
-			node.tetZ = node.tetZ2 = node.getModdedZ();
-			node.angle = 0.0F;
-
-			if (i > 0 && i < nodeList.length - 1) {
-				final Node nodePlus = nodeList[i + 1];
-				node.angle = MathStuff.atan2(node.getModdedZ() - nodePlus.getModdedZ(), node.posX - nodePlus.posX);
-				node.tetX += node.cosDeg90;
-				node.tetX2 += node.cosDeg270;
-				node.tetZ += node.sinDeg90;
-				node.tetZ2 += node.sinDeg270;
-			}
-		}
+		nodeList[0].findAngles(null);
+		nodeList[nodeList.length - 1].findAngles(null);
+		for (int i = 1; i < nodeList.length - 1; i++)
+			nodeList[i].findAngles(nodeList[i + 1]);
 	}
 }
