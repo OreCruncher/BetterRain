@@ -230,11 +230,7 @@ public final class ClientEffectHandler {
 		if (world == null)
 			return;
 
-		// Set the textures for the currentAurora intensity. This
-		// occurs now because rendering is about to take place.
-		// Also, it has to occur repeatedly because another
-		// mod may have done something with the textures and
-		// they need to be put back. :)
+		// Set the textures for the precipitation intensity.
 		RainIntensity.setTextures();
 
 		// If we want to let Vanilla handle, or if conditions don't

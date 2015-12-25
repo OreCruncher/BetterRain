@@ -38,9 +38,9 @@ import org.blockartistry.mod.BetterRain.ModOptions;
 import net.minecraft.world.biome.BiomeGenBase;
 
 public final class EffectType {
-	
+
 	private static final int AURORA = -1;
-	
+
 	private static final int NONE = 0;
 	private static final int DUST = 1;
 	private static final int PRECIPITATION = 2;
@@ -49,95 +49,93 @@ public final class EffectType {
 	private static final Map<BiomeGenBase, Integer> registry = new IdentityHashMap<BiomeGenBase, Integer>();
 	private static final Map<String, BiomeGenBase> nameMap = new HashMap<String, BiomeGenBase>();
 	private static final Set<BiomeGenBase> auroraBiomes = new HashSet<BiomeGenBase>();
-	
+
 	public static BiomeGenBase findBiome(final String name) {
 		return nameMap.get(name);
 	}
-	
-	private static final String[] DESERT_TOKENS = new String[] {
-		"desert", "sand", "mesa", "wasteland", "sahara"
-	};
-	
-	private static final String[] POLAR_TOKENS = new String[] {
-		"taiga", "frozen", "ice", "tundra", "polar", "snow", "glacier"
-	};
-	
+
+	private static final String[] DESERT_TOKENS = new String[] { "desert", "sand", "mesa", "wasteland", "sahara" };
+
+	private static final String[] POLAR_TOKENS = new String[] { "taiga", "frozen", "ice", "tundra", "polar", "snow",
+			"glacier" };
+
 	private static boolean contains(String name, final String[] list) {
 		name = name.toLowerCase();
-		for(int i = 0; i < list.length; i++)
-			if(name.contains(list[i]))
+		for (int i = 0; i < list.length; i++)
+			if (name.contains(list[i]))
 				return true;
 		return false;
 	}
-	
+
 	private static boolean looksLikeDust(final BiomeGenBase biome) {
 		return contains(biome.biomeName, DESERT_TOKENS);
 	}
-	
+
 	private static boolean looksLikeAurora(final BiomeGenBase biome) {
 		return contains(biome.biomeName, POLAR_TOKENS);
 	}
-	
+
 	private static void processBiomeList(final String biomeNames, final int type) {
 		final String[] names = StringUtils.split(biomeNames, ',');
-		if(names == null || names.length == 0)
+		if (names == null || names.length == 0)
 			return;
-		for(final String name: names) {
-			if(type == AURORA)
+		for (final String name : names) {
+			if (type == AURORA)
 				registerAuroraBiome(name);
 			else
 				registerBiome(name, type);
 		}
 	}
-	
+
 	public static void initialize() {
 		final BiomeGenBase[] biomeArray = BiomeGenBase.getBiomeGenArray();
-		for(int i = 0; i < biomeArray.length; i++) {
-			if(biomeArray[i] != null) {
+		for (int i = 0; i < biomeArray.length; i++) {
+			if (biomeArray[i] != null) {
 				final BiomeGenBase biome = biomeArray[i];
 				int type = NONE;
-				if(biome.canSpawnLightningBolt() || biome.getEnableSnow())
+				if (biome.canSpawnLightningBolt() || biome.getEnableSnow())
 					type = PRECIPITATION;
-				else if(looksLikeDust(biome))
+				else if (looksLikeDust(biome))
 					type = DUST;
 				registerBiome(biome, type);
 				nameMap.put(biome.biomeName, biome);
-				
-				if(looksLikeAurora(biome))
+
+				if (looksLikeAurora(biome))
 					auroraBiomes.add(biome);
 			}
 		}
-		
+
 		processBiomeList(ModOptions.getPrecipitationBiomes(), PRECIPITATION);
 		processBiomeList(ModOptions.getDustBiomes(), DUST);
 		processBiomeList(ModOptions.getNoneBiomes(), NONE);
 		processBiomeList(ModOptions.getAuroraAffectedBiomes(), AURORA);
-		
-		for(final Entry<BiomeGenBase, Integer> entry : registry.entrySet()) {
+
+		for (final Entry<BiomeGenBase, Integer> entry : registry.entrySet()) {
 			final BiomeGenBase biome = entry.getKey();
-			ModLog.info("Biome [%s]: %s %s", biome.biomeName, names[entry.getValue()], (hasAuroraEffect(biome) ? "AURORA" : ""));
+			ModLog.info("Biome %d [%s]: %s %s", biome.biomeID, biome.biomeName, names[entry.getValue()],
+					(hasAuroraEffect(biome) ? "AURORA" : ""));
 		}
 	}
-	
+
 	public static void registerBiome(final BiomeGenBase biome, final int type) {
 		registry.put(biome, Integer.valueOf(type));
 	}
-	
+
 	public static void registerBiome(final int biomeId, final int type) {
 		final BiomeGenBase[] biomeArray = BiomeGenBase.getBiomeGenArray();
-		if(biomeArray[biomeId] == null) {
+		if (biomeArray[biomeId] == null) {
 			ModLog.warn("Unknown biome ID registering biome " + biomeId);
 		} else {
 			registerBiome(biomeArray[biomeId], type);
 		}
 	}
-	
+
 	public static void registerBiome(final String name, final int type) {
 		final BiomeGenBase biome = nameMap.get(name);
-		if(biome != null)
+		if (biome != null)
 			registerBiome(biome, type);
 	}
-	
+
 	public static int get(final BiomeGenBase biome) {
 		final Integer type = registry.get(biome);
 		return type == null ? NONE : type.intValue();
@@ -146,21 +144,21 @@ public final class EffectType {
 	public static boolean hasDust(final BiomeGenBase biome) {
 		return get(biome) == DUST;
 	}
-	
+
 	public static boolean hasPrecipitation(final BiomeGenBase biome) {
 		return get(biome) == PRECIPITATION;
 	}
-	
+
 	public static void registerAuroraBiome(final String name) {
 		final BiomeGenBase biome = nameMap.get(name);
-		if(biome != null)
+		if (biome != null)
 			registerAuroraBiome(biome);
 	}
 
 	public static void registerAuroraBiome(final BiomeGenBase biome) {
 		auroraBiomes.add(biome);
 	}
-	
+
 	public static boolean hasAuroraEffect(final BiomeGenBase biome) {
 		return auroraBiomes.contains(biome);
 	}

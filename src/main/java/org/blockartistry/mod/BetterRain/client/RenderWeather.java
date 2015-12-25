@@ -148,6 +148,9 @@ public final class RenderWeather {
 	public static void renderRainSnow(final EntityRenderer theThis, final float particleTicks) {
 		// Aurora hook
 		AuroraRenderer.render(particleTicks);
+		
+		// Set our rain/snow/dust textures
+		RainIntensity.setTextures();
 
 		IRenderHandler renderer = null;
 		if ((renderer = theThis.mc.theWorld.provider.getWeatherRenderer()) != null) {
