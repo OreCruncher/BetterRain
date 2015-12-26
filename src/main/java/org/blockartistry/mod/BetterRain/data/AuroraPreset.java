@@ -46,15 +46,9 @@ public final class AuroraPreset {
 
 	static {
 		PRESET.add(new AuroraPreset(128, 30.0F, 30.0F, 90));
-		PRESET.add(new AuroraPreset(128, 30.0F, 30.0F, 45));
-
-		PRESET.add(new AuroraPreset(128, 15.0F, 15.0F, 90));
 		PRESET.add(new AuroraPreset(128, 15.0F, 15.0F, 45));
 
 		PRESET.add(new AuroraPreset(64, 30.0F, 30.0F, 90));
-		PRESET.add(new AuroraPreset(64, 30.0F, 30.0F, 45));
-
-		PRESET.add(new AuroraPreset(64, 15.0F, 15.0F, 90));
 		PRESET.add(new AuroraPreset(64, 15.0F, 15.0F, 45));
 	}
 

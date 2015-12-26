@@ -60,6 +60,7 @@ public final class ColorPair {
 		PAIRS.add(new ColorPair(Color.GREEN, Color.YELLOW));
 		PAIRS.add(new ColorPair(Color.MAGENTA, Color.GREEN));
 		PAIRS.add(new ColorPair(Color.INDIGO, Color.GREEN));
+		PAIRS.add(new ColorPair(Color.CYAN, Color.MAGENTA));
 	}
 
 	private ColorPair(final Color base, final Color fade) {

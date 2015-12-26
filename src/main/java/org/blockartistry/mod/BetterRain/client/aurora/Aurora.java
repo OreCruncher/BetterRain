@@ -24,9 +24,6 @@
 
 package org.blockartistry.mod.BetterRain.client.aurora;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.blockartistry.mod.BetterRain.ModOptions;
 import org.blockartistry.mod.BetterRain.data.AuroraData;
 import org.blockartistry.mod.BetterRain.data.AuroraPreset;
@@ -45,21 +42,19 @@ public final class Aurora {
 
 	private static final float ANGLE1 = MathStuff.PI_F / 16.0F;
 	private static final float ANGLE2 = MathStuff.toRadians(90.0F / 7.0F);
-
 	private static final int FADE_LIMIT = 1280;
+	private static final float AURORA_SPEED = 0.75F;
+	private static final float AURORA_AMPLITUDE = 18.0F;
+	private static final float AURORA_WAVELENGTH = 8.0F;
 
-	public static final float AURORA_SPEED = 0.75F;
-	public static final float AURORA_AMPLITUDE = 18.0F;
-	public static final float AURORA_WAVELENGTH = 8.0F;
-
-	private long seed;
 	public float posX;
 	public float posZ;
-	private float cycle = 0.0F;
-	public int fadeTimer = 0;
-	public boolean isAlive = true;
-	protected List<Node[]> nodeList = new ArrayList<Node[]>();
 
+	private Node[][] bands;
+	private long seed;
+	private float cycle = 0.0F;
+	private int fadeTimer = 0;
+	private boolean isAlive = true;
 	private int length;
 	private float nodeLength;
 	private float nodeWidth;
@@ -76,34 +71,27 @@ public final class Aurora {
 		this(data.posX, data.posZ, data.seed, data.colorSet, data.preset);
 	}
 
-	public Aurora(final float x, final float z, final long seed, final int colorSet, final int preset) {
+	public Aurora(final float x, final float z, final long seed, final int colorConfig, final int presetConfig) {
 		this.seed = seed;
 		this.posX = x;
 		this.posZ = z;
 
-		setPreset(preset);
-
-		final ColorPair pair = ColorPair.get(colorSet);
+		final ColorPair pair = ColorPair.get(colorConfig);
 		this.baseColor = pair.baseColor;
 		this.fadeColor = pair.fadeColor;
 
-		final Node[] baseArray = populateNodeListFromCenterAlt();
-		this.nodeList.add(baseArray);
+		preset(presetConfig);
+		generateBands();
 
-		if (MULTIPLES) {
-			this.nodeList.add(bandFromTemplate(baseArray, this.bandOffset));
-			this.nodeList.add(bandFromTemplate(baseArray, -this.bandOffset));
-		}
-		
 		// Initialize at least once for a non-animated aurora
 		translate(0);
 	}
 
-	public List<Node[]> getNodeList() {
-		return this.nodeList;
+	public Node[][] getNodeList() {
+		return this.bands;
 	}
 
-	private void setPreset(final int preset) {
+	private void preset(final int preset) {
 		final AuroraPreset p = AuroraPreset.get(preset);
 		this.length = p.length;
 		this.nodeLength = p.nodeLength;
@@ -141,26 +129,58 @@ public final class Aurora {
 			this.fadeTimer++;
 		}
 
-		if((this.cycle += AURORA_SPEED) >= 360.0F)
+		if ((this.cycle += AURORA_SPEED) >= 360.0F)
 			this.cycle -= 360.0F;
 	}
 
-	private static Node[] bandFromTemplate(final Node[] template, final int offset) {
-		final Node[] tet = new Node[template.length];
-		for (int i = 0; i < template.length; i++) {
-			final Node node = template[i];
-			final float rads = MathStuff.toRadians(90.0F + node.angle);
-			final float posX = node.posX + MathStuff.cos(rads) * offset;
-			final float posZ = node.posZ + MathStuff.sin(rads) * offset;
-			tet[i] = new Node(posX, node.posY - 2.0F, posZ, node.angle);
+	private void generateBands() {
+		this.bands = new Node[MULTIPLES ? 3 : 1][];
+		final Node[] band0 = this.bands[0] = populate();
+		final Node[] band1, band2;
+		if (this.bands.length > 1) {
+			band1 = this.bands[1] = populateFromTemplate(this.bands[0], this.bandOffset);
+			band2 = this.bands[2] = populateFromTemplate(this.bands[0], -this.bandOffset);
+		} else {
+			band1 = band2 = null;
 		}
 
-		return alterWidths(tet, 10.0F);
+		final float factor = MathStuff.PI_F / (this.length / 4);
+		final int lowerBound = this.length / 8 + 1;
+		final int upperBound = this.length * 7 / 8 - 1;
+
+		int count = 0;
+		for (int i = 0; i < this.length; i++) {
+			// Scale the widths at the head and tail of the
+			// aurora band.  This makes them taper.
+			final float width;
+			if (i < lowerBound) {
+				width = MathStuff.sin(factor * count++) * this.nodeWidth;
+			} else if (i > upperBound) {
+				width = MathStuff.sin(factor * count--) * this.nodeWidth;
+			} else {
+				width = this.nodeWidth;
+			}
+
+			band0[i].setWidth(width);
+			if (band1 != null) {
+				band1[i].setWidth(width);
+				band2[i].setWidth(width);
+			}
+		}
 	}
 
-	private Node[] populateNodeListFromCenterAlt() {
+	private static Node[] populateFromTemplate(final Node[] template, final int offset) {
+		final Node[] tet = new Node[template.length];
+		for (int i = 0; i < template.length; i++)
+			tet[i] = new Node(template[i], offset);
+		return tet;
+	}
+
+	private Node[] populate() {
 		final Node[] nodeList = new Node[this.length];
 		final XorShiftRandom nodeRand = new XorShiftRandom(this.seed);
+		final int bound = this.length / 2 - 1;
+
 		float angleTotal = 0.0F;
 		for (int i = this.length / 8 / 2 - 1; i >= 0; i--) {
 			float angle = (nodeRand.nextFloat() - 0.5F) * 8.0F;
@@ -171,24 +191,23 @@ public final class Aurora {
 			}
 
 			for (int k = 7; k >= 0; k--) {
-				if (i * 8 + k == this.length / 2 - 1) {
-					nodeList[i * 8 + k] = new Node(0.0F, 7.0F + nodeRand.nextFloat(), 0.0F, angle);
-
+				final int idx = i * 8 + k;
+				if (idx == bound) {
+					nodeList[idx] = new Node(0.0F, 7.0F + nodeRand.nextFloat(), 0.0F, angle);
 				} else {
-
 					float y;
 					if (i == 0)
 						y = MathStuff.sin(ANGLE1 * k) * 7.0F + nodeRand.nextFloat() / 2.0F;
 					else
 						y = 10.0F + nodeRand.nextFloat() * 5.0F;
 
-					final Node node = nodeList[i * 8 + k + 1];
+					final Node node = nodeList[idx + 1];
 					final float subAngle = node.angle + angle;
 					final float subAngleRads = MathStuff.toRadians(subAngle);
 					final float z = node.posZ - (MathStuff.sin(subAngleRads) * this.nodeLength);
 					final float x = node.posX - (MathStuff.cos(subAngleRads) * this.nodeLength);
 
-					nodeList[i * 8 + k] = new Node(x, y, z, subAngle);
+					nodeList[idx] = new Node(x, y, z, subAngle);
 				}
 			}
 		}
@@ -218,60 +237,42 @@ public final class Aurora {
 			}
 		}
 
-		return alterWidths(nodeList, this.nodeWidth);
-	}
-
-	// Scales the widths for nodes at the head and tail of the
-	// node list.
-	private static Node[] alterWidths(final Node[] nodeList, final float widthMax) {
-		final float factor = MathStuff.PI_F / (nodeList.length / 4);
-		final int lowerBound = nodeList.length / 8 + 1;
-		final int upperBound = nodeList.length * 7 / 8 - 1;
-
-		int count = 0;
-		for (int i = 0; i < nodeList.length; i++) {
-			final float x;
-
-			if (i < lowerBound) {
-				x = MathStuff.sin(factor * count++) * widthMax;
-			} else if (i > upperBound) {
-				x = MathStuff.sin(factor * count--) * widthMax;
-			} else {
-				x = widthMax;
-			}
-
-			nodeList[i].setWidth(x);
-		}
 		return nodeList;
 	}
 
 	/*
-	 * Calculates the next "frame" of the aurora if it is being
-	 * animated.
+	 * Calculates the next "frame" of the aurora if it is being animated.
 	 */
 	public void translate(final float partialTick) {
+		final Node[] nodeList = this.bands[0];
+		Node[] second = null;
+		Node[] third = null;
+		if (this.bands.length > 1) {
+			second = this.bands[1];
+			third = this.bands[2];
+		}
+
 		final float c = this.cycle + AURORA_SPEED * partialTick;
-		final Node[] nodeList = this.nodeList.get(0);
 		for (int i = 0; i < nodeList.length; i++) {
-			final Node node = nodeList[i];
-			final float f = MathStuff.sin(MathStuff.toRadians(AURORA_WAVELENGTH * i + c));
-			node.setModZ(f * AURORA_AMPLITUDE);
-			node.setModY(f * 3.0F);
+			// Travelling sine wave: https://en.wikipedia.org/wiki/Wavelength
+			final float f = MathStuff.cos(MathStuff.toRadians(AURORA_WAVELENGTH * i + c));
+			final float dZ = f * AURORA_AMPLITUDE;
+			final float dY = f * 3.0F;
+			Node node = nodeList[i];
+			node.setDeltaZ(dZ);
+			node.setDeltaY(dY);
+			if (second != null) {
+				node = second[i];
+				node.setDeltaZ(dZ);
+				node.setDeltaY(dY);
+
+				node = third[i];
+				node.setDeltaZ(dZ);
+				node.setDeltaY(dY);
+			}
 		}
 		findAngles(nodeList);
-		if(this.nodeList.size() > 1) {
-			final Node[] second = this.nodeList.get(1);
-			final Node[] third = this.nodeList.get(2);
-			for(int i = 0; i < nodeList.length; i++) {
-				final Node src = nodeList[i];
-				final Node t1 = second[i];
-				final Node t2 = third[i];
-				
-				t1.setModZ(src.getModZ());
-				t2.setModZ(src.getModZ());
-				t1.setModY(src.getModY());
-				t2.setModY(src.getModY());
-			}
+		if (second != null) {
 			findAngles(second);
 			findAngles(third);
 		}
@@ -279,8 +280,8 @@ public final class Aurora {
 
 	private static void findAngles(final Node[] nodeList) {
 		nodeList[0].findAngles(null);
-		nodeList[nodeList.length - 1].findAngles(null);
 		for (int i = 1; i < nodeList.length - 1; i++)
 			nodeList[i].findAngles(nodeList[i + 1]);
+		nodeList[nodeList.length - 1].findAngles(null);
 	}
 }

@@ -73,6 +73,8 @@ public final class AuroraRenderer {
 		if (ANIMATE)
 			aurora.translate(partialTick);
 
+		final Color base = aurora.getBaseColor();
+		final Color fade = aurora.getFadeColor();
 		final int alpha = aurora.getAlpha();
 		final double lowY = 0.0D;
 		final double lowY2 = 0.0D;
@@ -104,7 +106,7 @@ public final class AuroraRenderer {
 				final double tetX2;
 				final double tetZ2;
 				final double posY2;
-				
+
 				if (i < array.length - 2) {
 					final Node nodePlus = array[i + 1];
 					posX2 = nodePlus.tetX;
@@ -116,18 +118,6 @@ public final class AuroraRenderer {
 					posX2 = tetX2 = node.posX;
 					posZ2 = tetZ2 = node.getModdedZ();
 					posY2 = 0.0D;
-				}
-
-				final Color base;
-				final Color fade;
-
-				if (i == 0) {
-					base = fade = Color.WHITE;
-				} else if (i == array.length - 2) {
-					base = fade = Color.YELLOW;
-				} else {
-					base = aurora.getBaseColor();
-					fade = aurora.getFadeColor();
 				}
 
 				tess.startDrawing(GL11.GL_TRIANGLE_FAN);
@@ -159,7 +149,7 @@ public final class AuroraRenderer {
 				tess.draw();
 			}
 		}
-		
+
 		GL11.glScaled(3.5D, 25.0D, 3.5D);
 		GL11.glDepthMask(true);
 		GL11.glEnable(GL11.GL_CULL_FACE);

@@ -138,7 +138,7 @@ public final class ServerEffectHandler {
 
 				final int colorSet = ColorPair.randomId();
 				final int preset = AuroraPreset.randomId();
-				// final int colorSet = ColorPair.testId();
+				//final int colorSet = ColorPair.testId();
 				// final int preset = AuroraPreset.testId();
 				data.add(new AuroraData(player, Z_OFFSET, colorSet, preset));
 			}
