@@ -310,6 +310,7 @@ public final class RenderWeather {
 										+ f5 * factor * (float) theThis.random.nextGaussian();
 								float f11 = theThis.random.nextFloat()
 										+ f5 * (float) theThis.random.nextGaussian() * 0.001F;
+								
 								d4 = (double) ((float) i1 + 0.5F) - entitylivingbase.posX;
 								double d5 = (double) ((float) l + 0.5F) - entitylivingbase.posZ;
 								float f14 = MathHelper.sqrt_double(d4 * d4 + d5 * d5) / (float) b0;

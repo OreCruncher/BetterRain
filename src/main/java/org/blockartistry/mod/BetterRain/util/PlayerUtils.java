@@ -38,6 +38,8 @@ public final class PlayerUtils {
 	}
 
 	public static int getPlayerDimension(final EntityPlayer player) {
+		if(player == null || player.worldObj == null)
+			return -256;
 		return player.worldObj.provider.dimensionId;
 	}
 	

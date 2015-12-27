@@ -47,7 +47,7 @@ public enum RainIntensity {
 
 	private static final float SOUND_LEVEL = ModOptions.getSoundLevel();
 
-	private static float strength = 0.0F;
+	private static float intensityLevel = 0.0F;
 	private static RainIntensity intensity = VANILLA;
 
 	private final float level;
@@ -82,8 +82,8 @@ public enum RainIntensity {
 		return intensity;
 	}
 
-	public static float getStrength() {
-		return strength;
+	public static float getIntensityLevel() {
+		return intensityLevel;
 	}
 
 	public String getRainSound() {
@@ -95,7 +95,7 @@ public enum RainIntensity {
 	}
 
 	public static float getCurrentRainVolume() {
-		return (doVanillaRain() ? 0.66F : strength) * SOUND_LEVEL;
+		return (doVanillaRain() ? 0.66F : intensityLevel) * SOUND_LEVEL;
 	}
 
 	public static ResourceLocation getCurrentRainSound() {
@@ -111,7 +111,7 @@ public enum RainIntensity {
 	}
 
 	/**
-	 * Sets the rain intensity based on the strength level provided. This is
+	 * Sets the rain intensity based on the intensityLevel level provided. This is
 	 * called by the packet handler when the server wants to set the intensity
 	 * level on the client.
 	 */
@@ -122,22 +122,22 @@ public enum RainIntensity {
 		// that of Vanilla.
 		if (level == VANILLA.level) {
 			intensity = VANILLA;
-			strength = 0.0F;
+			intensityLevel = 0.0F;
 			setTextures();
 			return;
 		}
 
 		level = MathHelper.clamp_float(level, DimensionEffectData.MIN_INTENSITY, DimensionEffectData.MAX_INTENSITY);
 
-		if (strength != level) {
-			strength = level;
-			if (strength <= NONE.level)
+		if (intensityLevel != level) {
+			intensityLevel = level;
+			if (intensityLevel <= NONE.level)
 				intensity = NONE;
-			else if (strength < CALM.level)
+			else if (intensityLevel < CALM.level)
 				intensity = CALM;
-			else if (strength < LIGHT.level)
+			else if (intensityLevel < LIGHT.level)
 				intensity = LIGHT;
-			else if (strength < NORMAL.level)
+			else if (intensityLevel < NORMAL.level)
 				intensity = NORMAL;
 			else
 				intensity = HEAVY;

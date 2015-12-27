@@ -41,10 +41,11 @@ import org.blockartistry.mod.BetterRain.client.aurora.Aurora;
 import org.blockartistry.mod.BetterRain.client.rain.RainIntensity;
 import org.blockartistry.mod.BetterRain.data.AuroraData;
 import org.blockartistry.mod.BetterRain.data.EffectType;
+import org.blockartistry.mod.BetterRain.util.Color;
 import org.blockartistry.mod.BetterRain.util.PlayerUtils;
 import org.blockartistry.mod.BetterRain.util.WorldUtils;
 import org.blockartistry.mod.BetterRain.util.XorShiftRandom;
-
+import org.lwjgl.opengl.GL11;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
@@ -59,6 +60,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
+import net.minecraftforge.client.event.EntityViewRenderEvent;
 import net.minecraftforge.client.event.sound.PlaySoundEvent17;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.EntityEvent;
@@ -76,7 +78,9 @@ public final class ClientEffectHandler {
 	private static final float MIN_STRENGTH_FOR_PARTICLE_SPAWN = 0.1F;
 	private static final int RANGE_FACTOR = 10;
 
+	private static final Color DESERT_FOG_COLOR = new Color(204, 185, 102);
 	private static final boolean ALWAYS_OVERRIDE_SOUND = ModOptions.getAlwaysOverrideSound();
+	private static final boolean ALLOW_DESERT_FOG = ModOptions.getAllowDesertFog();
 
 	// Aurora information
 	private static final boolean AURORA_ENABLE = ModOptions.getAuroraEnable();
@@ -107,7 +111,7 @@ public final class ClientEffectHandler {
 
 	private static boolean generateParticle() {
 		return Minecraft.getMinecraft().gameSettings.particleSetting != PARTICLE_SETTING_MINIMAL
-				&& RainIntensity.getStrength() >= MIN_STRENGTH_FOR_PARTICLE_SPAWN;
+				&& RainIntensity.getIntensityLevel() >= MIN_STRENGTH_FOR_PARTICLE_SPAWN;
 	}
 
 	/*
@@ -122,7 +126,7 @@ public final class ClientEffectHandler {
 	public void entityEvent(final EntityEvent.EntityConstructing event) {
 		if (RainIntensity.doVanillaRain())
 			return;
-		final float strength = RainIntensity.getStrength();
+		final float strength = RainIntensity.getIntensityLevel();
 		if (event.entity instanceof EntityRainFX && (!generateParticle() || strength < random.nextFloat()))
 			event.entity.setDead();
 		else if (event.entity instanceof EntitySmokeFX && strength > 0.0F && strength < random.nextFloat())
@@ -151,11 +155,11 @@ public final class ClientEffectHandler {
 	}
 
 	private Aurora getClosestAurora(final TickEvent.ClientTickEvent event) {
-		if(auroraDimension != PlayerUtils.getClientPlayerDimension()) { 
+		if (auroraDimension != PlayerUtils.getClientPlayerDimension()) {
 			auroras.clear();
 			currentAurora = null;
 		}
-		
+
 		if (auroras.size() == 0) {
 			currentAurora = null;
 			return null;
@@ -189,9 +193,9 @@ public final class ClientEffectHandler {
 	}
 
 	private static boolean auroraTimeToDie(final long time) {
-		return time >= 22220L && time < 23500L; 
+		return time >= 22220L && time < 23500L;
 	}
-	
+
 	protected void processAurora(final TickEvent.ClientTickEvent event) {
 		final World world = FMLClientHandler.instance().getClient().theWorld;
 		if (world != null && auroras.size() > 0) {
@@ -314,6 +318,38 @@ public final class ClientEffectHandler {
 			}
 
 			mc.effectRenderer.addEffect(particle);
+		}
+	}
+
+	public static boolean isFogApplicable(final EntityLivingBase entity) {
+		if (!ALLOW_DESERT_FOG || RainIntensity.getIntensity() == RainIntensity.VANILLA)
+			return false;
+
+		final int posX = MathHelper.floor_double(entity.posX);
+		final int posZ = MathHelper.floor_double(entity.posZ);
+
+		if (Minecraft.getMinecraft().theWorld.provider.doesXZShowFog(posX, posZ))
+			return false;
+
+		final BiomeGenBase biome = entity.worldObj.getBiomeGenForCoords(posX, posZ);
+		return EffectType.hasDust(biome) && RainIntensity.getIntensity() != RainIntensity.NONE;
+	}
+
+	public void fogColorEvent(final EntityViewRenderEvent.FogColors event) {
+		if (isFogApplicable(event.entity)) {
+			event.red = DESERT_FOG_COLOR.red;
+			event.green = DESERT_FOG_COLOR.green;
+			event.blue = DESERT_FOG_COLOR.blue;
+		}
+	}
+
+	@SubscribeEvent
+	public void fogDensityEvent(final EntityViewRenderEvent.RenderFogEvent event) {
+		if (isFogApplicable(event.entity)) {
+			final float distanceFactor = 0.5F - 0.45F * RainIntensity.getIntensityLevel();
+			final float distance = event.farPlaneDistance * distanceFactor;
+			GL11.glFogf(GL11.GL_FOG_START, event.fogMode < 0 ? 0.0F : distance * 0.75F);
+			GL11.glFogf(GL11.GL_FOG_END, distance);
 		}
 	}
 }

@@ -50,6 +50,8 @@ public final class ModOptions {
 	protected static boolean alwaysOverrideSound = true;
 	protected static final String CONFIG_ALLOW_DESERT_DUST = "Desert Dust";
 	protected static boolean allowDesertDust = true;
+	protected static final String CONFIG_ALLOW_DESERT_FOG = "Desert Fog";
+	protected static boolean allowDesertFog = true;
 
 	protected static final String CATEGORY_GENERAL = "general";
 	protected static final String CONFIG_DIMENSION_LIST = "Dimensions";
@@ -60,7 +62,7 @@ public final class ModOptions {
 	protected static float defaultMinRainStrength = 0.0F;
 	protected static final String CONFIG_MAX_RAIN_STRENGTH = "Default Maximum Rain Strength";
 	protected static float defaultMaxRainStrength = 1.0F;
-	
+
 	protected static final String CATEGORTY_OVERRIDE = "biomes.override";
 	protected static final String CONFIG_DUST_BIOMES = "Dust";
 	protected static String dustBiomes = "";
@@ -68,7 +70,7 @@ public final class ModOptions {
 	protected static String precipitationBiomes = "";
 	protected static final String CONFIG_NONE_BIOMES = "None";
 	protected static String noneBiomes = "";
-	
+
 	protected static final String CATEGORY_AURORA = "aurora";
 	protected static final String CONFIG_AURORA_ENABLED = "Enabled";
 	protected static boolean auroraEnable = true;
@@ -80,7 +82,7 @@ public final class ModOptions {
 	protected static String auroraTriggerBiomes = "";
 	protected static final String CONFIG_AURORA_ANIMATE = "Animate";
 	protected static boolean auroraAnimate = true;
-	
+
 	public static void load(final Configuration config) {
 
 		// CATEGORY: Logging
@@ -101,8 +103,10 @@ public final class ModOptions {
 				comment);
 
 		comment = "Allow desert dust when raining";
-		allowDesertDust = config.getBoolean(CONFIG_ALLOW_DESERT_DUST, CATEGORY_RAIN, allowDesertDust,
-				comment);
+		allowDesertDust = config.getBoolean(CONFIG_ALLOW_DESERT_DUST, CATEGORY_RAIN, allowDesertDust, comment);
+
+		comment = "Allow desert fog when raining";
+		allowDesertFog = config.getBoolean(CONFIG_ALLOW_DESERT_FOG, CATEGORY_RAIN, allowDesertFog, comment);
 
 		// CATEGORY: General
 		comment = "Comma separated dimension ID list";
@@ -120,36 +124,35 @@ public final class ModOptions {
 		comment = "Default maximum rain strength for a dimension";
 		defaultMaxRainStrength = MathHelper.clamp_float(config.getFloat(CONFIG_MAX_RAIN_STRENGTH, CATEGORY_GENERAL,
 				defaultMaxRainStrength, 0.0F, 1.0F, comment), defaultMinRainStrength, 1.0F);
-		
+
 		// CATEGORY: Biome Overrides
 		comment = "Comma separated biome names to apply dust weather effect";
 		dustBiomes = config.getString(CONFIG_DUST_BIOMES, CATEGORTY_OVERRIDE, dustBiomes, comment);
 
 		comment = "Comma separated biome names to apply rain/snow weather effect";
-		precipitationBiomes = config.getString(CONFIG_PRECIPITATION_BIOMES, CATEGORTY_OVERRIDE, precipitationBiomes, comment);
+		precipitationBiomes = config.getString(CONFIG_PRECIPITATION_BIOMES, CATEGORTY_OVERRIDE, precipitationBiomes,
+				comment);
 
 		comment = "Comma separated biome names to apply NO weather effect";
 		noneBiomes = config.getString(CONFIG_NONE_BIOMES, CATEGORTY_OVERRIDE, noneBiomes, comment);
-		
+
 		// CATEGORY: Aurora
 		comment = "Whether to enable Aurora processing on server/client";
-		auroraEnable = config.getBoolean(CONFIG_AURORA_ENABLED, CATEGORY_AURORA,
-				auroraEnable, comment);
+		auroraEnable = config.getBoolean(CONFIG_AURORA_ENABLED, CATEGORY_AURORA, auroraEnable, comment);
 
 		comment = "true to keep the aurora at a height above player; false to fix it to an altitude";
 		auroraHeightPlayerRelative = config.getBoolean(CONFIG_Y_PLAYER_RELATIVE, CATEGORY_AURORA,
 				auroraHeightPlayerRelative, comment);
 
 		comment = "Allow Auroras with multiple bands";
-		auroraMultipleBands = config.getBoolean(CONFIG_MULTIPLE_BANDS, CATEGORY_AURORA,
-				auroraMultipleBands, comment);
+		auroraMultipleBands = config.getBoolean(CONFIG_MULTIPLE_BANDS, CATEGORY_AURORA, auroraMultipleBands, comment);
 
 		comment = "Comma separated biome names where Auroras can be triggered";
-		auroraTriggerBiomes = config.getString(CONFIG_TRIGGER_BIOME_LIST, CATEGORY_AURORA, auroraTriggerBiomes, comment);
+		auroraTriggerBiomes = config.getString(CONFIG_TRIGGER_BIOME_LIST, CATEGORY_AURORA, auroraTriggerBiomes,
+				comment);
 
 		comment = "Animate Aurora";
-		auroraAnimate = config.getBoolean(CONFIG_AURORA_ANIMATE, CATEGORY_AURORA,
-				auroraAnimate, comment);
+		auroraAnimate = config.getBoolean(CONFIG_AURORA_ANIMATE, CATEGORY_AURORA, auroraAnimate, comment);
 	}
 
 	public static boolean getEnableDebugLogging() {
@@ -167,9 +170,13 @@ public final class ModOptions {
 	public static boolean getAlwaysOverrideSound() {
 		return alwaysOverrideSound;
 	}
-	
+
 	public static boolean getAllowDesertDust() {
 		return allowDesertDust;
+	}
+
+	public static boolean getAllowDesertFog() {
+		return allowDesertFog;
 	}
 
 	public static int[] getDimensionList() {
@@ -191,19 +198,19 @@ public final class ModOptions {
 	public static float getDefaultMaxRainIntensity() {
 		return defaultMaxRainStrength;
 	}
-	
+
 	public static String getDustBiomes() {
 		return dustBiomes;
 	}
-	
+
 	public static String getPrecipitationBiomes() {
 		return precipitationBiomes;
 	}
-	
+
 	public static String getNoneBiomes() {
 		return noneBiomes;
 	}
-	
+
 	public static boolean getAuroraHeightPlayerRelative() {
 		return auroraHeightPlayerRelative;
 	}
@@ -215,11 +222,11 @@ public final class ModOptions {
 	public static String getAuroraTriggerBiomes() {
 		return auroraTriggerBiomes;
 	}
-	
+
 	public static boolean getAuroraEnable() {
 		return auroraEnable;
 	}
-	
+
 	public static boolean getAuroraAnimate() {
 		return auroraAnimate;
 	}
