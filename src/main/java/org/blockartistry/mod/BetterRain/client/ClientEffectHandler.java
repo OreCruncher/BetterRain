@@ -41,10 +41,10 @@ import org.blockartistry.mod.BetterRain.client.aurora.Aurora;
 import org.blockartistry.mod.BetterRain.client.rain.RainIntensity;
 import org.blockartistry.mod.BetterRain.data.AuroraData;
 import org.blockartistry.mod.BetterRain.data.EffectType;
-import org.blockartistry.mod.BetterRain.util.Color;
 import org.blockartistry.mod.BetterRain.util.PlayerUtils;
 import org.blockartistry.mod.BetterRain.util.WorldUtils;
 import org.lwjgl.opengl.GL11;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.ISound;
 import net.minecraft.client.audio.PositionedSoundRecord;
@@ -60,7 +60,11 @@ import net.minecraftforge.common.MinecraftForge;
 @SideOnly(Side.CLIENT)
 public final class ClientEffectHandler {
 
-	private static final Color DESERT_FOG_COLOR = new Color(204, 185, 102);
+	// Desert dust color for fog blending
+	private static final float DESERT_RED = 204.0F / 255.0F;
+	private static final float DESERT_GREEN = 185.0F / 255.0F;
+	private static final float DESERT_BLUE = 102.0F / 255.0F;
+	
 	private static final boolean ALWAYS_OVERRIDE_SOUND = ModOptions.getAlwaysOverrideSound();
 	private static final boolean ALLOW_DESERT_FOG = ModOptions.getAllowDesertFog();
 
@@ -156,9 +160,9 @@ public final class ClientEffectHandler {
 
 	@SubscribeEvent(priority = EventPriority.LOWEST)
 	public void processAurora(final TickEvent.ClientTickEvent event) {
-		if(!AURORA_ENABLE || event.phase != Phase.END)
+		if (!AURORA_ENABLE || event.phase != Phase.END)
 			return;
-		
+
 		final World world = FMLClientHandler.instance().getClient().theWorld;
 		if (world != null && auroras.size() > 0) {
 			final long time = WorldUtils.getWorldTime(world);
@@ -190,18 +194,21 @@ public final class ClientEffectHandler {
 		return EffectType.hasDust(biome) && RainIntensity.getIntensity() != RainIntensity.NONE;
 	}
 
+	@SubscribeEvent
 	public void fogColorEvent(final EntityViewRenderEvent.FogColors event) {
-		if (isFogApplicable(event.entity)) {
-			event.red = DESERT_FOG_COLOR.red;
-			event.green = DESERT_FOG_COLOR.green;
-			event.blue = DESERT_FOG_COLOR.blue;
-		}
+		if (!isFogApplicable(event.entity))
+			return;
+
+		// Blend in the dust color - like mixing paint
+		event.red = (event.red + DESERT_RED) / 2.0F;
+		event.green = (event.green + DESERT_GREEN) / 2.0F;
+		event.blue = (event.blue + DESERT_BLUE) / 2.0F;
 	}
 
 	@SubscribeEvent
 	public void fogDensityEvent(final EntityViewRenderEvent.RenderFogEvent event) {
 		if (isFogApplicable(event.entity)) {
-			final float distanceFactor = 0.5F - 0.45F * RainIntensity.getIntensityLevel();
+			final float distanceFactor = 0.5F - 0.40F * RainIntensity.getIntensityLevel();
 			final float distance = event.farPlaneDistance * distanceFactor;
 			GL11.glFogf(GL11.GL_FOG_START, event.fogMode < 0 ? 0.0F : distance * 0.75F);
 			GL11.glFogf(GL11.GL_FOG_END, distance);
