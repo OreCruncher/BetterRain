@@ -29,6 +29,7 @@ import org.blockartistry.mod.BetterRain.ModOptions;
 import org.blockartistry.mod.BetterRain.client.aurora.AuroraRenderer;
 import org.blockartistry.mod.BetterRain.client.rain.RainIntensity;
 import org.blockartistry.mod.BetterRain.data.EffectType;
+import org.blockartistry.mod.BetterRain.util.XorShiftRandom;
 import org.lwjgl.opengl.GL11;
 
 import cpw.mods.fml.relauncher.Side;
@@ -36,6 +37,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.multiplayer.WorldClient;
+import net.minecraft.client.particle.EntityFX;
 import net.minecraft.client.particle.EntityRainFX;
 import net.minecraft.client.particle.EntitySmokeFX;
 import net.minecraft.client.renderer.EntityRenderer;
@@ -50,97 +52,111 @@ import net.minecraftforge.client.IRenderHandler;
 @SideOnly(Side.CLIENT)
 public final class RenderWeather {
 
+	private static final XorShiftRandom random = new XorShiftRandom();
 	private static final boolean BLOW_DUST = ModOptions.getAllowDesertDust();
+
+	private static final int RANGE_FACTOR = 10;
 
 	public static ResourceLocation locationRainPng = new ResourceLocation("textures/environment/rain.png");
 	public static ResourceLocation locationSnowPng = new ResourceLocation("textures/environment/snow.png");
 	public static ResourceLocation locationDustPng = new ResourceLocation(BetterRain.MOD_ID,
 			"textures/environment/dust.png");
 
+	private static final float[] RAIN_X_COORDS = new float[1024];
+	private static final float[] RAIN_Y_COORDS = new float[1024];
+
+	static {
+		for (int i = 0; i < 32; ++i) {
+			for (int j = 0; j < 32; ++j) {
+				final float f2 = (float) (j - 16);
+				final float f3 = (float) (i - 16);
+				final float f4 = MathHelper.sqrt_float(f2 * f2 + f3 * f3);
+				RAIN_X_COORDS[i << 5 | j] = -f3 / f4;
+				RAIN_Y_COORDS[i << 5 | j] = f2 / f4;
+			}
+		}
+	}
+
 	private static boolean dustCheck(final BiomeGenBase biome) {
 		return BLOW_DUST && EffectType.hasDust(biome) && !RainIntensity.doVanillaRain();
 	}
 
 	public static void addRainParticles(final EntityRenderer theThis) {
-		float f = theThis.mc.theWorld.getRainStrength(1.0F);
+		if (theThis.mc.gameSettings.particleSetting == 2)
+			return;
 
-		if (!theThis.mc.gameSettings.fancyGraphics) {
-			f /= 2.0F;
+		float rainStrengthFactor = theThis.mc.theWorld.getRainStrength(1.0F);
+		if (!theThis.mc.gameSettings.fancyGraphics)
+			rainStrengthFactor /= 2.0F;
+
+		if (rainStrengthFactor == 0.0F)
+			return;
+
+		random.setSeed((long) theThis.rendererUpdateCount * 312987231L);
+		final EntityLivingBase entity = theThis.mc.renderViewEntity;
+		final WorldClient worldclient = theThis.mc.theWorld;
+		final int playerX = MathHelper.floor_double(entity.posX);
+		final int playerY = MathHelper.floor_double(entity.posY);
+		final int playerZ = MathHelper.floor_double(entity.posZ);
+		double spawnX = 0.0D;
+		double spawnY = 0.0D;
+		double spawnZ = 0.0D;
+		int particlesSpawned = 0;
+
+		int particleCount = (int) (200.0F * rainStrengthFactor * rainStrengthFactor
+				* RainIntensity.getIntensityLevel());
+
+		if (theThis.mc.gameSettings.particleSetting == 1)
+			particleCount >>= 1;
+
+		for (int j1 = 0; j1 < particleCount; ++j1) {
+			final int locX = playerX + random.nextInt(RANGE_FACTOR) - random.nextInt(RANGE_FACTOR);
+			final int locZ = playerZ + random.nextInt(RANGE_FACTOR) - random.nextInt(RANGE_FACTOR);
+			final int locY = worldclient.getPrecipitationHeight(locX, locZ);
+			final BiomeGenBase biome = worldclient.getBiomeGenForCoords(locX, locZ);
+			final boolean hasDust = dustCheck(biome);
+
+			if (locY <= playerY + RANGE_FACTOR && locY >= playerY - RANGE_FACTOR && (hasDust
+					|| (EffectType.hasPrecipitation(biome) && biome.getFloatTemperature(locX, locY, locZ) >= 0.15F))) {
+
+				final Block block = worldclient.getBlock(locX, locY - 1, locZ);
+				final double posX = locX + random.nextFloat();
+				final double posY = locY + 0.1F - block.getBlockBoundsMinY();
+				final double posZ = locZ + random.nextFloat();
+
+				EntityFX particle = null;
+				if (block.getMaterial() == Material.lava) {
+					if (!hasDust)
+						particle = new EntitySmokeFX(worldclient, posX, posY, posZ, 0.0D, 0.0D, 0.0D);
+				} else if (block.getMaterial() != Material.air) {
+
+					if (random.nextInt(++particlesSpawned) == 0) {
+						spawnX = posX;
+						spawnY = posY;
+						spawnZ = posZ;
+					}
+
+					if (!hasDust)
+						particle = new EntityRainFX(worldclient, posX, posY, posZ);
+				}
+
+				if (particle != null)
+					theThis.mc.effectRenderer.addEffect(particle);
+			}
 		}
 
-		if (f != 0.0F) {
-			theThis.random.setSeed((long) theThis.rendererUpdateCount * 312987231L);
-			EntityLivingBase entitylivingbase = theThis.mc.renderViewEntity;
-			WorldClient worldclient = theThis.mc.theWorld;
-			int i = MathHelper.floor_double(entitylivingbase.posX);
-			int j = MathHelper.floor_double(entitylivingbase.posY);
-			int k = MathHelper.floor_double(entitylivingbase.posZ);
-			byte b0 = 10;
-			double d0 = 0.0D;
-			double d1 = 0.0D;
-			double d2 = 0.0D;
-			int l = 0;
-			int i1 = (int) (100.0F * f * f);
+		// Handle precipitation sounds
+		if (particlesSpawned > 0 && random.nextInt(3) < theThis.rainSoundCounter++) {
+			theThis.rainSoundCounter = 0;
 
-			if (theThis.mc.gameSettings.particleSetting == 1) {
-				i1 >>= 1;
-			} else if (theThis.mc.gameSettings.particleSetting == 2) {
-				i1 = 0;
-			}
-
-			for (int j1 = 0; j1 < i1; ++j1) {
-				int k1 = i + theThis.random.nextInt(b0) - theThis.random.nextInt(b0);
-				int l1 = k + theThis.random.nextInt(b0) - theThis.random.nextInt(b0);
-				int i2 = worldclient.getPrecipitationHeight(k1, l1);
-				Block block = worldclient.getBlock(k1, i2 - 1, l1);
-				BiomeGenBase biome = worldclient.getBiomeGenForCoords(k1, l1);
-				final boolean hasDust = dustCheck(biome);
-
-				if (i2 <= j + b0 && i2 >= j - b0 && (hasDust
-						|| (EffectType.hasPrecipitation(biome) && biome.getFloatTemperature(k1, i2, l1) >= 0.15F))) {
-					float f1 = theThis.random.nextFloat();
-					float f2 = theThis.random.nextFloat();
-
-					if (block.getMaterial() == Material.lava) {
-						if (!hasDust)
-							theThis.mc.effectRenderer
-									.addEffect(new EntitySmokeFX(worldclient, (double) ((float) k1 + f1),
-											(double) ((float) i2 + 0.1F) - block.getBlockBoundsMinY(),
-											(double) ((float) l1 + f2), 0.0D, 0.0D, 0.0D));
-					} else if (block.getMaterial() != Material.air) {
-						++l;
-
-						if (theThis.random.nextInt(l) == 0) {
-							d0 = (double) ((float) k1 + f1);
-							d1 = (double) ((float) i2 + 0.1F) - block.getBlockBoundsMinY();
-							d2 = (double) ((float) l1 + f2);
-						}
-
-						if (!hasDust)
-							theThis.mc.effectRenderer
-									.addEffect(new EntityRainFX(worldclient, (double) ((float) k1 + f1),
-											(double) ((float) i2 + 0.1F) - block.getBlockBoundsMinY(),
-											(double) ((float) l1 + f2)));
-					}
-				}
-			}
-
-			if (l > 0 && theThis.random.nextInt(3) < theThis.rainSoundCounter++) {
-				theThis.rainSoundCounter = 0;
-
-				final boolean hasDust = dustCheck(worldclient.getBiomeGenForCoords((int) d0, (int) d2));
-				final String sound = hasDust ? RainIntensity.getIntensity().getDustSound()
-						: RainIntensity.getIntensity().getRainSound();
-				final float volume = RainIntensity.getCurrentRainVolume();
-				if (d1 > entitylivingbase.posY + 1.0D
-						&& worldclient.getPrecipitationHeight(MathHelper.floor_double(entitylivingbase.posX),
-								MathHelper.floor_double(entitylivingbase.posZ)) > MathHelper
-										.floor_double(entitylivingbase.posY)) {
-					theThis.mc.theWorld.playSound(d0, d1, d2, sound, volume, 0.5F, false);
-				} else {
-					theThis.mc.theWorld.playSound(d0, d1, d2, sound, volume, 1.0F, false);
-				}
-			}
+			final boolean hasDust = dustCheck(worldclient.getBiomeGenForCoords((int) spawnX, (int) spawnZ));
+			final String sound = hasDust ? RainIntensity.getIntensity().getDustSound()
+					: RainIntensity.getIntensity().getRainSound();
+			final float volume = RainIntensity.getCurrentRainVolume();
+			float pitch = 1.0F;
+			if (spawnY > entity.posY + 1.0D && worldclient.getPrecipitationHeight(playerX, playerZ) > playerY)
+				pitch = 0.5F;
+			theThis.mc.theWorld.playSound(spawnX, spawnY, spawnZ, sound, volume, pitch, false);
 		}
 	}
 
@@ -150,7 +166,7 @@ public final class RenderWeather {
 	public static void renderRainSnow(final EntityRenderer theThis, final float particleTicks) {
 		// Aurora hook
 		AuroraRenderer.render(particleTicks);
-		
+
 		// Set our rain/snow/dust textures
 		RainIntensity.setTextures();
 
@@ -160,192 +176,166 @@ public final class RenderWeather {
 			return;
 		}
 
-		float f1 = theThis.mc.theWorld.getRainStrength(particleTicks);
+		final float rainStrength = theThis.mc.theWorld.getRainStrength(particleTicks);
+		if (rainStrength <= 0.0F)
+			return;
 
-		if (f1 > 0.0F) {
-			theThis.enableLightmap((double) particleTicks);
+		theThis.enableLightmap((double) particleTicks);
 
-			if (theThis.rainXCoords == null) {
-				theThis.rainXCoords = new float[1024];
-				theThis.rainYCoords = new float[1024];
+		final EntityLivingBase entity = theThis.mc.renderViewEntity;
+		final WorldClient worldclient = theThis.mc.theWorld;
+		final int playerX = MathHelper.floor_double(entity.posX);
+		final int playerY = MathHelper.floor_double(entity.posY);
+		final int playerZ = MathHelper.floor_double(entity.posZ);
 
-				for (int i = 0; i < 32; ++i) {
-					for (int j = 0; j < 32; ++j) {
-						float f2 = (float) (j - 16);
-						float f3 = (float) (i - 16);
-						float f4 = MathHelper.sqrt_float(f2 * f2 + f3 * f3);
-						theThis.rainXCoords[i << 5 | j] = -f3 / f4;
-						theThis.rainYCoords[i << 5 | j] = f2 / f4;
+		GL11.glDisable(GL11.GL_CULL_FACE);
+		GL11.glNormal3f(0.0F, 1.0F, 0.0F);
+		GL11.glEnable(GL11.GL_BLEND);
+		OpenGlHelper.glBlendFunc(770, 771, 1, 0);
+		GL11.glAlphaFunc(GL11.GL_GREATER, 0.1F);
+
+		final double spawnX = entity.lastTickPosX + (entity.posX - entity.lastTickPosX) * (double) particleTicks;
+		final double spawnY = entity.lastTickPosY + (entity.posY - entity.lastTickPosY) * (double) particleTicks;
+		final double spawnZ = entity.lastTickPosZ + (entity.posZ - entity.lastTickPosZ) * (double) particleTicks;
+		final int locY = MathHelper.floor_double(spawnY);
+
+		final int b0 = theThis.mc.gameSettings.fancyGraphics ? 10 : 5;
+
+		byte b1 = -1;
+		float f5 = (float) theThis.rendererUpdateCount + particleTicks;
+
+		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+
+		final Tessellator tessellator = Tessellator.instance;
+		for (int locZ = playerZ - b0; locZ <= playerZ + b0; ++locZ) {
+			for (int locX = playerX - b0; locX <= playerX + b0; ++locX) {
+				final int idx = (locZ - playerZ + 16) * 32 + locX - playerX + 16;
+				final float f6 = RAIN_X_COORDS[idx] * 0.5F;
+				final float f7 = RAIN_Y_COORDS[idx] * 0.5F;
+				final BiomeGenBase biome = worldclient.getBiomeGenForCoords(locX, locZ);
+				final boolean hasDust = dustCheck(biome);
+
+				if (hasDust || EffectType.hasPrecipitation(biome)) {
+					int k1 = worldclient.getPrecipitationHeight(locX, locZ);
+					int l1 = playerY - b0;
+					int i2 = playerY + b0;
+
+					if (l1 < k1) {
+						l1 = k1;
 					}
-				}
-			}
 
-			EntityLivingBase entitylivingbase = theThis.mc.renderViewEntity;
-			WorldClient worldclient = theThis.mc.theWorld;
-			int k2 = MathHelper.floor_double(entitylivingbase.posX);
-			int l2 = MathHelper.floor_double(entitylivingbase.posY);
-			int i3 = MathHelper.floor_double(entitylivingbase.posZ);
-			Tessellator tessellator = Tessellator.instance;
-			GL11.glDisable(GL11.GL_CULL_FACE);
-			GL11.glNormal3f(0.0F, 1.0F, 0.0F);
-			GL11.glEnable(GL11.GL_BLEND);
-			OpenGlHelper.glBlendFunc(770, 771, 1, 0);
-			GL11.glAlphaFunc(GL11.GL_GREATER, 0.1F);
-			double d0 = entitylivingbase.lastTickPosX
-					+ (entitylivingbase.posX - entitylivingbase.lastTickPosX) * (double) particleTicks;
-			double d1 = entitylivingbase.lastTickPosY
-					+ (entitylivingbase.posY - entitylivingbase.lastTickPosY) * (double) particleTicks;
-			double d2 = entitylivingbase.lastTickPosZ
-					+ (entitylivingbase.posZ - entitylivingbase.lastTickPosZ) * (double) particleTicks;
-			int k = MathHelper.floor_double(d1);
-			byte b0 = 5;
+					if (i2 < k1) {
+						i2 = k1;
+					}
 
-			if (theThis.mc.gameSettings.fancyGraphics) {
-				b0 = 10;
-			}
+					float f8 = 1.0F;
+					int j2 = k1;
 
-			byte b1 = -1;
-			float f5 = (float) theThis.rendererUpdateCount + particleTicks;
+					if (k1 < locY) {
+						j2 = locY;
+					}
 
-			if (theThis.mc.gameSettings.fancyGraphics) {
-				b0 = 10;
-			}
+					if (l1 != i2) {
+						random.setSeed(
+								(long) (locX * locX * 3121 + locX * 45238971 ^ locZ * locZ * 418711 + locZ * 13761));
 
-			GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+						final float heightTemp = worldclient.getWorldChunkManager()
+								.getTemperatureAtHeight(biome.getFloatTemperature(locX, l1, locZ), k1);
+						float f10;
 
-			for (int l = i3 - b0; l <= i3 + b0; ++l) {
-				for (int i1 = k2 - b0; i1 <= k2 + b0; ++i1) {
-					int j1 = (l - i3 + 16) * 32 + i1 - k2 + 16;
-					float f6 = theThis.rainXCoords[j1] * 0.5F;
-					float f7 = theThis.rainYCoords[j1] * 0.5F;
-					final BiomeGenBase biome = worldclient.getBiomeGenForCoords(i1, l);
-					final boolean hasDust = dustCheck(biome);
-
-					if (hasDust || EffectType.hasPrecipitation(biome)) {
-						int k1 = worldclient.getPrecipitationHeight(i1, l);
-						int l1 = l2 - b0;
-						int i2 = l2 + b0;
-
-						if (l1 < k1) {
-							l1 = k1;
-						}
-
-						if (i2 < k1) {
-							i2 = k1;
-						}
-
-						float f8 = 1.0F;
-						int j2 = k1;
-
-						if (k1 < k) {
-							j2 = k;
-						}
-
-						if (l1 != i2) {
-							theThis.random
-									.setSeed((long) (i1 * i1 * 3121 + i1 * 45238971 ^ l * l * 418711 + l * 13761));
-
-							final float heightTemp = worldclient.getWorldChunkManager()
-									.getTemperatureAtHeight(biome.getFloatTemperature(i1, l1, l), k1);
-							float f10;
-							double d4;
-
-							if (!hasDust && heightTemp >= 0.15F) {
-								if (b1 != 0) {
-									if (b1 >= 0) {
-										tessellator.draw();
-									}
-
-									b1 = 0;
-									theThis.mc.getTextureManager().bindTexture(locationRainPng);
-									tessellator.startDrawingQuads();
+						if (!hasDust && heightTemp >= 0.15F) {
+							if (b1 != 0) {
+								if (b1 >= 0) {
+									tessellator.draw();
 								}
 
-								f10 = ((float) (theThis.rendererUpdateCount + i1 * i1 * 3121 + i1 * 45238971
-										+ l * l * 418711 + l * 13761 & 31) + particleTicks) / 32.0F
-										* (3.0F + theThis.random.nextFloat());
-								double d3 = (double) ((float) i1 + 0.5F) - entitylivingbase.posX;
-								d4 = (double) ((float) l + 0.5F) - entitylivingbase.posZ;
-								float f12 = MathHelper.sqrt_double(d3 * d3 + d4 * d4) / (float) b0;
-								float f13 = 1.0F;
-								tessellator.setBrightness(worldclient.getLightBrightnessForSkyBlocks(i1, j2, l, 0));
-								tessellator.setColorRGBA_F(f13, f13, f13, ((1.0F - f12 * f12) * 0.5F + 0.5F) * f1);
-								tessellator.setTranslation(-d0 * 1.0D, -d1 * 1.0D, -d2 * 1.0D);
-								tessellator.addVertexWithUV((double) ((float) i1 - f6) + 0.5D, (double) l1,
-										(double) ((float) l - f7) + 0.5D, (double) (0.0F * f8),
-										(double) ((float) l1 * f8 / 4.0F + f10 * f8));
-								tessellator.addVertexWithUV((double) ((float) i1 + f6) + 0.5D, (double) l1,
-										(double) ((float) l + f7) + 0.5D, (double) (1.0F * f8),
-										(double) ((float) l1 * f8 / 4.0F + f10 * f8));
-								tessellator.addVertexWithUV((double) ((float) i1 + f6) + 0.5D, (double) i2,
-										(double) ((float) l + f7) + 0.5D, (double) (1.0F * f8),
-										(double) ((float) i2 * f8 / 4.0F + f10 * f8));
-								tessellator.addVertexWithUV((double) ((float) i1 - f6) + 0.5D, (double) i2,
-										(double) ((float) l - f7) + 0.5D, (double) (0.0F * f8),
-										(double) ((float) i2 * f8 / 4.0F + f10 * f8));
-								tessellator.setTranslation(0.0D, 0.0D, 0.0D);
-							} else {
-								if (b1 != 1) {
-									if (b1 >= 0) {
-										tessellator.draw();
-									}
-
-									// If cold enough the dust texture will be
-									// snow that blows sideways
-									ResourceLocation texture = locationSnowPng;
-									if (hasDust && heightTemp >= 0.15F)
-										texture = locationDustPng;
-									b1 = 1;
-									theThis.mc.getTextureManager().bindTexture(texture);
-									tessellator.startDrawingQuads();
-								}
-
-								f10 = ((float) (theThis.rendererUpdateCount & 511) + particleTicks) / 512.0F;
-								// The 0.2F factor was originally 0.01F. It
-								// affects the horizontal
-								// movement of particles, which works well for
-								// dust.
-								final float factor = hasDust ? 0.2F : 0.01F;
-								float f16 = theThis.random.nextFloat()
-										+ f5 * factor * (float) theThis.random.nextGaussian();
-								float f11 = theThis.random.nextFloat()
-										+ f5 * (float) theThis.random.nextGaussian() * 0.001F;
-								
-								d4 = (double) ((float) i1 + 0.5F) - entitylivingbase.posX;
-								double d5 = (double) ((float) l + 0.5F) - entitylivingbase.posZ;
-								float f14 = MathHelper.sqrt_double(d4 * d4 + d5 * d5) / (float) b0;
-								float f15 = 1.0F;
-								tessellator.setBrightness(
-										(worldclient.getLightBrightnessForSkyBlocks(i1, j2, l, 0) * 3 + 15728880) / 4);
-								tessellator.setColorRGBA_F(f15, f15, f15, ((1.0F - f14 * f14) * 0.3F + 0.5F) * f1);
-								tessellator.setTranslation(-d0 * 1.0D, -d1 * 1.0D, -d2 * 1.0D);
-								tessellator.addVertexWithUV((double) ((float) i1 - f6) + 0.5D, (double) l1,
-										(double) ((float) l - f7) + 0.5D, (double) (0.0F * f8 + f16),
-										(double) ((float) l1 * f8 / 4.0F + f10 * f8 + f11));
-								tessellator.addVertexWithUV((double) ((float) i1 + f6) + 0.5D, (double) l1,
-										(double) ((float) l + f7) + 0.5D, (double) (1.0F * f8 + f16),
-										(double) ((float) l1 * f8 / 4.0F + f10 * f8 + f11));
-								tessellator.addVertexWithUV((double) ((float) i1 + f6) + 0.5D, (double) i2,
-										(double) ((float) l + f7) + 0.5D, (double) (1.0F * f8 + f16),
-										(double) ((float) i2 * f8 / 4.0F + f10 * f8 + f11));
-								tessellator.addVertexWithUV((double) ((float) i1 - f6) + 0.5D, (double) i2,
-										(double) ((float) l - f7) + 0.5D, (double) (0.0F * f8 + f16),
-										(double) ((float) i2 * f8 / 4.0F + f10 * f8 + f11));
-								tessellator.setTranslation(0.0D, 0.0D, 0.0D);
+								b1 = 0;
+								theThis.mc.getTextureManager().bindTexture(locationRainPng);
+								tessellator.startDrawingQuads();
 							}
+
+							f10 = ((float) (theThis.rendererUpdateCount + locX * locX * 3121 + locX * 45238971
+									+ locZ * locZ * 418711 + locZ * 13761 & 31) + particleTicks) / 32.0F
+									* (3.0F + random.nextFloat());
+							final double deltaX = (double) ((float) locX + 0.5F) - entity.posX;
+							final double deltaZ = (double) ((float) locZ + 0.5F) - entity.posZ;
+							final float dist = MathHelper.sqrt_double(deltaX * deltaX + deltaZ * deltaZ) / (float) b0;
+							tessellator.setBrightness(worldclient.getLightBrightnessForSkyBlocks(locX, j2, locZ, 0));
+							tessellator.setColorRGBA_F(1.0F, 1.0F, 1.0F,
+									((1.0F - dist * dist) * 0.5F + 0.5F) * rainStrength);
+							tessellator.setTranslation(-spawnX * 1.0D, -spawnY * 1.0D, -spawnZ * 1.0D);
+							tessellator.addVertexWithUV((double) ((float) locX - f6) + 0.5D, (double) l1,
+									(double) ((float) locZ - f7) + 0.5D, (double) (0.0F * f8),
+									(double) ((float) l1 * f8 / 4.0F + f10 * f8));
+							tessellator.addVertexWithUV((double) ((float) locX + f6) + 0.5D, (double) l1,
+									(double) ((float) locZ + f7) + 0.5D, (double) (1.0F * f8),
+									(double) ((float) l1 * f8 / 4.0F + f10 * f8));
+							tessellator.addVertexWithUV((double) ((float) locX + f6) + 0.5D, (double) i2,
+									(double) ((float) locZ + f7) + 0.5D, (double) (1.0F * f8),
+									(double) ((float) i2 * f8 / 4.0F + f10 * f8));
+							tessellator.addVertexWithUV((double) ((float) locX - f6) + 0.5D, (double) i2,
+									(double) ((float) locZ - f7) + 0.5D, (double) (0.0F * f8),
+									(double) ((float) i2 * f8 / 4.0F + f10 * f8));
+							tessellator.setTranslation(0.0D, 0.0D, 0.0D);
+						} else {
+							if (b1 != 1) {
+								if (b1 >= 0) {
+									tessellator.draw();
+								}
+
+								// If cold enough the dust texture will be
+								// snow that blows sideways
+								ResourceLocation texture = locationSnowPng;
+								if (hasDust && heightTemp >= 0.15F)
+									texture = locationDustPng;
+								b1 = 1;
+								theThis.mc.getTextureManager().bindTexture(texture);
+								tessellator.startDrawingQuads();
+							}
+
+							f10 = ((float) (theThis.rendererUpdateCount & 511) + particleTicks) / 512.0F;
+							// The 0.2F factor was originally 0.01F. It
+							// affects the horizontal
+							// movement of particles, which works well for
+							// dust.
+							final float factor = hasDust ? 0.2F : 0.01F;
+							float f16 = random.nextFloat() + f5 * factor * (float) random.nextGaussian();
+							float f11 = random.nextFloat() + f5 * (float) random.nextGaussian() * 0.001F;
+
+							final double deltaX = (double) ((float) locX + 0.5F) - entity.posX;
+							final double deltaZ = (double) ((float) locZ + 0.5F) - entity.posZ;
+							final float dist = MathHelper.sqrt_double(deltaX * deltaX + deltaZ * deltaZ) / (float) b0;
+							tessellator.setBrightness(
+									(worldclient.getLightBrightnessForSkyBlocks(locX, j2, locZ, 0) * 3 + 15728880) / 4);
+							tessellator.setColorRGBA_F(1.0F, 1.0F, 1.0F,
+									((1.0F - dist * dist) * 0.3F + 0.5F) * rainStrength);
+							tessellator.setTranslation(-spawnX * 1.0D, -spawnY * 1.0D, -spawnZ * 1.0D);
+							tessellator.addVertexWithUV((double) ((float) locX - f6) + 0.5D, (double) l1,
+									(double) ((float) locZ - f7) + 0.5D, (double) (0.0F * f8 + f16),
+									(double) ((float) l1 * f8 / 4.0F + f10 * f8 + f11));
+							tessellator.addVertexWithUV((double) ((float) locX + f6) + 0.5D, (double) l1,
+									(double) ((float) locZ + f7) + 0.5D, (double) (1.0F * f8 + f16),
+									(double) ((float) l1 * f8 / 4.0F + f10 * f8 + f11));
+							tessellator.addVertexWithUV((double) ((float) locX + f6) + 0.5D, (double) i2,
+									(double) ((float) locZ + f7) + 0.5D, (double) (1.0F * f8 + f16),
+									(double) ((float) i2 * f8 / 4.0F + f10 * f8 + f11));
+							tessellator.addVertexWithUV((double) ((float) locX - f6) + 0.5D, (double) i2,
+									(double) ((float) locZ - f7) + 0.5D, (double) (0.0F * f8 + f16),
+									(double) ((float) i2 * f8 / 4.0F + f10 * f8 + f11));
+							tessellator.setTranslation(0.0D, 0.0D, 0.0D);
 						}
 					}
 				}
 			}
-
-			if (b1 >= 0) {
-				tessellator.draw();
-			}
-
-			GL11.glEnable(GL11.GL_CULL_FACE);
-			GL11.glDisable(GL11.GL_BLEND);
-			GL11.glAlphaFunc(GL11.GL_GREATER, 0.1F);
-			theThis.disableLightmap((double) particleTicks);
 		}
+
+		if (b1 >= 0) {
+			tessellator.draw();
+		}
+
+		GL11.glEnable(GL11.GL_CULL_FACE);
+		GL11.glDisable(GL11.GL_BLEND);
+		GL11.glAlphaFunc(GL11.GL_GREATER, 0.1F);
+		theThis.disableLightmap((double) particleTicks);
 	}
 }
