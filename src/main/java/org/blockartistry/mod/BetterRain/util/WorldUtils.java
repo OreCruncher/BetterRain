@@ -54,4 +54,8 @@ public final class WorldUtils {
 	public static boolean hasSky(final World world) {
 		return !world.provider.hasNoSky;
 	}
+	
+	public static int getSeaLevel(final World world) {
+		return world.provider.getAverageGroundLevel();
+	}
 }

@@ -64,7 +64,9 @@ public final class ClientEffectHandler {
 	private static final float DESERT_RED = 204.0F / 255.0F;
 	private static final float DESERT_GREEN = 185.0F / 255.0F;
 	private static final float DESERT_BLUE = 102.0F / 255.0F;
-	
+
+	private static final int DESERT_FOG_Y_CUTOFF = 3;
+
 	private static final boolean ALWAYS_OVERRIDE_SOUND = ModOptions.getAlwaysOverrideSound();
 	private static final boolean ALLOW_DESERT_FOG = ModOptions.getAllowDesertFog();
 
@@ -181,7 +183,16 @@ public final class ClientEffectHandler {
 	}
 
 	public static boolean isFogApplicable(final EntityLivingBase entity) {
-		if (!ALLOW_DESERT_FOG || RainIntensity.getIntensity() == RainIntensity.VANILLA)
+		if (!ALLOW_DESERT_FOG || !WorldUtils.hasSky(entity.worldObj))
+			return false;
+
+		final RainIntensity intensity = RainIntensity.getIntensity();
+		if (intensity == RainIntensity.VANILLA || intensity == RainIntensity.NONE)
+			return false;
+
+		final int cutOff = WorldUtils.getSeaLevel(entity.worldObj) - DESERT_FOG_Y_CUTOFF;
+		final int posY = MathHelper.floor_double(entity.posY + entity.getEyeHeight());
+		if (posY < cutOff)
 			return false;
 
 		final int posX = MathHelper.floor_double(entity.posX);
@@ -191,7 +202,7 @@ public final class ClientEffectHandler {
 			return false;
 
 		final BiomeGenBase biome = entity.worldObj.getBiomeGenForCoords(posX, posZ);
-		return EffectType.hasDust(biome) && RainIntensity.getIntensity() != RainIntensity.NONE;
+		return EffectType.hasDust(biome);
 	}
 
 	@SubscribeEvent
@@ -210,7 +221,10 @@ public final class ClientEffectHandler {
 		if (isFogApplicable(event.entity)) {
 			final float distanceFactor = 0.5F - 0.40F * RainIntensity.getIntensityLevel();
 			final float distance = event.farPlaneDistance * distanceFactor;
-			GL11.glFogf(GL11.GL_FOG_START, event.fogMode < 0 ? 0.0F : distance * 0.75F);
+			float minDistance = 0.0F;
+			if (event.fogMode >= 0)
+				minDistance = distance * 0.75F;
+			GL11.glFogf(GL11.GL_FOG_START, minDistance);
 			GL11.glFogf(GL11.GL_FOG_END, distance);
 		}
 	}
