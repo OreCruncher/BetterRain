@@ -70,6 +70,7 @@ public final class ClientEffectHandler {
 	private static float dustFade = 0.0F;
 	private static final float DUST_FADE_SPEED = 0.02F;
 	private static final boolean ALLOW_DESERT_FOG = ModOptions.getAllowDesertFog();
+	private static final float DESERT_DUST_FACTOR = ModOptions.getDesertFogFactor();
 
 	// Aurora information
 	private static final boolean AURORA_ENABLE = ModOptions.getAuroraEnable();
@@ -256,7 +257,7 @@ public final class ClientEffectHandler {
 		if (dustFade <= 0.0F)
 			return;
 
-		final float fogDensity = RainIntensity.getFogDensity() * dustFade;
+		final float fogDensity = RainIntensity.getFogDensity() * dustFade * DESERT_DUST_FACTOR;
 		GL11.glFogi(GL11.GL_FOG_MODE, GL11.GL_EXP2);
 		GL11.glFogf(GL11.GL_FOG_DENSITY, fogDensity);
 	}
