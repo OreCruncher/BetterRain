@@ -28,20 +28,23 @@ import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.client.renderer.Tessellator;
 
 import org.blockartistry.mod.BetterRain.ModOptions;
 import org.blockartistry.mod.BetterRain.client.ClientEffectHandler;
+import org.blockartistry.mod.BetterRain.client.IAtmosRenderer;
 import org.blockartistry.mod.BetterRain.util.Color;
 import org.lwjgl.opengl.GL11;
 
 @SideOnly(Side.CLIENT)
-public final class AuroraRenderer {
+public final class AuroraRenderer implements IAtmosRenderer {
 
 	private static final boolean ANIMATE = ModOptions.getAuroraAnimate();
 	private static final boolean HEIGHT_PLAYER_RELATIVE = ModOptions.getAuroraHeightPlayerRelative();
 
-	public static void render(final float partialTick) {
+	@Override
+	public void render(final EntityRenderer renderer, final float partialTick) {
 		if (ClientEffectHandler.currentAurora != null) {
 			renderAurora(partialTick, ClientEffectHandler.currentAurora);
 		}

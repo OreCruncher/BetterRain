@@ -26,7 +26,6 @@ package org.blockartistry.mod.BetterRain.client.rain;
 
 import org.blockartistry.mod.BetterRain.BetterRain;
 import org.blockartistry.mod.BetterRain.ModOptions;
-import org.blockartistry.mod.BetterRain.client.RenderWeather;
 import org.blockartistry.mod.BetterRain.data.DimensionEffectData;
 import org.blockartistry.mod.BetterRain.util.MathStuff;
 
@@ -158,8 +157,8 @@ public enum RainIntensity {
 	 */
 	public static void setTextures() {
 		// AT transform removed final and made public.
-		RenderWeather.locationRainPng = intensity.rainTexture;
-		RenderWeather.locationSnowPng = intensity.snowTexture;
-		RenderWeather.locationDustPng = intensity.dustTexture;
+		RainSnowRenderer.locationRainPng = intensity.rainTexture;
+		RainSnowRenderer.locationSnowPng = intensity.snowTexture;
+		RainSnowRenderer.locationDustPng = intensity.dustTexture;
 	}
 }
