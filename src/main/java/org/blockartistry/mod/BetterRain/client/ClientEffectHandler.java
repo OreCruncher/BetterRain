@@ -41,6 +41,7 @@ import org.blockartistry.mod.BetterRain.client.aurora.Aurora;
 import org.blockartistry.mod.BetterRain.client.rain.RainIntensity;
 import org.blockartistry.mod.BetterRain.data.AuroraData;
 import org.blockartistry.mod.BetterRain.data.EffectType;
+import org.blockartistry.mod.BetterRain.util.MathStuff;
 import org.blockartistry.mod.BetterRain.util.PlayerUtils;
 import org.blockartistry.mod.BetterRain.util.WorldUtils;
 import org.lwjgl.opengl.GL11;
@@ -60,14 +61,15 @@ import net.minecraftforge.common.MinecraftForge;
 @SideOnly(Side.CLIENT)
 public final class ClientEffectHandler {
 
+	private static final boolean ALWAYS_OVERRIDE_SOUND = ModOptions.getAlwaysOverrideSound();
+
 	// Desert dust color for fog blending
 	private static final float DESERT_RED = 204.0F / 255.0F;
 	private static final float DESERT_GREEN = 185.0F / 255.0F;
 	private static final float DESERT_BLUE = 102.0F / 255.0F;
-
 	private static final int DESERT_FOG_Y_CUTOFF = 3;
-
-	private static final boolean ALWAYS_OVERRIDE_SOUND = ModOptions.getAlwaysOverrideSound();
+	private static float dustFade = 0.0F;
+	private static final float DUST_FADE_SPEED = 0.02F;
 	private static final boolean ALLOW_DESERT_FOG = ModOptions.getAllowDesertFog();
 
 	// Aurora information
@@ -161,12 +163,25 @@ public final class ClientEffectHandler {
 	}
 
 	@SubscribeEvent(priority = EventPriority.LOWEST)
-	public void processAurora(final TickEvent.ClientTickEvent event) {
-		if (!AURORA_ENABLE || event.phase != Phase.END)
+	public void clientTick(final TickEvent.ClientTickEvent event) {
+		final World world = FMLClientHandler.instance().getClient().theWorld;
+		if (world == null)
 			return;
 
-		final World world = FMLClientHandler.instance().getClient().theWorld;
-		if (world != null && auroras.size() > 0) {
+		if (event.phase == Phase.START) {
+			if (isFogApplicable(Minecraft.getMinecraft().thePlayer)) {
+				if (dustFade < 1.0F)
+					dustFade += DUST_FADE_SPEED;
+			} else {
+				if (dustFade > 0.0F)
+					dustFade -= DUST_FADE_SPEED;
+			}
+			return;
+		} else if (!AURORA_ENABLE) {
+			return;
+		}
+
+		if (auroras.size() > 0) {
 			final long time = WorldUtils.getWorldTime(world);
 			if (WorldUtils.isDaytime(time)) {
 				auroras.clear();
@@ -207,7 +222,7 @@ public final class ClientEffectHandler {
 
 	@SubscribeEvent
 	public void fogColorEvent(final EntityViewRenderEvent.FogColors event) {
-		if (!isFogApplicable(event.entity))
+		if (dustFade <= 0.0F)
 			return;
 
 		// Blend in the dust color - like mixing paint
@@ -218,14 +233,12 @@ public final class ClientEffectHandler {
 
 	@SubscribeEvent
 	public void fogDensityEvent(final EntityViewRenderEvent.RenderFogEvent event) {
-		if (isFogApplicable(event.entity)) {
-			final float distanceFactor = 0.5F - 0.40F * RainIntensity.getIntensityLevel();
-			final float distance = event.farPlaneDistance * distanceFactor;
-			float minDistance = 0.0F;
-			if (event.fogMode >= 0)
-				minDistance = distance * 0.75F;
-			GL11.glFogf(GL11.GL_FOG_START, minDistance);
-			GL11.glFogf(GL11.GL_FOG_END, distance);
-		}
+		if (dustFade <= 0.0F)
+			return;
+
+		float intensity = RainIntensity.getIntensityLevel();
+		final float fogDensity = ((intensity * intensity) / 10.0F + 0.004F) * dustFade;
+		GL11.glFogi(GL11.GL_FOG_MODE, GL11.GL_EXP2);
+		GL11.glFogf(GL11.GL_FOG_DENSITY, fogDensity);
 	}
 }

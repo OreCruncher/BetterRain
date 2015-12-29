@@ -85,6 +85,10 @@ public class MathStuff {
 		return SIN_TABLE[(int) ((rad + COS_TO_SIN) * RAD_TO_INDEX) & SIN_MASK];
 	}
 
+	public static final float tan(final float rad) {
+		return sin(rad) / cos(rad);
+	}
+
 	public static final double sin(final double rad) {
 		final float tmp = (float) rad;
 		return SIN_TABLE[(int) (tmp * RAD_TO_INDEX) & SIN_MASK];
@@ -95,6 +99,10 @@ public class MathStuff {
 		return SIN_TABLE[(int) ((tmp + COS_TO_SIN) * RAD_TO_INDEX) & SIN_MASK];
 	}
 
+	public static final double tan(final double rad) {
+		return tan((float)rad);
+	}
+	
 	public static final float atan2(float y, float x) {
 		final float add, mul;
 
