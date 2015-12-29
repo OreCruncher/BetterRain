@@ -28,6 +28,7 @@ import org.blockartistry.mod.BetterRain.BetterRain;
 import org.blockartistry.mod.BetterRain.ModOptions;
 import org.blockartistry.mod.BetterRain.client.RenderWeather;
 import org.blockartistry.mod.BetterRain.data.DimensionEffectData;
+import org.blockartistry.mod.BetterRain.util.MathStuff;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -49,6 +50,7 @@ public enum RainIntensity {
 
 	private static float intensityLevel = 0.0F;
 	private static RainIntensity intensity = VANILLA;
+	private static float fogDensity = 0.0F;
 
 	private final float level;
 	private final ResourceLocation rainTexture;
@@ -84,6 +86,10 @@ public enum RainIntensity {
 
 	public static float getIntensityLevel() {
 		return intensityLevel;
+	}
+	
+	public static float getFogDensity() {
+		return fogDensity;
 	}
 
 	public String getRainSound() {
@@ -123,6 +129,7 @@ public enum RainIntensity {
 		if (level == VANILLA.level) {
 			intensity = VANILLA;
 			intensityLevel = 0.0F;
+			fogDensity = 0.0F;
 			setTextures();
 			return;
 		}
@@ -131,6 +138,7 @@ public enum RainIntensity {
 
 		if (intensityLevel != level) {
 			intensityLevel = level;
+			fogDensity = MathStuff.tan(intensityLevel) / 12.0F + 0.004F;
 			if (intensityLevel <= NONE.level)
 				intensity = NONE;
 			else if (intensityLevel < CALM.level)

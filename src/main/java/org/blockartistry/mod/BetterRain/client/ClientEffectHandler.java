@@ -41,7 +41,6 @@ import org.blockartistry.mod.BetterRain.client.aurora.Aurora;
 import org.blockartistry.mod.BetterRain.client.rain.RainIntensity;
 import org.blockartistry.mod.BetterRain.data.AuroraData;
 import org.blockartistry.mod.BetterRain.data.EffectType;
-import org.blockartistry.mod.BetterRain.util.MathStuff;
 import org.blockartistry.mod.BetterRain.util.PlayerUtils;
 import org.blockartistry.mod.BetterRain.util.WorldUtils;
 import org.lwjgl.opengl.GL11;
@@ -162,6 +161,10 @@ public final class ClientEffectHandler {
 		return time >= 22220L && time < 23500L;
 	}
 
+	/*
+	 * Need to get called every tick to process the dust
+	 * fade timer as well as aurora processing.
+	 */
 	@SubscribeEvent(priority = EventPriority.LOWEST)
 	public void clientTick(final TickEvent.ClientTickEvent event) {
 		final World world = FMLClientHandler.instance().getClient().theWorld;
@@ -197,6 +200,10 @@ public final class ClientEffectHandler {
 		}
 	}
 
+	/*
+	 * Determines if dust fog is applicable for where the
+	 * entity is standing.
+	 */
 	public static boolean isFogApplicable(final EntityLivingBase entity) {
 		if (!ALLOW_DESERT_FOG || !WorldUtils.hasSky(entity.worldObj))
 			return false;
@@ -220,6 +227,10 @@ public final class ClientEffectHandler {
 		return EffectType.hasDust(biome);
 	}
 
+	/*
+	 * Hook the fog color event so that the fog can be tinted a
+	 * sand color if needed.
+	 */
 	@SubscribeEvent
 	public void fogColorEvent(final EntityViewRenderEvent.FogColors event) {
 		if (dustFade <= 0.0F)
@@ -231,13 +242,21 @@ public final class ClientEffectHandler {
 		event.blue = (event.blue + DESERT_BLUE) / 2.0F;
 	}
 
+	/*
+	 * Hook the fog density event so that the fog settings can be
+	 * reset based on rain intensity.  This routine will overwrite
+	 * what the vanilla code has done in terms of fog.
+	 * 
+	 * Note that this routine uses GL_EXP2 as a fog method rather
+	 * than vanilla's GL_LINEAR.  This is so that an intensity
+	 * for fog can be set.
+	 */
 	@SubscribeEvent
 	public void fogDensityEvent(final EntityViewRenderEvent.RenderFogEvent event) {
 		if (dustFade <= 0.0F)
 			return;
 
-		float intensity = RainIntensity.getIntensityLevel();
-		final float fogDensity = ((intensity * intensity) / 10.0F + 0.004F) * dustFade;
+		final float fogDensity = RainIntensity.getFogDensity() * dustFade;
 		GL11.glFogi(GL11.GL_FOG_MODE, GL11.GL_EXP2);
 		GL11.glFogf(GL11.GL_FOG_DENSITY, fogDensity);
 	}
