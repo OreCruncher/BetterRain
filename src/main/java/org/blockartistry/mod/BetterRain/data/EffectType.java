@@ -39,6 +39,7 @@ import net.minecraft.world.biome.BiomeGenBase;
 
 public final class EffectType {
 
+	private static final int GROUND_FOG = -2;
 	private static final int AURORA = -1;
 
 	private static final int NONE = 0;
@@ -49,15 +50,16 @@ public final class EffectType {
 	private static final Map<BiomeGenBase, Integer> registry = new IdentityHashMap<BiomeGenBase, Integer>();
 	private static final Map<String, BiomeGenBase> nameMap = new HashMap<String, BiomeGenBase>();
 	private static final Set<BiomeGenBase> auroraBiomes = new HashSet<BiomeGenBase>();
+	private static final Set<BiomeGenBase> groundFogBiomes = new HashSet<BiomeGenBase>();
 
 	public static BiomeGenBase findBiome(final String name) {
 		return nameMap.get(name);
 	}
 
 	private static final String[] DESERT_TOKENS = new String[] { "desert", "sand", "mesa", "wasteland", "sahara" };
-
 	private static final String[] POLAR_TOKENS = new String[] { "taiga", "frozen", "ice", "tundra", "polar", "snow",
 			"glacier" };
+	private static final String[] GROUND_FOG_TOKENS = new String[] { "fen", "bog", "swamp", "marsh" };
 
 	private static boolean contains(String name, final String[] list) {
 		name = name.toLowerCase();
@@ -74,6 +76,10 @@ public final class EffectType {
 	private static boolean looksLikeAurora(final BiomeGenBase biome) {
 		return contains(biome.biomeName, POLAR_TOKENS);
 	}
+	
+	private static boolean looksLikeGroundFog(final BiomeGenBase biome) {
+		return contains(biome.biomeName, GROUND_FOG_TOKENS);
+	}
 
 	private static void processBiomeList(final String biomeNames, final int type) {
 		final String[] names = StringUtils.split(biomeNames, ',');
@@ -82,6 +88,8 @@ public final class EffectType {
 		for (final String name : names) {
 			if (type == AURORA)
 				registerAuroraBiome(name);
+			else if(type == GROUND_FOG)
+				registerGroundFogBiome(name);
 			else
 				registerBiome(name, type);
 		}
@@ -102,6 +110,9 @@ public final class EffectType {
 
 				if (looksLikeAurora(biome))
 					auroraBiomes.add(biome);
+				
+				if(looksLikeGroundFog(biome))
+					groundFogBiomes.add(biome);
 			}
 		}
 
@@ -109,11 +120,17 @@ public final class EffectType {
 		processBiomeList(ModOptions.getDustBiomes(), DUST);
 		processBiomeList(ModOptions.getNoneBiomes(), NONE);
 		processBiomeList(ModOptions.getAuroraTriggerBiomes(), AURORA);
+		//processBiomeList(null, GROUND_FOG);
 
 		for (final Entry<BiomeGenBase, Integer> entry : registry.entrySet()) {
 			final BiomeGenBase biome = entry.getKey();
-			ModLog.info("Biome %d [%s]: %s %s", biome.biomeID, biome.biomeName, names[entry.getValue()],
-					(hasAuroraEffect(biome) ? "AURORA" : ""));
+			final StringBuilder builder = new StringBuilder();
+			builder.append(String.format("Biome %d [%s]: %s", biome.biomeID, biome.biomeName, names[entry.getValue()]));
+			if(hasAuroraEffect(biome))
+				builder.append(" AURORA");
+			if(hasGroundFogEffect(biome))
+				builder.append(" FOG");
+			ModLog.info(builder.toString());
 		}
 	}
 
@@ -161,5 +178,19 @@ public final class EffectType {
 
 	public static boolean hasAuroraEffect(final BiomeGenBase biome) {
 		return auroraBiomes.contains(biome);
+	}
+	
+	public static void registerGroundFogBiome(final String name) {
+		final BiomeGenBase biome = nameMap.get(name);
+		if(biome != null)
+			registerGroundFogBiome(biome);
+	}
+	
+	public static void registerGroundFogBiome(final BiomeGenBase biome) {
+		groundFogBiomes.add(biome);
+	}
+	
+	public static boolean hasGroundFogEffect(final BiomeGenBase biome) {
+		return groundFogBiomes.contains(biome);
 	}
 }

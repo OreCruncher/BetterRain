@@ -57,20 +57,20 @@ public final class AuroraRenderer implements IAtmosRenderer {
 	public static void renderAurora(final float partialTick, final Aurora aurora) {
 		final Tessellator tess = Tessellator.instance;
 		final Minecraft minecraft = FMLClientHandler.instance().getClient();
-		final float var12;
+		final float tranY;
 		if (HEIGHT_PLAYER_RELATIVE) {
 			// Fix height above player
-			var12 = 128.33F - 64.0F;
+			tranY = 128.33F - 64.0F;
 		} else {
 			// Adjust to keep aurora at the same altitude
-			var12 = 156.33F - (float) (minecraft.thePlayer.lastTickPosY
+			tranY = 156.33F - (float) (minecraft.thePlayer.lastTickPosY
 					+ (minecraft.thePlayer.posY - minecraft.thePlayer.lastTickPosY) * partialTick);
 		}
 
-		final double var8 = aurora.posX - (minecraft.thePlayer.lastTickPosX
+		final double tranX = aurora.posX - (minecraft.thePlayer.lastTickPosX
 				+ (minecraft.thePlayer.posX - minecraft.thePlayer.lastTickPosX) * partialTick);
 
-		final double var10 = aurora.posZ - (minecraft.thePlayer.lastTickPosZ
+		final double tranZ = aurora.posZ - (minecraft.thePlayer.lastTickPosZ
 				+ (minecraft.thePlayer.posZ - minecraft.thePlayer.lastTickPosZ) * partialTick);
 
 		if (ANIMATE)
@@ -83,7 +83,7 @@ public final class AuroraRenderer implements IAtmosRenderer {
 		final double lowY2 = 0.0D;
 
 		GL11.glPushMatrix();
-		GL11.glTranslatef((float) var8, var12, (float) var10);
+		GL11.glTranslatef((float) tranX, tranY, (float) tranZ);
 		GL11.glScaled(0.5D, 8.0D, 0.5D);
 		GL11.glDisable(GL11.GL_TEXTURE_2D);
 		GL11.glShadeModel(GL11.GL_SMOOTH);

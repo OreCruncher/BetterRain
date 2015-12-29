@@ -58,4 +58,22 @@ public final class WorldUtils {
 	public static int getSeaLevel(final World world) {
 		return world.provider.getAverageGroundLevel();
 	}
+	
+	public static boolean isDusk(final World world) {
+		return isSunset(world);
+	}
+	
+	public static boolean isSunset(final World world) {
+		final long time = getWorldTime(world);
+		return time >= 12000 && time < 14000;
+	}
+	
+	public static boolean isDawn(final World world) {
+		return isSunrise(world);
+	}
+	
+	public static boolean isSunrise(final World world) {
+		final long time = getWorldTime(world);
+		return time >= 0 && time < 1000;
+	}
 }
