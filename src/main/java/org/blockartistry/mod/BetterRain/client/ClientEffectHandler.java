@@ -61,7 +61,7 @@ import net.minecraftforge.common.MinecraftForge;
 public final class ClientEffectHandler {
 
 	private static final boolean ALWAYS_OVERRIDE_SOUND = ModOptions.getAlwaysOverrideSound();
-	private static final boolean ENABLE_VERTICLE_FOG = ModOptions.getEnableVerticalFog();
+	private static final boolean ENABLE_ELEVATION_HAZE = ModOptions.getEnableElevationHaze();
 
 	// Desert dust color for fog blending
 	private static final float DESERT_RED = 204.0F / 255.0F;
@@ -253,7 +253,7 @@ public final class ClientEffectHandler {
 	 */
 	@SubscribeEvent(priority = EventPriority.NORMAL, receiveCanceled = true)
 	public void fogDensityEvent(final EntityViewRenderEvent.FogDensity event) {
-		if (!ENABLE_VERTICLE_FOG)
+		if (!ENABLE_ELEVATION_HAZE)
 			return;
 
 		final World world = event.entity.worldObj;
