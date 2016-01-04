@@ -68,10 +68,14 @@ public final class ClientEffectHandler {
 	private static final float DESERT_GREEN = 185.0F / 255.0F;
 	private static final float DESERT_BLUE = 102.0F / 255.0F;
 	private static final int DESERT_FOG_Y_CUTOFF = 3;
-	private static float dustFade = 0.0F;
-	private static final float DUST_FADE_SPEED = 0.02F;
+	private static int dustFade = 0;
+	private static final float DUST_FADE_SPEED = 2;
 	private static final boolean ALLOW_DESERT_FOG = ModOptions.getAllowDesertFog();
 	private static final float DESERT_DUST_FACTOR = ModOptions.getDesertFogFactor();
+
+	private static float currentDustFog = 0.0F;
+	private static float currentHeightFog = 0.0F;
+	private static float effectiveFog = 0.0F;
 
 	// Aurora information
 	private static final boolean AURORA_ENABLE = ModOptions.getAuroraEnable();
@@ -174,13 +178,33 @@ public final class ClientEffectHandler {
 			return;
 
 		if (event.phase == Phase.START) {
-			if (isFogApplicable(Minecraft.getMinecraft().thePlayer)) {
-				if (dustFade < 1.0F)
+			currentDustFog = 0.0F;
+			currentHeightFog = 0.0F;
+			effectiveFog = 0.0F;
+			if (!WorldUtils.hasSky(world)) {
+				dustFade = 0;
+				return;
+			}
+			
+			final Minecraft mc = Minecraft.getMinecraft();
+			if (isDustFogApplicable(mc.thePlayer)) {
+				if (dustFade < 100)
 					dustFade += DUST_FADE_SPEED;
 			} else {
-				if (dustFade > 0.0F)
+				if (dustFade > 0)
 					dustFade -= DUST_FADE_SPEED;
 			}
+			if (dustFade > 0) {
+				final float fadeIntensity = Math.min(dustFade / 100.0F, world.getRainStrength(1.0F));
+				currentDustFog = RainIntensity.getFogDensity() * fadeIntensity * DESERT_DUST_FACTOR;
+			}
+			final float factor = 1.0F + world.getRainStrength(1.0F) * RainIntensity.getIntensityLevel();
+			final float skyHeight = WorldUtils.getSkyHeight(world) / factor;
+			final float groundLevel = WorldUtils.getSeaLevel(world);
+			currentHeightFog = (float) Math
+					.abs(Math.pow(((FMLClientHandler.instance().getClient().thePlayer.posY - groundLevel)
+							/ (skyHeight - groundLevel)), 4));
+			effectiveFog = Math.max(currentDustFog, currentHeightFog);
 			return;
 		} else if (!AURORA_ENABLE) {
 			return;
@@ -205,12 +229,15 @@ public final class ClientEffectHandler {
 	/*
 	 * Determines if dust fog is applicable for where the entity is standing.
 	 */
-	public static boolean isFogApplicable(final EntityLivingBase entity) {
+	public static boolean isDustFogApplicable(final EntityLivingBase entity) {
 		if (!ALLOW_DESERT_FOG || !WorldUtils.hasSky(entity.worldObj))
 			return false;
 
 		final RainIntensity intensity = RainIntensity.getIntensity();
 		if (intensity == RainIntensity.VANILLA || intensity == RainIntensity.NONE)
+			return false;
+
+		if (!entity.worldObj.isRaining())
 			return false;
 
 		final int cutOff = WorldUtils.getSeaLevel(entity.worldObj) - DESERT_FOG_Y_CUTOFF;
@@ -234,13 +261,12 @@ public final class ClientEffectHandler {
 	 */
 	@SubscribeEvent
 	public void fogColorEvent(final EntityViewRenderEvent.FogColors event) {
-		if (dustFade <= 0.0F)
-			return;
-
-		// Blend in the dust color - like mixing paint
-		event.red = (event.red + DESERT_RED) / 2.0F;
-		event.green = (event.green + DESERT_GREEN) / 2.0F;
-		event.blue = (event.blue + DESERT_BLUE) / 2.0F;
+		if (currentDustFog > 0.0F) {
+			// Blend in the dust color - like mixing paint
+			event.red = (event.red + DESERT_RED) / 2.0F;
+			event.green = (event.green + DESERT_GREEN) / 2.0F;
+			event.blue = (event.blue + DESERT_BLUE) / 2.0F;
+		}
 	}
 
 	/*
@@ -253,20 +279,15 @@ public final class ClientEffectHandler {
 	 */
 	@SubscribeEvent(priority = EventPriority.NORMAL, receiveCanceled = true)
 	public void fogDensityEvent(final EntityViewRenderEvent.FogDensity event) {
-		if (!ENABLE_ELEVATION_HAZE)
+
+		if (currentDustFog > 0 || !ENABLE_ELEVATION_HAZE)
 			return;
 
 		final World world = event.entity.worldObj;
 		if (!WorldUtils.hasSky(world))
 			return;
 
-		int skyHeight = WorldUtils.getSkyHeight(world);
-		if (world.isRaining()) {
-			final float factor = 1.0F + world.getRainStrength(1.0F) * RainIntensity.getIntensityLevel();
-			skyHeight = (int) (skyHeight / factor);
-		}
-		final int groundLevel = WorldUtils.getSeaLevel(world);
-		event.density = (float) Math.abs(Math.pow(((event.entity.posY - groundLevel) / (skyHeight - groundLevel)), 4));
+		event.density = effectiveFog;
 		event.setCanceled(true);
 	}
 
@@ -280,11 +301,9 @@ public final class ClientEffectHandler {
 	 */
 	@SubscribeEvent
 	public void fogRenderEvent(final EntityViewRenderEvent.RenderFogEvent event) {
-		if (dustFade <= 0.0F)
-			return;
-
-		final float fogDensity = RainIntensity.getFogDensity() * dustFade * DESERT_DUST_FACTOR;
-		GL11.glFogi(GL11.GL_FOG_MODE, GL11.GL_EXP2);
-		GL11.glFogf(GL11.GL_FOG_DENSITY, fogDensity);
+		if(currentDustFog > 0.0F) {
+			GL11.glFogi(GL11.GL_FOG_MODE, GL11.GL_EXP2);
+			GL11.glFogf(GL11.GL_FOG_DENSITY, effectiveFog);
+		}
 	}
 }
