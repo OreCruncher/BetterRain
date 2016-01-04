@@ -54,6 +54,8 @@ public final class ModOptions {
 	protected static boolean allowDesertFog = true;
 	protected static final String CONFIG_DESERT_FOG_FACTOR = "Desert Fog Factor";
 	protected static float desertFogFactor = 1.0F;
+	protected static final String CONFIG_ENABLE_VERTICAL_FOG = "Vertical Fog";
+	protected static boolean verticalFog = true;
 
 	protected static final String CATEGORY_GENERAL = "general";
 	protected static final String CONFIG_DIMENSION_LIST = "Dimensions";
@@ -112,6 +114,9 @@ public final class ModOptions {
 
 		comment = "Visibility factor to apply to fog (higher is thicker)";
 		desertFogFactor = config.getFloat(CONFIG_DESERT_FOG_FACTOR, CATEGORY_RAIN, desertFogFactor, 0.0F, 5.0F, comment);
+
+		comment = "Add fog the higher a players elevation";
+		verticalFog = config.getBoolean(CONFIG_ENABLE_VERTICAL_FOG, CATEGORY_RAIN, verticalFog, comment);
 
 		// CATEGORY: General
 		comment = "Comma separated dimension ID list";
@@ -238,5 +243,9 @@ public final class ModOptions {
 
 	public static boolean getAuroraAnimate() {
 		return auroraAnimate;
+	}
+	
+	public static boolean getEnableVerticalFog(){
+		return verticalFog;
 	}
 }

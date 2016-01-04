@@ -76,4 +76,8 @@ public final class WorldUtils {
 		final long time = getWorldTime(world);
 		return time >= 0 && time < 1000;
 	}
+	
+	public static int getSkyHeight(final World world) {
+		return world.provider.getHeight();
+	}
 }

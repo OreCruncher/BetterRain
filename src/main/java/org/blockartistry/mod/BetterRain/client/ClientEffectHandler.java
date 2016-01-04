@@ -61,6 +61,7 @@ import net.minecraftforge.common.MinecraftForge;
 public final class ClientEffectHandler {
 
 	private static final boolean ALWAYS_OVERRIDE_SOUND = ModOptions.getAlwaysOverrideSound();
+	private static final boolean ENABLE_VERTICLE_FOG = ModOptions.getEnableVerticalFog();
 
 	// Desert dust color for fog blending
 	private static final float DESERT_RED = 204.0F / 255.0F;
@@ -163,8 +164,8 @@ public final class ClientEffectHandler {
 	}
 
 	/*
-	 * Need to get called every tick to process the dust
-	 * fade timer as well as aurora processing.
+	 * Need to get called every tick to process the dust fade timer as well as
+	 * aurora processing.
 	 */
 	@SubscribeEvent(priority = EventPriority.LOWEST)
 	public void clientTick(final TickEvent.ClientTickEvent event) {
@@ -202,8 +203,7 @@ public final class ClientEffectHandler {
 	}
 
 	/*
-	 * Determines if dust fog is applicable for where the
-	 * entity is standing.
+	 * Determines if dust fog is applicable for where the entity is standing.
 	 */
 	public static boolean isFogApplicable(final EntityLivingBase entity) {
 		if (!ALLOW_DESERT_FOG || !WorldUtils.hasSky(entity.worldObj))
@@ -229,8 +229,8 @@ public final class ClientEffectHandler {
 	}
 
 	/*
-	 * Hook the fog color event so that the fog can be tinted a
-	 * sand color if needed.
+	 * Hook the fog color event so that the fog can be tinted a sand color if
+	 * needed.
 	 */
 	@SubscribeEvent
 	public void fogColorEvent(final EntityViewRenderEvent.FogColors event) {
@@ -244,16 +244,42 @@ public final class ClientEffectHandler {
 	}
 
 	/*
-	 * Hook the fog density event so that the fog settings can be
-	 * reset based on rain intensity.  This routine will overwrite
-	 * what the vanilla code has done in terms of fog.
+	 * Called by the fog renderer when trying to get the density of fog to
+	 * display. The idea here is to have fog increase the higher the player
+	 * rises off the ground.
 	 * 
-	 * Note that this routine uses GL_EXP2 as a fog method rather
-	 * than vanilla's GL_LINEAR.  This is so that an intensity
-	 * for fog can be set.
+	 * http://jabelarminecraft.blogspot.com/p/minecraft-forge-172-event-handling
+	 * .html
+	 */
+	@SubscribeEvent(priority = EventPriority.NORMAL, receiveCanceled = true)
+	public void fogDensityEvent(final EntityViewRenderEvent.FogDensity event) {
+		if (!ENABLE_VERTICLE_FOG)
+			return;
+
+		final World world = event.entity.worldObj;
+		if (!WorldUtils.hasSky(world))
+			return;
+
+		int skyHeight = WorldUtils.getSkyHeight(world);
+		if (world.isRaining()) {
+			final float factor = 1.0F + world.getRainStrength(1.0F) * RainIntensity.getIntensityLevel();
+			skyHeight = (int) (skyHeight / factor);
+		}
+		final int groundLevel = WorldUtils.getSeaLevel(world);
+		event.density = (float) Math.abs(Math.pow(((event.entity.posY - groundLevel) / (skyHeight - groundLevel)), 4));
+		event.setCanceled(true);
+	}
+
+	/*
+	 * Hook the fog density event so that the fog settings can be reset based on
+	 * rain intensity. This routine will overwrite what the vanilla code has
+	 * done in terms of fog.
+	 * 
+	 * Note that this routine uses GL_EXP2 as a fog method rather than vanilla's
+	 * GL_LINEAR. This is so that an intensity for fog can be set.
 	 */
 	@SubscribeEvent
-	public void fogDensityEvent(final EntityViewRenderEvent.RenderFogEvent event) {
+	public void fogRenderEvent(final EntityViewRenderEvent.RenderFogEvent event) {
 		if (dustFade <= 0.0F)
 			return;
 
