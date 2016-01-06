@@ -41,6 +41,7 @@ import org.blockartistry.mod.BetterRain.client.aurora.Aurora;
 import org.blockartistry.mod.BetterRain.client.rain.RainProperties;
 import org.blockartistry.mod.BetterRain.data.AuroraData;
 import org.blockartistry.mod.BetterRain.data.EffectType;
+import org.blockartistry.mod.BetterRain.util.Color;
 import org.blockartistry.mod.BetterRain.util.PlayerUtils;
 import org.blockartistry.mod.BetterRain.util.WorldUtils;
 import org.lwjgl.opengl.GL11;
@@ -67,6 +68,7 @@ public final class ClientEffectHandler {
 	private static final float DESERT_RED = 204.0F / 255.0F;
 	private static final float DESERT_GREEN = 185.0F / 255.0F;
 	private static final float DESERT_BLUE = 102.0F / 255.0F;
+	
 	private static final int DESERT_FOG_Y_CUTOFF = 3;
 	private static float dustFade = 0.0F;
 	private static final float DUST_FADE_SPEED = 1.0F;
@@ -289,7 +291,7 @@ public final class ClientEffectHandler {
 	public void fogRenderEvent(final EntityViewRenderEvent.RenderFogEvent event) {
 		final float factor = 1.0F + effectiveFog * 100.0F;
 		final float near = (event.farPlaneDistance * 0.75F) / (factor * factor);
-		final float horizon = event.farPlaneDistance / factor;
+		final float horizon = event.farPlaneDistance / (factor);
 		GL11.glFogf(GL11.GL_FOG_START, near);
 		GL11.glFogf(GL11.GL_FOG_END, horizon);
 	}
