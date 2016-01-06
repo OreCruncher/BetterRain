@@ -24,7 +24,7 @@
 
 package org.blockartistry.mod.BetterRain.network;
 
-import org.blockartistry.mod.BetterRain.client.rain.RainIntensity;
+import org.blockartistry.mod.BetterRain.client.rain.RainProperties;
 import org.blockartistry.mod.BetterRain.util.PlayerUtils;
 
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
@@ -43,22 +43,30 @@ public final class PacketRainIntensity implements IMessage, IMessageHandler<Pack
 	 * Dimension where the rainfall is occurring
 	 */
 	private int dimension;
+	
+	/**
+	 * Current phase of the rain cycle.
+	 */
+	private int rainPhase;
 
 	public PacketRainIntensity() {
 	}
 
-	public PacketRainIntensity(final float intensity, final int dimension) {
+	public PacketRainIntensity(final float intensity, final int rainPhase, final int dimension) {
 		this.intensity = intensity;
+		this.rainPhase = rainPhase;
 		this.dimension = dimension;
 	}
 
 	public void fromBytes(final ByteBuf buf) {
 		this.intensity = buf.readFloat();
+		this.rainPhase = buf.readByte();
 		this.dimension = buf.readInt();
 	}
 
 	public void toBytes(final ByteBuf buf) {
 		buf.writeFloat(this.intensity);
+		buf.writeByte(this.rainPhase);
 		buf.writeInt(this.dimension);
 	}
 
@@ -66,7 +74,8 @@ public final class PacketRainIntensity implements IMessage, IMessageHandler<Pack
 		// If the player is in the dimension set the intensity.  Otherwise
 		// ignore.
 		if (message.dimension == PlayerUtils.getClientPlayerDimension()) {
-			RainIntensity.setIntensity(message.intensity);
+			RainProperties.setIntensity(message.intensity);
+			RainProperties.setRainPhase(message.rainPhase);
 		}
 		return null;
 	}

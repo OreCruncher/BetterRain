@@ -38,7 +38,7 @@ import java.util.Set;
 import org.blockartistry.mod.BetterRain.ModLog;
 import org.blockartistry.mod.BetterRain.ModOptions;
 import org.blockartistry.mod.BetterRain.client.aurora.Aurora;
-import org.blockartistry.mod.BetterRain.client.rain.RainIntensity;
+import org.blockartistry.mod.BetterRain.client.rain.RainProperties;
 import org.blockartistry.mod.BetterRain.data.AuroraData;
 import org.blockartistry.mod.BetterRain.data.EffectType;
 import org.blockartistry.mod.BetterRain.util.PlayerUtils;
@@ -68,8 +68,8 @@ public final class ClientEffectHandler {
 	private static final float DESERT_GREEN = 185.0F / 255.0F;
 	private static final float DESERT_BLUE = 102.0F / 255.0F;
 	private static final int DESERT_FOG_Y_CUTOFF = 3;
-	private static int dustFade = 0;
-	private static final float DUST_FADE_SPEED = 2;
+	private static float dustFade = 0.0F;
+	private static final float DUST_FADE_SPEED = 1.0F;
 	private static final boolean ALLOW_DESERT_FOG = ModOptions.getAllowDesertFog();
 	private static final float DESERT_DUST_FACTOR = ModOptions.getDesertFogFactor();
 
@@ -117,10 +117,10 @@ public final class ClientEffectHandler {
 	 */
 	@SubscribeEvent
 	public void soundEvent(final PlaySoundEvent17 event) {
-		if ((ALWAYS_OVERRIDE_SOUND || !RainIntensity.doVanillaRain()) && replaceRainSound(event.name)) {
+		if ((ALWAYS_OVERRIDE_SOUND || !RainProperties.doVanillaRain()) && replaceRainSound(event.name)) {
 			final ISound sound = event.sound;
-			event.result = new PositionedSoundRecord(RainIntensity.getCurrentRainSound(),
-					RainIntensity.getCurrentRainVolume(), sound.getPitch(), sound.getXPosF(), sound.getYPosF(),
+			event.result = new PositionedSoundRecord(RainProperties.getCurrentRainSound(),
+					RainProperties.getCurrentRainVolume(), sound.getPitch(), sound.getXPosF(), sound.getYPosF(),
 					sound.getZPosF());
 		}
 	}
@@ -185,25 +185,39 @@ public final class ClientEffectHandler {
 				dustFade = 0;
 				return;
 			}
-			
+
 			final Minecraft mc = Minecraft.getMinecraft();
 			if (isDustFogApplicable(mc.thePlayer)) {
-				if (dustFade < 100)
+				switch (RainProperties.getRainPhase()) {
+				case STARTING:
+				case RAINING:
 					dustFade += DUST_FADE_SPEED;
-			} else {
-				if (dustFade > 0)
+					break;
+				case STOPPING:
+				case NOT_RAINING:
 					dustFade -= DUST_FADE_SPEED;
+					break;
+				default:
+					;
+				}
+			} else {
+				dustFade -= DUST_FADE_SPEED;
 			}
+
+			dustFade = MathHelper.clamp_float(dustFade, 0.0F, 100.0F);
+
 			if (dustFade > 0) {
-				final float fadeIntensity = Math.min(dustFade / 100.0F, world.getRainStrength(1.0F));
-				currentDustFog = RainIntensity.getFogDensity() * fadeIntensity * DESERT_DUST_FACTOR;
+				currentDustFog = RainProperties.getFogDensity() * dustFade / 100.0F * DESERT_DUST_FACTOR;
 			}
-			final float factor = 1.0F + world.getRainStrength(1.0F) * RainIntensity.getIntensityLevel();
-			final float skyHeight = WorldUtils.getSkyHeight(world) / factor;
-			final float groundLevel = WorldUtils.getSeaLevel(world);
-			currentHeightFog = (float) Math
-					.abs(Math.pow(((FMLClientHandler.instance().getClient().thePlayer.posY - groundLevel)
-							/ (skyHeight - groundLevel)), 4));
+			
+			if (ENABLE_ELEVATION_HAZE) {
+				final float factor = 1.0F + world.getRainStrength(1.0F) * RainProperties.getIntensityLevel();
+				final float skyHeight = WorldUtils.getSkyHeight(world) / factor;
+				final float groundLevel = WorldUtils.getSeaLevel(world);
+				currentHeightFog = (float) Math
+						.abs(Math.pow(((FMLClientHandler.instance().getClient().thePlayer.posY - groundLevel)
+								/ (skyHeight - groundLevel)), 4));
+			}
 			effectiveFog = Math.max(currentDustFog, currentHeightFog);
 			return;
 		} else if (!AURORA_ENABLE) {
@@ -233,11 +247,8 @@ public final class ClientEffectHandler {
 		if (!ALLOW_DESERT_FOG || !WorldUtils.hasSky(entity.worldObj))
 			return false;
 
-		final RainIntensity intensity = RainIntensity.getIntensity();
-		if (intensity == RainIntensity.VANILLA || intensity == RainIntensity.NONE)
-			return false;
-
-		if (!entity.worldObj.isRaining())
+		final RainProperties intensity = RainProperties.getIntensity();
+		if (intensity == RainProperties.VANILLA)
 			return false;
 
 		final int cutOff = WorldUtils.getSeaLevel(entity.worldObj) - DESERT_FOG_Y_CUTOFF;
@@ -270,40 +281,16 @@ public final class ClientEffectHandler {
 	}
 
 	/*
-	 * Called by the fog renderer when trying to get the density of fog to
-	 * display. The idea here is to have fog increase the higher the player
-	 * rises off the ground.
-	 * 
-	 * http://jabelarminecraft.blogspot.com/p/minecraft-forge-172-event-handling
-	 * .html
-	 */
-	@SubscribeEvent(priority = EventPriority.NORMAL, receiveCanceled = true)
-	public void fogDensityEvent(final EntityViewRenderEvent.FogDensity event) {
-
-		if (currentDustFog > 0 || !ENABLE_ELEVATION_HAZE)
-			return;
-
-		final World world = event.entity.worldObj;
-		if (!WorldUtils.hasSky(world))
-			return;
-
-		event.density = effectiveFog;
-		event.setCanceled(true);
-	}
-
-	/*
 	 * Hook the fog density event so that the fog settings can be reset based on
 	 * rain intensity. This routine will overwrite what the vanilla code has
 	 * done in terms of fog.
-	 * 
-	 * Note that this routine uses GL_EXP2 as a fog method rather than vanilla's
-	 * GL_LINEAR. This is so that an intensity for fog can be set.
 	 */
 	@SubscribeEvent
 	public void fogRenderEvent(final EntityViewRenderEvent.RenderFogEvent event) {
-		if(currentDustFog > 0.0F) {
-			GL11.glFogi(GL11.GL_FOG_MODE, GL11.GL_EXP2);
-			GL11.glFogf(GL11.GL_FOG_DENSITY, effectiveFog);
-		}
+		final float factor = 1.0F + effectiveFog * 100.0F;
+		final float near = (event.farPlaneDistance * 0.75F) / (factor * factor);
+		final float horizon = event.farPlaneDistance / factor;
+		GL11.glFogf(GL11.GL_FOG_START, near);
+		GL11.glFogf(GL11.GL_FOG_END, horizon);
 	}
 }

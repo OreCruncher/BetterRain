@@ -6,5 +6,9 @@ msg.MinRainIntensitySet=§9Minimum rain intensity set to %s
 msg.MaxRainIntensitySet=§9Maximum rain intensity set to %s
 msg.RainReset=§9World rain parameters have been reset
 
+msg.RainStarting=It starts to rain...
+msg.RainStopping=The rain is stopping...
+
+
 # Version checking strings
 msg.NewVersionAvailable.betterrain=["§6Update Available: §9[",{"text":"§2%s §ev%s§f","color":"gold","hoverEvent":{"action":"show_text","value":{"text":"Click for CurseForge Project Page","color":"aqua"}},"clickEvent":{"action":"open_url","value":"http://minecraft.curseforge.com/mc-mods/%s"}},"§9]"]

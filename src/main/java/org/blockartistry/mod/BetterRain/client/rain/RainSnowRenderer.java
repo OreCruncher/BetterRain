@@ -47,7 +47,7 @@ public class RainSnowRenderer implements IAtmosRenderer {
 	@Override
 	public void render(final EntityRenderer renderer, final float partialTicks) {
 		// Set our rain/snow/dust textures
-		RainIntensity.setTextures();
+		RainProperties.setTextures();
 
 		IRenderHandler r = null;
 		if ((r = renderer.mc.theWorld.provider.getWeatherRenderer()) != null) {

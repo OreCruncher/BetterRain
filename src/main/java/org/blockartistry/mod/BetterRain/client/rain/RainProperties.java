@@ -27,29 +27,28 @@ package org.blockartistry.mod.BetterRain.client.rain;
 import org.blockartistry.mod.BetterRain.BetterRain;
 import org.blockartistry.mod.BetterRain.ModOptions;
 import org.blockartistry.mod.BetterRain.data.DimensionEffectData;
-import org.blockartistry.mod.BetterRain.util.MathStuff;
-
+import org.blockartistry.mod.BetterRain.data.RainPhase;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.EntityRenderer;
+import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.StatCollector;
 
 @SideOnly(Side.CLIENT)
-public enum RainIntensity {
+public enum RainProperties {
 
-	VANILLA,
-	NONE(0.0F, "calm"),
-	CALM(0.1F, "calm"),
-	LIGHT(0.33F, "light"),
-	NORMAL(0.66F, "normal"),
-	HEAVY(1.0F, "heavy");
+	VANILLA, NONE(0.0F, "calm"), CALM(0.1F, "calm"), LIGHT(0.33F, "light"), NORMAL(0.66F, "normal"), HEAVY(1.0F,
+			"heavy");
 
 	private static final float SOUND_LEVEL = ModOptions.getSoundLevel();
 
 	private static float intensityLevel = 0.0F;
-	private static RainIntensity intensity = VANILLA;
+	private static RainProperties intensity = VANILLA;
 	private static float fogDensity = 0.0F;
+	private static RainPhase rainPhase = RainPhase.NOT_RAINING;
 
 	private final float level;
 	private final ResourceLocation rainTexture;
@@ -58,7 +57,7 @@ public enum RainIntensity {
 	private final String rainSound;
 	private final String dustSound;
 
-	private RainIntensity() {
+	private RainProperties() {
 		this.level = -10.0F;
 		this.rainTexture = EntityRenderer.locationRainPng;
 		this.snowTexture = EntityRenderer.locationSnowPng;
@@ -67,7 +66,7 @@ public enum RainIntensity {
 		this.dustSound = String.format("%s:%s", BetterRain.MOD_ID, "dust");
 	}
 
-	private RainIntensity(final float level, final String intensity) {
+	private RainProperties(final float level, final String intensity) {
 		this.level = level;
 		this.rainTexture = new ResourceLocation(BetterRain.MOD_ID,
 				String.format("textures/environment/rain_%s.png", intensity));
@@ -79,14 +78,14 @@ public enum RainIntensity {
 		this.dustSound = String.format("%s:%s", BetterRain.MOD_ID, "dust");
 	}
 
-	public static RainIntensity getIntensity() {
+	public static RainProperties getIntensity() {
 		return intensity;
 	}
 
 	public static float getIntensityLevel() {
 		return intensityLevel;
 	}
-	
+
 	public static float getFogDensity() {
 		return fogDensity;
 	}
@@ -94,7 +93,7 @@ public enum RainIntensity {
 	public String getRainSound() {
 		return this.rainSound;
 	}
-	
+
 	public String getDustSound() {
 		return this.dustSound;
 	}
@@ -106,7 +105,7 @@ public enum RainIntensity {
 	public static ResourceLocation getCurrentRainSound() {
 		return new ResourceLocation(intensity.rainSound);
 	}
-	
+
 	public static ResourceLocation getCurrentDustSound() {
 		return new ResourceLocation(intensity.dustSound);
 	}
@@ -116,9 +115,9 @@ public enum RainIntensity {
 	}
 
 	/**
-	 * Sets the rain intensity based on the intensityLevel level provided. This is
-	 * called by the packet handler when the server wants to set the intensity
-	 * level on the client.
+	 * Sets the rain intensity based on the intensityLevel level provided. This
+	 * is called by the packet handler when the server wants to set the
+	 * intensity level on the client.
 	 */
 	public static void setIntensity(float level) {
 
@@ -137,7 +136,8 @@ public enum RainIntensity {
 
 		if (intensityLevel != level) {
 			intensityLevel = level;
-			fogDensity = MathStuff.tan(intensityLevel) / 12.0F + 0.004F;
+			level += 0.01;
+			fogDensity = level * level * 0.13F;
 			if (intensityLevel <= NONE.level)
 				intensity = NONE;
 			else if (intensityLevel < CALM.level)
@@ -149,6 +149,28 @@ public enum RainIntensity {
 			else
 				intensity = HEAVY;
 		}
+	}
+
+	/**
+	 * Sets the phase in the current rain cycle to the specified
+	 * value.
+	 */
+	public static void setRainPhase(final int phase) {
+		final RainPhase newCycle = RainPhase.values()[phase];
+		if (newCycle != rainPhase) {
+			String msg = null;
+			if (newCycle == RainPhase.STARTING)
+				msg = StatCollector.translateToLocal("msg.RainStarting");
+			else if (newCycle == RainPhase.STOPPING)
+				msg = StatCollector.translateToLocal("msg.RainStopping");
+			if (msg != null)
+				Minecraft.getMinecraft().thePlayer.addChatComponentMessage(new ChatComponentText(msg));
+		}
+		rainPhase = newCycle;
+	}
+
+	public static RainPhase getRainPhase() {
+		return rainPhase;
 	}
 
 	/**

@@ -28,7 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.blockartistry.mod.BetterRain.client.aurora.AuroraRenderer;
-import org.blockartistry.mod.BetterRain.client.rain.RainIntensity;
+import org.blockartistry.mod.BetterRain.client.rain.RainProperties;
 import org.blockartistry.mod.BetterRain.client.rain.RainSnowRenderer;
 import org.blockartistry.mod.BetterRain.data.EffectType;
 import org.blockartistry.mod.BetterRain.util.XorShiftRandom;
@@ -90,7 +90,7 @@ public final class RenderWeather {
 		int particlesSpawned = 0;
 
 		int particleCount = (int) (200.0F * rainStrengthFactor * rainStrengthFactor
-				* RainIntensity.getIntensityLevel());
+				* RainProperties.getIntensityLevel());
 
 		if (theThis.mc.gameSettings.particleSetting == 1)
 			particleCount >>= 1;
@@ -136,9 +136,9 @@ public final class RenderWeather {
 			theThis.rainSoundCounter = 0;
 
 			final boolean hasDust = WeatherUtils.biomeHasDust(worldclient.getBiomeGenForCoords((int) spawnX, (int) spawnZ));
-			final String sound = hasDust ? RainIntensity.getIntensity().getDustSound()
-					: RainIntensity.getIntensity().getRainSound();
-			final float volume = RainIntensity.getCurrentRainVolume();
+			final String sound = hasDust ? RainProperties.getIntensity().getDustSound()
+					: RainProperties.getIntensity().getRainSound();
+			final float volume = RainProperties.getCurrentRainVolume();
 			float pitch = 1.0F;
 			if (spawnY > entity.posY + 1.0D && worldclient.getPrecipitationHeight(playerX, playerZ) > playerY)
 				pitch = 0.5F;
