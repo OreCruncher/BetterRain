@@ -32,6 +32,8 @@ import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.common.gameevent.TickEvent.Phase;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import gnu.trove.map.hash.TIntIntHashMap;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -41,7 +43,7 @@ import org.blockartistry.mod.BetterRain.client.aurora.Aurora;
 import org.blockartistry.mod.BetterRain.client.rain.RainProperties;
 import org.blockartistry.mod.BetterRain.data.AuroraData;
 import org.blockartistry.mod.BetterRain.data.EffectType;
-import org.blockartistry.mod.BetterRain.util.Color;
+import org.blockartistry.mod.BetterRain.util.MyUtils;
 import org.blockartistry.mod.BetterRain.util.PlayerUtils;
 import org.blockartistry.mod.BetterRain.util.WorldUtils;
 import org.lwjgl.opengl.GL11;
@@ -84,6 +86,34 @@ public final class ClientEffectHandler {
 	private static int auroraDimension = 0;
 	private static final Set<AuroraData> auroras = new HashSet<AuroraData>();
 	public static Aurora currentAurora;
+	
+	// Elevation information
+	private static final TIntIntHashMap seaLevelOverride = new TIntIntHashMap();
+	private static final TIntIntHashMap skyHeightOverride = new TIntIntHashMap();
+	
+	static {
+		for(final String entry: ModOptions.getElevationOverrides()) {
+			final int[] values = MyUtils.splitToInts(entry, ',');
+			if(values.length == 3) {
+				seaLevelOverride.put(values[0], values[1]);
+				skyHeightOverride.put(values[0], values[2]);
+			}
+		}
+	}
+	
+	private static int getSeaLevel(final World world) {
+		final int dimId = world.provider.dimensionId;
+		if(seaLevelOverride.contains(dimId))
+			return seaLevelOverride.get(dimId);
+		return WorldUtils.getSeaLevel(world);
+	}
+	
+	private static int getSkyHeight(final World world) {
+		final int dimId = world.provider.dimensionId;
+		if(skyHeightOverride.contains(dimId))
+			return skyHeightOverride.get(dimId);
+		return WorldUtils.getSkyHeight(world);
+	}
 
 	public static void addAurora(final AuroraData data) {
 		if (!AURORA_ENABLE)
@@ -214,8 +244,8 @@ public final class ClientEffectHandler {
 			
 			if (ENABLE_ELEVATION_HAZE) {
 				final float factor = 1.0F + world.getRainStrength(1.0F) * RainProperties.getIntensityLevel();
-				final float skyHeight = WorldUtils.getSkyHeight(world) / factor;
-				final float groundLevel = WorldUtils.getSeaLevel(world);
+				final float skyHeight = getSkyHeight(world) / factor;
+				final float groundLevel = getSeaLevel(world);
 				currentHeightFog = (float) Math
 						.abs(Math.pow(((FMLClientHandler.instance().getClient().thePlayer.posY - groundLevel)
 								/ (skyHeight - groundLevel)), 4));

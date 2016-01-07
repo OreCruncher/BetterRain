@@ -56,6 +56,8 @@ public final class ModOptions {
 	protected static float desertFogFactor = 1.0F;
 	protected static final String CONFIG_ENABLE_ELEVATION_HAZE = "Elevation Haze";
 	protected static boolean enableElevationHaze = true;
+	protected static final String CONFIG_ELEVATION_OVERRIDES = "Elevation Overrides";
+	protected static String[] elevationOverrides = {};
 
 	protected static final String CATEGORY_GENERAL = "general";
 	protected static final String CONFIG_DIMENSION_LIST = "Dimensions";
@@ -117,6 +119,9 @@ public final class ModOptions {
 
 		comment = "Higher the player elevation the more haze that is experienced";
 		enableElevationHaze = config.getBoolean(CONFIG_ENABLE_ELEVATION_HAZE, CATEGORY_RAIN, enableElevationHaze, comment);
+
+		comment = "Elevation override for dimensions if needed (dimension,sea level,sky height)";
+		elevationOverrides = config.getStringList(CONFIG_ELEVATION_OVERRIDES, CATEGORY_RAIN, elevationOverrides, comment);
 
 		// CATEGORY: General
 		comment = "Comma separated dimension ID list";
@@ -247,5 +252,9 @@ public final class ModOptions {
 	
 	public static boolean getEnableElevationHaze(){
 		return enableElevationHaze;
+	}
+	
+	public static String[] getElevationOverrides() {
+		return elevationOverrides;
 	}
 }
