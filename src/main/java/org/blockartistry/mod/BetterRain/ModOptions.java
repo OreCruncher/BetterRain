@@ -56,6 +56,8 @@ public final class ModOptions {
 	protected static float desertFogFactor = 1.0F;
 	protected static final String CONFIG_ENABLE_ELEVATION_HAZE = "Elevation Haze";
 	protected static boolean enableElevationHaze = true;
+	protected static final String CONFIG_ELEVATION_HAZE_FACTOR = "Elevation Haze Factor";
+	protected static float elevationHazeFactor = 1.0F;
 	protected static final String CONFIG_ELEVATION_OVERRIDES = "Elevation Overrides";
 	protected static String[] elevationOverrides = {};
 
@@ -114,14 +116,21 @@ public final class ModOptions {
 		comment = "Allow desert fog when raining";
 		allowDesertFog = config.getBoolean(CONFIG_ALLOW_DESERT_FOG, CATEGORY_RAIN, allowDesertFog, comment);
 
-		comment = "Visibility factor to apply to fog (higher is thicker)";
-		desertFogFactor = config.getFloat(CONFIG_DESERT_FOG_FACTOR, CATEGORY_RAIN, desertFogFactor, 0.0F, 5.0F, comment);
+		comment = "Visibility factor to apply to desert fog (higher is thicker)";
+		desertFogFactor = config.getFloat(CONFIG_DESERT_FOG_FACTOR, CATEGORY_RAIN, desertFogFactor, 0.0F, 5.0F,
+				comment);
 
 		comment = "Higher the player elevation the more haze that is experienced";
-		enableElevationHaze = config.getBoolean(CONFIG_ENABLE_ELEVATION_HAZE, CATEGORY_RAIN, enableElevationHaze, comment);
+		enableElevationHaze = config.getBoolean(CONFIG_ENABLE_ELEVATION_HAZE, CATEGORY_RAIN, enableElevationHaze,
+				comment);
+
+		comment = "Visibility factor to apply to elevation haze (higher is thicker)";
+		elevationHazeFactor = config.getFloat(CONFIG_ELEVATION_HAZE_FACTOR, CATEGORY_RAIN, elevationHazeFactor, 0.0F, 5.0F,
+				comment);
 
 		comment = "Elevation override for dimensions if needed (dimension,sea level,sky height)";
-		elevationOverrides = config.getStringList(CONFIG_ELEVATION_OVERRIDES, CATEGORY_RAIN, elevationOverrides, comment);
+		elevationOverrides = config.getStringList(CONFIG_ELEVATION_OVERRIDES, CATEGORY_RAIN, elevationOverrides,
+				comment);
 
 		// CATEGORY: General
 		comment = "Comma separated dimension ID list";
@@ -193,7 +202,7 @@ public final class ModOptions {
 	public static boolean getAllowDesertFog() {
 		return allowDesertFog;
 	}
-	
+
 	public static float getDesertFogFactor() {
 		return desertFogFactor;
 	}
@@ -249,9 +258,13 @@ public final class ModOptions {
 	public static boolean getAuroraAnimate() {
 		return auroraAnimate;
 	}
-	
-	public static boolean getEnableElevationHaze(){
+
+	public static boolean getEnableElevationHaze() {
 		return enableElevationHaze;
+	}
+
+	public static float getElevationHazeFactor() {
+		return elevationHazeFactor;
 	}
 	
 	public static String[] getElevationOverrides() {

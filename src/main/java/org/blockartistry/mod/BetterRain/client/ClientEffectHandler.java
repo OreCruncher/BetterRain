@@ -90,6 +90,7 @@ public final class ClientEffectHandler {
 	// Elevation information
 	private static final TIntIntHashMap seaLevelOverride = new TIntIntHashMap();
 	private static final TIntIntHashMap skyHeightOverride = new TIntIntHashMap();
+	private static final float ELEVATION_HAZE_FACTOR = ModOptions.getElevationHazeFactor();
 	
 	static {
 		for(final String entry: ModOptions.getElevationOverrides()) {
@@ -248,7 +249,7 @@ public final class ClientEffectHandler {
 				final float groundLevel = getSeaLevel(world);
 				currentHeightFog = (float) Math
 						.abs(Math.pow(((FMLClientHandler.instance().getClient().thePlayer.posY - groundLevel)
-								/ (skyHeight - groundLevel)), 4));
+								/ (skyHeight - groundLevel)), 4)) * ELEVATION_HAZE_FACTOR;
 			}
 			effectiveFog = Math.max(currentDustFog, currentHeightFog);
 			return;
