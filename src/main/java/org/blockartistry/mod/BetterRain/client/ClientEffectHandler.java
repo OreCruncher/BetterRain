@@ -132,7 +132,6 @@ public final class ClientEffectHandler {
 	private Aurora getClosestAurora(final TickEvent.ClientTickEvent event) {
 		if (auroraDimension != PlayerUtils.getClientPlayerDimension()) {
 			auroras.clear();
-			currentAurora = null;
 		}
 
 		if (auroras.size() == 0) {
@@ -236,10 +235,12 @@ public final class ClientEffectHandler {
 				currentAurora = null;
 			} else {
 				final Aurora aurora = getClosestAurora(event);
-				aurora.update();
-				if (aurora.isAlive() && auroraTimeToDie(time)) {
-					ModLog.info("Aurora fade...");
-					aurora.die();
+				if(aurora != null) {
+					aurora.update();
+					if (aurora.isAlive() && auroraTimeToDie(time)) {
+						ModLog.info("Aurora fade...");
+						aurora.die();
+					}
 				}
 			}
 		}
