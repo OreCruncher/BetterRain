@@ -93,11 +93,15 @@ public final class ModOptions {
 	protected static final String CONFIG_AURORA_ANIMATE = "Animate";
 	protected static boolean auroraAnimate = true;
 
-	protected static final String CATEGORY_FIRE_JETS = "firejets";
-	protected static final String CONFIG_FIREJETS_ENABLED = "Enabled";
+	protected static final String CATEGORY_JETS = "jets";
+	protected static final String CONFIG_FIREJETS_ENABLED = "Firejets Enabled";
 	protected static boolean enableFireJets = true;
-	protected static final String CONFIG_FIREJET_CHANCE = "Spawn Chance";
-	protected static int fireJetsSpawnChance = 700;
+	protected static final String CONFIG_FIREJET_CHANCE = "Firejet Spawn Chance";
+	protected static int fireJetsSpawnChance = 1000;
+	protected static final String CONFIG_BUBBLEJETS_ENABLED = "Bubblejets Enabled";
+	protected static boolean enableBubbleJets = true;
+	protected static final String CONFIG_BUBBLEJETS_CHANCE = "Bubblejet Spawn Chance";
+	protected static int bubbleJetSpawnChance = 1800;
 
 	public static void load(final Configuration config) {
 
@@ -190,15 +194,21 @@ public final class ModOptions {
 		comment = "Animate Aurora";
 		auroraAnimate = config.getBoolean(CONFIG_AURORA_ANIMATE, CATEGORY_AURORA, auroraAnimate, comment);
 
-		// CATEGORY: Fire Jets
+		// CATEGORY: Jets
 		comment = "Enable firejet spawn on lava blocks";
-		enableFireJets = config.getBoolean(CONFIG_FIREJETS_ENABLED, CATEGORY_FIRE_JETS, enableFireJets, comment);
+		enableFireJets = config.getBoolean(CONFIG_FIREJETS_ENABLED, CATEGORY_JETS, enableFireJets, comment);
 
-		comment = "1-in-N chance per random tick a fire jet will spawn on lava blocks";
-		fireJetsSpawnChance = config.getInt(CONFIG_FIREJET_CHANCE, CATEGORY_FIRE_JETS, fireJetsSpawnChance, 300,
+		comment = "1-in-N chance per random tick a firejet will spawn on lava blocks";
+		fireJetsSpawnChance = config.getInt(CONFIG_FIREJET_CHANCE, CATEGORY_JETS, fireJetsSpawnChance, 300,
 				Integer.MAX_VALUE, comment);
 
-	}
+		comment = "Enable bubblejet spawn in water";
+		enableBubbleJets = config.getBoolean(CONFIG_BUBBLEJETS_ENABLED, CATEGORY_JETS, enableBubbleJets, comment);
+
+		comment = "1-in-N chance per random tick a bubblejet will spawn in water";
+		bubbleJetSpawnChance = config.getInt(CONFIG_BUBBLEJETS_CHANCE, CATEGORY_JETS, bubbleJetSpawnChance, 300,
+				Integer.MAX_VALUE, comment);
+}
 
 	public static boolean getEnableDebugLogging() {
 		return enableDebugLogging;
@@ -302,5 +312,13 @@ public final class ModOptions {
 
 	public static int getFireJetsSpawnChance() {
 		return fireJetsSpawnChance;
+	}
+	
+	public static boolean getEnableBubbleJets() {
+		return enableBubbleJets;
+	}
+	
+	public static int getBubbleJetSpawnChance() {
+		return bubbleJetSpawnChance;
 	}
 }

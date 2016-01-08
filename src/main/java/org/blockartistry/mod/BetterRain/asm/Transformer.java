@@ -124,7 +124,7 @@ public class Transformer implements IClassTransformer {
 				list.add(new VarInsnNode(ILOAD, 4));
 				list.add(new VarInsnNode(ALOAD, 5));
 				final String sig = "(Lnet/minecraft/block/Block;Lnet/minecraft/world/World;IIILjava/util/Random;)V";
-				list.add(new MethodInsnNode(INVOKESTATIC, "org/blockartistry/mod/BetterRain/client/firejet/EntityFireJetFX", targetName[0], sig,
+				list.add(new MethodInsnNode(INVOKESTATIC, "org/blockartistry/mod/BetterRain/client/liquid/BlockLiquidHandler", targetName[0], sig,
 						false));
 				m.instructions.insertBefore(m.instructions.getFirst(), list);
 				break;
