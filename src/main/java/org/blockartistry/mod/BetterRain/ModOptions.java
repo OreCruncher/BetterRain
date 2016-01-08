@@ -91,6 +91,12 @@ public final class ModOptions {
 	protected static final String CONFIG_AURORA_ANIMATE = "Animate";
 	protected static boolean auroraAnimate = true;
 
+	protected static final String CATEGORY_FIRE_JETS = "firejets";
+	protected static final String CONFIG_FIREJETS_ENABLED = "Enabled";
+	protected static boolean enableFireJets = true;
+	protected static final String CONFIG_FIREJET_CHANCE = "Spawn Chance";
+	protected static int fireJetsSpawnChance = 700;
+
 	public static void load(final Configuration config) {
 
 		// CATEGORY: Logging
@@ -125,8 +131,8 @@ public final class ModOptions {
 				comment);
 
 		comment = "Visibility factor to apply to elevation haze (higher is thicker)";
-		elevationHazeFactor = config.getFloat(CONFIG_ELEVATION_HAZE_FACTOR, CATEGORY_RAIN, elevationHazeFactor, 0.0F, 5.0F,
-				comment);
+		elevationHazeFactor = config.getFloat(CONFIG_ELEVATION_HAZE_FACTOR, CATEGORY_RAIN, elevationHazeFactor, 0.0F,
+				5.0F, comment);
 
 		comment = "Elevation override for dimensions if needed (dimension,sea level,sky height)";
 		elevationOverrides = config.getStringList(CONFIG_ELEVATION_OVERRIDES, CATEGORY_RAIN, elevationOverrides,
@@ -177,6 +183,15 @@ public final class ModOptions {
 
 		comment = "Animate Aurora";
 		auroraAnimate = config.getBoolean(CONFIG_AURORA_ANIMATE, CATEGORY_AURORA, auroraAnimate, comment);
+
+		// CATEGORY: Fire Jets
+		comment = "Enable firejet spawn on lava blocks";
+		enableFireJets = config.getBoolean(CONFIG_FIREJETS_ENABLED, CATEGORY_FIRE_JETS, enableFireJets, comment);
+
+		comment = "1-in-N chance per random tick a fire jet will spawn on lava blocks";
+		fireJetsSpawnChance = config.getInt(CONFIG_FIREJET_CHANCE, CATEGORY_FIRE_JETS, fireJetsSpawnChance, 300,
+				Integer.MAX_VALUE, comment);
+
 	}
 
 	public static boolean getEnableDebugLogging() {
@@ -266,8 +281,16 @@ public final class ModOptions {
 	public static float getElevationHazeFactor() {
 		return elevationHazeFactor;
 	}
-	
+
 	public static String[] getElevationOverrides() {
 		return elevationOverrides;
+	}
+	
+	public static boolean getEnableFireJets() {
+		return enableFireJets;
+	}
+	
+	public static int getFireJetsSpawnChance() {
+		return fireJetsSpawnChance;
 	}
 }

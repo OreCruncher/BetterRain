@@ -29,6 +29,7 @@ import static org.objectweb.asm.Opcodes.*;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.tree.ClassNode;
+import org.objectweb.asm.tree.InsnList;
 import org.objectweb.asm.tree.InsnNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
@@ -44,17 +45,20 @@ public class Transformer implements IClassTransformer {
 
 	@Override
 	public byte[] transform(String name, String transformedName, byte[] basicClass) {
-		
-		if("net.minecraft.client.renderer.EntityRenderer".equals(name) || "blt".equals(name)) {
+
+		if ("net.minecraft.client.renderer.EntityRenderer".equals(name) || "blt".equals(name)) {
 			logger.debug("Transforming EntityRenderer...");
 			return transformEntityRenderer(basicClass);
+		} else if("net.minecraft.block.BlockLiquid".equals(name) || "alw".equals(name)) {
+			logger.debug("Transforming BlockLiquid...");
+			return transformBlockLiquid(basicClass);
 		}
-		
+
 		return basicClass;
 	}
 
 	private byte[] transformEntityRenderer(final byte[] classBytes) {
-		String names[] = null;
+		final String names[];
 
 		if (TransformLoader.runtimeDeobEnabled)
 			names = new String[] { "func_78474_d", "func_78484_h" };
@@ -69,26 +73,65 @@ public class Transformer implements IClassTransformer {
 
 		for (final MethodNode m : cn.methods) {
 			if (m.name.equals(names[0])) {
+				logger.debug("Hooking " + names[0]);
 				m.localVariables = null;
 				m.instructions.clear();
 				m.instructions.add(new VarInsnNode(ALOAD, 0));
 				m.instructions.add(new VarInsnNode(FLOAD, 1));
 				final String sig = "(Lnet/minecraft/client/renderer/EntityRenderer;F)V";
-				m.instructions.add(new MethodInsnNode(INVOKESTATIC, "org/blockartistry/mod/BetterRain/client/RenderWeather",
-						targetName[0], sig, false));
+				m.instructions.add(new MethodInsnNode(INVOKESTATIC,
+						"org/blockartistry/mod/BetterRain/client/RenderWeather", targetName[0], sig, false));
 				m.instructions.add(new InsnNode(RETURN));
-			} else if(m.name.equals(names[1])) {
+			} else if (m.name.equals(names[1])) {
+				logger.debug("Hooking " + names[1]);
 				m.localVariables = null;
 				m.instructions.clear();
 				m.instructions.add(new VarInsnNode(ALOAD, 0));
 				final String sig = "(Lnet/minecraft/client/renderer/EntityRenderer;)V";
-				m.instructions.add(new MethodInsnNode(INVOKESTATIC, "org/blockartistry/mod/BetterRain/client/RenderWeather",
-						targetName[1], sig, false));
+				m.instructions.add(new MethodInsnNode(INVOKESTATIC,
+						"org/blockartistry/mod/BetterRain/client/RenderWeather", targetName[1], sig, false));
 				m.instructions.add(new InsnNode(RETURN));
 			}
 		}
 
-		ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_MAXS);
+		final ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_MAXS);
+		cn.accept(cw);
+		return cw.toByteArray();
+	}
+
+	private byte[] transformBlockLiquid(final byte[] classBytes) {
+		final String names[];
+
+		if (TransformLoader.runtimeDeobEnabled)
+			names = new String[] { "func_149734_b" };
+		else
+			names = new String[] { "randomDisplayTick" };
+
+		final String targetName[] = new String[] { "randomDisplayTick" };
+
+		final ClassReader cr = new ClassReader(classBytes);
+		final ClassNode cn = new ClassNode(ASM5);
+		cr.accept(cn, 0);
+
+		for (final MethodNode m : cn.methods) {
+			if (m.name.equals(names[0])) {
+				logger.debug("Hooking " + names[0]);
+				InsnList list = new InsnList();
+				list.add(new VarInsnNode(ALOAD, 0));
+				list.add(new VarInsnNode(ALOAD, 1));
+				list.add(new VarInsnNode(ILOAD, 2));
+				list.add(new VarInsnNode(ILOAD, 3));
+				list.add(new VarInsnNode(ILOAD, 4));
+				list.add(new VarInsnNode(ALOAD, 5));
+				final String sig = "(Lnet/minecraft/block/Block;Lnet/minecraft/world/World;IIILjava/util/Random;)V";
+				list.add(new MethodInsnNode(INVOKESTATIC, "org/blockartistry/mod/BetterRain/client/firejet/EntityFireJetFX", targetName[0], sig,
+						false));
+				m.instructions.insertBefore(m.instructions.getFirst(), list);
+				break;
+			}
+		}
+
+		final ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_MAXS);
 		cn.accept(cw);
 		return cw.toByteArray();
 	}
