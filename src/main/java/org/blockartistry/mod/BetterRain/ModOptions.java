@@ -84,6 +84,8 @@ public final class ModOptions {
 	protected static boolean auroraEnable = true;
 	protected static final String CONFIG_Y_PLAYER_RELATIVE = "Height Player Relative";
 	protected static boolean auroraHeightPlayerRelative = true;
+	protected static final String CONFIG_PLAYER_FIXED_HEIGHT = "Player Fixed Height";
+	protected static float playerFixedHeight = 64.0F;
 	protected static final String CONFIG_MULTIPLE_BANDS = "Multiple Bands";
 	protected static boolean auroraMultipleBands = true;
 	protected static final String CONFIG_TRIGGER_BIOME_LIST = "Trigger Biomes";
@@ -134,10 +136,6 @@ public final class ModOptions {
 		elevationHazeFactor = config.getFloat(CONFIG_ELEVATION_HAZE_FACTOR, CATEGORY_RAIN, elevationHazeFactor, 0.0F,
 				5.0F, comment);
 
-		comment = "Elevation override for dimensions if needed (dimension,sea level,sky height)";
-		elevationOverrides = config.getStringList(CONFIG_ELEVATION_OVERRIDES, CATEGORY_RAIN, elevationOverrides,
-				comment);
-
 		// CATEGORY: General
 		comment = "Comma separated dimension ID list";
 		String temp = config.getString(CONFIG_DIMENSION_LIST, CATEGORY_GENERAL, "1,-1", comment);
@@ -154,6 +152,10 @@ public final class ModOptions {
 		comment = "Default maximum rain strength for a dimension";
 		defaultMaxRainStrength = MathHelper.clamp_float(config.getFloat(CONFIG_MAX_RAIN_STRENGTH, CATEGORY_GENERAL,
 				defaultMaxRainStrength, 0.0F, 1.0F, comment), defaultMinRainStrength, 1.0F);
+
+		comment = "Elevation override for dimensions if needed (dimension,sea level,sky height)";
+		elevationOverrides = config.getStringList(CONFIG_ELEVATION_OVERRIDES, CATEGORY_GENERAL, elevationOverrides,
+				comment);
 
 		// CATEGORY: Biome Overrides
 		comment = "Comma separated biome names to apply dust weather effect";
@@ -173,6 +175,10 @@ public final class ModOptions {
 		comment = "true to keep the aurora at a height above player; false to fix it to an altitude";
 		auroraHeightPlayerRelative = config.getBoolean(CONFIG_Y_PLAYER_RELATIVE, CATEGORY_AURORA,
 				auroraHeightPlayerRelative, comment);
+
+		comment = "Number of blocks to say fixed above player if Aurora is player relative";
+		playerFixedHeight = config.getFloat(CONFIG_PLAYER_FIXED_HEIGHT, CATEGORY_AURORA, playerFixedHeight, 16.0F,
+				2048.0F, comment);
 
 		comment = "Allow Auroras with multiple bands";
 		auroraMultipleBands = config.getBoolean(CONFIG_MULTIPLE_BANDS, CATEGORY_AURORA, auroraMultipleBands, comment);
@@ -273,6 +279,10 @@ public final class ModOptions {
 	public static boolean getAuroraAnimate() {
 		return auroraAnimate;
 	}
+	
+	public static float getPlayerFixedHeight() {
+		return playerFixedHeight;
+	}
 
 	public static boolean getEnableElevationHaze() {
 		return enableElevationHaze;
@@ -285,11 +295,11 @@ public final class ModOptions {
 	public static String[] getElevationOverrides() {
 		return elevationOverrides;
 	}
-	
+
 	public static boolean getEnableFireJets() {
 		return enableFireJets;
 	}
-	
+
 	public static int getFireJetsSpawnChance() {
 		return fireJetsSpawnChance;
 	}

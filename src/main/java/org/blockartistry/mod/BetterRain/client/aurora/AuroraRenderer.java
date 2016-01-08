@@ -35,6 +35,7 @@ import org.blockartistry.mod.BetterRain.ModOptions;
 import org.blockartistry.mod.BetterRain.client.ClientEffectHandler;
 import org.blockartistry.mod.BetterRain.client.IAtmosRenderer;
 import org.blockartistry.mod.BetterRain.util.Color;
+import org.blockartistry.mod.BetterRain.util.WorldUtils;
 import org.lwjgl.opengl.GL11;
 
 @SideOnly(Side.CLIENT)
@@ -42,6 +43,7 @@ public final class AuroraRenderer implements IAtmosRenderer {
 
 	private static final boolean ANIMATE = ModOptions.getAuroraAnimate();
 	private static final boolean HEIGHT_PLAYER_RELATIVE = ModOptions.getAuroraHeightPlayerRelative();
+	private static final float PLAYER_FIXED_HEIGHT = ModOptions.getPlayerFixedHeight();
 
 	@Override
 	public void render(final EntityRenderer renderer, final float partialTick) {
@@ -60,10 +62,10 @@ public final class AuroraRenderer implements IAtmosRenderer {
 		final float tranY;
 		if (HEIGHT_PLAYER_RELATIVE) {
 			// Fix height above player
-			tranY = 128.33F - 64.0F;
+			tranY = PLAYER_FIXED_HEIGHT;
 		} else {
 			// Adjust to keep aurora at the same altitude
-			tranY = 156.33F - (float) (minecraft.thePlayer.lastTickPosY
+			tranY = WorldUtils.getCloudHeight(minecraft.theWorld) + 5 - (float) (minecraft.thePlayer.lastTickPosY
 					+ (minecraft.thePlayer.posY - minecraft.thePlayer.lastTickPosY) * partialTick);
 		}
 

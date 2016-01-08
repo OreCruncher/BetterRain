@@ -139,6 +139,7 @@ public final class ServerEffectHandler {
 
 	private static final int CHECK_INTERVAL = 100; // Ticks
 	private static long lastTimeCheck = 0;
+	private static int tickCounter = 0;
 
 	protected void processAuroras(final TickEvent.WorldTickEvent event) {
 
@@ -152,7 +153,8 @@ public final class ServerEffectHandler {
 		// Daylight hours clear the aurora list
 		if (WorldUtils.isDaytime(time)) {
 			data.clear();
-		} else if (lastTimeCheck != time && time % CHECK_INTERVAL == 0) {
+		} else if (lastTimeCheck != time && ++tickCounter % CHECK_INTERVAL == 0) {
+			tickCounter = 0;
 			lastTimeCheck = time;
 			@SuppressWarnings("unchecked")
 			final List<EntityPlayerMP> players = MinecraftServer.getServer().getConfigurationManager().playerEntityList;
