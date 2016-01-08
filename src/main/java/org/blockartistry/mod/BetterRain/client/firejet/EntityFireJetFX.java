@@ -49,14 +49,15 @@ public class EntityFireJetFX extends EntityFX {
 	private static final boolean ENABLE_FIREJETS = ModOptions.getEnableFireJets();
 	private static final int SPAWN_CHANCE = ModOptions.getFireJetsSpawnChance();
 	private static final int MAX_LAVA_BLOCKS = 10;
+	private static final String FIRE_SOUND = "minecraft:fire.fire";
 
 	private final int jetStrength;
 
 	protected EntityFireJetFX(final int strength, final World world, final double x, final double y, final double z) {
 		super(world, x, y, z);
 
-		this.jetStrength = strength;
 		this.setAlphaF(0.0F);
+		this.jetStrength = strength;
 		this.particleMaxAge = (XorShiftRandom.shared.nextInt(strength) + 2) * 20;
 	}
 
@@ -79,9 +80,9 @@ public class EntityFireJetFX extends EntityFX {
 			final EntityFlameFX flame = new EntityFlameFX(this.worldObj, this.posX, this.posY, this.posZ, 0.0D,
 					this.jetStrength / 10.0D, 0.0D);
 			flame.flameScale *= this.jetStrength;
-			Minecraft.getMinecraft().effectRenderer.addEffect(flame);
-			Minecraft.getMinecraft().theWorld.playSound(this.posX, this.posY, this.posZ, "minecraft:fire.fire",
-					10.0F * this.jetStrength, 1.0F, false);
+			final Minecraft mc = Minecraft.getMinecraft();
+			mc.effectRenderer.addEffect(flame);
+			mc.theWorld.playSound(this.posX, this.posY, this.posZ, FIRE_SOUND, this.jetStrength, 1.0F, false);
 		}
 
 		if (this.particleAge++ >= this.particleMaxAge) {
@@ -121,6 +122,9 @@ public class EntityFireJetFX extends EntityFX {
 		if (lavaBlocks == 0)
 			return;
 
+		// The number of lava blocks beneath determines the jet
+		// strength.  Strength affects life span, size of flame
+		// particle, and the sound volume.
 		final EntityFireJetFX jet = new EntityFireJetFX(lavaBlocks, world, x + 0.5D, y + 1.1D, z + 0.5D);
 		Minecraft.getMinecraft().effectRenderer.addEffect(jet);
 	}
