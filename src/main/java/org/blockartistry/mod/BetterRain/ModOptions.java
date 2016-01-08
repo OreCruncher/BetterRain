@@ -97,7 +97,7 @@ public final class ModOptions {
 	protected static final String CONFIG_FIREJETS_ENABLED = "Firejets Enabled";
 	protected static boolean enableFireJets = true;
 	protected static final String CONFIG_FIREJET_CHANCE = "Firejet Spawn Chance";
-	protected static int fireJetsSpawnChance = 1000;
+	protected static int fireJetsSpawnChance = 1800;
 	protected static final String CONFIG_BUBBLEJETS_ENABLED = "Bubblejets Enabled";
 	protected static boolean enableBubbleJets = true;
 	protected static final String CONFIG_BUBBLEJETS_CHANCE = "Bubblejet Spawn Chance";

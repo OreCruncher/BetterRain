@@ -27,11 +27,12 @@ package org.blockartistry.mod.BetterRain.client.liquid;
 import java.util.Random;
 
 import org.blockartistry.mod.BetterRain.ModOptions;
+import org.blockartistry.mod.BetterRain.util.XorShiftRandom;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.EntityFX;
+import net.minecraft.init.Blocks;
 import net.minecraft.world.World;
 
 /*
@@ -41,54 +42,47 @@ import net.minecraft.world.World;
  */
 public class BlockLiquidHandler {
 
+	private static final Random RANDOM = XorShiftRandom.shared;
 	private static final boolean ENABLE_FIREJETS = ModOptions.getEnableFireJets();
 	private static final boolean ENABLE_WATER_BUBBLES = ModOptions.getEnableBubbleJets();
 	private static final int FIREJET_SPAWN_CHANCE = ModOptions.getFireJetsSpawnChance();
 	private static final int WATERBUBBLE_SPAWN_CHANCE = ModOptions.getBubbleJetSpawnChance();
 	private static final int MAX_STRENGTH = 10;
 
-	private static int lavaBlocksBeneath(final World world, int x, int y, int z) {
+	private static int countBlocks(final World world, final int x, final int y, final int z, final Block block,
+			final int dir) {
 		int count = 0;
-		for (; count < MAX_STRENGTH; count++)
-			if (world.getBlock(x, y - count - 1, z).getMaterial() != Material.lava)
-				break;
-		return count;
-	}
-
-	private static int waterBlocksAbove(final World world, int x, int y, int z) {
-		int count = 0;
-		for (; count < MAX_STRENGTH; count++)
-			if (world.getBlock(x, y + count, z).getMaterial() != Material.water)
-				break;
+		int idx = y;
+		while (count < MAX_STRENGTH) {
+			if (world.getBlock(x, idx, z) != block)
+				return count;
+			count++;
+			idx += dir;
+		}
 		return count;
 	}
 
 	/*
-	 * Hooked into BlockLiquid.randomDisplayTick(). Goal is to spawn
-	 * EntityJetFX particles as an effect, like flames and lava pops of
-	 * ordinary lava.
+	 * Hooked into BlockLiquid.randomDisplayTick(). Goal is to spawn EntityJetFX
+	 * particles as a client side effect.
 	 */
-	public static void randomDisplayTick(final Block theThis, final World world, int x, int y, int z, Random random) {
+	public static void randomDisplayTick(final Block theThis, final World world, final int x, final int y, final int z,
+			final Random random) {
 		EntityFX effect = null;
-		if (ENABLE_FIREJETS && theThis.getMaterial() == Material.lava) {
-			if (random.nextInt(FIREJET_SPAWN_CHANCE) == 0 && world.isAirBlock(x, y + 1, z)) {
-				final int lavaBlocks = lavaBlocksBeneath(world, x, y, z);
-				if (lavaBlocks == 0)
-					return;
-
+		if (ENABLE_FIREJETS && theThis == Blocks.lava) {
+			if (RANDOM.nextInt(FIREJET_SPAWN_CHANCE) == 0 && world.isAirBlock(x, y + 1, z)) {
 				// The number of lava blocks beneath determines the jet
 				// strength. Strength affects life span, size of flame
 				// particle, and the sound volume.
+				final int lavaBlocks = countBlocks(world, x, y, z, theThis, -1);
 				effect = new EntityFireJetFX(lavaBlocks, world, x + 0.5D, y + 1.1D, z + 0.5D);
 			}
-		} else if (ENABLE_WATER_BUBBLES && theThis.getMaterial() == Material.water) {
-			if (random.nextInt(WATERBUBBLE_SPAWN_CHANCE) == 0 && world.getBlock(x, y - 1, z).getMaterial().isSolid()) {
-				final int waterBlocks = waterBlocksAbove(world, x, y, z);
-				//if(waterBlocks < 1)
-				//	return;
+		} else if (ENABLE_WATER_BUBBLES && theThis == Blocks.water) {
+			if (RANDOM.nextInt(WATERBUBBLE_SPAWN_CHANCE) == 0 && world.getBlock(x, y - 1, z).getMaterial().isSolid()) {
 				// The number of water blocks in the water column determines
-				// the jet strength.  Strength affects life span of the jet
+				// the jet strength. Strength affects life span of the jet
 				// as well as the speed at which the bubbles rise.
+				final int waterBlocks = countBlocks(world, x, y, z, theThis, 1);
 				effect = new EntityBubbleJetFX(waterBlocks, world, x + 0.5D, y + 0.1D, z + 0.5D);
 			}
 		}

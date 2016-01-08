@@ -43,7 +43,7 @@ public class EntityBubbleJetFX extends EntityJetFX {
 	}
 
 	@Override
-	protected EntityFX spawnJetParticle(World world, EffectRenderer renderer) {
+	protected EntityFX spawnJetParticle(final World world, final EffectRenderer renderer) {
 		final EntityBubbleFX bubble = new EntityBubbleFX(world, this.posX, this.posY, this.posZ, 0.0D,
 				0.5D + this.jetStrength / 10.0D, 0.0D);
 		renderer.addEffect(bubble);

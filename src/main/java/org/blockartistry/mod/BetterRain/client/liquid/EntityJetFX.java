@@ -63,12 +63,12 @@ public abstract class EntityJetFX extends EntityFX {
 	protected abstract EntityFX spawnJetParticle(final World world, final EffectRenderer renderer);
 	
 	/*
-	 * During update see if a flame needs to be spawned so that it can rise up.
+	 * During update see if a particle needs to be spawned so that it can rise up.
 	 */
 	@Override
 	public void onUpdate() {
 
-		// Check to see if a flame needs to be generated
+		// Check to see if a particle needs to be generated
 		if (this.particleAge % 3 == 0) {
 			final Minecraft minecraft = Minecraft.getMinecraft();
 			spawnJetParticle(minecraft.theWorld, minecraft.effectRenderer);
