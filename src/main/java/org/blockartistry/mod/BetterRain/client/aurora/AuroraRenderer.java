@@ -26,6 +26,7 @@ package org.blockartistry.mod.BetterRain.client.aurora;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.EntityRenderer;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
@@ -83,16 +84,16 @@ public final class AuroraRenderer implements IAtmosRenderer {
 		final double lowY = 0.0D;
 		final double lowY2 = 0.0D;
 
-		GL11.glPushMatrix();
-		GL11.glTranslatef((float) tranX, tranY, (float) tranZ);
-		GL11.glScaled(0.5D, 8.0D, 0.5D);
-		GL11.glDisable(GL11.GL_TEXTURE_2D);
-		GL11.glShadeModel(GL11.GL_SMOOTH);
-		GL11.glEnable(GL11.GL_BLEND);
-		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, 1);
-		GL11.glDisable(GL11.GL_ALPHA_TEST);
-		GL11.glDisable(GL11.GL_CULL_FACE);
-		GL11.glDepthMask(false);
+		GlStateManager.pushMatrix();
+		GlStateManager.translate((float) tranX, tranY, (float) tranZ);
+		GlStateManager.scale(0.5D, 8.0D, 0.5D);
+		GlStateManager.disableTexture2D();
+		GlStateManager.shadeModel(GL11.GL_SMOOTH);
+		GlStateManager.enableBlend();
+		GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+		GlStateManager.disableAlpha();
+		GlStateManager.disableCull();
+		GlStateManager.depthMask(false);
 
 		for (final Node[] array : aurora.getNodeList()) {
 			for (int i = 0; i < array.length - 1; i++) {
@@ -129,7 +130,8 @@ public final class AuroraRenderer implements IAtmosRenderer {
 				renderer.pos(posX, posY, posZ).color(fade.red, fade.green, fade.blue, 0).endVertex();
 				renderer.pos(posX2, posY2, posZ2).color(fade.red, fade.green, fade.blue, 0).endVertex();
 				renderer.pos(posX2, lowY2, posZ2).color(base.red, base.blue, base.green, alpha).endVertex();
-
+				tess.draw();
+				
 				// tess.startDrawing(GL11.GL_TRIANGLE_FAN);
 				// setColor(base, alpha);
 				// tess.addVertex(posX, lowY, posZ);
@@ -138,13 +140,14 @@ public final class AuroraRenderer implements IAtmosRenderer {
 				// tess.addVertex(posX2, posY2, posZ2);
 				// setColor(base, alpha);
 				// tess.addVertex(posX2, lowY2, posZ2);
-				tess.draw();
+				// tess.draw();
 
 				renderer.begin(GL11.GL_TRIANGLE_FAN, DefaultVertexFormats.POSITION_COLOR);
 				renderer.pos(posX, lowY, posZ).color(base.red, base.green, base.blue, alpha).endVertex();
 				renderer.pos(posX2, lowY2, posZ2).color(base.red, base.green, base.blue, alpha).endVertex();
 				renderer.pos(tetX2, lowY2, tetZ2).color(base.red, base.green, base.blue, alpha).endVertex();
 				renderer.pos(tetX, lowY, tetZ).color(base.red, base.green, base.blue, alpha).endVertex();
+				tess.draw();
 
 				// tess.startDrawing(GL11.GL_TRIANGLE_FAN);
 				// setColor(base, alpha);
@@ -152,13 +155,14 @@ public final class AuroraRenderer implements IAtmosRenderer {
 				// tess.addVertex(posX2, lowY2, posZ2);
 				// tess.addVertex(tetX2, lowY2, tetZ2);
 				// tess.addVertex(tetX, lowY, tetZ);
-				tess.draw();
+				// tess.draw();
 
 				renderer.begin(GL11.GL_TRIANGLE_FAN, DefaultVertexFormats.POSITION_COLOR);
 				renderer.pos(tetX, lowY, tetZ).color(base.red, base.green, base.blue, alpha).endVertex();
 				renderer.pos(tetX, posY, tetZ).color(fade.red, fade.blue, fade.green, 0).endVertex();
 				renderer.pos(tetX2, posY2, tetZ2).color(fade.red, fade.blue, fade.green, 0).endVertex();
 				renderer.pos(tetX2, lowY2, tetZ2).color(base.red, base.green, base.blue, alpha).endVertex();
+				tess.draw();
 
 				// tess.startDrawing(GL11.GL_TRIANGLE_FAN);
 				// setColor(base, alpha);
@@ -168,19 +172,18 @@ public final class AuroraRenderer implements IAtmosRenderer {
 				// tess.addVertex(tetX2, posY2, tetZ2);
 				// setColor(base, alpha);
 				// tess.addVertex(tetX2, lowY2, tetZ2);
-
-				tess.draw();
+				// tess.draw();
 			}
 		}
 
-		GL11.glScaled(3.5D, 25.0D, 3.5D);
-		GL11.glDepthMask(true);
-		GL11.glEnable(GL11.GL_CULL_FACE);
-		GL11.glDisable(GL11.GL_BLEND);
-		GL11.glShadeModel(GL11.GL_FLAT);
-		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		GL11.glEnable(GL11.GL_TEXTURE_2D);
-		GL11.glEnable(GL11.GL_ALPHA_TEST);
-		GL11.glPopMatrix();
+		GlStateManager.scale(3.5D, 25.0D, 3.5D);
+		GlStateManager.depthMask(true);
+		GlStateManager.enableCull();
+		GlStateManager.disableBlend();
+		GlStateManager.shadeModel(GL11.GL_FLAT);
+		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+		GlStateManager.enableTexture2D();
+		GlStateManager.enableAlpha();
+		GlStateManager.popMatrix();
 	}
 }
