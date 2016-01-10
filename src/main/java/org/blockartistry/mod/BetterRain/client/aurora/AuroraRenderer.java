@@ -81,8 +81,7 @@ public final class AuroraRenderer implements IAtmosRenderer {
 		final Color base = aurora.getBaseColor();
 		final Color fade = aurora.getFadeColor();
 		final int alpha = aurora.getAlpha();
-		final double lowY = 0.0D;
-		final double lowY2 = 0.0D;
+		final double zero = 0.0D;
 
 		GlStateManager.pushMatrix();
 		GlStateManager.translate((float) tranX, tranY, (float) tranZ);
@@ -90,7 +89,7 @@ public final class AuroraRenderer implements IAtmosRenderer {
 		GlStateManager.disableTexture2D();
 		GlStateManager.shadeModel(GL11.GL_SMOOTH);
 		GlStateManager.enableBlend();
-		GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+		GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, 1);//GL11.GL_ONE_MINUS_SRC_ALPHA);
 		GlStateManager.disableAlpha();
 		GlStateManager.disableCull();
 		GlStateManager.depthMask(false);
@@ -125,11 +124,14 @@ public final class AuroraRenderer implements IAtmosRenderer {
 					posY2 = 0.0D;
 				}
 
+				final int alpha1 = 0;
+				
+				// Front
 				renderer.begin(GL11.GL_TRIANGLE_FAN, DefaultVertexFormats.POSITION_COLOR);
-				renderer.pos(posX, lowY, posZ).color(base.red, base.blue, base.green, alpha).endVertex();
-				renderer.pos(posX, posY, posZ).color(fade.red, fade.green, fade.blue, 0).endVertex();
-				renderer.pos(posX2, posY2, posZ2).color(fade.red, fade.green, fade.blue, 0).endVertex();
-				renderer.pos(posX2, lowY2, posZ2).color(base.red, base.blue, base.green, alpha).endVertex();
+				renderer.pos(posX, zero, posZ).color(base.red, base.blue, base.green, alpha).endVertex();
+				renderer.pos(posX, posY, posZ).color(fade.red, fade.green, fade.blue, alpha1).endVertex();
+				renderer.pos(posX2, posY2, posZ2).color(fade.red, fade.green, fade.blue, alpha1).endVertex();
+				renderer.pos(posX2, zero, posZ2).color(base.red, base.blue, base.green, alpha).endVertex();
 				tess.draw();
 				
 				// tess.startDrawing(GL11.GL_TRIANGLE_FAN);
@@ -142,13 +144,16 @@ public final class AuroraRenderer implements IAtmosRenderer {
 				// tess.addVertex(posX2, lowY2, posZ2);
 				// tess.draw();
 
+				/*
+				// Bottom
 				renderer.begin(GL11.GL_TRIANGLE_FAN, DefaultVertexFormats.POSITION_COLOR);
-				renderer.pos(posX, lowY, posZ).color(base.red, base.green, base.blue, alpha).endVertex();
-				renderer.pos(posX2, lowY2, posZ2).color(base.red, base.green, base.blue, alpha).endVertex();
-				renderer.pos(tetX2, lowY2, tetZ2).color(base.red, base.green, base.blue, alpha).endVertex();
-				renderer.pos(tetX, lowY, tetZ).color(base.red, base.green, base.blue, alpha).endVertex();
+				renderer.pos(posX, zero, posZ).color(base.red, base.green, base.blue, alpha).endVertex();
+				renderer.pos(posX2, zero, posZ2).color(base.red, base.green, base.blue, alpha).endVertex();
+				renderer.pos(tetX2, zero, tetZ2).color(base.red, base.green, base.blue, alpha).endVertex();
+				renderer.pos(tetX, zero, tetZ).color(base.red, base.green, base.blue, alpha).endVertex();
 				tess.draw();
-
+				*/
+				
 				// tess.startDrawing(GL11.GL_TRIANGLE_FAN);
 				// setColor(base, alpha);
 				// tess.addVertex(posX, lowY, posZ);
@@ -157,11 +162,12 @@ public final class AuroraRenderer implements IAtmosRenderer {
 				// tess.addVertex(tetX, lowY, tetZ);
 				// tess.draw();
 
+				// Back
 				renderer.begin(GL11.GL_TRIANGLE_FAN, DefaultVertexFormats.POSITION_COLOR);
-				renderer.pos(tetX, lowY, tetZ).color(base.red, base.green, base.blue, alpha).endVertex();
+				renderer.pos(tetX, zero, tetZ).color(base.red, base.green, base.blue, alpha).endVertex();
 				renderer.pos(tetX, posY, tetZ).color(fade.red, fade.blue, fade.green, 0).endVertex();
 				renderer.pos(tetX2, posY2, tetZ2).color(fade.red, fade.blue, fade.green, 0).endVertex();
-				renderer.pos(tetX2, lowY2, tetZ2).color(base.red, base.green, base.blue, alpha).endVertex();
+				renderer.pos(tetX2, zero, tetZ2).color(base.red, base.green, base.blue, alpha).endVertex();
 				tess.draw();
 
 				// tess.startDrawing(GL11.GL_TRIANGLE_FAN);
