@@ -26,6 +26,7 @@ package org.blockartistry.mod.BetterRain.data;
 
 import org.blockartistry.mod.BetterRain.util.INBTSerialization;
 
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 
@@ -55,13 +56,20 @@ public final class AuroraData implements INBTSerialization {
 				player.worldObj.getWorldTime(), colorSet, preset);
 	}
 
-	public AuroraData(final int dimensionId, final int x, final int z, final long seed, final int colorSet, final int preset) {
+	public AuroraData(final int dimensionId, final int x, final int z, final long seed, final int colorSet,
+			final int preset) {
 		this.dimensionId = dimensionId;
 		this.posX = x;
 		this.posZ = z;
 		this.seed = seed;
 		this.colorSet = colorSet;
 		this.preset = preset;
+	}
+	
+	public long distanceSq(final Entity entity, final int offset) {
+		final long deltaX = this.posX - (int) entity.posX;
+		final long deltaZ = this.posZ - (int) entity.posZ + offset;
+		return deltaX * deltaX + deltaZ * deltaZ;
 	}
 
 	@Override
@@ -89,7 +97,7 @@ public final class AuroraData implements INBTSerialization {
 		if (!(anObj instanceof AuroraData))
 			return false;
 		final AuroraData a = (AuroraData) anObj;
-		return (this.posX == a.posX) && (this.posZ == a.posZ);
+		return (this.dimensionId == a.dimensionId) && (this.posX == a.posX) && (this.posZ == a.posZ);
 	}
 
 	@Override
