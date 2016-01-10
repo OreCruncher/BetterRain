@@ -67,7 +67,8 @@ public class BlockLiquidHandler {
 	 * Hooked into BlockLiquid.randomDisplayTick(). Goal is to spawn EntityJetFX
 	 * particles as a client side effect.
 	 */
-	public static void randomDisplayTick(final World world, final BlockPos pos, final IBlockState state, final Random rand) {
+	public static void randomDisplayTick(final World world, final BlockPos pos, final IBlockState state,
+			final Random rand) {
 		final Block theThis = state.getBlock();
 		EntityFX effect = null;
 		if (ENABLE_FIREJETS && theThis == Blocks.lava) {
@@ -76,7 +77,7 @@ public class BlockLiquidHandler {
 				// strength. Strength affects life span, size of flame
 				// particle, and the sound volume.
 				final int lavaBlocks = countBlocks(world, pos, theThis, -1);
-				effect = new EntityFireJetFX(lavaBlocks, world, pos.getX() + 0.5D, pos.getY() + 1.1D,
+				effect = new EntityJetFX(lavaBlocks, EntityFireJetFX.factory, world, pos.getX() + 0.5D, pos.getY() + 1.1D,
 						pos.getZ() + 0.5D);
 			}
 		} else if (ENABLE_WATER_BUBBLES && theThis == Blocks.water) {
@@ -86,8 +87,8 @@ public class BlockLiquidHandler {
 				// the jet strength. Strength affects life span of the jet
 				// as well as the speed at which the bubbles rise.
 				final int waterBlocks = countBlocks(world, pos, theThis, 1);
-				effect = new EntityBubbleJetFX(waterBlocks, world, pos.getX() + 0.5D, pos.getY() + 0.1D,
-						pos.getZ() + 0.5D);
+				effect = new EntityJetFX(waterBlocks, EntityBubbleJetFX.factory, world, pos.getX() + 0.5D,
+						pos.getY() + 0.1D, pos.getZ() + 0.5D);
 			}
 		}
 

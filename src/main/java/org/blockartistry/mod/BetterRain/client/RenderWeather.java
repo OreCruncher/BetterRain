@@ -38,6 +38,7 @@ import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.particle.EntityFX;
 import net.minecraft.client.particle.EntityRainFX;
 import net.minecraft.client.particle.EntitySmokeFX;
+import net.minecraft.client.particle.IParticleFactory;
 import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.BlockPos;
@@ -114,13 +115,11 @@ public final class RenderWeather {
 				final double posY = precipHeight.getY() + 0.1F - block.getBlockBoundsMinY();
 				final double posZ = locZ + random.nextFloat();
 
-				EntityFX particle = null;
+				IParticleFactory factory = null;
 				if (block.getMaterial() == Material.lava) {
 					if (!hasDust)
-						particle = new EntitySmokeFX.Factory().getEntityFX(0, worldclient, posX, posY, posZ, 0.0D, 0.0D,
-								0.0D);
+						factory = new EntitySmokeFX.Factory();
 				} else if (block.getMaterial() != Material.air) {
-
 					if (random.nextInt(++particlesSpawned) == 0) {
 						spawnX = posX;
 						spawnY = posY;
@@ -128,12 +127,13 @@ public final class RenderWeather {
 					}
 
 					if (!hasDust)
-						particle = new EntityRainFX.Factory().getEntityFX(0, worldclient, posX, posY, posZ, 0.0D, 0.0D,
-								0.0D);
+						factory = new EntityRainFX.Factory();
 				}
 
-				if (particle != null)
-					theThis.mc.effectRenderer.addEffect(particle);
+				if (factory != null) {
+					final EntityFX effect = factory.getEntityFX(0, worldclient, posX, posY, posZ, 0.0D, 0.0D, 0.0D);
+					theThis.mc.effectRenderer.addEffect(effect);
+				}
 			}
 		}
 

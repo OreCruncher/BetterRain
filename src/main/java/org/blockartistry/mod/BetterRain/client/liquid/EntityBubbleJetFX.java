@@ -24,9 +24,9 @@
 
 package org.blockartistry.mod.BetterRain.client.liquid;
 
-import net.minecraft.client.particle.EffectRenderer;
 import net.minecraft.client.particle.EntityBubbleFX;
 import net.minecraft.client.particle.EntityFX;
+import net.minecraft.client.particle.IParticleFactory;
 import net.minecraft.world.World;
 
 /*
@@ -36,18 +36,18 @@ import net.minecraft.world.World;
  * - it is just a way to maintain state across several ticks while it
  * spews bubble particles.
  */
-public class EntityBubbleJetFX extends EntityJetFX {
+public final class EntityBubbleJetFX implements IParticleFactory {
+	
+	public static final IParticleFactory factory = new EntityBubbleJetFX();
 
-	protected EntityBubbleJetFX(final int strength, final World world, final double x, final double y, final double z) {
-		super(strength, world, x, y, z);
+	private EntityBubbleJetFX() {
 	}
 
 	@Override
-	protected EntityFX spawnJetParticle(final World world, final EffectRenderer renderer) {
-		final EntityFX bubble = new EntityBubbleFX.Factory().getEntityFX(0, world, this.posX, this.posY, this.posZ, 0.0D,
-				0.5D + this.jetStrength / 10.0D, 0.0D);
-		renderer.addEffect(bubble);
+	public EntityFX getEntityFX(int jetStrength, World world, double x, double y, double z,
+			double sX, double sY, double sZ, int... notUsed) {
+		final EntityFX bubble = new EntityBubbleFX.Factory().getEntityFX(0, world, x, y, z, 0.0D,
+				0.5D + jetStrength / 10.0D, 0.0D);
 		return bubble;
 	}
-
 }

@@ -27,8 +27,8 @@ package org.blockartistry.mod.BetterRain.client.liquid;
 import org.blockartistry.mod.BetterRain.util.XorShiftRandom;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.particle.EffectRenderer;
 import net.minecraft.client.particle.EntityFX;
+import net.minecraft.client.particle.IParticleFactory;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.world.World;
@@ -38,16 +38,18 @@ import net.minecraft.world.World;
  * other particles as a jet.  This entity does not render - just
  * serves as a particle factory.
  */
-public abstract class EntityJetFX extends EntityFX {
+public class EntityJetFX extends EntityFX {
 
 	protected final int jetStrength;
+	protected final IParticleFactory factory;
 
-	protected EntityJetFX(final int strength, final World world, final double x, final double y, final double z) {
+	protected EntityJetFX(final int strength, final IParticleFactory factory, final World world, final double x, final double y, final double z) {
 		super(world, x, y, z);
 
 		this.setAlphaF(0.0F);
 		this.jetStrength = strength;
 		this.particleMaxAge = (XorShiftRandom.shared.nextInt(strength) + 2) * 20;
+		this.factory = factory;
 	}
 
 	/*
@@ -60,11 +62,6 @@ public abstract class EntityJetFX extends EntityFX {
 	}
 
 	/*
-	 * Override in derived class to provide jet particle spawning.
-	 */
-	protected abstract EntityFX spawnJetParticle(final World world, final EffectRenderer renderer);
-
-	/*
 	 * During update see if a particle needs to be spawned so that it can rise
 	 * up.
 	 */
@@ -73,8 +70,9 @@ public abstract class EntityJetFX extends EntityFX {
 
 		// Check to see if a particle needs to be generated
 		if (this.particleAge % 3 == 0) {
-			final Minecraft minecraft = Minecraft.getMinecraft();
-			spawnJetParticle(minecraft.theWorld, minecraft.effectRenderer);
+			final Minecraft mc = Minecraft.getMinecraft();
+			final EntityFX effect = factory.getEntityFX(this.jetStrength, mc.theWorld, this.posX, this.posY, this.posZ, 0, 0, 0);
+			mc.effectRenderer.addEffect(effect);
 		}
 
 		if (this.particleAge++ >= this.particleMaxAge) {
