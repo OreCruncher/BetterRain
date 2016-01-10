@@ -31,15 +31,15 @@ import java.net.URL;
 
 import org.apache.commons.lang3.StringUtils;
 
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.Loader;
-import cpw.mods.fml.common.event.FMLInterModComms;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.IChatComponent;
 import net.minecraft.util.StatCollector;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.event.FMLInterModComms;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 
 // Modeled after the BuildCraft version check system.
 public final class VersionCheck implements Runnable {
@@ -161,7 +161,7 @@ public final class VersionCheck implements Runnable {
 
 		if (ModOptions.getOnlineVersionChecking()) {
 			final VersionCheck test = new VersionCheck();
-			FMLCommonHandler.instance().bus().register(test);
+			MinecraftForge.EVENT_BUS.register(test);
 			new Thread(test).start();
 		}
 	}
@@ -173,7 +173,7 @@ public final class VersionCheck implements Runnable {
 			if (status == UpdateStatus.OUTDATED) {
 				final String msg = StatCollector.translateToLocalFormatted("msg.NewVersionAvailable.betterrain",
 						BetterRain.MOD_NAME, currentVersion, CURSE_PROJECT_NAME);
-				IChatComponent component = IChatComponent.Serializer.func_150699_a(msg);
+				final IChatComponent component = IChatComponent.Serializer.jsonToComponent(msg);
 				event.player.addChatMessage(component);
 			}
 		}
@@ -253,7 +253,7 @@ public final class VersionCheck implements Runnable {
 			ModLog.warn("Version check failed");
 			break;
 		case CURRENT:
-			ModLog.info("BetterRain version [%s] is the same or newer than the currentAurora version [%s]", modVersion,
+			ModLog.info("BetterRain version [%s] is the same or newer than the current version [%s]", modVersion,
 					currentVersion);
 			break;
 		case OUTDATED:

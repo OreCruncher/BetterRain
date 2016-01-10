@@ -24,14 +24,6 @@
 
 package org.blockartistry.mod.BetterRain.client;
 
-import cpw.mods.fml.client.FMLClientHandler;
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.eventhandler.EventPriority;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.gameevent.TickEvent;
-import cpw.mods.fml.common.gameevent.TickEvent.Phase;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -48,14 +40,22 @@ import org.lwjgl.opengl.GL11;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.ISound;
 import net.minecraft.client.audio.PositionedSoundRecord;
-import net.minecraft.client.entity.EntityClientPlayerMP;
+import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.client.event.EntityViewRenderEvent;
-import net.minecraftforge.client.event.sound.PlaySoundEvent17;
+import net.minecraftforge.client.event.sound.PlaySoundEvent;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.client.FMLClientHandler;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.relauncher.Side;
 
 @SideOnly(Side.CLIENT)
 public final class ClientEffectHandler {
@@ -105,7 +105,6 @@ public final class ClientEffectHandler {
 	public static void initialize() {
 		final ClientEffectHandler handler = new ClientEffectHandler();
 		MinecraftForge.EVENT_BUS.register(handler);
-		FMLCommonHandler.instance().bus().register(handler);
 	}
 
 	/*
@@ -120,7 +119,7 @@ public final class ClientEffectHandler {
 	 * experience is to be Vanilla let it just roll on through.
 	 */
 	@SubscribeEvent
-	public void soundEvent(final PlaySoundEvent17 event) {
+	public void soundEvent(final PlaySoundEvent event) {
 		if ((ALWAYS_OVERRIDE_SOUND || !RainProperties.doVanillaRain()) && replaceRainSound(event.name)) {
 			final ISound sound = event.sound;
 			event.result = new PositionedSoundRecord(RainProperties.getCurrentRainSound(),
@@ -139,7 +138,7 @@ public final class ClientEffectHandler {
 			return null;
 		}
 
-		final EntityClientPlayerMP player = FMLClientHandler.instance().getClient().thePlayer;
+		final EntityPlayerSP player = FMLClientHandler.instance().getClient().thePlayer;
 		final int playerX = (int) player.posX;
 		final int playerZ = (int) player.posZ;
 		boolean started = false;
@@ -268,7 +267,7 @@ public final class ClientEffectHandler {
 		if (Minecraft.getMinecraft().theWorld.provider.doesXZShowFog(posX, posZ))
 			return false;
 
-		final BiomeGenBase biome = entity.worldObj.getBiomeGenForCoords(posX, posZ);
+		final BiomeGenBase biome = entity.worldObj.getBiomeGenForCoords(new BlockPos(posX, 0, posZ));
 		return EffectType.hasDust(biome);
 	}
 

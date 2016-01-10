@@ -24,14 +24,14 @@
 
 package org.blockartistry.mod.BetterRain.server;
 
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.gameevent.TickEvent;
-import cpw.mods.fml.common.gameevent.TickEvent.Phase;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.World;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 
 import java.util.List;
 
@@ -62,7 +62,7 @@ public final class ServerEffectHandler {
 	private static final long MIN_AURORA_DISTANCE_SQ = 400 * 400;
 
 	public static void initialize() {
-		FMLCommonHandler.instance().bus().register(new ServerEffectHandler());
+		MinecraftForge.EVENT_BUS.register(new ServerEffectHandler());
 	}
 
 	private final ElementRule rule = ModOptions.getDimensionRule();
@@ -101,7 +101,7 @@ public final class ServerEffectHandler {
 		float sendIntensity = RESET;
 		int sendPhase = RainPhase.NOT_RAINING.ordinal();
 		final World world = event.world;
-		final int dimensionId = world.provider.dimensionId;
+		final int dimensionId = world.provider.getDimensionId();
 
 		// Have to be a surface world and match the dimension rule
 		if (world.provider.isSurfaceWorld() && rule.isOk(dimensionId)) {
@@ -156,7 +156,6 @@ public final class ServerEffectHandler {
 		} else if (lastTimeCheck != time && ++tickCounter % CHECK_INTERVAL == 0) {
 			tickCounter = 0;
 			lastTimeCheck = time;
-			@SuppressWarnings("unchecked")
 			final List<EntityPlayerMP> players = MinecraftServer.getServer().getConfigurationManager().playerEntityList;
 
 			for (final EntityPlayerMP player : players) {
@@ -173,7 +172,7 @@ public final class ServerEffectHandler {
 			}
 
 			for (final AuroraData a : data) {
-				Network.sendAurora(a, world.provider.dimensionId);
+				Network.sendAurora(a, world.provider.getDimensionId());
 			}
 		}
 	}

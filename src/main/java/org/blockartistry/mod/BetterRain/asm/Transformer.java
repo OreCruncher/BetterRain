@@ -117,13 +117,11 @@ public class Transformer implements IClassTransformer {
 			if (m.name.equals(names[0])) {
 				logger.debug("Hooking " + names[0]);
 				InsnList list = new InsnList();
-				list.add(new VarInsnNode(ALOAD, 0));
 				list.add(new VarInsnNode(ALOAD, 1));
-				list.add(new VarInsnNode(ILOAD, 2));
-				list.add(new VarInsnNode(ILOAD, 3));
-				list.add(new VarInsnNode(ILOAD, 4));
-				list.add(new VarInsnNode(ALOAD, 5));
-				final String sig = "(Lnet/minecraft/block/Block;Lnet/minecraft/world/World;IIILjava/util/Random;)V";
+				list.add(new VarInsnNode(ALOAD, 2));
+				list.add(new VarInsnNode(ALOAD, 3));
+				list.add(new VarInsnNode(ALOAD, 4));
+				final String sig = "(Lnet/minecraft/world/World;Lnet/minecraft/util/BlockPos;Lnet/minecraft/block/state/IBlockState;Ljava/util/Random;)V";
 				list.add(new MethodInsnNode(INVOKESTATIC, "org/blockartistry/mod/BetterRain/client/liquid/BlockLiquidHandler", targetName[0], sig,
 						false));
 				m.instructions.insertBefore(m.instructions.getFirst(), list);

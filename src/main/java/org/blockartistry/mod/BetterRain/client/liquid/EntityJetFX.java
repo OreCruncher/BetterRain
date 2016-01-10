@@ -29,7 +29,8 @@ import org.blockartistry.mod.BetterRain.util.XorShiftRandom;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.EffectRenderer;
 import net.minecraft.client.particle.EntityFX;
-import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.entity.Entity;
 import net.minecraft.world.World;
 
 /*
@@ -40,7 +41,7 @@ import net.minecraft.world.World;
 public abstract class EntityJetFX extends EntityFX {
 
 	protected final int jetStrength;
-	
+
 	protected EntityJetFX(final int strength, final World world, final double x, final double y, final double z) {
 		super(world, x, y, z);
 
@@ -53,17 +54,19 @@ public abstract class EntityJetFX extends EntityFX {
 	 * Nothing to render so optimize out
 	 */
 	@Override
-	public void renderParticle(final Tessellator tess, final float x, final float y, final float z, final float dX,
-			final float dY, final float dZ) {
+	public void renderParticle(final WorldRenderer worldRendererIn, final Entity entityIn, final float partialTicks,
+			final float p_180434_4_, final float p_180434_5_, final float p_180434_6_, final float p_180434_7_,
+			final float p_180434_8_) {
 	}
 
 	/*
 	 * Override in derived class to provide jet particle spawning.
 	 */
 	protected abstract EntityFX spawnJetParticle(final World world, final EffectRenderer renderer);
-	
+
 	/*
-	 * During update see if a particle needs to be spawned so that it can rise up.
+	 * During update see if a particle needs to be spawned so that it can rise
+	 * up.
 	 */
 	@Override
 	public void onUpdate() {

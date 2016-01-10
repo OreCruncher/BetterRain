@@ -26,8 +26,8 @@ package org.blockartistry.mod.BetterRain.client.aurora;
 
 import org.blockartistry.mod.BetterRain.util.MathStuff;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.relauncher.Side;
 
 @SideOnly(Side.CLIENT)
 public final class Node {

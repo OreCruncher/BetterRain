@@ -45,7 +45,7 @@ public class EntityFireJetFX extends EntityJetFX {
 	}
 
 	protected EntityFX spawnJetParticle(final World world, final EffectRenderer renderer) {
-		final EntityFlameFX flame = new EntityFlameFX(world, this.posX, this.posY, this.posZ, 0.0D,
+		final EntityFlameFX flame = (EntityFlameFX) new EntityFlameFX.Factory().getEntityFX(0, world, this.posX, this.posY, this.posZ, 0.0D,
 				this.jetStrength / 10.0D, 0.0D);
 		flame.flameScale *= this.jetStrength;
 		renderer.addEffect(flame);

@@ -70,7 +70,7 @@ public final class WorldUtils {
 	}
 
 	public static boolean hasSky(final World world) {
-		return !world.provider.hasNoSky;
+		return !world.provider.getHasNoSky();
 	}
 
 	public static boolean isDusk(final World world) {
@@ -92,14 +92,14 @@ public final class WorldUtils {
 	}
 
 	public static int getSeaLevel(final World world) {
-		final int dimId = world.provider.dimensionId;
+		final int dimId = world.provider.getDimensionId();
 		if (seaLevelOverride.contains(dimId))
 			return seaLevelOverride.get(dimId);
 		return world.provider.getAverageGroundLevel();
 	}
 
 	public static int getSkyHeight(final World world) {
-		final int dimId = world.provider.dimensionId;
+		final int dimId = world.provider.getDimensionId();
 		if (skyHeightOverride.contains(dimId))
 			return skyHeightOverride.get(dimId);
 		return world.provider.getHeight();

@@ -26,12 +26,12 @@ package org.blockartistry.mod.BetterRain.proxy;
 
 import org.blockartistry.mod.BetterRain.client.ClientEffectHandler;
 
-import cpw.mods.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 
 public class ProxyClient extends Proxy {
 
 	@Override
-	public void init(FMLInitializationEvent event) {
+	public void init(final FMLInitializationEvent event) {
 		super.init(event);
 		ClientEffectHandler.initialize();
 	}

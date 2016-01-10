@@ -24,12 +24,14 @@
 
 package org.blockartistry.mod.BetterRain.client.aurora;
 
-import cpw.mods.fml.client.FMLClientHandler;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.client.FMLClientHandler;
+import net.minecraftforge.fml.relauncher.Side;
 
 import org.blockartistry.mod.BetterRain.ModOptions;
 import org.blockartistry.mod.BetterRain.client.ClientEffectHandler;
@@ -52,12 +54,9 @@ public final class AuroraRenderer implements IAtmosRenderer {
 		}
 	}
 
-	private static void setColor(final Color color, final int alpha) {
-		Tessellator.instance.setColorRGBA(color.red, color.green, color.blue, alpha);
-	}
-
 	public static void renderAurora(final float partialTick, final Aurora aurora) {
-		final Tessellator tess = Tessellator.instance;
+		final Tessellator tess = Tessellator.getInstance();
+		final WorldRenderer renderer = tess.getWorldRenderer();
 		final Minecraft minecraft = FMLClientHandler.instance().getClient();
 		final float tranY;
 		if (HEIGHT_PLAYER_RELATIVE) {
@@ -125,32 +124,51 @@ public final class AuroraRenderer implements IAtmosRenderer {
 					posY2 = 0.0D;
 				}
 
-				tess.startDrawing(GL11.GL_TRIANGLE_FAN);
-				setColor(base, alpha);
-				tess.addVertex(posX, lowY, posZ);
-				setColor(fade, 0);
-				tess.addVertex(posX, posY, posZ);
-				tess.addVertex(posX2, posY2, posZ2);
-				setColor(base, alpha);
-				tess.addVertex(posX2, lowY2, posZ2);
+				renderer.begin(GL11.GL_TRIANGLE_FAN, DefaultVertexFormats.POSITION_COLOR);
+				renderer.pos(posX, lowY, posZ).color(base.red, base.blue, base.green, alpha).endVertex();
+				renderer.pos(posX, posY, posZ).color(fade.red, fade.green, fade.blue, 0).endVertex();
+				renderer.pos(posX2, posY2, posZ2).color(fade.red, fade.green, fade.blue, 0).endVertex();
+				renderer.pos(posX2, lowY2, posZ2).color(base.red, base.blue, base.green, alpha).endVertex();
+
+				// tess.startDrawing(GL11.GL_TRIANGLE_FAN);
+				// setColor(base, alpha);
+				// tess.addVertex(posX, lowY, posZ);
+				// setColor(fade, 0);
+				// tess.addVertex(posX, posY, posZ);
+				// tess.addVertex(posX2, posY2, posZ2);
+				// setColor(base, alpha);
+				// tess.addVertex(posX2, lowY2, posZ2);
 				tess.draw();
 
-				tess.startDrawing(GL11.GL_TRIANGLE_FAN);
-				setColor(base, alpha);
-				tess.addVertex(posX, lowY, posZ);
-				tess.addVertex(posX2, lowY2, posZ2);
-				tess.addVertex(tetX2, lowY2, tetZ2);
-				tess.addVertex(tetX, lowY, tetZ);
+				renderer.begin(GL11.GL_TRIANGLE_FAN, DefaultVertexFormats.POSITION_COLOR);
+				renderer.pos(posX, lowY, posZ).color(base.red, base.green, base.blue, alpha).endVertex();
+				renderer.pos(posX2, lowY2, posZ2).color(base.red, base.green, base.blue, alpha).endVertex();
+				renderer.pos(tetX2, lowY2, tetZ2).color(base.red, base.green, base.blue, alpha).endVertex();
+				renderer.pos(tetX, lowY, tetZ).color(base.red, base.green, base.blue, alpha).endVertex();
+
+				// tess.startDrawing(GL11.GL_TRIANGLE_FAN);
+				// setColor(base, alpha);
+				// tess.addVertex(posX, lowY, posZ);
+				// tess.addVertex(posX2, lowY2, posZ2);
+				// tess.addVertex(tetX2, lowY2, tetZ2);
+				// tess.addVertex(tetX, lowY, tetZ);
 				tess.draw();
 
-				tess.startDrawing(GL11.GL_TRIANGLE_FAN);
-				setColor(base, alpha);
-				tess.addVertex(tetX, lowY, tetZ);
-				setColor(fade, 0);
-				tess.addVertex(tetX, posY, tetZ);
-				tess.addVertex(tetX2, posY2, tetZ2);
-				setColor(base, alpha);
-				tess.addVertex(tetX2, lowY2, tetZ2);
+				renderer.begin(GL11.GL_TRIANGLE_FAN, DefaultVertexFormats.POSITION_COLOR);
+				renderer.pos(tetX, lowY, tetZ).color(base.red, base.green, base.blue, alpha).endVertex();
+				renderer.pos(tetX, posY, tetZ).color(fade.red, fade.blue, fade.green, 0).endVertex();
+				renderer.pos(tetX2, posY2, tetZ2).color(fade.red, fade.blue, fade.green, 0).endVertex();
+				renderer.pos(tetX2, lowY2, tetZ2).color(base.red, base.green, base.blue, alpha).endVertex();
+
+				// tess.startDrawing(GL11.GL_TRIANGLE_FAN);
+				// setColor(base, alpha);
+				// tess.addVertex(tetX, lowY, tetZ);
+				// setColor(fade, 0);
+				// tess.addVertex(tetX, posY, tetZ);
+				// tess.addVertex(tetX2, posY2, tetZ2);
+				// setColor(base, alpha);
+				// tess.addVertex(tetX2, lowY2, tetZ2);
+
 				tess.draw();
 			}
 		}

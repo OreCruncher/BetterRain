@@ -73,7 +73,7 @@ public final class DimensionEffectDataFile extends WorldSavedData {
 	}
 
 	public static DimensionEffectData get(final World world) {
-		return getFile(world).getData(world.provider.dimensionId);
+		return getFile(world).getData(world.provider.getDimensionId());
 	}
 
 	@Override

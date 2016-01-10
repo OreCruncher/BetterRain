@@ -23,24 +23,24 @@
 
 package org.blockartistry.mod.BetterRain.util;
 
-import cpw.mods.fml.client.FMLClientHandler;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.biome.BiomeGenBase;
+import net.minecraftforge.fml.client.FMLClientHandler;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.relauncher.Side;
 
 public final class PlayerUtils {
 	
 	private PlayerUtils() {}
 	
 	public static BiomeGenBase getPlayerBiome(final EntityPlayer player) {
-		return player.worldObj.getBiomeGenForCoords((int) player.posX, (int) player.posZ);
+		return player.worldObj.getBiomeGenForCoords(player.getPosition());
 	}
 
 	public static int getPlayerDimension(final EntityPlayer player) {
 		if(player == null || player.worldObj == null)
 			return -256;
-		return player.worldObj.provider.dimensionId;
+		return player.worldObj.provider.getDimensionId();
 	}
 	
 	@SideOnly(Side.CLIENT)

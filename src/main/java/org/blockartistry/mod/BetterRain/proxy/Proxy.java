@@ -30,35 +30,31 @@ import org.blockartistry.mod.BetterRain.data.EffectType;
 import org.blockartistry.mod.BetterRain.network.Network;
 import org.blockartistry.mod.BetterRain.server.ServerEffectHandler;
 
-import cpw.mods.fml.common.event.FMLInitializationEvent;
-import cpw.mods.fml.common.event.FMLPostInitializationEvent;
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import net.minecraft.command.ICommandManager;
 import net.minecraft.command.ServerCommandManager;
 import net.minecraft.server.MinecraftServer;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 
 public class Proxy {
 
-	public void preInit(FMLPreInitializationEvent event) {
+	public void preInit(final FMLPreInitializationEvent event) {
 		// Register early to give the background process a good amount
 		// of seed to get the mod version data
 		VersionCheck.register();
 	}
 
-	public void init(FMLInitializationEvent event) {
+	public void init(final FMLInitializationEvent event) {
 		Network.initialize();
 		ServerEffectHandler.initialize();
 	}
 
-	public void postInit(FMLPostInitializationEvent event) {
+	public void postInit(final FMLPostInitializationEvent event) {
 		EffectType.initialize();
 	}
 
-	public void serverLoad(FMLServerStartingEvent event) {
-
-	}
-	
 	public void serverStarting(final FMLServerStartingEvent event) {
 		final MinecraftServer server = MinecraftServer.getServer();
 		final ICommandManager command = server.getCommandManager();

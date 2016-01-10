@@ -26,9 +26,9 @@ package org.blockartistry.mod.BetterRain.asm;
 
 import java.util.Map;
 
-import cpw.mods.fml.relauncher.IFMLLoadingPlugin;
+import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin;
 
-@IFMLLoadingPlugin.MCVersion("1.7.10")
+@IFMLLoadingPlugin.MCVersion("1.8.9")
 @IFMLLoadingPlugin.TransformerExclusions({ "org.blockartistry.mod.BetterRain.asm." })
 @IFMLLoadingPlugin.SortingIndex(10001)
 @IFMLLoadingPlugin.Name("BetterRain")

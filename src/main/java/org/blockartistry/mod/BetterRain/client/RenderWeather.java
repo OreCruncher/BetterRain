@@ -32,8 +32,6 @@ import org.blockartistry.mod.BetterRain.client.rain.RainProperties;
 import org.blockartistry.mod.BetterRain.client.rain.RainSnowRenderer;
 import org.blockartistry.mod.BetterRain.data.EffectType;
 import org.blockartistry.mod.BetterRain.util.XorShiftRandom;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.multiplayer.WorldClient;
@@ -41,18 +39,22 @@ import net.minecraft.client.particle.EntityFX;
 import net.minecraft.client.particle.EntityRainFX;
 import net.minecraft.client.particle.EntitySmokeFX;
 import net.minecraft.client.renderer.EntityRenderer;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.Entity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.biome.BiomeGenBase;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.relauncher.Side;
 
 @SideOnly(Side.CLIENT)
 public final class RenderWeather {
-	
+
 	private static final List<IAtmosRenderer> renderList = new ArrayList<IAtmosRenderer>();
+
 	public static void register(final IAtmosRenderer renderer) {
 		renderList.add(renderer);
 	}
-	
+
 	static {
 		register(new RainSnowRenderer());
 		register(new AuroraRenderer());
@@ -79,7 +81,7 @@ public final class RenderWeather {
 			return;
 
 		random.setSeed((long) theThis.rendererUpdateCount * 312987231L);
-		final EntityLivingBase entity = theThis.mc.renderViewEntity;
+		final Entity entity = theThis.mc.getRenderViewEntity();
 		final WorldClient worldclient = theThis.mc.theWorld;
 		final int playerX = MathHelper.floor_double(entity.posX);
 		final int playerY = MathHelper.floor_double(entity.posY);
@@ -98,22 +100,25 @@ public final class RenderWeather {
 		for (int j1 = 0; j1 < particleCount; ++j1) {
 			final int locX = playerX + random.nextInt(RANGE_FACTOR) - random.nextInt(RANGE_FACTOR);
 			final int locZ = playerZ + random.nextInt(RANGE_FACTOR) - random.nextInt(RANGE_FACTOR);
-			final int locY = worldclient.getPrecipitationHeight(locX, locZ);
-			final BiomeGenBase biome = worldclient.getBiomeGenForCoords(locX, locZ);
+			final BlockPos posXZ = new BlockPos(locX, 0, locZ);
+			final BlockPos precipHeight = worldclient.getPrecipitationHeight(posXZ);
+			final BiomeGenBase biome = worldclient.getBiomeGenForCoords(posXZ);
 			final boolean hasDust = WeatherUtils.biomeHasDust(biome);
 
-			if (locY <= playerY + RANGE_FACTOR && locY >= playerY - RANGE_FACTOR && (hasDust
-					|| (EffectType.hasPrecipitation(biome) && biome.getFloatTemperature(locX, locY, locZ) >= 0.15F))) {
+			if (precipHeight.getY() <= playerY + RANGE_FACTOR && precipHeight.getY() >= playerY - RANGE_FACTOR
+					&& (hasDust || (EffectType.hasPrecipitation(biome)
+							&& biome.getFloatTemperature(precipHeight) >= 0.15F))) {
 
-				final Block block = worldclient.getBlock(locX, locY - 1, locZ);
+				final Block block = worldclient.getBlockState(precipHeight.down()).getBlock();
 				final double posX = locX + random.nextFloat();
-				final double posY = locY + 0.1F - block.getBlockBoundsMinY();
+				final double posY = precipHeight.getY() + 0.1F - block.getBlockBoundsMinY();
 				final double posZ = locZ + random.nextFloat();
 
 				EntityFX particle = null;
 				if (block.getMaterial() == Material.lava) {
 					if (!hasDust)
-						particle = new EntitySmokeFX(worldclient, posX, posY, posZ, 0.0D, 0.0D, 0.0D);
+						particle = new EntitySmokeFX.Factory().getEntityFX(0, worldclient, posX, posY, posZ, 0.0D, 0.0D,
+								0.0D);
 				} else if (block.getMaterial() != Material.air) {
 
 					if (random.nextInt(++particlesSpawned) == 0) {
@@ -123,7 +128,8 @@ public final class RenderWeather {
 					}
 
 					if (!hasDust)
-						particle = new EntityRainFX(worldclient, posX, posY, posZ);
+						particle = new EntityRainFX.Factory().getEntityFX(0, worldclient, posX, posY, posZ, 0.0D, 0.0D,
+								0.0D);
 				}
 
 				if (particle != null)
@@ -135,12 +141,14 @@ public final class RenderWeather {
 		if (particlesSpawned > 0 && random.nextInt(3) < theThis.rainSoundCounter++) {
 			theThis.rainSoundCounter = 0;
 
-			final boolean hasDust = WeatherUtils.biomeHasDust(worldclient.getBiomeGenForCoords((int) spawnX, (int) spawnZ));
+			final BlockPos coord = new BlockPos(spawnX, 0, spawnZ);
+			final boolean hasDust = WeatherUtils.biomeHasDust(worldclient.getBiomeGenForCoords(coord));
 			final String sound = hasDust ? RainProperties.getIntensity().getDustSound()
 					: RainProperties.getIntensity().getRainSound();
 			final float volume = RainProperties.getCurrentRainVolume();
 			float pitch = 1.0F;
-			if (spawnY > entity.posY + 1.0D && worldclient.getPrecipitationHeight(playerX, playerZ) > playerY)
+			if (spawnY > entity.posY + 1.0D
+					&& worldclient.getPrecipitationHeight(new BlockPos(playerX, 0, playerZ)).getY() > playerY)
 				pitch = 0.5F;
 			theThis.mc.theWorld.playSound(spawnX, spawnY, spawnZ, sound, volume, pitch, false);
 		}
@@ -152,7 +160,7 @@ public final class RenderWeather {
 	 * Redirect from EntityRenderer.
 	 */
 	public static void renderRainSnow(final EntityRenderer theThis, final float partialTicks) {
-		for(final IAtmosRenderer renderer: renderList)
+		for (final IAtmosRenderer renderer : renderList)
 			renderer.render(theThis, partialTicks);
 	}
 }
