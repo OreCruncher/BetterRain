@@ -148,7 +148,7 @@ public final class VersionCheck implements Runnable {
 	}
 
 	private static final String CURSE_PROJECT_NAME = "238891-better-rain";
-	private static final String MOD_NAME_TEMPLATE = "BetterRain-1.7.10-[].jar";
+	private static final String MOD_NAME_TEMPLATE = "BetterRain-1.8.9-[].jar";
 
 	public static void register() {
 

@@ -127,21 +127,21 @@ public class RainSnowRenderer implements IAtmosRenderer {
 				final boolean hasDust = WeatherUtils.biomeHasDust(biome);
 
 				if (hasDust || EffectType.hasPrecipitation(biome)) {
-					int j2 = world.getPrecipitationHeight(mutable).getY();
+					final int precipHeight = world.getPrecipitationHeight(mutable).getY();
 					int k2 = playerY - range;
 					int l2 = playerY + range;
 
-					if (k2 < j2) {
-						k2 = j2;
+					if (k2 < precipHeight) {
+						k2 = precipHeight;
 					}
 
-					if (l2 < j2) {
-						l2 = j2;
+					if (l2 < precipHeight) {
+						l2 = precipHeight;
 					}
 
-					int i3 = j2;
+					int i3 = precipHeight;
 
-					if (j2 < locY) {
+					if (precipHeight < locY) {
 						i3 = locY;
 					}
 
@@ -150,7 +150,7 @@ public class RainSnowRenderer implements IAtmosRenderer {
 								^ gridZ * gridZ * 418711 + gridZ * 13761));
 						mutable.set(gridX, k2, gridZ);
 						final float biomeTemp = biome.getFloatTemperature(mutable);
-						final float heightTemp = world.getWorldChunkManager().getTemperatureAtHeight(biomeTemp, j2);
+						final float heightTemp = world.getWorldChunkManager().getTemperatureAtHeight(biomeTemp, precipHeight);
 
 						if (!hasDust && heightTemp >= 0.15F) {
 							if (j1 != 0) {
