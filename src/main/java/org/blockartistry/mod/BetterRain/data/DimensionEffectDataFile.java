@@ -24,11 +24,9 @@
 
 package org.blockartistry.mod.BetterRain.data;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.blockartistry.mod.BetterRain.BetterRain;
 
+import gnu.trove.map.hash.TIntObjectHashMap;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.world.World;
@@ -43,7 +41,7 @@ public final class DimensionEffectDataFile extends WorldSavedData {
 		public final static String ENTRIES = "e";
 	};
 
-	private final Map<Integer, DimensionEffectData> dataList = new HashMap<Integer, DimensionEffectData>();
+	private final TIntObjectHashMap<DimensionEffectData> dataList = new TIntObjectHashMap<DimensionEffectData>();
 
 	public DimensionEffectDataFile() {
 		this(IDENTIFIER);
@@ -90,7 +88,7 @@ public final class DimensionEffectDataFile extends WorldSavedData {
 	@Override
 	public void writeToNBT(final NBTTagCompound nbt) {
 		final NBTTagList list = new NBTTagList();
-		for (final DimensionEffectData data : this.dataList.values()) {
+		for (final DimensionEffectData data : this.dataList.valueCollection()) {
 			final NBTTagCompound tag = new NBTTagCompound();
 			data.writeToNBT(tag);
 			list.appendTag(tag);

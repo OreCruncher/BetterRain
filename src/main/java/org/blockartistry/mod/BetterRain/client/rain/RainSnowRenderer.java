@@ -75,9 +75,9 @@ public class RainSnowRenderer implements IAtmosRenderer {
 	 * Render rain and snow
 	 */
 	public void render(final EntityRenderer renderer, final float partialTicks) {
-		
+
 		RainProperties.setTextures();
-		
+
 		IRenderHandler r = renderer.mc.theWorld.provider.getWeatherRenderer();
 		if (r != null) {
 			r.render(partialTicks, renderer.mc.theWorld, renderer.mc);
@@ -109,7 +109,7 @@ public class RainSnowRenderer implements IAtmosRenderer {
 		final double spawnZ = entity.lastTickPosZ + (entity.posZ - entity.lastTickPosZ) * (double) partialTicks;
 
 		final int locY = MathHelper.floor_double(spawnY);
-		final int b0 = renderer.mc.gameSettings.fancyGraphics ? 10 : 5;
+		final int range = renderer.mc.gameSettings.fancyGraphics ? 10 : 5;
 
 		int j1 = -1;
 		float f1 = (float) renderer.rendererUpdateCount + partialTicks;
@@ -117,19 +117,19 @@ public class RainSnowRenderer implements IAtmosRenderer {
 		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 		BlockPos.MutableBlockPos mutable = new BlockPos.MutableBlockPos();
 
-		for (int k1 = playerZ - b0; k1 <= playerZ + b0; ++k1) {
-			for (int l1 = playerX - b0; l1 <= playerX + b0; ++l1) {
-				int i2 = (k1 - playerZ + 16) * 32 + l1 - playerX + 16;
-				double d3 = (double) RAIN_X_COORDS[i2] * 0.5D;
-				double d4 = (double) RAIN_Y_COORDS[i2] * 0.5D;
-				mutable.set(l1, 0, k1);
-				BiomeGenBase biome = world.getBiomeGenForCoords(mutable);
+		for (int gridZ = playerZ - range; gridZ <= playerZ + range; ++gridZ) {
+			for (int gridX = playerX - range; gridX <= playerX + range; ++gridX) {
+				final int idx = (gridZ - playerZ + 16) * 32 + gridX - playerX + 16;
+				final double rainX = (double) RAIN_X_COORDS[idx] * 0.5D;
+				final double rainY = (double) RAIN_Y_COORDS[idx] * 0.5D;
+				mutable.set(gridX, 0, gridZ);
+				final BiomeGenBase biome = world.getBiomeGenForCoords(mutable);
 				final boolean hasDust = WeatherUtils.biomeHasDust(biome);
 
 				if (hasDust || EffectType.hasPrecipitation(biome)) {
 					int j2 = world.getPrecipitationHeight(mutable).getY();
-					int k2 = playerY - b0;
-					int l2 = playerY + b0;
+					int k2 = playerY - range;
+					int l2 = playerY + range;
 
 					if (k2 < j2) {
 						k2 = j2;
@@ -146,10 +146,11 @@ public class RainSnowRenderer implements IAtmosRenderer {
 					}
 
 					if (k2 != l2) {
-						random.setSeed((long) (l1 * l1 * 3121 + l1 * 45238971 ^ k1 * k1 * 418711 + k1 * 13761));
-						mutable.set(l1, k2, k1);
-						float f2 = biome.getFloatTemperature(mutable);
-						final float heightTemp = world.getWorldChunkManager().getTemperatureAtHeight(f2, j2);
+						random.setSeed((long) (gridX * gridX * 3121 + gridX * 45238971
+								^ gridZ * gridZ * 418711 + gridZ * 13761));
+						mutable.set(gridX, k2, gridZ);
+						final float biomeTemp = biome.getFloatTemperature(mutable);
+						final float heightTemp = world.getWorldChunkManager().getTemperatureAtHeight(biomeTemp, j2);
 
 						if (!hasDust && heightTemp >= 0.15F) {
 							if (j1 != 0) {
@@ -159,30 +160,31 @@ public class RainSnowRenderer implements IAtmosRenderer {
 
 								j1 = 0;
 								renderer.mc.getTextureManager().bindTexture(locationRainPng);
-								worldrenderer.begin(7, DefaultVertexFormats.PARTICLE_POSITION_TEX_COLOR_LMAP);
+								worldrenderer.begin(GL11.GL_QUADS,
+										DefaultVertexFormats.PARTICLE_POSITION_TEX_COLOR_LMAP);
 							}
 
-							double d5 = ((double) (renderer.rendererUpdateCount + l1 * l1 * 3121 + l1 * 45238971
-									+ k1 * k1 * 418711 + k1 * 13761 & 31) + (double) partialTicks) / 32.0D
-									* (3.0D + random.nextDouble());
-							double d6 = (double) ((float) l1 + 0.5F) - entity.posX;
-							double d7 = (double) ((float) k1 + 0.5F) - entity.posZ;
-							float f3 = MathHelper.sqrt_double(d6 * d6 + d7 * d7) / (float) b0;
+							double d5 = ((double) (renderer.rendererUpdateCount + gridX * gridX * 3121
+									+ gridX * 45238971 + gridZ * gridZ * 418711 + gridZ * 13761 & 31)
+									+ (double) partialTicks) / 32.0D * (3.0D + random.nextDouble());
+							double d6 = (double) ((float) gridX + 0.5F) - entity.posX;
+							double d7 = (double) ((float) gridZ + 0.5F) - entity.posZ;
+							float f3 = MathHelper.sqrt_double(d6 * d6 + d7 * d7) / (float) range;
 							float f4 = ((1.0F - f3 * f3) * 0.5F + 0.5F) * rainStrength;
-							mutable.set(l1, i3, k1);
+							mutable.set(gridX, i3, gridZ);
 							int j3 = world.getCombinedLight(mutable, 0);
 							int k3 = j3 >> 16 & 65535;
 							int l3 = j3 & 65535;
-							worldrenderer.pos((double) l1 - d3 + 0.5D, (double) k2, (double) k1 - d4 + 0.5D)
+							worldrenderer.pos((double) gridX - rainX + 0.5D, (double) k2, (double) gridZ - rainY + 0.5D)
 									.tex(0.0D, (double) k2 * 0.25D + d5).color(1.0F, 1.0F, 1.0F, f4).lightmap(k3, l3)
 									.endVertex();
-							worldrenderer.pos((double) l1 + d3 + 0.5D, (double) k2, (double) k1 + d4 + 0.5D)
+							worldrenderer.pos((double) gridX + rainX + 0.5D, (double) k2, (double) gridZ + rainY + 0.5D)
 									.tex(1.0D, (double) k2 * 0.25D + d5).color(1.0F, 1.0F, 1.0F, f4).lightmap(k3, l3)
 									.endVertex();
-							worldrenderer.pos((double) l1 + d3 + 0.5D, (double) l2, (double) k1 + d4 + 0.5D)
+							worldrenderer.pos((double) gridX + rainX + 0.5D, (double) l2, (double) gridZ + rainY + 0.5D)
 									.tex(1.0D, (double) l2 * 0.25D + d5).color(1.0F, 1.0F, 1.0F, f4).lightmap(k3, l3)
 									.endVertex();
-							worldrenderer.pos((double) l1 - d3 + 0.5D, (double) l2, (double) k1 - d4 + 0.5D)
+							worldrenderer.pos((double) gridX - rainX + 0.5D, (double) l2, (double) gridZ - rainY + 0.5D)
 									.tex(0.0D, (double) l2 * 0.25D + d5).color(1.0F, 1.0F, 1.0F, f4).lightmap(k3, l3)
 									.endVertex();
 						} else {
@@ -199,7 +201,9 @@ public class RainSnowRenderer implements IAtmosRenderer {
 
 								j1 = 1;
 								renderer.mc.getTextureManager().bindTexture(texture);
-								worldrenderer.begin(7, DefaultVertexFormats.PARTICLE_POSITION_TEX_COLOR_LMAP);
+								// GL_QUADS == 7
+								worldrenderer.begin(GL11.GL_QUADS,
+										DefaultVertexFormats.PARTICLE_POSITION_TEX_COLOR_LMAP);
 							}
 
 							double d8 = (double) (((float) (renderer.rendererUpdateCount & 511) + partialTicks)
@@ -212,24 +216,24 @@ public class RainSnowRenderer implements IAtmosRenderer {
 							double d9 = random.nextDouble()
 									+ (double) f1 * factor * (double) ((float) random.nextGaussian());
 							double d10 = random.nextDouble() + (double) (f1 * (float) random.nextGaussian()) * 0.001D;
-							double d11 = (double) ((float) l1 + 0.5F) - entity.posX;
-							double d12 = (double) ((float) k1 + 0.5F) - entity.posZ;
-							float f6 = MathHelper.sqrt_double(d11 * d11 + d12 * d12) / (float) b0;
+							double d11 = (double) ((float) gridX + 0.5F) - entity.posX;
+							double d12 = (double) ((float) gridZ + 0.5F) - entity.posZ;
+							float f6 = MathHelper.sqrt_double(d11 * d11 + d12 * d12) / (float) range;
 							float f5 = ((1.0F - f6 * f6) * 0.3F + 0.5F) * rainStrength;
-							mutable.set(l1, i3, k1);
+							mutable.set(gridX, i3, gridZ);
 							int i4 = (world.getCombinedLight(mutable, 0) * 3 + 15728880) / 4;
 							int j4 = i4 >> 16 & 65535;
 							int k4 = i4 & 65535;
-							worldrenderer.pos((double) l1 - d3 + 0.5D, (double) k2, (double) k1 - d4 + 0.5D)
+							worldrenderer.pos((double) gridX - rainX + 0.5D, (double) k2, (double) gridZ - rainY + 0.5D)
 									.tex(0.0D + d9, (double) k2 * 0.25D + d8 + d10).color(1.0F, 1.0F, 1.0F, f5)
 									.lightmap(j4, k4).endVertex();
-							worldrenderer.pos((double) l1 + d3 + 0.5D, (double) k2, (double) k1 + d4 + 0.5D)
+							worldrenderer.pos((double) gridX + rainX + 0.5D, (double) k2, (double) gridZ + rainY + 0.5D)
 									.tex(1.0D + d9, (double) k2 * 0.25D + d8 + d10).color(1.0F, 1.0F, 1.0F, f5)
 									.lightmap(j4, k4).endVertex();
-							worldrenderer.pos((double) l1 + d3 + 0.5D, (double) l2, (double) k1 + d4 + 0.5D)
+							worldrenderer.pos((double) gridX + rainX + 0.5D, (double) l2, (double) gridZ + rainY + 0.5D)
 									.tex(1.0D + d9, (double) l2 * 0.25D + d8 + d10).color(1.0F, 1.0F, 1.0F, f5)
 									.lightmap(j4, k4).endVertex();
-							worldrenderer.pos((double) l1 - d3 + 0.5D, (double) l2, (double) k1 - d4 + 0.5D)
+							worldrenderer.pos((double) gridX - rainX + 0.5D, (double) l2, (double) gridZ - rainY + 0.5D)
 									.tex(0.0D + d9, (double) l2 * 0.25D + d8 + d10).color(1.0F, 1.0F, 1.0F, f5)
 									.lightmap(j4, k4).endVertex();
 						}
