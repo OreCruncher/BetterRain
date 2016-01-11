@@ -34,6 +34,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.World;
 
 import java.util.List;
+import java.util.Set;
 
 import org.blockartistry.mod.BetterRain.ModLog;
 import org.blockartistry.mod.BetterRain.ModOptions;
@@ -125,7 +126,7 @@ public final class ServerEffectHandler {
 		Network.sendRainIntensity(sendIntensity, sendPhase, dimensionId);
 	}
 
-	private static boolean isAuroraInRange(final EntityPlayerMP player, final List<AuroraData> data) {
+	private static boolean isAuroraInRange(final EntityPlayerMP player, final Set<AuroraData> data) {
 		for (final AuroraData aurora : data) {
 			final long deltaX = aurora.posX - (int) player.posX;
 			final long deltaZ = aurora.posZ - (int) player.posZ + Z_OFFSET;
@@ -147,7 +148,7 @@ public final class ServerEffectHandler {
 		if (world == null || !WorldUtils.hasSky(world))
 			return;
 
-		final List<AuroraData> data = DimensionEffectData.get(world).getAuroraList();
+		final Set<AuroraData> data = DimensionEffectData.get(world).getAuroraList();
 		final long time = WorldUtils.getWorldTime(world);
 
 		// Daylight hours clear the aurora list

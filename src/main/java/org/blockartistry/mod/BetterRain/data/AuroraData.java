@@ -55,7 +55,8 @@ public final class AuroraData implements INBTSerialization {
 				player.worldObj.getWorldTime(), colorSet, preset);
 	}
 
-	public AuroraData(final int dimensionId, final int x, final int z, final long seed, final int colorSet, final int preset) {
+	public AuroraData(final int dimensionId, final int x, final int z, final long seed, final int colorSet,
+			final int preset) {
 		this.dimensionId = dimensionId;
 		this.posX = x;
 		this.posZ = z;
@@ -89,7 +90,7 @@ public final class AuroraData implements INBTSerialization {
 		if (!(anObj instanceof AuroraData))
 			return false;
 		final AuroraData a = (AuroraData) anObj;
-		return (this.posX == a.posX) && (this.posZ == a.posZ);
+		return (this.dimensionId == a.dimensionId) && (this.posX == a.posX) && (this.posZ == a.posZ);
 	}
 
 	@Override

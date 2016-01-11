@@ -25,8 +25,9 @@
 package org.blockartistry.mod.BetterRain.data;
 
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.blockartistry.mod.BetterRain.ModOptions;
 import org.blockartistry.mod.BetterRain.util.INBTSerialization;
 import org.blockartistry.mod.BetterRain.util.XorShiftRandom;
@@ -62,7 +63,7 @@ public final class DimensionEffectData implements INBTSerialization {
 	private int rainPhase = 0;
 	private float minIntensity = ModOptions.getDefaultMinRainIntensity();
 	private float maxIntensity = ModOptions.getDefaultMaxRainIntensity();
-	private List<AuroraData> auroras = new ArrayList<AuroraData>();
+	private Set<AuroraData> auroras = new HashSet<AuroraData>();
 
 	public DimensionEffectData() {
 	}
@@ -107,7 +108,7 @@ public final class DimensionEffectData implements INBTSerialization {
 		this.maxIntensity = MathHelper.clamp_float(intensity, this.minIntensity, MAX_INTENSITY);
 	}
 	
-	public List<AuroraData> getAuroraList() {
+	public Set<AuroraData> getAuroraList() {
 		return this.auroras;
 	}
 
