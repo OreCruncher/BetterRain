@@ -24,6 +24,8 @@
 
 package org.blockartistry.mod.BetterRain.data;
 
+import javax.annotation.Nonnull;
+
 import org.blockartistry.mod.BetterRain.BetterRain;
 
 import gnu.trove.map.hash.TIntObjectHashMap;
@@ -47,11 +49,11 @@ public final class DimensionEffectDataFile extends WorldSavedData {
 		this(IDENTIFIER);
 	}
 
-	public DimensionEffectDataFile(final String id) {
+	public DimensionEffectDataFile(@Nonnull final String id) {
 		super(id);
 	}
 
-	private static DimensionEffectDataFile getFile(final World world) {
+	private static DimensionEffectDataFile getFile(@Nonnull final World world) {
 		DimensionEffectDataFile data = (DimensionEffectDataFile) world.loadItemData(DimensionEffectDataFile.class, IDENTIFIER);
 		if (data == null) {
 			data = new DimensionEffectDataFile();
@@ -70,12 +72,12 @@ public final class DimensionEffectDataFile extends WorldSavedData {
 		return data;
 	}
 
-	public static DimensionEffectData get(final World world) {
+	public static DimensionEffectData get(@Nonnull final World world) {
 		return getFile(world).getData(world.provider.getDimensionId());
 	}
 
 	@Override
-	public void readFromNBT(final NBTTagCompound nbt) {
+	public void readFromNBT(@Nonnull final NBTTagCompound nbt) {
 		final NBTTagList list = nbt.getTagList(NBT.ENTRIES, Constants.NBT.TAG_COMPOUND);
 		for (int i = 0; i < list.tagCount(); i++) {
 			final NBTTagCompound tag = list.getCompoundTagAt(i);
@@ -86,7 +88,7 @@ public final class DimensionEffectDataFile extends WorldSavedData {
 	}
 
 	@Override
-	public void writeToNBT(final NBTTagCompound nbt) {
+	public void writeToNBT(@Nonnull final NBTTagCompound nbt) {
 		final NBTTagList list = new NBTTagList();
 		for (final DimensionEffectData data : this.dataList.valueCollection()) {
 			final NBTTagCompound tag = new NBTTagCompound();

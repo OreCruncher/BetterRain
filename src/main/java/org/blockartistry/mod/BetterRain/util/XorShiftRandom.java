@@ -27,6 +27,8 @@ import java.lang.reflect.Field;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
 
+import javax.annotation.Nonnull;
+
 /**
  * Essentially swipe the ThreadLocalRandom code, but not make it thread
  * specific.  ThreadLocalRandom is fast, and this version avoids
@@ -82,11 +84,11 @@ public class XorShiftRandom extends Random {
 		this(initialSeed());
 	}
 
-	public XorShiftRandom(final XorShiftRandom random) {
+	public XorShiftRandom(@Nonnull final XorShiftRandom random) {
 		this.seed = random.seed;
 	}
 	
-	public XorShiftRandom(final Random random) {
+	public XorShiftRandom(@Nonnull final Random random) {
 		if(random instanceof XorShiftRandom) {
 			this.seed = ((XorShiftRandom)random).seed;
 		} else {

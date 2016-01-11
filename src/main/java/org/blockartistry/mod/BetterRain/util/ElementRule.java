@@ -24,6 +24,8 @@
 
 package org.blockartistry.mod.BetterRain.util;
 
+import javax.annotation.Nonnull;
+
 public final class ElementRule {
 
 	public static enum Rule {
@@ -33,11 +35,11 @@ public final class ElementRule {
 	private final int[] elements;
 	private final boolean contains;
 
-	public ElementRule(final Rule rule, final String tokens) {
+	public ElementRule(@Nonnull final Rule rule, @Nonnull final String tokens) {
 		this(rule, MyUtils.splitToInts(tokens, ','));
 	}
 	
-	public ElementRule(final Rule rule, final int[] list) {
+	public ElementRule(@Nonnull final Rule rule, @Nonnull final int[] list) {
 		this.contains = rule == Rule.MUST_BE_IN;
 		this.elements = new int[list.length];
 		System.arraycopy(list, 0, this.elements, 0, list.length);

@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package org.blockartistry.mod.BetterRain.client.liquid;
+package org.blockartistry.mod.BetterRain.client.fx;
 
 import org.blockartistry.mod.BetterRain.util.XorShiftRandom;
 
@@ -32,18 +32,22 @@ import net.minecraft.client.particle.IParticleFactory;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 /*
  * Base for particle entities that are long lived and generate
  * other particles as a jet.  This entity does not render - just
  * serves as a particle factory.
  */
+@SideOnly(Side.CLIENT)
 public class EntityJetFX extends EntityFX {
 
 	protected final int jetStrength;
 	protected final IParticleFactory factory;
 
-	protected EntityJetFX(final int strength, final IParticleFactory factory, final World world, final double x, final double y, final double z) {
+	protected EntityJetFX(final int strength, final IParticleFactory factory, final World world, final double x,
+			final double y, final double z) {
 		super(world, x, y, z);
 
 		this.setAlphaF(0.0F);
@@ -71,7 +75,8 @@ public class EntityJetFX extends EntityFX {
 		// Check to see if a particle needs to be generated
 		if (this.particleAge % 3 == 0) {
 			final Minecraft mc = Minecraft.getMinecraft();
-			final EntityFX effect = factory.getEntityFX(this.jetStrength, mc.theWorld, this.posX, this.posY, this.posZ, 0, 0, 0);
+			final EntityFX effect = this.factory.getEntityFX(this.jetStrength, mc.theWorld, this.posX, this.posY,
+					this.posZ, 0, 0, 0);
 			mc.effectRenderer.addEffect(effect);
 		}
 

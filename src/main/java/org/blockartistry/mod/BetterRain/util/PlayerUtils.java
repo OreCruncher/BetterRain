@@ -23,6 +23,8 @@
 
 package org.blockartistry.mod.BetterRain.util;
 
+import javax.annotation.Nonnull;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.fml.client.FMLClientHandler;
@@ -33,11 +35,11 @@ public final class PlayerUtils {
 	
 	private PlayerUtils() {}
 	
-	public static BiomeGenBase getPlayerBiome(final EntityPlayer player) {
+	public static BiomeGenBase getPlayerBiome(@Nonnull final EntityPlayer player) {
 		return player.worldObj.getBiomeGenForCoords(player.getPosition());
 	}
 
-	public static int getPlayerDimension(final EntityPlayer player) {
+	public static int getPlayerDimension(@Nonnull final EntityPlayer player) {
 		if(player == null || player.worldObj == null)
 			return -256;
 		return player.worldObj.provider.getDimensionId();

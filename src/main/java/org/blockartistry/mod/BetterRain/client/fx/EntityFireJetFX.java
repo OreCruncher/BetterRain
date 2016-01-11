@@ -22,12 +22,14 @@
  * THE SOFTWARE.
  */
 
-package org.blockartistry.mod.BetterRain.client.liquid;
+package org.blockartistry.mod.BetterRain.client.fx;
 
 import net.minecraft.client.particle.EntityFX;
 import net.minecraft.client.particle.EntityFlameFX;
 import net.minecraft.client.particle.IParticleFactory;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 /*
  * A special hidden entity that generates vertically moving flame entity
@@ -36,6 +38,7 @@ import net.minecraft.world.World;
  * itself does not render - it is just a way to maintain state across
  * several ticks while it spews fire particles.
  */
+@SideOnly(Side.CLIENT)
 public final class EntityFireJetFX implements IParticleFactory {
 
 	public static final IParticleFactory factory = new EntityFireJetFX();

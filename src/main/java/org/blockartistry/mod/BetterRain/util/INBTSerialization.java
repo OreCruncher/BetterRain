@@ -24,6 +24,8 @@
 
 package org.blockartistry.mod.BetterRain.util;
 
+import javax.annotation.Nonnull;
+
 import net.minecraft.nbt.NBTTagCompound;
 
 public interface INBTSerialization {
@@ -31,10 +33,10 @@ public interface INBTSerialization {
 	/**
 	 * Used to deserialize data from an NBT structure
 	 */
-	public void readFromNBT(final NBTTagCompound nbt);
+	public void readFromNBT(@Nonnull final NBTTagCompound nbt);
 
 	/**
 	 * Used to serialize data into an NBT structure;
 	 */
-	public void writeToNBT(final NBTTagCompound nbt);
+	public void writeToNBT(@Nonnull final NBTTagCompound nbt);
 }

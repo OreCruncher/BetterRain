@@ -22,12 +22,14 @@
  * THE SOFTWARE.
  */
 
-package org.blockartistry.mod.BetterRain.client.liquid;
+package org.blockartistry.mod.BetterRain.client.fx;
 
 import net.minecraft.client.particle.EntityBubbleFX;
 import net.minecraft.client.particle.EntityFX;
 import net.minecraft.client.particle.IParticleFactory;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 /*
  * A special hidden entity that generates vertically moving buble entity
@@ -36,6 +38,7 @@ import net.minecraft.world.World;
  * - it is just a way to maintain state across several ticks while it
  * spews bubble particles.
  */
+@SideOnly(Side.CLIENT)
 public final class EntityBubbleJetFX implements IParticleFactory {
 	
 	public static final IParticleFactory factory = new EntityBubbleJetFX();

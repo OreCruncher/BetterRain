@@ -29,7 +29,10 @@ import org.blockartistry.mod.BetterRain.client.rain.RainProperties;
 import org.blockartistry.mod.BetterRain.data.EffectType;
 
 import net.minecraft.world.biome.BiomeGenBase;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
+@SideOnly(Side.CLIENT)
 public class WeatherUtils {
 
 	private static final boolean BLOW_DUST = ModOptions.getAllowDesertDust();

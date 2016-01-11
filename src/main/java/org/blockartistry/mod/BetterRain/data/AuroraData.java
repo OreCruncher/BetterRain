@@ -24,6 +24,8 @@
 
 package org.blockartistry.mod.BetterRain.data;
 
+import javax.annotation.Nonnull;
+
 import org.blockartistry.mod.BetterRain.util.INBTSerialization;
 
 import net.minecraft.entity.Entity;
@@ -51,7 +53,7 @@ public final class AuroraData implements INBTSerialization {
 	public AuroraData() {
 	}
 
-	public AuroraData(final EntityPlayer player, final int zOffset, final int colorSet, final int preset) {
+	public AuroraData(@Nonnull final EntityPlayer player, final int zOffset, final int colorSet, final int preset) {
 		this(player.worldObj.provider.getDimensionId(), (int) player.posX, (int) player.posZ + zOffset,
 				player.worldObj.getWorldTime(), colorSet, preset);
 	}
@@ -73,7 +75,7 @@ public final class AuroraData implements INBTSerialization {
 	}
 
 	@Override
-	public void readFromNBT(final NBTTagCompound nbt) {
+	public void readFromNBT(@Nonnull final NBTTagCompound nbt) {
 		this.dimensionId = nbt.getInteger(NBT.DIMENSION);
 		this.posX = nbt.getInteger(NBT.XCOORD);
 		this.posZ = nbt.getInteger(NBT.ZCOORD);
@@ -83,7 +85,7 @@ public final class AuroraData implements INBTSerialization {
 	}
 
 	@Override
-	public void writeToNBT(final NBTTagCompound nbt) {
+	public void writeToNBT(@Nonnull final NBTTagCompound nbt) {
 		nbt.setInteger(NBT.DIMENSION, this.dimensionId);
 		nbt.setInteger(NBT.XCOORD, this.posX);
 		nbt.setInteger(NBT.ZCOORD, this.posZ);

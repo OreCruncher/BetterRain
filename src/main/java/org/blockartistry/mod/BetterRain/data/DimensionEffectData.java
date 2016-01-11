@@ -28,6 +28,8 @@ import java.text.DecimalFormat;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.annotation.Nonnull;
+
 import org.blockartistry.mod.BetterRain.ModOptions;
 import org.blockartistry.mod.BetterRain.util.INBTSerialization;
 import org.blockartistry.mod.BetterRain.util.XorShiftRandom;
@@ -117,7 +119,7 @@ public final class DimensionEffectData implements INBTSerialization {
 	}
 
 	@Override
-	public void readFromNBT(final NBTTagCompound nbt) {
+	public void readFromNBT(@Nonnull final NBTTagCompound nbt) {
 		this.dimensionId = nbt.getInteger(NBT.DIMENSION);
 		this.intensity = MathHelper.clamp_float(nbt.getFloat(NBT.INTENSITY), MIN_INTENSITY, MAX_INTENSITY);
 		this.rainPhase = nbt.getByte(NBT.RAIN_PHASE);
@@ -136,7 +138,7 @@ public final class DimensionEffectData implements INBTSerialization {
 	}
 
 	@Override
-	public void writeToNBT(final NBTTagCompound nbt) {
+	public void writeToNBT(@Nonnull final NBTTagCompound nbt) {
 		nbt.setInteger(NBT.DIMENSION, this.dimensionId);
 		nbt.setFloat(NBT.INTENSITY, this.intensity);
 		nbt.setByte(NBT.RAIN_PHASE, (byte)this.rainPhase);

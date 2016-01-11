@@ -23,6 +23,8 @@
 
 package org.blockartistry.mod.BetterRain.util;
 
+import javax.annotation.Nonnull;
+
 import org.apache.commons.lang3.StringUtils;
 
 public final class MyUtils {
@@ -32,7 +34,7 @@ public final class MyUtils {
 	private MyUtils() {
 	}
 
-	public static int[] splitToInts(final String str, final char splitChar) {
+	public static int[] splitToInts(@Nonnull final String str, final char splitChar) {
 
 		final String[] tokens = StringUtils.split(str, splitChar);
 		if (tokens == null || tokens.length == 0)

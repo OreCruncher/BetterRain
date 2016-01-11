@@ -23,6 +23,8 @@
 
 package org.blockartistry.mod.BetterRain.util;
 
+import javax.annotation.Nonnull;
+
 import org.blockartistry.mod.BetterRain.ModOptions;
 
 import gnu.trove.map.hash.TIntIntHashMap;
@@ -46,14 +48,14 @@ public final class WorldUtils {
 	private WorldUtils() {
 	}
 
-	public static long getWorldTime(final World world) {
+	public static long getWorldTime(@Nonnull final World world) {
 		long time = world.getWorldTime();
 		for (; time > 24000L; time -= 24000L)
 			;
 		return time;
 	}
 
-	public static boolean isDaytime(final World world) {
+	public static boolean isDaytime(@Nonnull final World world) {
 		return !isNighttime(world);
 	}
 
@@ -61,7 +63,7 @@ public final class WorldUtils {
 		return !isNighttime(time);
 	}
 
-	public static boolean isNighttime(final World world) {
+	public static boolean isNighttime(@Nonnull final World world) {
 		return isNighttime(getWorldTime(world));
 	}
 
@@ -69,43 +71,43 @@ public final class WorldUtils {
 		return time >= 13000L && time <= 23500L;
 	}
 
-	public static boolean hasSky(final World world) {
+	public static boolean hasSky(@Nonnull final World world) {
 		return !world.provider.getHasNoSky();
 	}
 
-	public static boolean isDusk(final World world) {
+	public static boolean isDusk(@Nonnull final World world) {
 		return isSunset(world);
 	}
 
-	public static boolean isSunset(final World world) {
+	public static boolean isSunset(@Nonnull final World world) {
 		final long time = getWorldTime(world);
 		return time >= 12000 && time < 14000;
 	}
 
-	public static boolean isDawn(final World world) {
+	public static boolean isDawn(@Nonnull final World world) {
 		return isSunrise(world);
 	}
 
-	public static boolean isSunrise(final World world) {
+	public static boolean isSunrise(@Nonnull final World world) {
 		final long time = getWorldTime(world);
 		return time >= 0 && time < 1000;
 	}
 
-	public static int getSeaLevel(final World world) {
+	public static int getSeaLevel(@Nonnull final World world) {
 		final int dimId = world.provider.getDimensionId();
 		if (seaLevelOverride.contains(dimId))
 			return seaLevelOverride.get(dimId);
 		return world.provider.getAverageGroundLevel();
 	}
 
-	public static int getSkyHeight(final World world) {
+	public static int getSkyHeight(@Nonnull final World world) {
 		final int dimId = world.provider.getDimensionId();
 		if (skyHeightOverride.contains(dimId))
 			return skyHeightOverride.get(dimId);
 		return world.provider.getHeight();
 	}
 
-	public static int getCloudHeight(final World world) {
+	public static int getCloudHeight(@Nonnull final World world) {
 		int sky = getSkyHeight(world);
 		if (hasSky(world))
 			sky /= 2;

@@ -24,6 +24,8 @@
 
 package org.blockartistry.mod.BetterRain.client;
 
+import javax.annotation.Nonnull;
+
 import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.fml.relauncher.Side;
@@ -31,6 +33,6 @@ import net.minecraftforge.fml.relauncher.Side;
 @SideOnly(Side.CLIENT)
 public interface IAtmosRenderer {
 	
-	public void render(final EntityRenderer renderer, final float partialTicks);
+	public void render(@Nonnull final EntityRenderer renderer, final float partialTicks);
 
 }
