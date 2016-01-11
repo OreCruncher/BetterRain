@@ -46,11 +46,11 @@ public final class AuroraPreset {
 
 	static {
 		// 10/5; 90/45
-		PRESET.add(new AuroraPreset(128, 30.0F, 1.0F, 45));
-		PRESET.add(new AuroraPreset(128, 15.0F, 1.0F, 27));
+		PRESET.add(new AuroraPreset(128, 30.0F, 2.0F, 45));
+		PRESET.add(new AuroraPreset(128, 15.0F, 2.0F, 27));
 
-		PRESET.add(new AuroraPreset(64, 30.0F, 1.0F, 45));
-		PRESET.add(new AuroraPreset(64, 15.0F, 1.0F, 27));
+		PRESET.add(new AuroraPreset(64, 30.0F, 2.0F, 45));
+		PRESET.add(new AuroraPreset(64, 15.0F, 2.0F, 27));
 	}
 
 	private AuroraPreset(final int length, final float nodeLength, final float nodeWidth, final int bandOffset) {
