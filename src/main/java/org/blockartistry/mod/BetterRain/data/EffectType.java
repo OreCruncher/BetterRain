@@ -42,7 +42,9 @@ import net.minecraft.world.biome.BiomeGenBase;
 
 public final class EffectType {
 
-	private static final int GROUND_FOG = -2;
+	public static final float DEFAULT_FOG_INTENSITY = 0.6F;
+
+	private static final int FOG = -2;
 	private static final int AURORA = -1;
 
 	private static final int NONE = 0;
@@ -55,14 +57,16 @@ public final class EffectType {
 	private static final Set<BiomeGenBase> auroraBiomes = new HashSet<BiomeGenBase>();
 	private static final Set<BiomeGenBase> groundFogBiomes = new HashSet<BiomeGenBase>();
 
+	private static final Map<BiomeGenBase, Float> fogIntensity = new IdentityHashMap<BiomeGenBase, Float>();
+
 	public static BiomeGenBase findBiome(@Nonnull final String name) {
 		return nameMap.get(name);
 	}
 
 	private static final String[] DESERT_TOKENS = new String[] { "desert", "sand", "mesa", "wasteland", "sahara" };
 	private static final String[] POLAR_TOKENS = new String[] { "taiga", "frozen", "ice", "tundra", "polar", "snow",
-			"glacier" };
-	private static final String[] GROUND_FOG_TOKENS = new String[] { "fen", "bog", "swamp", "marsh" };
+			"glacier", "arctic" };
+	private static final String[] GROUND_FOG_TOKENS = new String[] { "fen", "bog", "swamp", "marsh", "moor", "bayou" };
 
 	private static boolean contains(@Nonnull String name, @Nonnull final String[] list) {
 		name = name.toLowerCase();
@@ -80,7 +84,7 @@ public final class EffectType {
 		return contains(biome.biomeName, POLAR_TOKENS);
 	}
 
-	private static boolean looksLikeGroundFog(@Nonnull final BiomeGenBase biome) {
+	private static boolean looksLikeFog(@Nonnull final BiomeGenBase biome) {
 		return contains(biome.biomeName, GROUND_FOG_TOKENS);
 	}
 
@@ -91,8 +95,8 @@ public final class EffectType {
 		for (final String name : names) {
 			if (type == AURORA)
 				registerAuroraBiome(name);
-			else if (type == GROUND_FOG)
-				registerGroundFogBiome(name);
+			else if (type == FOG)
+				registerFogBiome(name, DEFAULT_FOG_INTENSITY);
 			else
 				registerBiome(name, type);
 		}
@@ -114,7 +118,7 @@ public final class EffectType {
 				if (looksLikeAurora(biome))
 					auroraBiomes.add(biome);
 
-				if (looksLikeGroundFog(biome))
+				if (looksLikeFog(biome))
 					groundFogBiomes.add(biome);
 			}
 		}
@@ -123,7 +127,7 @@ public final class EffectType {
 		processBiomeList(ModOptions.getDustBiomes(), DUST);
 		processBiomeList(ModOptions.getNoneBiomes(), NONE);
 		processBiomeList(ModOptions.getAuroraTriggerBiomes(), AURORA);
-		// processBiomeList(null, GROUND_FOG);
+		processBiomeList(null, FOG);
 
 		for (final Entry<BiomeGenBase, Integer> entry : registry.entrySet()) {
 			final BiomeGenBase biome = entry.getKey();
@@ -131,7 +135,7 @@ public final class EffectType {
 			builder.append(String.format("Biome %d [%s]: %s", biome.biomeID, biome.biomeName, names[entry.getValue()]));
 			if (hasAuroraEffect(biome))
 				builder.append(" AURORA");
-			if (hasGroundFogEffect(biome))
+			if (hasFogEffect(biome))
 				builder.append(" FOG");
 			ModLog.info(builder.toString());
 		}
@@ -183,17 +187,23 @@ public final class EffectType {
 		return auroraBiomes.contains(biome);
 	}
 
-	public static void registerGroundFogBiome(@Nonnull final String name) {
+	public static void registerFogBiome(@Nonnull final String name, final float intensity) {
 		final BiomeGenBase biome = nameMap.get(name);
 		if (biome != null)
-			registerGroundFogBiome(biome);
+			registerFogBiome(biome, intensity);
 	}
 
-	public static void registerGroundFogBiome(@Nonnull final BiomeGenBase biome) {
+	public static void registerFogBiome(@Nonnull final BiomeGenBase biome, final float intensity) {
 		groundFogBiomes.add(biome);
+		fogIntensity.put(biome, Float.valueOf(intensity));
 	}
 
-	public static boolean hasGroundFogEffect(@Nonnull final BiomeGenBase biome) {
+	public static boolean hasFogEffect(@Nonnull final BiomeGenBase biome) {
 		return groundFogBiomes.contains(biome);
+	}
+
+	public static float getFogIntensity(@Nonnull final BiomeGenBase biome) {
+		final Float intensity = fogIntensity.get(biome);
+		return intensity == null ? 0.0F : intensity.floatValue();
 	}
 }

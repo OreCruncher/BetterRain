@@ -46,10 +46,10 @@ public class Transformer implements IClassTransformer {
 	@Override
 	public byte[] transform(String name, String transformedName, byte[] basicClass) {
 
-		if ("net.minecraft.client.renderer.EntityRenderer".equals(name) || "blt".equals(name)) {
+		if ("net.minecraft.client.renderer.EntityRenderer".equals(name) || "bfk".equals(name)) {
 			logger.debug("Transforming EntityRenderer...");
 			return transformEntityRenderer(basicClass);
-		} else if("net.minecraft.block.BlockLiquid".equals(name) || "alw".equals(name)) {
+		} else if("net.minecraft.block.BlockLiquid".equals(name) || "ahv".equals(name)) {
 			logger.debug("Transforming BlockLiquid...");
 			return transformBlockLiquid(basicClass);
 		}
@@ -103,7 +103,7 @@ public class Transformer implements IClassTransformer {
 		final String names[];
 
 		if (TransformLoader.runtimeDeobEnabled)
-			names = new String[] { "func_149734_b" };
+			names = new String[] { "func_180655_c" };
 		else
 			names = new String[] { "randomDisplayTick" };
 

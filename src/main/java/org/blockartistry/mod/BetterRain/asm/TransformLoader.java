@@ -34,7 +34,7 @@ import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin;
 @IFMLLoadingPlugin.Name("BetterRain")
 public class TransformLoader implements IFMLLoadingPlugin {
 
-	public static boolean runtimeDeobEnabled = false;
+	public static boolean runtimeDeobEnabled = true;
 
 	@Override
 	public String[] getASMTransformerClass() {
