@@ -165,10 +165,6 @@ public final class ClientEffectHandler {
 		return currentAurora;
 	}
 
-	private static boolean auroraTimeToDie(final long time) {
-		return time >= 22220L && time < 23500L;
-	}
-
 	/*
 	 * Need to get called every tick to process the dust fade timer as well as
 	 * aurora processing.
@@ -228,15 +224,14 @@ public final class ClientEffectHandler {
 		}
 
 		if (auroras.size() > 0) {
-			final long time = WorldUtils.getWorldTime(world);
-			if (WorldUtils.isDaytime(time)) {
+			if (WorldUtils.isDaytime(world)) {
 				auroras.clear();
 				currentAurora = null;
 			} else {
 				final Aurora aurora = getClosestAurora(event);
-				if(aurora != null) {
+				if (aurora != null) {
 					aurora.update();
-					if (aurora.isAlive() && auroraTimeToDie(time)) {
+					if (aurora.isAlive() && WorldUtils.isSunrise(world)) {
 						ModLog.info("Aurora fade...");
 						aurora.die();
 					}
