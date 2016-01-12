@@ -30,8 +30,77 @@ import net.minecraft.world.World;
 
 public final class WorldUtils {
 
+	private static boolean useCelestial = true;
+
+	private static interface IDiurnalProvider {
+		boolean isDaytime(final World world);
+
+		boolean isNighttime(final World world);
+
+		boolean isSunrise(final World world);
+
+		boolean isSunset(final World world);
+	}
+
+	private static class CelestialProvider implements IDiurnalProvider {
+
+		@Override
+		public boolean isDaytime(final World world) {
+			final float celestialAngle = getCelestialAngle(world, 0.0F);
+			// 0.785 0.260
+			return celestialAngle >= 0.785F || celestialAngle < 0.285F;
+		}
+
+		@Override
+		public boolean isNighttime(final World world) {
+			final float celestialAngle = getCelestialAngle(world, 0.0F);
+			// 0.260 0.705
+			return celestialAngle >= 0.285F && celestialAngle < 0.701F;
+		}
+
+		@Override
+		public boolean isSunrise(final World world) {
+			final float celestialAngle = getCelestialAngle(world, 0.0F);
+			// 0.705
+			return celestialAngle >= 0.701F && celestialAngle < 0.785F;
+		}
+
+		@Override
+		public boolean isSunset(final World world) {
+			final float celestialAngle = getCelestialAngle(world, 0.0F);
+			return celestialAngle > 0.215 && celestialAngle <= 0.306F;
+		}
+	}
+
+	private static class WallClockProvider implements IDiurnalProvider {
+		@Override
+		public boolean isDaytime(final World world) {
+			final long time = getClockTime(world);
+			return time < 13000;
+		}
+
+		@Override
+		public boolean isNighttime(final World world) {
+			final long time = getClockTime(world);
+			return time >= 13000 && time < 22220L;
+		}
+
+		@Override
+		public boolean isSunrise(final World world) {
+			final long time = getClockTime(world);
+			return time >= 22220L;
+		}
+
+		@Override
+		public boolean isSunset(final World world) {
+			final long time = getClockTime(world);
+			return time >= 12000 && time < 14000;
+		}
+	}
+
 	private static final TIntIntHashMap seaLevelOverride = new TIntIntHashMap();
 	private static final TIntIntHashMap skyHeightOverride = new TIntIntHashMap();
+	private static final IDiurnalProvider diurnalProvider;
 
 	static {
 		for (final String entry : ModOptions.getElevationOverrides()) {
@@ -41,54 +110,28 @@ public final class WorldUtils {
 				skyHeightOverride.put(values[0], values[2]);
 			}
 		}
+
+		diurnalProvider = useCelestial ? new CelestialProvider() : new WallClockProvider();
 	}
 
 	private WorldUtils() {
 	}
 
-	public static long getWorldTime(final World world) {
-		long time = world.getWorldTime();
-		for (; time > 24000L; time -= 24000L)
-			;
-		return time;
+	public static float getCelestialAngle(final World world, final float partialTickTime) {
+		final float angle = world.getCelestialAngle(partialTickTime);
+		return angle >= 1.0F ? angle - 1.0F : angle;
 	}
 
-	public static boolean isDaytime(final World world) {
-		return !isNighttime(world);
+	public static float getMoonPhaseFactor(final World world) {
+		return world.getCurrentMoonPhaseFactor();
 	}
 
-	public static boolean isDaytime(final long time) {
-		return !isNighttime(time);
-	}
-
-	public static boolean isNighttime(final World world) {
-		return isNighttime(getWorldTime(world));
-	}
-
-	public static boolean isNighttime(final long time) {
-		return time >= 13000L && time <= 23500L;
+	public static long getClockTime(final World world) {
+		return world.getWorldTime() % 24000L;
 	}
 
 	public static boolean hasSky(final World world) {
 		return !world.provider.hasNoSky;
-	}
-
-	public static boolean isDusk(final World world) {
-		return isSunset(world);
-	}
-
-	public static boolean isSunset(final World world) {
-		final long time = getWorldTime(world);
-		return time >= 12000 && time < 14000;
-	}
-
-	public static boolean isDawn(final World world) {
-		return isSunrise(world);
-	}
-
-	public static boolean isSunrise(final World world) {
-		final long time = getWorldTime(world);
-		return time >= 0 && time < 1000;
 	}
 
 	public static int getSeaLevel(final World world) {
@@ -106,9 +149,19 @@ public final class WorldUtils {
 	}
 
 	public static int getCloudHeight(final World world) {
-		int sky = getSkyHeight(world);
-		if (hasSky(world))
-			sky /= 2;
-		return sky;
+		final int sky = getSkyHeight(world);
+		return hasSky(world) ? sky / 2 : sky;
+	}
+
+	public static boolean isDaytime(final World world) {
+		return diurnalProvider.isDaytime(world);
+	}
+
+	public static boolean isNighttime(final World world) {
+		return diurnalProvider.isNighttime(world);
+	}
+
+	public static boolean isSunrise(final World world) {
+		return diurnalProvider.isSunrise(world);
 	}
 }

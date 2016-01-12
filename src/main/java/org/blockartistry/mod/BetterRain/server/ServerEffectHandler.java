@@ -67,24 +67,24 @@ public final class ServerEffectHandler {
 	}
 
 	private final ElementRule rule = ModOptions.getDimensionRule();
-	
-	private static TIntObjectHashMap<Float> rainStrengths = new TIntObjectHashMap<Float>();
-	
+
+	private static final TIntObjectHashMap<Float> rainStrengths = new TIntObjectHashMap<Float>();
+
 	private static void processRainCycle(final World world, final DimensionEffectData data) {
 		Float lastStrength = rainStrengths.get(data.getDimensionId());
-		if(lastStrength == null)
+		if (lastStrength == null)
 			lastStrength = new Float(0.0F);
 
 		RainPhase rainState = RainPhase.values()[data.getRainPhase()];
 		final float currentRainStrength = world.getRainStrength(1.0F);
-		
-		if(currentRainStrength <= 0.0F)
+
+		if (currentRainStrength <= 0.0F)
 			rainState = RainPhase.NOT_RAINING;
-		else if(currentRainStrength == 1.0F)
+		else if (currentRainStrength == 1.0F)
 			rainState = RainPhase.RAINING;
-		else if(currentRainStrength > lastStrength)
+		else if (currentRainStrength > lastStrength)
 			rainState = RainPhase.STARTING;
-		else if(currentRainStrength < lastStrength)
+		else if (currentRainStrength < lastStrength)
 			rainState = RainPhase.STOPPING;
 		data.setRainPhase(rainState.ordinal());
 		rainStrengths.put(data.getDimensionId(), new Float(currentRainStrength));
@@ -137,9 +137,16 @@ public final class ServerEffectHandler {
 
 		return false;
 	}
+	
+	/*
+	 * Only OK to spawn an aurora when it is night time and the moon
+	 * brightness is less than half full.
+	 */
+	private static boolean okToSpawnAurora(final World world) {
+		return WorldUtils.isNighttime(world) && WorldUtils.getMoonPhaseFactor(world) < 0.5F;
+	}
 
 	private static final int CHECK_INTERVAL = 100; // Ticks
-	private static long lastTimeCheck = 0;
 	private static int tickCounter = 0;
 
 	protected void processAuroras(final TickEvent.WorldTickEvent event) {
@@ -149,28 +156,36 @@ public final class ServerEffectHandler {
 			return;
 
 		final Set<AuroraData> data = DimensionEffectData.get(world).getAuroraList();
-		final long time = WorldUtils.getWorldTime(world);
 
-		// Daylight hours clear the aurora list
-		if (WorldUtils.isDaytime(time)) {
+		// Daylight hours clear the aurora list. No auroras should be
+		// showing at this time.
+		if (WorldUtils.isDaytime(world)) {
 			data.clear();
-		} else if (lastTimeCheck != time && ++tickCounter % CHECK_INTERVAL == 0) {
 			tickCounter = 0;
-			lastTimeCheck = time;
-			@SuppressWarnings("unchecked")
-			final List<EntityPlayerMP> players = MinecraftServer.getServer().getConfigurationManager().playerEntityList;
+		} else if (++tickCounter % CHECK_INTERVAL == 0) {
+			tickCounter = 0;
 
-			for (final EntityPlayerMP player : players) {
-				if (!EffectType.hasAuroraEffect(PlayerUtils.getPlayerBiome(player)))
-					continue;
-				if (isAuroraInRange(player, data))
-					continue;
+			if (okToSpawnAurora(world)) {
 
-				final int colorSet = ColorPair.randomId();
-				final int preset = AuroraPreset.randomId();
-				//final int colorSet = ColorPair.testId();
-				// final int preset = AuroraPreset.testId();
-				data.add(new AuroraData(player, Z_OFFSET, colorSet, preset));
+				@SuppressWarnings("unchecked")
+				final List<EntityPlayerMP> players = MinecraftServer.getServer()
+						.getConfigurationManager().playerEntityList;
+
+				for (final EntityPlayerMP player : players) {
+					if (!EffectType.hasAuroraEffect(PlayerUtils.getPlayerBiome(player)))
+						continue;
+					if (isAuroraInRange(player, data))
+						continue;
+
+					final int colorSet = ColorPair.randomId();
+					final int preset = AuroraPreset.randomId();
+					// final int colorSet = ColorPair.testId();
+					// final int preset = AuroraPreset.testId();
+					final AuroraData aurora = new AuroraData(player, Z_OFFSET, colorSet, preset);
+					if (data.add(aurora)) {
+						ModLog.info("Spawned new aurora: " + aurora.toString());
+					}
+				}
 			}
 
 			for (final AuroraData a : data) {
