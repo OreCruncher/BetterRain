@@ -35,7 +35,7 @@ import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.relauncher.Side;
 
 import org.blockartistry.mod.BetterRain.ModOptions;
-import org.blockartistry.mod.BetterRain.client.ClientEffectHandler;
+import org.blockartistry.mod.BetterRain.client.AuroraEffectHandler;
 import org.blockartistry.mod.BetterRain.client.IAtmosRenderer;
 import org.blockartistry.mod.BetterRain.util.Color;
 import org.blockartistry.mod.BetterRain.util.WorldUtils;
@@ -50,8 +50,8 @@ public final class AuroraRenderer implements IAtmosRenderer {
 
 	@Override
 	public void render(final EntityRenderer renderer, final float partialTick) {
-		if (ClientEffectHandler.currentAurora != null) {
-			renderAurora(partialTick, ClientEffectHandler.currentAurora);
+		if (AuroraEffectHandler.currentAurora != null) {
+			renderAurora(partialTick, AuroraEffectHandler.currentAurora);
 		}
 	}
 

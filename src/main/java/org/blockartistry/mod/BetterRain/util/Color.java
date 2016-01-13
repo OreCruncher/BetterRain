@@ -22,7 +22,6 @@
  * THE SOFTWARE.
  */
 
-
 /*
  * The MIT License (MIT)
  * Copyright (c) 2013 Ben Holland
@@ -46,7 +45,7 @@
 // Portions from: https://github.com/benjholla/ColorMixer
 package org.blockartistry.mod.BetterRain.util;
 
-import javax.annotation.Nonnull;
+import net.minecraft.util.Vec3;
 
 /**
  * Holds an RGB triple. See: http://www.rapidtables.com/web/color/RGB_Color.htm
@@ -82,8 +81,26 @@ public final class Color {
 		this.blue = blue;
 	}
 
+	public Color(final Vec3 vec) {
+		this((int) (vec.xCoord * 255.0D), (int) (vec.yCoord * 255.0D), (int) (vec.zCoord * 255.0D));
+	}
+
 	public Color(final float red, final float green, final float blue) {
 		this((int) (red * 255.0F), (int) (green * 255.0F), (int) (blue * 255.0F));
+	}
+
+	public Vec3 toVec3() {
+		return new Vec3(this.red / 255.0D, this.green / 255.0D, this.blue / 255.0D);
+	}
+
+	@Override
+	public String toString() {
+		final StringBuilder builder = new StringBuilder();
+		builder.append("[r:").append(this.red);
+		builder.append(",g:").append(this.green);
+		builder.append(",b:").append(this.blue);
+		builder.append(']');
+		return builder.toString();
 	}
 
 	/**
@@ -134,7 +151,7 @@ public final class Color {
 		 * @param color
 		 *            The color to create
 		 */
-		public KMColor(@Nonnull final Color color) {
+		public KMColor(final Color color) {
 			// normalize the RGB color values
 			final double red = color.red == 0 ? 0.00001 : (double) color.red / 255.0;
 			final double green = color.green == 0 ? 0.00001 : (double) color.green / 255.0;
@@ -184,7 +201,7 @@ public final class Color {
 		 * @param color
 		 *            The Color to mix into this Color
 		 */
-		public void mix(@Nonnull final Color color) {
+		public void mix(final Color color) {
 			// calculate new KS (Absorbance) for mix with one color of equal
 			// concentration
 			final KMColor kmColor = new KMColor(color);
@@ -213,7 +230,7 @@ public final class Color {
 	 * @param colorB
 	 * @return
 	 */
-	public static Color mix(@Nonnull final Color colorA, @Nonnull final Color colorB) {
+	public static Color mix(final Color colorA, final Color colorB) {
 		final KMColor color = new KMColor(colorA);
 		color.mix(colorB);
 		return color.getColor();
@@ -225,7 +242,7 @@ public final class Color {
 	 * @param colors
 	 * @return
 	 */
-	public static Color mix(@Nonnull final Color... colors) {
+	public static Color mix(final Color... colors) {
 		if (colors.length >= 1) {
 			final KMColor color = new KMColor(colors[0]);
 			for (int i = 1; i < colors.length; i++) {

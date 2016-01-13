@@ -37,13 +37,15 @@ import net.minecraft.world.biome.BiomeGenBase;
 public final class BiomeRegistry {
 
 	private static final Color DEFAULT_DUST_COLOR = new Color(204, 185, 102);
-	private static final Color DEFAULT_FOG_COLOR = new Color(127, 127, 127);
-	private static final float DEFAULT_FOG_DENSITY = 0.1F;
+	private static final Color DEFAULT_FOG_COLOR = new Color(64, 64, 64);
+	private static final float DEFAULT_FOG_DENSITY = 0.04F;
+
+	private static final Color GREEN_FOG_COLOR = new Color(64, 128, 64);
 
 	private static final String[] DESERT_TOKENS = new String[] { "desert", "sand", "mesa", "wasteland", "sahara" };
 	private static final String[] POLAR_TOKENS = new String[] { "taiga", "frozen", "ice", "tundra", "polar", "snow",
 			"glacier", "arctic" };
-	private static final String[] GROUND_FOG_TOKENS = new String[] { "fen", "bog", "swamp", "marsh", "moor", "bayou" };
+	private static final String[] FOG_TOKENS = new String[] { "fen", "bog", "swamp", "marsh", "moor", "bayou" };
 
 	private static boolean contains(String name, final String[] list) {
 		name = name.toLowerCase();
@@ -62,7 +64,7 @@ public final class BiomeRegistry {
 	}
 
 	private static boolean looksLikeFog(final BiomeGenBase biome) {
-		return contains(biome.biomeName, GROUND_FOG_TOKENS);
+		return contains(biome.biomeName, FOG_TOKENS);
 	}
 
 	private static final TIntObjectHashMap<Entry> registry = new TIntObjectHashMap<Entry>();
@@ -124,7 +126,13 @@ public final class BiomeRegistry {
 		if (names == null || names.length == 0)
 			return;
 		for (final String name : names) {
-			final BiomeGenBase biome = nameMap.get(name);
+			boolean setting = true;
+			String t = name;
+			if (t.startsWith("!")) {
+				setting = false;
+				t = t.substring(1);
+			}
+			final BiomeGenBase biome = nameMap.get(t);
 			if (biome != null) {
 				final Entry entry = registry.get(biome.biomeID);
 				if (entry != null) {
@@ -139,19 +147,19 @@ public final class BiomeRegistry {
 						entry.fogDensity = 0.0F;
 						break;
 					case PRECIPITATION:
-						entry.hasPrecipitation = true;
+						entry.hasPrecipitation = setting;
 						break;
 					case DUST:
-						entry.hasDust = true;
-						entry.dustColor = DEFAULT_DUST_COLOR;
+						entry.hasDust = setting;
+						entry.dustColor = setting ? DEFAULT_DUST_COLOR : null;
 						break;
 					case AURORA:
-						entry.hasAurora = true;
+						entry.hasAurora = setting;
 						break;
 					case FOG:
-						entry.hasFog = true;
-						entry.fogColor = DEFAULT_FOG_COLOR;
-						entry.fogDensity = DEFAULT_FOG_DENSITY;
+						entry.hasFog = setting;
+						entry.fogColor = setting ? DEFAULT_FOG_COLOR : null;
+						entry.fogDensity = setting ? DEFAULT_FOG_DENSITY : 0.0F;
 						break;
 					}
 				}
@@ -170,12 +178,14 @@ public final class BiomeRegistry {
 
 		processBiomeList(ModOptions.getPrecipitationBiomes(), PRECIPITATION);
 		processBiomeList(ModOptions.getDustBiomes(), DUST);
-		processBiomeList(ModOptions.getNoneBiomes(), NONE);
 		processBiomeList(ModOptions.getAuroraTriggerBiomes(), AURORA);
-		// processBiomeList(null, GROUND_FOG);
+		processBiomeList(ModOptions.getFogBiomes(), FOG);
+		processBiomeList(ModOptions.getNoneBiomes(), NONE);
 
 		for (final Entry entry : registry.valueCollection())
 			ModLog.info(entry.toString());
+
+		setupFogColors();
 	}
 
 	public static boolean hasDust(final BiomeGenBase biome) {
@@ -204,5 +214,13 @@ public final class BiomeRegistry {
 
 	public static float getFogDensity(final BiomeGenBase biome) {
 		return registry.get(biome.biomeID).fogDensity;
+	}
+
+	private static void setupFogColors() {
+		for (final Entry entry : registry.valueCollection()) {
+			final String name = entry.biome.biomeName.toLowerCase();
+			if (name.contains("swamp") && entry.fogColor != null)
+				entry.fogColor = GREEN_FOG_COLOR;
+		}
 	}
 }
