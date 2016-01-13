@@ -3,7 +3,7 @@ package org.blockartistry.mod.BetterRain.client.rain;
 import org.blockartistry.mod.BetterRain.BetterRain;
 import org.blockartistry.mod.BetterRain.client.IAtmosRenderer;
 import org.blockartistry.mod.BetterRain.client.WeatherUtils;
-import org.blockartistry.mod.BetterRain.data.EffectType;
+import org.blockartistry.mod.BetterRain.data.BiomeRegistry;
 import org.blockartistry.mod.BetterRain.util.XorShiftRandom;
 import org.lwjgl.opengl.GL11;
 
@@ -94,7 +94,7 @@ public class RainSnowRenderer implements IAtmosRenderer {
 				final BiomeGenBase biome = worldclient.getBiomeGenForCoords(locX, locZ);
 				final boolean hasDust = WeatherUtils.biomeHasDust(biome);
 
-				if (hasDust || EffectType.hasPrecipitation(biome)) {
+				if (hasDust || BiomeRegistry.hasPrecipitation(biome)) {
 					int k1 = worldclient.getPrecipitationHeight(locX, locZ);
 					int l1 = playerY - b0;
 					int i2 = playerY + b0;

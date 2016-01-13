@@ -30,7 +30,7 @@ import java.util.List;
 import org.blockartistry.mod.BetterRain.client.aurora.AuroraRenderer;
 import org.blockartistry.mod.BetterRain.client.rain.RainProperties;
 import org.blockartistry.mod.BetterRain.client.rain.RainSnowRenderer;
-import org.blockartistry.mod.BetterRain.data.EffectType;
+import org.blockartistry.mod.BetterRain.data.BiomeRegistry;
 import org.blockartistry.mod.BetterRain.util.XorShiftRandom;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -103,7 +103,7 @@ public final class RenderWeather {
 			final boolean hasDust = WeatherUtils.biomeHasDust(biome);
 
 			if (locY <= playerY + RANGE_FACTOR && locY >= playerY - RANGE_FACTOR && (hasDust
-					|| (EffectType.hasPrecipitation(biome) && biome.getFloatTemperature(locX, locY, locZ) >= 0.15F))) {
+					|| (BiomeRegistry.hasPrecipitation(biome) && biome.getFloatTemperature(locX, locY, locZ) >= 0.15F))) {
 
 				final Block block = worldclient.getBlock(locX, locY - 1, locZ);
 				final double posX = locX + random.nextFloat();

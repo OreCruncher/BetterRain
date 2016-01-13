@@ -40,7 +40,7 @@ import org.blockartistry.mod.BetterRain.ModOptions;
 import org.blockartistry.mod.BetterRain.client.aurora.Aurora;
 import org.blockartistry.mod.BetterRain.client.rain.RainProperties;
 import org.blockartistry.mod.BetterRain.data.AuroraData;
-import org.blockartistry.mod.BetterRain.data.EffectType;
+import org.blockartistry.mod.BetterRain.data.BiomeRegistry;
 import org.blockartistry.mod.BetterRain.util.PlayerUtils;
 import org.blockartistry.mod.BetterRain.util.WorldUtils;
 import org.lwjgl.opengl.GL11;
@@ -264,7 +264,7 @@ public final class ClientEffectHandler {
 			return false;
 
 		final BiomeGenBase biome = entity.worldObj.getBiomeGenForCoords(posX, posZ);
-		return EffectType.hasDust(biome);
+		return BiomeRegistry.hasDust(biome);
 	}
 
 	/*

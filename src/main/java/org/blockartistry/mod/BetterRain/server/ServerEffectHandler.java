@@ -43,7 +43,7 @@ import org.blockartistry.mod.BetterRain.data.AuroraData;
 import org.blockartistry.mod.BetterRain.data.AuroraPreset;
 import org.blockartistry.mod.BetterRain.data.ColorPair;
 import org.blockartistry.mod.BetterRain.data.DimensionEffectData;
-import org.blockartistry.mod.BetterRain.data.EffectType;
+import org.blockartistry.mod.BetterRain.data.BiomeRegistry;
 import org.blockartistry.mod.BetterRain.network.Network;
 import org.blockartistry.mod.BetterRain.util.ElementRule;
 import org.blockartistry.mod.BetterRain.util.PlayerUtils;
@@ -172,7 +172,7 @@ public final class ServerEffectHandler {
 						.getConfigurationManager().playerEntityList;
 
 				for (final EntityPlayerMP player : players) {
-					if (!EffectType.hasAuroraEffect(PlayerUtils.getPlayerBiome(player)))
+					if (!BiomeRegistry.hasAurora(PlayerUtils.getPlayerBiome(player)))
 						continue;
 					if (isAuroraInRange(player, data))
 						continue;
