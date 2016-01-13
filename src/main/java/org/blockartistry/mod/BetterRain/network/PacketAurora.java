@@ -24,7 +24,7 @@
 
 package org.blockartistry.mod.BetterRain.network;
 
-import org.blockartistry.mod.BetterRain.client.ClientEffectHandler;
+import org.blockartistry.mod.BetterRain.client.AuroraEffectHandler;
 import org.blockartistry.mod.BetterRain.data.AuroraData;
 
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
@@ -77,7 +77,7 @@ public final class PacketAurora implements IMessage, IMessageHandler<PacketAuror
 
 	@Override
 	public IMessage onMessage(final PacketAurora message, final MessageContext ctx) {
-		ClientEffectHandler.addAurora(new AuroraData(message.dimension, message.posX, message.posZ, message.seed, message.colorSet, message.preset));
+		AuroraEffectHandler.addAurora(new AuroraData(message.dimension, message.posX, message.posZ, message.seed, message.colorSet, message.preset));
 		return null;
 	}
 }

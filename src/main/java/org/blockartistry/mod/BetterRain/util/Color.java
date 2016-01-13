@@ -22,7 +22,6 @@
  * THE SOFTWARE.
  */
 
-
 /*
  * The MIT License (MIT)
  * Copyright (c) 2013 Ben Holland
@@ -45,6 +44,8 @@
 
 // Portions from: https://github.com/benjholla/ColorMixer
 package org.blockartistry.mod.BetterRain.util;
+
+import net.minecraft.util.Vec3;
 
 /**
  * Holds an RGB triple. See: http://www.rapidtables.com/web/color/RGB_Color.htm
@@ -80,8 +81,26 @@ public final class Color {
 		this.blue = blue;
 	}
 
+	public Color(final Vec3 vec) {
+		this((int) (vec.xCoord * 255.0D), (int) (vec.yCoord * 255.0D), (int) (vec.zCoord * 255.0D));
+	}
+
 	public Color(final float red, final float green, final float blue) {
 		this((int) (red * 255.0F), (int) (green * 255.0F), (int) (blue * 255.0F));
+	}
+
+	public Vec3 toVec3() {
+		return Vec3.createVectorHelper(this.red / 255.0D, this.green / 255.0D, this.blue / 255.0D);
+	}
+
+	@Override
+	public String toString() {
+		final StringBuilder builder = new StringBuilder();
+		builder.append("[r:").append(this.red);
+		builder.append(",g:").append(this.green);
+		builder.append(",b:").append(this.blue);
+		builder.append(']');
+		return builder.toString();
 	}
 
 	/**

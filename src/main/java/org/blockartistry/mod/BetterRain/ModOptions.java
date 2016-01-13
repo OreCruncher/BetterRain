@@ -50,6 +50,10 @@ public final class ModOptions {
 	protected static boolean alwaysOverrideSound = true;
 	protected static final String CONFIG_ALLOW_DESERT_DUST = "Desert Dust";
 	protected static boolean allowDesertDust = true;
+	protected static final String CONFIG_ELEVATION_OVERRIDES = "Elevation Overrides";
+	protected static String[] elevationOverrides = {};
+	
+	protected static final String CATEGORY_FOG = "fog";
 	protected static final String CONFIG_ALLOW_DESERT_FOG = "Desert Fog";
 	protected static boolean allowDesertFog = true;
 	protected static final String CONFIG_DESERT_FOG_FACTOR = "Desert Fog Factor";
@@ -58,8 +62,8 @@ public final class ModOptions {
 	protected static boolean enableElevationHaze = true;
 	protected static final String CONFIG_ELEVATION_HAZE_FACTOR = "Elevation Haze Factor";
 	protected static float elevationHazeFactor = 1.0F;
-	protected static final String CONFIG_ELEVATION_OVERRIDES = "Elevation Overrides";
-	protected static String[] elevationOverrides = {};
+	protected static final String CONFIG_ENABLE_BIOME_FOG = "Biome Fog";
+	protected static boolean enableBiomeFog = true;
 
 	protected static final String CATEGORY_GENERAL = "general";
 	protected static final String CONFIG_DIMENSION_LIST = "Dimensions";
@@ -78,6 +82,8 @@ public final class ModOptions {
 	protected static String precipitationBiomes = "";
 	protected static final String CONFIG_NONE_BIOMES = "None";
 	protected static String noneBiomes = "";
+	protected static final String CONFIG_FOG_BIOMES = "Fog";
+	protected static String fogBiomes = "";
 
 	protected static final String CATEGORY_AURORA = "aurora";
 	protected static final String CONFIG_AURORA_ENABLED = "Enabled";
@@ -125,21 +131,6 @@ public final class ModOptions {
 		comment = "Allow desert dust when raining";
 		allowDesertDust = config.getBoolean(CONFIG_ALLOW_DESERT_DUST, CATEGORY_RAIN, allowDesertDust, comment);
 
-		comment = "Allow desert fog when raining";
-		allowDesertFog = config.getBoolean(CONFIG_ALLOW_DESERT_FOG, CATEGORY_RAIN, allowDesertFog, comment);
-
-		comment = "Visibility factor to apply to desert fog (higher is thicker)";
-		desertFogFactor = config.getFloat(CONFIG_DESERT_FOG_FACTOR, CATEGORY_RAIN, desertFogFactor, 0.0F, 5.0F,
-				comment);
-
-		comment = "Higher the player elevation the more haze that is experienced";
-		enableElevationHaze = config.getBoolean(CONFIG_ENABLE_ELEVATION_HAZE, CATEGORY_RAIN, enableElevationHaze,
-				comment);
-
-		comment = "Visibility factor to apply to elevation haze (higher is thicker)";
-		elevationHazeFactor = config.getFloat(CONFIG_ELEVATION_HAZE_FACTOR, CATEGORY_RAIN, elevationHazeFactor, 0.0F,
-				5.0F, comment);
-
 		// CATEGORY: General
 		comment = "Comma separated dimension ID list";
 		String temp = config.getString(CONFIG_DIMENSION_LIST, CATEGORY_GENERAL, "1,-1", comment);
@@ -171,6 +162,9 @@ public final class ModOptions {
 
 		comment = "Comma separated biome names to apply NO weather effect";
 		noneBiomes = config.getString(CONFIG_NONE_BIOMES, CATEGORTY_OVERRIDE, noneBiomes, comment);
+
+		comment = "Comma separated biome names to apply Fog effect";
+		fogBiomes = config.getString(CONFIG_FOG_BIOMES, CATEGORTY_OVERRIDE, fogBiomes, comment);
 
 		// CATEGORY: Aurora
 		comment = "Whether to enable Aurora processing on server/client";
@@ -208,7 +202,27 @@ public final class ModOptions {
 		comment = "1-in-N chance per random tick a bubblejet will spawn in water";
 		bubbleJetSpawnChance = config.getInt(CONFIG_BUBBLEJETS_CHANCE, CATEGORY_JETS, bubbleJetSpawnChance, 300,
 				Integer.MAX_VALUE, comment);
-}
+		
+		// CATEGORY: Fog
+		comment = "Allow desert fog when raining";
+		allowDesertFog = config.getBoolean(CONFIG_ALLOW_DESERT_FOG, CATEGORY_FOG, allowDesertFog, comment);
+
+		comment = "Visibility factor to apply to desert fog (higher is thicker)";
+		desertFogFactor = config.getFloat(CONFIG_DESERT_FOG_FACTOR, CATEGORY_FOG, desertFogFactor, 0.0F, 5.0F,
+				comment);
+
+		comment = "Higher the player elevation the more haze that is experienced";
+		enableElevationHaze = config.getBoolean(CONFIG_ENABLE_ELEVATION_HAZE, CATEGORY_FOG, enableElevationHaze,
+				comment);
+
+		comment = "Visibility factor to apply to elevation haze (higher is thicker)";
+		elevationHazeFactor = config.getFloat(CONFIG_ELEVATION_HAZE_FACTOR, CATEGORY_FOG, elevationHazeFactor, 0.0F,
+				5.0F, comment);
+
+		comment = "Enable biome specific fog density and color";
+		enableBiomeFog = config.getBoolean(CONFIG_ENABLE_BIOME_FOG, CATEGORY_FOG, enableBiomeFog,
+				comment);
+	}
 
 	public static boolean getEnableDebugLogging() {
 		return enableDebugLogging;
@@ -269,6 +283,10 @@ public final class ModOptions {
 	public static String getNoneBiomes() {
 		return noneBiomes;
 	}
+	
+	public static String getFogBiomes() {
+		return fogBiomes;
+	}
 
 	public static boolean getAuroraHeightPlayerRelative() {
 		return auroraHeightPlayerRelative;
@@ -320,5 +338,9 @@ public final class ModOptions {
 	
 	public static int getBubbleJetSpawnChance() {
 		return bubbleJetSpawnChance;
+	}
+	
+	public static boolean getEnableBiomeFog() {
+		return enableBiomeFog;
 	}
 }

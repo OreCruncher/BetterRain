@@ -24,80 +24,22 @@
 
 package org.blockartistry.mod.BetterRain.client;
 
-import cpw.mods.fml.client.FMLClientHandler;
+import org.blockartistry.mod.BetterRain.ModOptions;
+import org.blockartistry.mod.BetterRain.client.rain.RainProperties;
+
 import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.eventhandler.EventPriority;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.gameevent.TickEvent;
-import cpw.mods.fml.common.gameevent.TickEvent.Phase;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import java.util.HashSet;
-import java.util.Set;
-
-import org.blockartistry.mod.BetterRain.ModLog;
-import org.blockartistry.mod.BetterRain.ModOptions;
-import org.blockartistry.mod.BetterRain.client.aurora.Aurora;
-import org.blockartistry.mod.BetterRain.client.rain.RainProperties;
-import org.blockartistry.mod.BetterRain.data.AuroraData;
-import org.blockartistry.mod.BetterRain.data.BiomeRegistry;
-import org.blockartistry.mod.BetterRain.util.PlayerUtils;
-import org.blockartistry.mod.BetterRain.util.WorldUtils;
-import org.lwjgl.opengl.GL11;
-
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.ISound;
 import net.minecraft.client.audio.PositionedSoundRecord;
-import net.minecraft.client.entity.EntityClientPlayerMP;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.util.MathHelper;
-import net.minecraft.world.World;
-import net.minecraft.world.biome.BiomeGenBase;
-import net.minecraftforge.client.event.EntityViewRenderEvent;
 import net.minecraftforge.client.event.sound.PlaySoundEvent17;
 import net.minecraftforge.common.MinecraftForge;
 
 @SideOnly(Side.CLIENT)
-public final class ClientEffectHandler {
-
+public class ClientEffectHandler {
+	
 	private static final boolean ALWAYS_OVERRIDE_SOUND = ModOptions.getAlwaysOverrideSound();
-	private static final boolean ENABLE_ELEVATION_HAZE = ModOptions.getEnableElevationHaze();
-
-	// Desert dust color for fog blending
-	private static final float DESERT_RED = 204.0F / 255.0F;
-	private static final float DESERT_GREEN = 185.0F / 255.0F;
-	private static final float DESERT_BLUE = 102.0F / 255.0F;
-
-	private static final int DESERT_FOG_Y_CUTOFF = 3;
-	private static float dustFade = 0.0F;
-	private static final float DUST_FADE_SPEED = 1.0F;
-	private static final boolean ALLOW_DESERT_FOG = ModOptions.getAllowDesertFog();
-	private static final float DESERT_DUST_FACTOR = ModOptions.getDesertFogFactor();
-
-	private static float currentDustFog = 0.0F;
-	private static float currentHeightFog = 0.0F;
-	private static float effectiveFog = 0.0F;
-
-	// Aurora information
-	private static final boolean AURORA_ENABLE = ModOptions.getAuroraEnable();
-	private static int auroraDimension = 0;
-	private static final Set<AuroraData> auroras = new HashSet<AuroraData>();
-	public static Aurora currentAurora;
-
-	// Elevation information
-	private static final float ELEVATION_HAZE_FACTOR = ModOptions.getElevationHazeFactor();
-
-	public static void addAurora(final AuroraData data) {
-		if (!AURORA_ENABLE)
-			return;
-
-		if (auroraDimension != data.dimensionId || PlayerUtils.getClientPlayerDimension() != data.dimensionId) {
-			auroras.clear();
-			currentAurora = null;
-			auroraDimension = data.dimensionId;
-		}
-		auroras.add(data);
-	}
 
 	private ClientEffectHandler() {
 	}
@@ -129,169 +71,4 @@ public final class ClientEffectHandler {
 		}
 	}
 
-	private Aurora getClosestAurora(final TickEvent.ClientTickEvent event) {
-		if (auroraDimension != PlayerUtils.getClientPlayerDimension()) {
-			auroras.clear();
-		}
-
-		if (auroras.size() == 0) {
-			currentAurora = null;
-			return null;
-		}
-
-		final EntityClientPlayerMP player = FMLClientHandler.instance().getClient().thePlayer;
-		final int playerX = (int) player.posX;
-		final int playerZ = (int) player.posZ;
-		boolean started = false;
-		int distanceSq = 0;
-		AuroraData ad = null;
-		for (final AuroraData data : auroras) {
-			final int deltaX = data.posX - playerX;
-			final int deltaZ = data.posZ - playerZ;
-			final int d = deltaX * deltaX + deltaZ * deltaZ;
-			if (!started || distanceSq > d) {
-				started = true;
-				distanceSq = d;
-				ad = data;
-			}
-		}
-
-		if (ad == null) {
-			currentAurora = null;
-		} else if (currentAurora == null || (currentAurora.posX != ad.posX && currentAurora.posZ != ad.posZ)) {
-			ModLog.info("New aurora: " + ad.toString());
-			currentAurora = new Aurora(ad);
-		}
-
-		return currentAurora;
-	}
-
-	/*
-	 * Need to get called every tick to process the dust fade timer as well as
-	 * aurora processing.
-	 */
-	@SubscribeEvent(priority = EventPriority.LOWEST)
-	public void clientTick(final TickEvent.ClientTickEvent event) {
-		final World world = FMLClientHandler.instance().getClient().theWorld;
-		if (world == null)
-			return;
-
-		if (event.phase == Phase.START) {
-			currentDustFog = 0.0F;
-			currentHeightFog = 0.0F;
-			effectiveFog = 0.0F;
-			if (!WorldUtils.hasSky(world)) {
-				dustFade = 0;
-				return;
-			}
-
-			final Minecraft mc = Minecraft.getMinecraft();
-			if (isDustFogApplicable(mc.thePlayer)) {
-				switch (RainProperties.getRainPhase()) {
-				case STARTING:
-				case RAINING:
-					dustFade += DUST_FADE_SPEED;
-					break;
-				case STOPPING:
-				case NOT_RAINING:
-					dustFade -= DUST_FADE_SPEED;
-					break;
-				default:
-					;
-				}
-			} else {
-				dustFade -= DUST_FADE_SPEED;
-			}
-
-			dustFade = MathHelper.clamp_float(dustFade, 0.0F, 100.0F);
-
-			if (dustFade > 0) {
-				currentDustFog = RainProperties.getFogDensity() * dustFade / 100.0F * DESERT_DUST_FACTOR;
-			}
-
-			if (ENABLE_ELEVATION_HAZE) {
-				final float factor = 1.0F + world.getRainStrength(1.0F) * RainProperties.getIntensityLevel();
-				final float skyHeight = WorldUtils.getSkyHeight(world) / factor;
-				final float groundLevel = WorldUtils.getSeaLevel(world);
-				currentHeightFog = (float) Math
-						.abs(Math.pow(((FMLClientHandler.instance().getClient().thePlayer.posY - groundLevel)
-								/ (skyHeight - groundLevel)), 4))
-						* ELEVATION_HAZE_FACTOR;
-			}
-			effectiveFog = Math.max(currentDustFog, currentHeightFog);
-			return;
-		} else if (!AURORA_ENABLE) {
-			return;
-		}
-
-		if (auroras.size() > 0) {
-			if (WorldUtils.isDaytime(world)) {
-				auroras.clear();
-				currentAurora = null;
-			} else {
-				final Aurora aurora = getClosestAurora(event);
-				if(aurora != null) {
-					aurora.update();
-					if (aurora.isAlive() && WorldUtils.isSunrise(world)) {
-						ModLog.info("Aurora fade...");
-						aurora.die();
-					}
-				}
-			}
-		}
-	}
-
-	/*
-	 * Determines if dust fog is applicable for where the entity is standing.
-	 */
-	public static boolean isDustFogApplicable(final EntityLivingBase entity) {
-		if (!ALLOW_DESERT_FOG || !WorldUtils.hasSky(entity.worldObj))
-			return false;
-
-		final RainProperties intensity = RainProperties.getIntensity();
-		if (intensity == RainProperties.VANILLA)
-			return false;
-
-		final int cutOff = WorldUtils.getSeaLevel(entity.worldObj) - DESERT_FOG_Y_CUTOFF;
-		final int posY = MathHelper.floor_double(entity.posY + entity.getEyeHeight());
-		if (posY < cutOff)
-			return false;
-
-		final int posX = MathHelper.floor_double(entity.posX);
-		final int posZ = MathHelper.floor_double(entity.posZ);
-
-		if (Minecraft.getMinecraft().theWorld.provider.doesXZShowFog(posX, posZ))
-			return false;
-
-		final BiomeGenBase biome = entity.worldObj.getBiomeGenForCoords(posX, posZ);
-		return BiomeRegistry.hasDust(biome);
-	}
-
-	/*
-	 * Hook the fog color event so that the fog can be tinted a sand color if
-	 * needed.
-	 */
-	@SubscribeEvent
-	public void fogColorEvent(final EntityViewRenderEvent.FogColors event) {
-		if (currentDustFog > 0.0F) {
-			// Blend in the dust color - like mixing paint
-			event.red = (event.red + DESERT_RED) / 2.0F;
-			event.green = (event.green + DESERT_GREEN) / 2.0F;
-			event.blue = (event.blue + DESERT_BLUE) / 2.0F;
-		}
-	}
-
-	/*
-	 * Hook the fog density event so that the fog settings can be reset based on
-	 * rain intensity. This routine will overwrite what the vanilla code has
-	 * done in terms of fog.
-	 */
-	@SubscribeEvent
-	public void fogRenderEvent(final EntityViewRenderEvent.RenderFogEvent event) {
-		final float factor = 1.0F + effectiveFog * 100.0F;
-		final float near = (event.farPlaneDistance * 0.75F) / (factor * factor);
-		final float horizon = event.farPlaneDistance / (factor);
-		GL11.glFogf(GL11.GL_FOG_START, near);
-		GL11.glFogf(GL11.GL_FOG_END, horizon);
-	}
 }
