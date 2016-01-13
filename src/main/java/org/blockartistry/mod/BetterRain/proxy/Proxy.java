@@ -26,7 +26,7 @@ package org.blockartistry.mod.BetterRain.proxy;
 
 import org.blockartistry.mod.BetterRain.VersionCheck;
 import org.blockartistry.mod.BetterRain.commands.CommandRain;
-import org.blockartistry.mod.BetterRain.data.EffectType;
+import org.blockartistry.mod.BetterRain.data.BiomeRegistry;
 import org.blockartistry.mod.BetterRain.network.Network;
 import org.blockartistry.mod.BetterRain.server.ServerEffectHandler;
 
@@ -52,7 +52,7 @@ public class Proxy {
 	}
 
 	public void postInit(final FMLPostInitializationEvent event) {
-		EffectType.initialize();
+		BiomeRegistry.initialize();
 	}
 
 	public void serverStarting(final FMLServerStartingEvent event) {
