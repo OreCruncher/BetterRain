@@ -24,51 +24,20 @@
 
 package org.blockartistry.mod.BetterRain.data;
 
-import java.util.HashMap;
-import java.util.Map;
-import org.apache.commons.lang3.StringUtils;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.blockartistry.mod.BetterRain.BetterRain;
 import org.blockartistry.mod.BetterRain.ModLog;
-import org.blockartistry.mod.BetterRain.ModOptions;
 import org.blockartistry.mod.BetterRain.util.Color;
+import org.blockartistry.mod.BetterRain.util.MyUtils;
 
 import gnu.trove.map.hash.TIntObjectHashMap;
 import net.minecraft.world.biome.BiomeGenBase;
 
 public final class BiomeRegistry {
 
-	private static final Color DEFAULT_DUST_COLOR = new Color(204, 185, 102);
-	private static final Color DEFAULT_FOG_COLOR = new Color(64, 64, 64);
-	private static final float DEFAULT_FOG_DENSITY = 0.04F;
-
-	private static final Color GREEN_FOG_COLOR = new Color(64, 128, 64);
-
-	private static final String[] DESERT_TOKENS = new String[] { "desert", "sand", "mesa", "wasteland", "sahara" };
-	private static final String[] POLAR_TOKENS = new String[] { "taiga", "frozen", "ice", "tundra", "polar", "snow",
-			"glacier", "arctic" };
-	private static final String[] FOG_TOKENS = new String[] { "fen", "bog", "swamp", "marsh", "moor", "bayou" };
-
-	private static boolean contains(String name, final String[] list) {
-		name = name.toLowerCase();
-		for (int i = 0; i < list.length; i++)
-			if (name.contains(list[i]))
-				return true;
-		return false;
-	}
-
-	private static boolean looksLikeDust(final BiomeGenBase biome) {
-		return contains(biome.biomeName, DESERT_TOKENS);
-	}
-
-	private static boolean looksLikeAurora(final BiomeGenBase biome) {
-		return contains(biome.biomeName, POLAR_TOKENS);
-	}
-
-	private static boolean looksLikeFog(final BiomeGenBase biome) {
-		return contains(biome.biomeName, FOG_TOKENS);
-	}
-
 	private static final TIntObjectHashMap<Entry> registry = new TIntObjectHashMap<Entry>();
-	private static final Map<String, BiomeGenBase> nameMap = new HashMap<String, BiomeGenBase>();
 
 	private static class Entry {
 
@@ -85,16 +54,6 @@ public final class BiomeRegistry {
 		public Entry(final BiomeGenBase biome) {
 			this.biome = biome;
 			this.hasPrecipitation = biome.canSpawnLightningBolt() || biome.getEnableSnow();
-			this.hasDust = looksLikeDust(biome);
-			this.hasAurora = looksLikeAurora(biome);
-			this.hasFog = looksLikeFog(biome);
-
-			if (this.hasDust)
-				this.dustColor = DEFAULT_DUST_COLOR;
-			if (this.hasFog) {
-				this.fogColor = DEFAULT_FOG_COLOR;
-				this.fogDensity = DEFAULT_FOG_DENSITY;
-			}
 		}
 
 		@Override
@@ -111,59 +70,13 @@ public final class BiomeRegistry {
 				builder.append(" FOG");
 			if (!this.hasPrecipitation && !this.hasDust && !this.hasAurora && !this.hasFog)
 				builder.append(" NONE");
+			if (this.dustColor != null)
+				builder.append(" dustColor:").append(this.dustColor.toString());
+			if (this.fogColor != null) {
+				builder.append(" fogColor:").append(this.fogColor.toString());
+				builder.append(" fogDensity:").append(this.fogDensity);
+			}
 			return builder.toString();
-		}
-	}
-
-	private static final int NONE = 0;
-	private static final int DUST = 1;
-	private static final int PRECIPITATION = 2;
-	private static final int FOG = 3;
-	private static final int AURORA = 4;
-
-	private static void processBiomeList(final String biomeNames, final int type) {
-		final String[] names = StringUtils.split(biomeNames, ',');
-		if (names == null || names.length == 0)
-			return;
-		for (final String name : names) {
-			boolean setting = true;
-			String t = name;
-			if (t.startsWith("!")) {
-				setting = false;
-				t = t.substring(1);
-			}
-			final BiomeGenBase biome = nameMap.get(t);
-			if (biome != null) {
-				final Entry entry = registry.get(biome.biomeID);
-				if (entry != null) {
-					switch (type) {
-					case NONE:
-						entry.hasAurora = false;
-						entry.hasDust = false;
-						entry.hasFog = false;
-						entry.hasPrecipitation = false;
-						entry.dustColor = null;
-						entry.fogColor = null;
-						entry.fogDensity = 0.0F;
-						break;
-					case PRECIPITATION:
-						entry.hasPrecipitation = setting;
-						break;
-					case DUST:
-						entry.hasDust = setting;
-						entry.dustColor = setting ? DEFAULT_DUST_COLOR : null;
-						break;
-					case AURORA:
-						entry.hasAurora = setting;
-						break;
-					case FOG:
-						entry.hasFog = setting;
-						entry.fogColor = setting ? DEFAULT_FOG_COLOR : null;
-						entry.fogDensity = setting ? DEFAULT_FOG_DENSITY : 0.0F;
-						break;
-					}
-				}
-			}
 		}
 	}
 
@@ -173,19 +86,12 @@ public final class BiomeRegistry {
 		for (int i = 0; i < biomeArray.length; i++)
 			if (biomeArray[i] != null) {
 				registry.put(biomeArray[i].biomeID, new Entry(biomeArray[i]));
-				nameMap.put(biomeArray[i].biomeName, biomeArray[i]);
 			}
 
-		processBiomeList(ModOptions.getPrecipitationBiomes(), PRECIPITATION);
-		processBiomeList(ModOptions.getDustBiomes(), DUST);
-		processBiomeList(ModOptions.getAuroraTriggerBiomes(), AURORA);
-		processBiomeList(ModOptions.getFogBiomes(), FOG);
-		processBiomeList(ModOptions.getNoneBiomes(), NONE);
+		processConfig();
 
 		for (final Entry entry : registry.valueCollection())
 			ModLog.info(entry.toString());
-
-		setupFogColors();
 	}
 
 	public static boolean hasDust(final BiomeGenBase biome) {
@@ -216,11 +122,35 @@ public final class BiomeRegistry {
 		return registry.get(biome.biomeID).fogDensity;
 	}
 
-	private static void setupFogColors() {
-		for (final Entry entry : registry.valueCollection()) {
-			final String name = entry.biome.biomeName.toLowerCase();
-			if (name.contains("swamp") && entry.fogColor != null)
-				entry.fogColor = GREEN_FOG_COLOR;
+	private static void processConfig() {
+		final BiomeConfig config = BiomeConfig.load(BetterRain.MOD_ID);
+		for (final BiomeConfig.Entry entry : config.entries) {
+			final Pattern pattern = Pattern.compile(entry.biomeName);
+			for (final Entry biomeEntry : registry.valueCollection()) {
+				final Matcher m = pattern.matcher(biomeEntry.biome.biomeName);
+				if (m.matches()) {
+					if (entry.hasPrecipitation != null)
+						biomeEntry.hasPrecipitation = entry.hasPrecipitation.booleanValue();
+					if (entry.hasAurora != null)
+						biomeEntry.hasAurora = entry.hasAurora.booleanValue();
+					if (entry.hasDust != null)
+						biomeEntry.hasDust = entry.hasDust.booleanValue();
+					if (entry.hasFog != null)
+						biomeEntry.hasFog = entry.hasFog.booleanValue();
+					if (entry.fogDensity != null)
+						biomeEntry.fogDensity = entry.fogDensity.floatValue();
+					if (entry.fogColor != null) {
+						final int[] rgb = MyUtils.splitToInts(entry.fogColor, ',');
+						if (rgb.length == 3)
+							biomeEntry.fogColor = new Color(rgb[0], rgb[1], rgb[2]);
+					}
+					if (entry.dustColor != null) {
+						final int[] rgb = MyUtils.splitToInts(entry.dustColor, ',');
+						if (rgb.length == 3)
+							biomeEntry.dustColor = new Color(rgb[0], rgb[1], rgb[2]);
+					}
+				}
+			}
 		}
 	}
 }

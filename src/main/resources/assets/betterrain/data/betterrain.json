@@ -1,0 +1,26 @@
+{
+	"entries":[
+		{
+			"biomeName":"(?i).*swamp.*",
+			"fog":true,
+			"fogColor":"64,128,64",
+			"fogDensity":0.04
+		},
+		{
+			"biomeName":"(?i).*fen.*|.*bog.*|.*marsh.*|.*moor.*|.*bayou.*",
+			"fog":true,
+			"fogColor":"64,64,64",
+			"fogDensity":0.04
+		},
+		{
+			"biomeName":"(?i).*desert.*|.*sand.*|.*mesa.*|.*wasteland.*|.*sahara.*",
+			"dust":true,
+			"dustColor":"204,185,102"
+		},
+		{
+			"biomeName":"(?i).*taiga.*|.*frozen.*|.*ice.*|.*tundra.*|.*polar.*|.*snow.*|.*glacier.*|.*arctic.*",
+			"aurora":true
+		}
+		
+	]
+}
