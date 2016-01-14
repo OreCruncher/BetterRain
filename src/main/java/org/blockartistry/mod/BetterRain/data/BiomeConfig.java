@@ -58,15 +58,14 @@ final class BiomeConfig {
 
 	public List<Entry> entries = ImmutableList.of();
 
-	public static BiomeConfig load(final File file) {
+	@SuppressWarnings("unused")
+	public static BiomeConfig load(final File file) throws Exception {
 		InputStream stream = null;
 
 		try {
 			stream = new FileInputStream(file);
 			if (stream != null)
 				return load(stream);
-		} catch (final Throwable t) {
-			;
 		} finally {
 			try {
 				if (stream != null)

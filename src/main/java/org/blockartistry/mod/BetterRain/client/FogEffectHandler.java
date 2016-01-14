@@ -120,7 +120,7 @@ public class FogEffectHandler {
 		// and elevation haze. Don't want to do needless calculations if they
 		// are under ground.
 		if (posY >= cutOff) {
-			if (ENABLE_BIOME_FOG)
+			if (ENABLE_BIOME_FOG && BiomeRegistry.hasFog(biome))
 				biomeFog = BiomeRegistry.getFogDensity(biome);
 
 			if (ENABLE_DESERT_FOG && BiomeRegistry.hasDust(biome)) {
