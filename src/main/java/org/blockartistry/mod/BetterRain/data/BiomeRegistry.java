@@ -24,11 +24,13 @@
 
 package org.blockartistry.mod.BetterRain.data;
 
+import java.io.File;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.blockartistry.mod.BetterRain.BetterRain;
 import org.blockartistry.mod.BetterRain.ModLog;
+import org.blockartistry.mod.BetterRain.ModOptions;
 import org.blockartistry.mod.BetterRain.util.Color;
 import org.blockartistry.mod.BetterRain.util.MyUtils;
 
@@ -123,7 +125,28 @@ public final class BiomeRegistry {
 	}
 
 	private static void processConfig() {
-		final BiomeConfig config = BiomeConfig.load(BetterRain.MOD_ID);
+		process(BiomeConfig.load(BetterRain.MOD_ID));
+
+		final String[] configFiles = ModOptions.getBiomeConfigFiles();
+		for (final String file : configFiles) {
+			final File theFile = new File(BetterRain.dataDirectory(), file);
+			if (theFile.exists()) {
+				try {
+					final BiomeConfig config = BiomeConfig.load(theFile);
+					if(config != null)
+						process(config);
+					else 
+						ModLog.warn("Unable to process biome config file " + file);
+				} catch (final Exception ex) {
+					ModLog.error("Unable to process biome config file " + file, ex);
+				}
+			} else {
+				ModLog.warn("Could not locate biome config file [%s]", file);
+			}
+		}
+	}
+
+	private static void process(final BiomeConfig config) {
 		for (final BiomeConfig.Entry entry : config.entries) {
 			final Pattern pattern = Pattern.compile(entry.biomeName);
 			for (final Entry biomeEntry : registry.valueCollection()) {

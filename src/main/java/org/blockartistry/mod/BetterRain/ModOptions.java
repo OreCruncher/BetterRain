@@ -52,7 +52,7 @@ public final class ModOptions {
 	protected static boolean allowDesertDust = true;
 	protected static final String CONFIG_ELEVATION_OVERRIDES = "Elevation Overrides";
 	protected static String[] elevationOverrides = {};
-	
+
 	protected static final String CATEGORY_FOG = "fog";
 	protected static final String CONFIG_ALLOW_DESERT_FOG = "Desert Fog";
 	protected static boolean allowDesertFog = true;
@@ -100,6 +100,10 @@ public final class ModOptions {
 	protected static boolean enableBubbleJets = true;
 	protected static final String CONFIG_BUBBLEJETS_CHANCE = "Bubblejet Spawn Chance";
 	protected static int bubbleJetSpawnChance = 1800;
+
+	protected static final String CATEGORY_BIOMES = "biomes";
+	protected static final String CONFIG_BIOME_CONFIG_FILES = "Config Files";
+	protected static String[] biomeConfigFiles = {};
 
 	public static void load(final Configuration config) {
 
@@ -161,10 +165,10 @@ public final class ModOptions {
 
 		comment = "Animate Aurora";
 		auroraAnimate = config.getBoolean(CONFIG_AURORA_ANIMATE, CATEGORY_AURORA, auroraAnimate, comment);
-		
+
 		comment = "Number of blocks north of player location to spawn an aurora";
-		auroraSpawnOffset = config.getInt(CONFIG_AURORA_SPAWN_OFFSET, CATEGORY_AURORA, auroraSpawnOffset, 0,
-				200, comment);
+		auroraSpawnOffset = config.getInt(CONFIG_AURORA_SPAWN_OFFSET, CATEGORY_AURORA, auroraSpawnOffset, 0, 200,
+				comment);
 
 		// CATEGORY: Jets
 		comment = "Enable firejet spawn on lava blocks";
@@ -180,14 +184,13 @@ public final class ModOptions {
 		comment = "1-in-N chance per random tick a bubblejet will spawn in water";
 		bubbleJetSpawnChance = config.getInt(CONFIG_BUBBLEJETS_CHANCE, CATEGORY_JETS, bubbleJetSpawnChance, 300,
 				Integer.MAX_VALUE, comment);
-		
+
 		// CATEGORY: Fog
 		comment = "Allow desert fog when raining";
 		allowDesertFog = config.getBoolean(CONFIG_ALLOW_DESERT_FOG, CATEGORY_FOG, allowDesertFog, comment);
 
 		comment = "Visibility factor to apply to desert fog (higher is thicker)";
-		desertFogFactor = config.getFloat(CONFIG_DESERT_FOG_FACTOR, CATEGORY_FOG, desertFogFactor, 0.0F, 5.0F,
-				comment);
+		desertFogFactor = config.getFloat(CONFIG_DESERT_FOG_FACTOR, CATEGORY_FOG, desertFogFactor, 0.0F, 5.0F, comment);
 
 		comment = "Higher the player elevation the more haze that is experienced";
 		enableElevationHaze = config.getBoolean(CONFIG_ENABLE_ELEVATION_HAZE, CATEGORY_FOG, enableElevationHaze,
@@ -198,8 +201,12 @@ public final class ModOptions {
 				5.0F, comment);
 
 		comment = "Enable biome specific fog density and color";
-		enableBiomeFog = config.getBoolean(CONFIG_ENABLE_BIOME_FOG, CATEGORY_FOG, enableBiomeFog,
-				comment);
+		enableBiomeFog = config.getBoolean(CONFIG_ENABLE_BIOME_FOG, CATEGORY_FOG, enableBiomeFog, comment);
+
+		// CATEGORY: Biomes
+		comment = "Configuration files for configuring Biome Registry";
+		biomeConfigFiles = config.getStringList(CONFIG_BIOME_CONFIG_FILES, CATEGORY_BIOMES, biomeConfigFiles, comment);
+
 	}
 
 	public static boolean getEnableDebugLogging() {
@@ -265,11 +272,11 @@ public final class ModOptions {
 	public static boolean getAuroraAnimate() {
 		return auroraAnimate;
 	}
-	
+
 	public static int getAuroraSpawnOffset() {
 		return auroraSpawnOffset;
 	}
-	
+
 	public static float getPlayerFixedHeight() {
 		return playerFixedHeight;
 	}
@@ -293,16 +300,20 @@ public final class ModOptions {
 	public static int getFireJetsSpawnChance() {
 		return fireJetsSpawnChance;
 	}
-	
+
 	public static boolean getEnableBubbleJets() {
 		return enableBubbleJets;
 	}
-	
+
 	public static int getBubbleJetSpawnChance() {
 		return bubbleJetSpawnChance;
 	}
-	
+
 	public static boolean getEnableBiomeFog() {
 		return enableBiomeFog;
+	}
+	
+	public static String[] getBiomeConfigFiles() {
+		return biomeConfigFiles;
 	}
 }
