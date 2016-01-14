@@ -24,6 +24,7 @@
 
 package org.blockartistry.mod.BetterRain.server;
 
+import gnu.trove.map.hash.TIntIntHashMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
@@ -144,7 +145,7 @@ public final class ServerEffectHandler {
 	}
 
 	private static final int CHECK_INTERVAL = 100; // Ticks
-	private static int tickCounter = 0;
+	private static TIntIntHashMap tickCounters = new TIntIntHashMap();
 
 	protected void processAuroras(final TickEvent.WorldTickEvent event) {
 
@@ -157,33 +158,34 @@ public final class ServerEffectHandler {
 		// Daylight hours clear the aurora list
 		if (WorldUtils.isDaytime(world)) {
 			data.clear();
-			tickCounter = 0;
-		} else if (++tickCounter % CHECK_INTERVAL == 0) {
-			tickCounter = 0;
+		} else {
+			final int tickCount = tickCounters.get(world.provider.getDimensionId()) + 1;
+			tickCounters.put(world.provider.getDimensionId(), tickCount);
+			if (tickCount % CHECK_INTERVAL == 0) {
+				if (okToSpawnAurora(world)) {
+					final List<EntityPlayerMP> players = MinecraftServer.getServer()
+							.getConfigurationManager().playerEntityList;
 
-			if (okToSpawnAurora(world)) {
-				final List<EntityPlayerMP> players = MinecraftServer.getServer()
-						.getConfigurationManager().playerEntityList;
+					for (final EntityPlayerMP player : players) {
+						if (!BiomeRegistry.hasAurora(PlayerUtils.getPlayerBiome(player)))
+							continue;
+						if (isAuroraInRange(player, data))
+							continue;
 
-				for (final EntityPlayerMP player : players) {
-					if (!BiomeRegistry.hasAurora(PlayerUtils.getPlayerBiome(player)))
-						continue;
-					if (isAuroraInRange(player, data))
-						continue;
-
-					final int colorSet = ColorPair.randomId();
-					final int preset = AuroraPreset.randomId();
-					// final int colorSet = ColorPair.testId();
-					// final int preset = AuroraPreset.testId();
-					final AuroraData aurora = new AuroraData(player, Z_OFFSET, colorSet, preset);
-					if (data.add(aurora)) {
-						ModLog.info("Spawned new aurora: " + aurora.toString());
+						final int colorSet = ColorPair.randomId();
+						final int preset = AuroraPreset.randomId();
+						// final int colorSet = ColorPair.testId();
+						// final int preset = AuroraPreset.testId();
+						final AuroraData aurora = new AuroraData(player, Z_OFFSET, colorSet, preset);
+						if (data.add(aurora)) {
+							ModLog.info("Spawned new aurora: " + aurora.toString());
+						}
 					}
 				}
-			}
 
-			for (final AuroraData a : data) {
-				Network.sendAurora(a, world.provider.getDimensionId());
+				for (final AuroraData a : data) {
+					Network.sendAurora(a, world.provider.getDimensionId());
+				}
 			}
 		}
 	}
