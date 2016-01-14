@@ -28,6 +28,7 @@ import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.common.gameevent.TickEvent.Phase;
+import gnu.trove.map.hash.TIntIntHashMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
@@ -137,17 +138,17 @@ public final class ServerEffectHandler {
 
 		return false;
 	}
-	
+
 	/*
-	 * Only OK to spawn an aurora when it is night time and the moon
-	 * brightness is less than half full.
+	 * Only OK to spawn an aurora when it is night time and the moon brightness
+	 * is less than half full.
 	 */
 	private static boolean okToSpawnAurora(final World world) {
 		return WorldUtils.isNighttime(world) && WorldUtils.getMoonPhaseFactor(world) < 0.5F;
 	}
 
 	private static final int CHECK_INTERVAL = 100; // Ticks
-	private static int tickCounter = 0;
+	private static TIntIntHashMap tickCounters = new TIntIntHashMap();
 
 	protected void processAuroras(final TickEvent.WorldTickEvent event) {
 
@@ -161,35 +162,36 @@ public final class ServerEffectHandler {
 		// showing at this time.
 		if (WorldUtils.isDaytime(world)) {
 			data.clear();
-			tickCounter = 0;
-		} else if (++tickCounter % CHECK_INTERVAL == 0) {
-			tickCounter = 0;
+		} else {
+			final int tickCount = tickCounters.get(world.provider.dimensionId) + 1;
+			tickCounters.put(world.provider.dimensionId, tickCount);
+			if (tickCount % CHECK_INTERVAL == 0) {
+				if (okToSpawnAurora(world)) {
 
-			if (okToSpawnAurora(world)) {
+					@SuppressWarnings("unchecked")
+					final List<EntityPlayerMP> players = MinecraftServer.getServer()
+							.getConfigurationManager().playerEntityList;
 
-				@SuppressWarnings("unchecked")
-				final List<EntityPlayerMP> players = MinecraftServer.getServer()
-						.getConfigurationManager().playerEntityList;
+					for (final EntityPlayerMP player : players) {
+						if (!BiomeRegistry.hasAurora(PlayerUtils.getPlayerBiome(player)))
+							continue;
+						if (isAuroraInRange(player, data))
+							continue;
 
-				for (final EntityPlayerMP player : players) {
-					if (!BiomeRegistry.hasAurora(PlayerUtils.getPlayerBiome(player)))
-						continue;
-					if (isAuroraInRange(player, data))
-						continue;
-
-					final int colorSet = ColorPair.randomId();
-					final int preset = AuroraPreset.randomId();
-					// final int colorSet = ColorPair.testId();
-					// final int preset = AuroraPreset.testId();
-					final AuroraData aurora = new AuroraData(player, Z_OFFSET, colorSet, preset);
-					if (data.add(aurora)) {
-						ModLog.info("Spawned new aurora: " + aurora.toString());
+						final int colorSet = ColorPair.randomId();
+						final int preset = AuroraPreset.randomId();
+						// final int colorSet = ColorPair.testId();
+						// final int preset = AuroraPreset.testId();
+						final AuroraData aurora = new AuroraData(player, Z_OFFSET, colorSet, preset);
+						if (data.add(aurora)) {
+							ModLog.info("Spawned new aurora: " + aurora.toString());
+						}
 					}
 				}
-			}
 
-			for (final AuroraData a : data) {
-				Network.sendAurora(a, world.provider.dimensionId);
+				for (final AuroraData a : data) {
+					Network.sendAurora(a, world.provider.dimensionId);
+				}
 			}
 		}
 	}
