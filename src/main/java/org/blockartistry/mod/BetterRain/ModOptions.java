@@ -50,8 +50,8 @@ public final class ModOptions {
 	protected static boolean alwaysOverrideSound = true;
 	protected static final String CONFIG_ALLOW_DESERT_DUST = "Desert Dust";
 	protected static boolean allowDesertDust = true;
-	protected static final String CONFIG_ELEVATION_OVERRIDES = "Elevation Overrides";
-	protected static String[] elevationOverrides = {};
+	protected static final String CONFIG_RESET_RAIN_ON_SLEEP = "Reset Rain on Sleep";
+	protected static boolean resetRainOnSleep = true;
 
 	protected static final String CATEGORY_FOG = "fog";
 	protected static final String CONFIG_ALLOW_DESERT_FOG = "Desert Fog";
@@ -74,6 +74,8 @@ public final class ModOptions {
 	protected static float defaultMinRainStrength = 0.0F;
 	protected static final String CONFIG_MAX_RAIN_STRENGTH = "Default Maximum Rain Strength";
 	protected static float defaultMaxRainStrength = 1.0F;
+	protected static final String CONFIG_ELEVATION_OVERRIDES = "Elevation Overrides";
+	protected static String[] elevationOverrides = {};
 
 	protected static final String CATEGORY_AURORA = "aurora";
 	protected static final String CONFIG_AURORA_ENABLED = "Enabled";
@@ -126,6 +128,10 @@ public final class ModOptions {
 
 		comment = "Allow desert dust when raining";
 		allowDesertDust = config.getBoolean(CONFIG_ALLOW_DESERT_DUST, CATEGORY_RAIN, allowDesertDust, comment);
+
+		comment = "Reset rain/thunder when all players sleep";
+		resetRainOnSleep = config.getBoolean(CONFIG_RESET_RAIN_ON_SLEEP, CATEGORY_RAIN, resetRainOnSleep,
+				comment);
 
 		// CATEGORY: General
 		comment = "Comma separated dimension ID list";
@@ -235,6 +241,10 @@ public final class ModOptions {
 
 	public static float getDesertFogFactor() {
 		return desertFogFactor;
+	}
+	
+	public static boolean getResetRainOnSleep() {
+		return resetRainOnSleep;
 	}
 
 	public static int[] getDimensionList() {
