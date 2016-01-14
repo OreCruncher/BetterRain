@@ -57,7 +57,7 @@ public final class ServerEffectHandler {
 
 	// Offset from the player location so they can see it
 	// without looking straight up.
-	private static final int Z_OFFSET = -150;
+	private static final int Z_OFFSET = -ModOptions.getAuroraSpawnOffset();
 
 	// Minimum distance between auroras, squared
 	private static final long MIN_AURORA_DISTANCE_SQ = 400 * 400;
