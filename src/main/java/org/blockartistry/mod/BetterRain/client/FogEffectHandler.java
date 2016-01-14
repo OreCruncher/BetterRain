@@ -28,6 +28,7 @@ import org.blockartistry.mod.BetterRain.ModOptions;
 import org.blockartistry.mod.BetterRain.client.rain.RainProperties;
 import org.blockartistry.mod.BetterRain.data.BiomeRegistry;
 import org.blockartistry.mod.BetterRain.util.Color;
+import org.blockartistry.mod.BetterRain.util.MathStuff;
 import org.blockartistry.mod.BetterRain.util.PlayerUtils;
 import org.blockartistry.mod.BetterRain.util.WorldUtils;
 import org.lwjgl.opengl.GL11;
@@ -46,6 +47,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.eventhandler.Event.Result;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import net.minecraftforge.fml.relauncher.Side;
@@ -72,6 +74,10 @@ public class FogEffectHandler {
 	private static Vec3 currentFogColor = null;
 	private static Vec3 targetFogColor = null;
 	private static Vec3 fogColorTransitionAdjustments = null;
+
+	private static float darkScaleRed = 1.0F;
+	private static float darkScaleGreen = 1.0F;
+	private static float darkScaleBlue = 1.0F;
 
 	private static boolean areEqual(final Vec3 color1, final Vec3 color2) {
 		return color1.xCoord == color2.xCoord && color1.yCoord == color2.yCoord && color1.zCoord == color2.zCoord;
@@ -198,16 +204,25 @@ public class FogEffectHandler {
 		}
 
 		currentFogColor = new Vec3(currentRed, currentGreen, currentBlue);
+		
+		// Calculate the darken factor to apply to the color.
+		float celestialAngle = WorldUtils.getCelestialAngle(world, 0.0F);
+		float baseScale = MathHelper.clamp_float(MathStuff.cos(celestialAngle * MathStuff.PI_F * 2.0F) * 2.0F + 0.5F,
+				0.0F, 1.0F);
+
+		darkScaleRed = baseScale * 0.94F + 0.06F;
+		darkScaleGreen = baseScale * 0.94F + 0.06F;
+		darkScaleBlue = baseScale * 0.91F + 0.09F;
 	}
 
 	/*
 	 * Hook the fog color event so we can tell the renderer what color the fog
 	 * should be.
 	 */
-	@SubscribeEvent
+	@SubscribeEvent(priority = EventPriority.LOWEST)
 	public void fogColorEvent(final EntityViewRenderEvent.FogColors event) {
 		// Timing is everything...
-		if (currentFogColor == null)
+		if (currentFogColor == null || event.getResult() != Result.DEFAULT)
 			return;
 
 		final Block block = ActiveRenderInfo.getBlockAtEntityViewpoint(event.entity.worldObj, event.entity,
@@ -215,9 +230,10 @@ public class FogEffectHandler {
 		if (block.getMaterial() == Material.lava || block.getMaterial() == Material.water)
 			return;
 
-		event.red = (event.red + (float) currentFogColor.xCoord) / 2.0F;
-		event.green = (event.green + (float) currentFogColor.yCoord) / 2.0F;
-		event.blue = (event.blue + (float) currentFogColor.zCoord) / 2.0F;
+		event.red = (event.red + (float) (currentFogColor.xCoord * darkScaleRed)) / 2.0F;
+		event.green = (event.green + (float) (currentFogColor.yCoord * darkScaleGreen)) / 2.0F;
+		event.blue = (event.blue + (float) (currentFogColor.zCoord * darkScaleBlue)) / 2.0F;
+		event.setResult(Result.ALLOW);
 	}
 
 	/*
@@ -225,13 +241,17 @@ public class FogEffectHandler {
 	 * rain intensity. This routine will overwrite what the vanilla code has
 	 * done in terms of fog.
 	 */
-	@SubscribeEvent
+	@SubscribeEvent(priority = EventPriority.LOWEST)
 	public void fogRenderEvent(final EntityViewRenderEvent.RenderFogEvent event) {
+		if(event.getResult() != Result.DEFAULT)
+			return;
+		
 		final float factor = 1.0F + currentFogLevel * 100.0F;
 		final float near = (event.farPlaneDistance * 0.75F) / (factor * factor);
 		final float horizon = event.farPlaneDistance / (factor);
 		GL11.glFogf(GL11.GL_FOG_START, near);
 		GL11.glFogf(GL11.GL_FOG_END, horizon);
+		event.setResult(Result.ALLOW);
 	}
 
 }
