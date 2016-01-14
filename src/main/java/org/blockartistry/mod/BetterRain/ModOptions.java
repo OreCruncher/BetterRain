@@ -75,16 +75,6 @@ public final class ModOptions {
 	protected static final String CONFIG_MAX_RAIN_STRENGTH = "Default Maximum Rain Strength";
 	protected static float defaultMaxRainStrength = 1.0F;
 
-	protected static final String CATEGORTY_OVERRIDE = "biomes.override";
-	protected static final String CONFIG_DUST_BIOMES = "Dust";
-	protected static String dustBiomes = "";
-	protected static final String CONFIG_PRECIPITATION_BIOMES = "Precipitation";
-	protected static String precipitationBiomes = "";
-	protected static final String CONFIG_NONE_BIOMES = "None";
-	protected static String noneBiomes = "";
-	protected static final String CONFIG_FOG_BIOMES = "Fog";
-	protected static String fogBiomes = "";
-
 	protected static final String CATEGORY_AURORA = "aurora";
 	protected static final String CONFIG_AURORA_ENABLED = "Enabled";
 	protected static boolean auroraEnable = true;
@@ -98,6 +88,8 @@ public final class ModOptions {
 	protected static String auroraTriggerBiomes = "";
 	protected static final String CONFIG_AURORA_ANIMATE = "Animate";
 	protected static boolean auroraAnimate = true;
+	protected static final String CONFIG_AURORA_SPAWN_OFFSET = "Spawn Offset";
+	protected static int auroraSpawnOffset = 150;
 
 	protected static final String CATEGORY_JETS = "jets";
 	protected static final String CONFIG_FIREJETS_ENABLED = "Firejets Enabled";
@@ -152,20 +144,6 @@ public final class ModOptions {
 		elevationOverrides = config.getStringList(CONFIG_ELEVATION_OVERRIDES, CATEGORY_GENERAL, elevationOverrides,
 				comment);
 
-		// CATEGORY: Biome Overrides
-		comment = "Comma separated biome names to apply dust weather effect";
-		dustBiomes = config.getString(CONFIG_DUST_BIOMES, CATEGORTY_OVERRIDE, dustBiomes, comment);
-
-		comment = "Comma separated biome names to apply rain/snow weather effect";
-		precipitationBiomes = config.getString(CONFIG_PRECIPITATION_BIOMES, CATEGORTY_OVERRIDE, precipitationBiomes,
-				comment);
-
-		comment = "Comma separated biome names to apply NO weather effect";
-		noneBiomes = config.getString(CONFIG_NONE_BIOMES, CATEGORTY_OVERRIDE, noneBiomes, comment);
-
-		comment = "Comma separated biome names to apply Fog effect";
-		fogBiomes = config.getString(CONFIG_FOG_BIOMES, CATEGORTY_OVERRIDE, fogBiomes, comment);
-
 		// CATEGORY: Aurora
 		comment = "Whether to enable Aurora processing on server/client";
 		auroraEnable = config.getBoolean(CONFIG_AURORA_ENABLED, CATEGORY_AURORA, auroraEnable, comment);
@@ -181,12 +159,12 @@ public final class ModOptions {
 		comment = "Allow Auroras with multiple bands";
 		auroraMultipleBands = config.getBoolean(CONFIG_MULTIPLE_BANDS, CATEGORY_AURORA, auroraMultipleBands, comment);
 
-		comment = "Comma separated biome names where Auroras can be triggered";
-		auroraTriggerBiomes = config.getString(CONFIG_TRIGGER_BIOME_LIST, CATEGORY_AURORA, auroraTriggerBiomes,
-				comment);
-
 		comment = "Animate Aurora";
 		auroraAnimate = config.getBoolean(CONFIG_AURORA_ANIMATE, CATEGORY_AURORA, auroraAnimate, comment);
+		
+		comment = "Number of blocks north of player location to spawn an aurora";
+		auroraSpawnOffset = config.getInt(CONFIG_AURORA_SPAWN_OFFSET, CATEGORY_AURORA, auroraSpawnOffset, 0,
+				200, comment);
 
 		// CATEGORY: Jets
 		comment = "Enable firejet spawn on lava blocks";
@@ -272,22 +250,6 @@ public final class ModOptions {
 		return defaultMaxRainStrength;
 	}
 
-	public static String getDustBiomes() {
-		return dustBiomes;
-	}
-
-	public static String getPrecipitationBiomes() {
-		return precipitationBiomes;
-	}
-
-	public static String getNoneBiomes() {
-		return noneBiomes;
-	}
-	
-	public static String getFogBiomes() {
-		return fogBiomes;
-	}
-
 	public static boolean getAuroraHeightPlayerRelative() {
 		return auroraHeightPlayerRelative;
 	}
@@ -296,16 +258,16 @@ public final class ModOptions {
 		return auroraMultipleBands;
 	}
 
-	public static String getAuroraTriggerBiomes() {
-		return auroraTriggerBiomes;
-	}
-
 	public static boolean getAuroraEnable() {
 		return auroraEnable;
 	}
 
 	public static boolean getAuroraAnimate() {
 		return auroraAnimate;
+	}
+	
+	public static int getAuroraSpawnOffset() {
+		return auroraSpawnOffset;
 	}
 	
 	public static float getPlayerFixedHeight() {
