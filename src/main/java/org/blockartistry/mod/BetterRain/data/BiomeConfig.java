@@ -53,7 +53,7 @@ final class BiomeConfig {
 		@SerializedName("fogColor")
 		public String fogColor = null;
 		@SerializedName("fogDensity")
-		public Float fogDensity = 0.0F;
+		public Float fogDensity= null;
 	}
 
 	public List<Entry> entries = ImmutableList.of();
