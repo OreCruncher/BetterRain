@@ -72,17 +72,13 @@ public class FogEffectHandler {
 
 	// Time period, in ticks, to transition fog colors
 	private static final int COLOR_TRANSIITON_PERIOD = 40;
-	private static Vec3 currentFogColor = null;
-	private static Vec3 targetFogColor = null;
+	private static Color currentFogColor = null;
+	private static Color targetFogColor = null;
 	private static Vec3 fogColorTransitionAdjustments = null;
 
 	private static float darkScaleRed = 1.0F;
 	private static float darkScaleGreen = 1.0F;
 	private static float darkScaleBlue = 1.0F;
-
-	private static boolean areEqual(final Vec3 color1, final Vec3 color2) {
-		return color1.xCoord == color2.xCoord && color1.yCoord == color2.yCoord && color1.zCoord == color2.zCoord;
-	}
 
 	private FogEffectHandler() {
 	}
@@ -106,10 +102,10 @@ public class FogEffectHandler {
 		final BiomeGenBase biome = PlayerUtils.getPlayerBiome(mc.thePlayer);
 
 		if (currentFogColor == null)
-			currentFogColor = world.getFogColor(1.0F);
+			currentFogColor = new Color(world.getFogColor(1.0F));
 
 		if (targetFogColor == null)
-			targetFogColor = world.getFogColor(1.0F);
+			targetFogColor = new Color(world.getFogColor(1.0F));
 
 		float biomeFog = 0.0F;
 		float dustFog = 0.0F;
@@ -147,30 +143,23 @@ public class FogEffectHandler {
 
 		// Get the appropriate fog color based on the predominant
 		// fog effect.
-		Vec3 newTargetColor = null;
+		Color newTargetColor = null;
 		if (targetFogLevel == dustFog) {
-			final Color color = BiomeRegistry.getDustColor(biome);
-			if (color != null)
-				newTargetColor = color.toVec3();
+			newTargetColor = BiomeRegistry.getDustColor(biome);
 		} else if (targetFogLevel == biomeFog) {
-			final Color color = BiomeRegistry.getFogColor(biome);
-			if (color != null)
-				newTargetColor = color.toVec3();
+			newTargetColor = BiomeRegistry.getFogColor(biome);
 		}
 
 		// Height fog/world default
 		if (newTargetColor == null)
-			newTargetColor = world.getFogColor(1.0F);
+			newTargetColor = new Color(world.getFogColor(1.0F));
 
 		// Calculate the rate of color change from the current fog
 		// color to the new target color. Each of the RGB components
 		// is scaled so that the color transition is smooth.
-		if (fogColorTransitionAdjustments == null || !areEqual(newTargetColor, targetFogColor)) {
+		if (fogColorTransitionAdjustments == null || !targetFogColor.equals(newTargetColor)) {
 			targetFogColor = newTargetColor;
-			final double deltaRed = (targetFogColor.xCoord - currentFogColor.xCoord) / COLOR_TRANSIITON_PERIOD;
-			final double deltaGreen = (targetFogColor.yCoord - currentFogColor.yCoord) / COLOR_TRANSIITON_PERIOD;
-			final double deltaBlue = (targetFogColor.zCoord - currentFogColor.zCoord) / COLOR_TRANSIITON_PERIOD;
-			fogColorTransitionAdjustments = Vec3.createVectorHelper(deltaRed, deltaGreen, deltaBlue);
+			fogColorTransitionAdjustments = currentFogColor.transitionTo(targetFogColor, COLOR_TRANSIITON_PERIOD);
 		}
 
 		// Move the current fog density to the desired target
@@ -187,26 +176,7 @@ public class FogEffectHandler {
 
 		// Adjust the fog color toward the target color based
 		// on the scaled adjustments per tick.
-		currentFogColor.xCoord += fogColorTransitionAdjustments.xCoord;
-		if ((fogColorTransitionAdjustments.xCoord < 0.0F && currentFogColor.xCoord < targetFogColor.xCoord)
-				|| (fogColorTransitionAdjustments.xCoord > 0.0F && currentFogColor.xCoord > targetFogColor.xCoord)) {
-			currentFogColor.xCoord = targetFogColor.xCoord;
-			fogColorTransitionAdjustments.xCoord = 0.0F;
-		}
-
-		currentFogColor.yCoord += fogColorTransitionAdjustments.yCoord;
-		if ((fogColorTransitionAdjustments.yCoord < 0.0F && currentFogColor.yCoord < targetFogColor.yCoord)
-				|| (fogColorTransitionAdjustments.yCoord > 0.0F && currentFogColor.yCoord > targetFogColor.yCoord)) {
-			currentFogColor.yCoord = targetFogColor.yCoord;
-			fogColorTransitionAdjustments.yCoord = 0.0F;
-		}
-
-		currentFogColor.zCoord += fogColorTransitionAdjustments.zCoord;
-		if ((fogColorTransitionAdjustments.zCoord < 0.0F && currentFogColor.zCoord < targetFogColor.zCoord)
-				|| (fogColorTransitionAdjustments.zCoord > 0.0F && currentFogColor.zCoord > targetFogColor.zCoord)) {
-			currentFogColor.zCoord = targetFogColor.zCoord;
-			fogColorTransitionAdjustments.zCoord = 0.0F;
-		}
+		currentFogColor.adjust(fogColorTransitionAdjustments, targetFogColor);
 
 		// Calculate the darken factor to apply to the color.
 		float celestialAngle = WorldUtils.getCelestialAngle(world, 0.0F);
@@ -233,9 +203,9 @@ public class FogEffectHandler {
 		if (block.getMaterial() == Material.lava || block.getMaterial() == Material.water)
 			return;
 
-		event.red = (event.red + (float) (currentFogColor.xCoord * darkScaleRed)) / 2.0F;
-		event.green = (event.green + (float) (currentFogColor.yCoord * darkScaleGreen)) / 2.0F;
-		event.blue = (event.blue + (float) (currentFogColor.zCoord * darkScaleBlue)) / 2.0F;
+		event.red = (event.red + (currentFogColor.red * darkScaleRed)) / 2.0F;
+		event.green = (event.green + (currentFogColor.green * darkScaleGreen)) / 2.0F;
+		event.blue = (event.blue + (currentFogColor.blue * darkScaleBlue)) / 2.0F;
 		event.setResult(Result.ALLOW);
 	}
 
@@ -246,15 +216,15 @@ public class FogEffectHandler {
 	 */
 	@SubscribeEvent(priority = EventPriority.LOWEST)
 	public void fogRenderEvent(final EntityViewRenderEvent.RenderFogEvent event) {
-		if(event.getResult() != Result.DEFAULT)
+		if (event.getResult() != Result.DEFAULT)
 			return;
-		
+
 		float level = currentFogLevel;
-		if(level > targetFogLevel)
+		if (level > targetFogLevel)
 			level -= event.renderPartialTicks * FOG_DELTA;
-		else if(level < targetFogLevel)
+		else if (level < targetFogLevel)
 			level += event.renderPartialTicks * FOG_DELTA;
-		
+
 		final float factor = 1.0F + level * 100.0F;
 		final float near = (event.farPlaneDistance * 0.75F) / (factor * factor);
 		final float horizon = event.farPlaneDistance / (factor);

@@ -53,7 +53,7 @@ public final class AuroraRenderer implements IAtmosRenderer {
 	}
 
 	private static void setColor(final Color color, final int alpha) {
-		Tessellator.instance.setColorRGBA(color.red, color.green, color.blue, alpha);
+		Tessellator.instance.setColorRGBA_F(color.red, color.green, color.blue, alpha / 255.0F);
 	}
 
 	public static void renderAurora(final float partialTick, final Aurora aurora) {
