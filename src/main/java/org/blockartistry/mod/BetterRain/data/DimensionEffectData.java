@@ -45,7 +45,7 @@ import net.minecraftforge.common.util.Constants;
  */
 public final class DimensionEffectData implements INBTSerialization {
 
-	private static final XorShiftRandom random = XorShiftRandom.shared;
+	private static final XorShiftRandom random = new XorShiftRandom();
 	private static final DecimalFormat FORMATTER = new DecimalFormat("0");
 
 	public final static float MIN_INTENSITY = 0.0F;
@@ -83,11 +83,11 @@ public final class DimensionEffectData implements INBTSerialization {
 	public void setRainIntensity(final float intensity) {
 		this.intensity = MathHelper.clamp_float(intensity, MIN_INTENSITY, MAX_INTENSITY);
 	}
-	
+
 	public float getMinRainIntensity() {
 		return this.minIntensity;
 	}
-	
+
 	public void setMinRainIntensity(final float intensity) {
 		this.minIntensity = MathHelper.clamp_float(intensity, MIN_INTENSITY, this.maxIntensity);
 	}
@@ -95,11 +95,11 @@ public final class DimensionEffectData implements INBTSerialization {
 	public float getMaxRainIntensity() {
 		return this.maxIntensity;
 	}
-	
+
 	public void setMaxRainIntensity(final float intensity) {
 		this.maxIntensity = MathHelper.clamp_float(intensity, this.minIntensity, MAX_INTENSITY);
 	}
-	
+
 	public Set<AuroraData> getAuroraList() {
 		return this.auroras;
 	}
@@ -107,13 +107,13 @@ public final class DimensionEffectData implements INBTSerialization {
 	public void randomizeRain() {
 		float result = 0.0F;
 		final float delta = this.maxIntensity - this.minIntensity;
-		if (delta == 0.0F) {
-			result = (float) delta;
+		if (delta <= 0.0F) {
+			result = (float) this.minIntensity;
 		} else {
 			final float mid = delta / 2.0F;
 			result = random.nextFloat() * mid + random.nextFloat() * mid;
 		}
-		setRainIntensity(MathHelper.clamp_float(result, 0.0F, 1.0F));
+		setRainIntensity(MathHelper.clamp_float(result, 0.01F, MAX_INTENSITY));
 	}
 
 	@Override
