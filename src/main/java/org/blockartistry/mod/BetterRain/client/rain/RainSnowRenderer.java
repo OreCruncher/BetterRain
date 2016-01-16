@@ -48,21 +48,27 @@ public class RainSnowRenderer implements IAtmosRenderer {
 	public void render(final EntityRenderer renderer, final float partialTicks) {
 		// Set our rain/snow/dust textures
 		RainProperties.setTextures();
+		final WorldClient world = renderer.mc.theWorld;
 
 		IRenderHandler r = null;
-		if ((r = renderer.mc.theWorld.provider.getWeatherRenderer()) != null) {
-			r.render(partialTicks, renderer.mc.theWorld, renderer.mc);
+		if ((r = world.provider.getWeatherRenderer()) != null) {
+			r.render(partialTicks, world, renderer.mc);
 			return;
 		}
 
-		final float rainStrength = renderer.mc.theWorld.getRainStrength(partialTicks);
+		final float rainStrength = world.getRainStrength(partialTicks);
 		if (rainStrength <= 0.0F)
 			return;
+		
+		final float alphaRatio;
+		if(RainProperties.getIntensityLevel() > 0.0F)
+			alphaRatio = world.rainingStrength / RainProperties.getIntensityLevel();
+		else
+			alphaRatio = rainStrength;
 
 		renderer.enableLightmap((double) partialTicks);
 
 		final EntityLivingBase entity = renderer.mc.renderViewEntity;
-		final WorldClient worldclient = renderer.mc.theWorld;
 		final int playerX = MathHelper.floor_double(entity.posX);
 		final int playerY = MathHelper.floor_double(entity.posY);
 		final int playerZ = MathHelper.floor_double(entity.posZ);
@@ -91,11 +97,11 @@ public class RainSnowRenderer implements IAtmosRenderer {
 				final int idx = (locZ - playerZ + 16) * 32 + locX - playerX + 16;
 				final float f6 = RAIN_X_COORDS[idx] * 0.5F;
 				final float f7 = RAIN_Y_COORDS[idx] * 0.5F;
-				final BiomeGenBase biome = worldclient.getBiomeGenForCoords(locX, locZ);
+				final BiomeGenBase biome = world.getBiomeGenForCoords(locX, locZ);
 				final boolean hasDust = WeatherUtils.biomeHasDust(biome);
 
 				if (hasDust || BiomeRegistry.hasPrecipitation(biome)) {
-					int k1 = worldclient.getPrecipitationHeight(locX, locZ);
+					int k1 = world.getPrecipitationHeight(locX, locZ);
 					int l1 = playerY - b0;
 					int i2 = playerY + b0;
 
@@ -118,7 +124,7 @@ public class RainSnowRenderer implements IAtmosRenderer {
 						random.setSeed(
 								(long) (locX * locX * 3121 + locX * 45238971 ^ locZ * locZ * 418711 + locZ * 13761));
 
-						final float heightTemp = worldclient.getWorldChunkManager()
+						final float heightTemp = world.getWorldChunkManager()
 								.getTemperatureAtHeight(biome.getFloatTemperature(locX, l1, locZ), k1);
 						float f10;
 
@@ -139,9 +145,9 @@ public class RainSnowRenderer implements IAtmosRenderer {
 							final double deltaX = (double) ((float) locX + 0.5F) - entity.posX;
 							final double deltaZ = (double) ((float) locZ + 0.5F) - entity.posZ;
 							final float dist = MathHelper.sqrt_double(deltaX * deltaX + deltaZ * deltaZ) / (float) b0;
-							tessellator.setBrightness(worldclient.getLightBrightnessForSkyBlocks(locX, j2, locZ, 0));
+							tessellator.setBrightness(world.getLightBrightnessForSkyBlocks(locX, j2, locZ, 0));
 							tessellator.setColorRGBA_F(1.0F, 1.0F, 1.0F,
-									((1.0F - dist * dist) * 0.5F + 0.5F) * rainStrength);
+									((1.0F - dist * dist) * 0.5F + 0.5F) * alphaRatio);
 							tessellator.setTranslation(-spawnX * 1.0D, -spawnY * 1.0D, -spawnZ * 1.0D);
 							tessellator.addVertexWithUV((double) ((float) locX - f6) + 0.5D, (double) l1,
 									(double) ((float) locZ - f7) + 0.5D, (double) (0.0F * f8),
@@ -185,9 +191,9 @@ public class RainSnowRenderer implements IAtmosRenderer {
 							final double deltaZ = (double) ((float) locZ + 0.5F) - entity.posZ;
 							final float dist = MathHelper.sqrt_double(deltaX * deltaX + deltaZ * deltaZ) / (float) b0;
 							tessellator.setBrightness(
-									(worldclient.getLightBrightnessForSkyBlocks(locX, j2, locZ, 0) * 3 + 15728880) / 4);
+									(world.getLightBrightnessForSkyBlocks(locX, j2, locZ, 0) * 3 + 15728880) / 4);
 							tessellator.setColorRGBA_F(1.0F, 1.0F, 1.0F,
-									((1.0F - dist * dist) * 0.3F + 0.5F) * rainStrength);
+									((1.0F - dist * dist) * 0.3F + 0.5F) * alphaRatio);
 							tessellator.setTranslation(-spawnX * 1.0D, -spawnY * 1.0D, -spawnZ * 1.0D);
 							tessellator.addVertexWithUV((double) ((float) locX - f6) + 0.5D, (double) l1,
 									(double) ((float) locZ - f7) + 0.5D, (double) (0.0F * f8 + f16),
