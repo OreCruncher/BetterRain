@@ -43,7 +43,7 @@ import net.minecraftforge.common.util.Constants;
  */
 public final class DimensionEffectData implements INBTSerialization {
 
-	private static final XorShiftRandom random = XorShiftRandom.shared;
+	private static final XorShiftRandom random = new XorShiftRandom();
 	private static final DecimalFormat FORMATTER = new DecimalFormat("0");
 
 	public final static float MIN_INTENSITY = 0.0F;
@@ -105,13 +105,13 @@ public final class DimensionEffectData implements INBTSerialization {
 	public void randomizeRain() {
 		float result = 0.0F;
 		final float delta = this.maxIntensity - this.minIntensity;
-		if (delta == 0.0F) {
-			result = (float) delta;
+		if (delta <= 0.0F) {
+			result = (float) this.minIntensity;
 		} else {
 			final float mid = delta / 2.0F;
 			result = random.nextFloat() * mid + random.nextFloat() * mid;
 		}
-		setRainIntensity(MathHelper.clamp_float(result, 0.0F, 1.0F));
+		setRainIntensity(MathHelper.clamp_float(result, 0.01F, MAX_INTENSITY));
 	}
 
 	@Override
