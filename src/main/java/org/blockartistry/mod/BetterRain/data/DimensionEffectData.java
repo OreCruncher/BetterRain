@@ -83,11 +83,11 @@ public final class DimensionEffectData implements INBTSerialization {
 	public void setRainIntensity(final float intensity) {
 		this.intensity = MathHelper.clamp_float(intensity, MIN_INTENSITY, MAX_INTENSITY);
 	}
-	
+
 	public int getRainPhase() {
 		return this.rainPhase;
 	}
-	
+
 	public void setRainPhase(final int phase) {
 		this.rainPhase = phase;
 	}
@@ -95,7 +95,7 @@ public final class DimensionEffectData implements INBTSerialization {
 	public float getMinRainIntensity() {
 		return this.minIntensity;
 	}
-	
+
 	public void setMinRainIntensity(final float intensity) {
 		this.minIntensity = MathHelper.clamp_float(intensity, MIN_INTENSITY, this.maxIntensity);
 	}
@@ -103,17 +103,25 @@ public final class DimensionEffectData implements INBTSerialization {
 	public float getMaxRainIntensity() {
 		return this.maxIntensity;
 	}
-	
+
 	public void setMaxRainIntensity(final float intensity) {
 		this.maxIntensity = MathHelper.clamp_float(intensity, this.minIntensity, MAX_INTENSITY);
 	}
-	
+
 	public Set<AuroraData> getAuroraList() {
 		return this.auroras;
 	}
 
 	public void randomizeRain() {
-		setRainIntensity(MathHelper.randomFloatClamp(random, this.minIntensity, this.maxIntensity));
+		float result = 0.0F;
+		final float delta = this.maxIntensity - this.minIntensity;
+		if (delta == 0.0F) {
+			result = (float) delta;
+		} else {
+			final float mid = delta / 2.0F;
+			result = random.nextFloat() * mid + random.nextFloat() * mid;
+		}
+		setRainIntensity(MathHelper.clamp_float(result, 0.0F, 1.0F));
 	}
 
 	@Override
@@ -139,7 +147,7 @@ public final class DimensionEffectData implements INBTSerialization {
 	public void writeToNBT(final NBTTagCompound nbt) {
 		nbt.setInteger(NBT.DIMENSION, this.dimensionId);
 		nbt.setFloat(NBT.INTENSITY, this.intensity);
-		nbt.setByte(NBT.RAIN_PHASE, (byte)this.rainPhase);
+		nbt.setByte(NBT.RAIN_PHASE, (byte) this.rainPhase);
 		nbt.setFloat(NBT.MIN_INTENSITY, this.minIntensity);
 		nbt.setFloat(NBT.MAX_INTENSITY, this.maxIntensity);
 		final NBTTagList list = new NBTTagList();

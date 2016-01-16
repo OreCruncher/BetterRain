@@ -106,10 +106,10 @@ public class FogEffectHandler {
 		final BiomeGenBase biome = PlayerUtils.getPlayerBiome(mc.thePlayer);
 
 		if (currentFogColor == null)
-			currentFogColor = world.getFogColor(0.0F);
+			currentFogColor = world.getFogColor(1.0F);
 
 		if (targetFogColor == null)
-			targetFogColor = world.getFogColor(0.0F);
+			targetFogColor = world.getFogColor(1.0F);
 
 		float biomeFog = 0.0F;
 		float dustFog = 0.0F;
@@ -134,7 +134,7 @@ public class FogEffectHandler {
 			}
 
 			if (ENABLE_ELEVATION_HAZE) {
-				final float factor = 1.0F + world.getRainStrength(1.0F) * RainProperties.getIntensityLevel();
+				final float factor = 1.0F + world.getRainStrength(1.0F);
 				final float skyHeight = WorldUtils.getSkyHeight(world) / factor;
 				final float groundLevel = WorldUtils.getSeaLevel(world);
 				final float ratio = (posY - groundLevel) / (skyHeight - groundLevel);
@@ -160,7 +160,7 @@ public class FogEffectHandler {
 
 		// Height fog/world default
 		if (newTargetColor == null)
-			newTargetColor = world.getFogColor(0.0F);
+			newTargetColor = world.getFogColor(1.0F);
 
 		// Calculate the rate of color change from the current fog
 		// color to the new target color. Each of the RGB components
@@ -249,7 +249,13 @@ public class FogEffectHandler {
 		if(event.getResult() != Result.DEFAULT)
 			return;
 		
-		final float factor = 1.0F + currentFogLevel * 100.0F;
+		float level = currentFogLevel;
+		if(level > targetFogLevel)
+			level -= event.renderPartialTicks * FOG_DELTA;
+		else if(level < targetFogLevel)
+			level += event.renderPartialTicks * FOG_DELTA;
+		
+		final float factor = 1.0F + level * 100.0F;
 		final float near = (event.farPlaneDistance * 0.75F) / (factor * factor);
 		final float horizon = event.farPlaneDistance / (factor);
 		GL11.glFogf(GL11.GL_FOG_START, near);
