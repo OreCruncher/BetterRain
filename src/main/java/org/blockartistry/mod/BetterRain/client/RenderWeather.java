@@ -92,8 +92,7 @@ public final class RenderWeather {
 		double spawnZ = 0.0D;
 		int particlesSpawned = 0;
 
-		int particleCount = (int) (200.0F * rainStrengthFactor * rainStrengthFactor
-				* RainProperties.getIntensityLevel());
+		int particleCount = (int) (200.0F * rainStrengthFactor * rainStrengthFactor);
 
 		if (theThis.mc.gameSettings.particleSetting == 1)
 			particleCount >>= 1;

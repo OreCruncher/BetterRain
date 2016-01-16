@@ -55,6 +55,9 @@ public class Transformer implements IClassTransformer {
 		} else if("net.minecraft.world.WorldServer".equals(name) || "le".equals(name)) {
 			logger.debug("Transforming WorldServer...");
 			return transformWorldServer(basicClass);
+		} else if("net.minecraft.world.World".equals(name) || "adm".equals(name)) {
+			logger.debug("Transforming World...");
+			return transformWorld(basicClass);
 		}
 
 		return basicClass;
@@ -160,6 +163,39 @@ public class Transformer implements IClassTransformer {
 				final String sig = "(Lnet/minecraft/world/WorldServer;)V";
 				m.instructions.add(new MethodInsnNode(INVOKESTATIC,
 						"org/blockartistry/mod/BetterRain/server/PlayerSleepHandler", targetName[0], sig, false));
+				m.instructions.add(new InsnNode(RETURN));
+				break;
+			}
+		}
+
+		final ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_MAXS);
+		cn.accept(cw);
+		return cw.toByteArray();
+	}
+	
+	private byte[] transformWorld(final byte[] classBytes) {
+		final String names[];
+
+		if (TransformLoader.runtimeDeobEnabled)
+			names = new String[] { "updateWeatherBody" };
+		else
+			names = new String[] { "updateWeatherBody" };
+
+		final String targetName[] = new String[] { "updateWeatherBody" };
+
+		final ClassReader cr = new ClassReader(classBytes);
+		final ClassNode cn = new ClassNode(ASM5);
+		cr.accept(cn, 0);
+
+		for (final MethodNode m : cn.methods) {
+			if (m.name.equals(names[0])) {
+				logger.debug("Hooking " + names[0]);
+				m.localVariables = null;
+				m.instructions.clear();
+				m.instructions.add(new VarInsnNode(ALOAD, 0));
+				final String sig = "(Lnet/minecraft/world/World;)V";
+				m.instructions.add(new MethodInsnNode(INVOKESTATIC,
+						"org/blockartistry/mod/BetterRain/server/WorldHandler", targetName[0], sig, false));
 				m.instructions.add(new InsnNode(RETURN));
 				break;
 			}

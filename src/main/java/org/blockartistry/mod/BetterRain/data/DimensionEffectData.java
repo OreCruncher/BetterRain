@@ -115,7 +115,15 @@ public final class DimensionEffectData implements INBTSerialization {
 	}
 
 	public void randomizeRain() {
-		setRainIntensity(MathHelper.randomFloatClamp(random, this.minIntensity, this.maxIntensity));
+		float result = 0.0F;
+		final float delta = this.maxIntensity - this.minIntensity;
+		if (delta == 0.0F) {
+			result = (float) delta;
+		} else {
+			final float mid = delta / 2.0F;
+			result = random.nextFloat() * mid + random.nextFloat() * mid;
+		}
+		setRainIntensity(MathHelper.clamp_float(result, 0.0F, 1.0F));
 	}
 
 	@Override

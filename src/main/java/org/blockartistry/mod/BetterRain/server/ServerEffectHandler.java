@@ -108,15 +108,6 @@ public final class ServerEffectHandler {
 		// Have to be a surface world and match the dimension rule
 		if (world.provider.isSurfaceWorld() && rule.isOk(dimensionId)) {
 			final DimensionEffectData data = DimensionEffectData.get(world);
-			if (world.getRainStrength(1.0F) > 0.0F) {
-				if (data.getRainIntensity() == 0.0F) {
-					data.randomizeRain();
-					ModLog.info(String.format("dim %d rain strength set to %f", dimensionId, data.getRainIntensity()));
-				}
-			} else if (data.getRainIntensity() > 0.0F) {
-				ModLog.info(String.format("dim %d rain has stopped", dimensionId));
-				data.setRainIntensity(0.0F);
-			}
 			processRainCycle(world, data);
 			sendIntensity = data.getRainIntensity();
 			sendPhase = data.getRainPhase();
