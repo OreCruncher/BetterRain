@@ -31,6 +31,7 @@ import org.blockartistry.mod.BetterRain.client.aurora.AuroraRenderer;
 import org.blockartistry.mod.BetterRain.client.rain.RainProperties;
 import org.blockartistry.mod.BetterRain.client.rain.RainSnowRenderer;
 import org.blockartistry.mod.BetterRain.data.BiomeRegistry;
+import org.blockartistry.mod.BetterRain.util.WorldUtils;
 import org.blockartistry.mod.BetterRain.util.XorShiftRandom;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -43,7 +44,9 @@ import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.MathHelper;
+import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
+import net.minecraft.world.gen.NoiseGeneratorSimplex;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.fml.relauncher.Side;
 
@@ -61,9 +64,15 @@ public final class RenderWeather {
 		register(new AuroraRenderer());
 	}
 
-	private static final XorShiftRandom random = new XorShiftRandom();
-
 	private static final int RANGE_FACTOR = 10;
+
+	private static final XorShiftRandom random = new XorShiftRandom();
+	private static final NoiseGeneratorSimplex gen = new NoiseGeneratorSimplex(random);
+
+	private static float calculateRainSoundVolume(final World world) {
+		return MathHelper.clamp_float((float) (RainProperties.getCurrentRainVolume()
+				+ gen.func_151605_a(WorldUtils.getClockTime(world) / 100, 1) / 5.0F), 0.0F, 1.0F);
+	}
 
 	/*
 	 * Render rain particles.
@@ -144,7 +153,7 @@ public final class RenderWeather {
 			final boolean hasDust = WeatherUtils.biomeHasDust(worldclient.getBiomeGenForCoords(coord));
 			final String sound = hasDust ? RainProperties.getIntensity().getDustSound()
 					: RainProperties.getIntensity().getRainSound();
-			final float volume = RainProperties.getCurrentRainVolume();
+			final float volume = calculateRainSoundVolume(worldclient);
 			float pitch = 1.0F;
 			if (spawnY > entity.posY + 1.0D
 					&& worldclient.getPrecipitationHeight(new BlockPos(playerX, 0, playerZ)).getY() > playerY)
