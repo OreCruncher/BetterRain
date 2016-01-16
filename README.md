@@ -1,5 +1,5 @@
 ###Build Status
-Master Branch: [![Master Branch](https://travis-ci.org/OreCruncher/BetterRain.svg?branch=master)](https://travis-ci.org/OreCruncher/BetterRain)
+Master Branch: [![1.7.10 Branch](https://travis-ci.org/OreCruncher/BetterRain.svg?branch=1.7.10)](https://travis-ci.org/OreCruncher/BetterRain)
 
 ### BetterRain
 Minecraft mod that improves the rain experience.
