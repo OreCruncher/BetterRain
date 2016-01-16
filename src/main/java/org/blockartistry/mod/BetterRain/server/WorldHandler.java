@@ -24,10 +24,13 @@
 
 package org.blockartistry.mod.BetterRain.server;
 
+import java.util.Random;
+
 import org.blockartistry.mod.BetterRain.ModLog;
 import org.blockartistry.mod.BetterRain.data.DimensionEffectData;
 import org.blockartistry.mod.BetterRain.data.DimensionEffectDataFile;
 import org.blockartistry.mod.BetterRain.util.WorldUtils;
+import org.blockartistry.mod.BetterRain.util.XorShiftRandom;
 
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
@@ -36,6 +39,11 @@ import net.minecraft.world.storage.WorldInfo;
 public class WorldHandler {
 
 	private static final float STRENGTH_ADJUST = 0.01F;
+	private static final Random random = new XorShiftRandom();
+
+	private static int nextInterval(final boolean flag) {
+		return random.nextInt(flag ? 12000 : 168000) + (flag ? 3600 : 12000);
+	}
 
 	public static void updateWeatherBody(final World world) {
 
@@ -49,11 +57,7 @@ public class WorldHandler {
 		int i = info.getThunderTime();
 
 		if (i <= 0) {
-			if (info.isThundering()) {
-				info.setThunderTime(world.rand.nextInt(12000) + 3600);
-			} else {
-				info.setThunderTime(world.rand.nextInt(168000) + 12000);
-			}
+			info.setThunderTime(nextInterval(info.isThundering()));
 		} else {
 			--i;
 			info.setThunderTime(i);
@@ -70,11 +74,7 @@ public class WorldHandler {
 		int j = info.getRainTime();
 
 		if (j <= 0) {
-			if (info.isRaining()) {
-				info.setRainTime(world.rand.nextInt(12000) + 12000);
-			} else {
-				info.setRainTime(world.rand.nextInt(168000) + 12000);
-			}
+			info.setRainTime(nextInterval(info.isRaining()));
 		} else {
 			--j;
 			info.setRainTime(j);
@@ -90,11 +90,21 @@ public class WorldHandler {
 		}
 
 		world.prevRainingStrength = world.rainingStrength;
-		world.rainingStrength += info.isRaining() ? STRENGTH_ADJUST : -STRENGTH_ADJUST;
-		world.rainingStrength = MathHelper.clamp_float(world.rainingStrength, 0.0F, data.getRainIntensity());
-		world.rainingStrength = MathHelper.clamp_float(world.rainingStrength, 0.0F, 1.0F);
-
-		if (world.rainingStrength == 0.0F && data.getRainIntensity() > 0.0F) {
+		if (info.isRaining()) {
+			if (world.rainingStrength > data.getRainIntensity()) {
+				world.rainingStrength -= STRENGTH_ADJUST;
+				if (world.rainingStrength < 0.0F)
+					world.rainingStrength = 0.0F;
+			} else if (world.rainingStrength < data.getRainIntensity()) {
+				world.rainingStrength += STRENGTH_ADJUST;
+				if (world.rainingStrength > data.getRainIntensity())
+					world.rainingStrength = data.getRainIntensity();
+			}
+		} else if (world.rainingStrength > 0.0F) {
+			world.rainingStrength -= STRENGTH_ADJUST;
+			if (world.rainingStrength < 0.0F)
+				world.rainingStrength = 0.0F;
+		} else if (data.getRainIntensity() > 0.0F) {
 			data.setRainIntensity(0.0F);
 			ModLog.info(String.format("dim %d rain has stopped", dimensionId));
 		}

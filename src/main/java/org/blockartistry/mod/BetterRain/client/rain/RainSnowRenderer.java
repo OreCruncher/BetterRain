@@ -31,6 +31,7 @@ import org.blockartistry.mod.BetterRain.data.BiomeRegistry;
 import org.blockartistry.mod.BetterRain.util.XorShiftRandom;
 import org.lwjgl.opengl.GL11;
 
+import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
@@ -77,21 +78,27 @@ public class RainSnowRenderer implements IAtmosRenderer {
 	public void render(final EntityRenderer renderer, final float partialTicks) {
 
 		RainProperties.setTextures();
+		final World world = renderer.mc.theWorld;
 
-		IRenderHandler r = renderer.mc.theWorld.provider.getWeatherRenderer();
+		IRenderHandler r = world.provider.getWeatherRenderer();
 		if (r != null) {
-			r.render(partialTicks, renderer.mc.theWorld, renderer.mc);
+			r.render(partialTicks, (WorldClient) world, renderer.mc);
 			return;
 		}
 
-		final float rainStrength = renderer.mc.theWorld.getRainStrength(partialTicks);
+		final float rainStrength = world.getRainStrength(partialTicks);
 		if (rainStrength <= 0.0F)
 			return;
+		
+		final float alphaRatio;
+		if(RainProperties.getIntensityLevel() > 0.0F)
+			alphaRatio = world.rainingStrength / RainProperties.getIntensityLevel();
+		else
+			alphaRatio = rainStrength;
 
 		renderer.enableLightmap();
 
 		final Entity entity = renderer.mc.getRenderViewEntity();
-		final World world = renderer.mc.theWorld;
 		final int playerX = MathHelper.floor_double(entity.posX);
 		final int playerY = MathHelper.floor_double(entity.posY);
 		final int playerZ = MathHelper.floor_double(entity.posZ);
@@ -170,7 +177,7 @@ public class RainSnowRenderer implements IAtmosRenderer {
 							double d6 = (double) ((float) gridX + 0.5F) - entity.posX;
 							double d7 = (double) ((float) gridZ + 0.5F) - entity.posZ;
 							float f3 = MathHelper.sqrt_double(d6 * d6 + d7 * d7) / (float) range;
-							float f4 = ((1.0F - f3 * f3) * 0.5F + 0.5F) * rainStrength;
+							float f4 = ((1.0F - f3 * f3) * 0.5F + 0.5F) * alphaRatio;
 							mutable.set(gridX, i3, gridZ);
 							int j3 = world.getCombinedLight(mutable, 0);
 							int k3 = j3 >> 16 & 65535;
@@ -219,7 +226,7 @@ public class RainSnowRenderer implements IAtmosRenderer {
 							double d11 = (double) ((float) gridX + 0.5F) - entity.posX;
 							double d12 = (double) ((float) gridZ + 0.5F) - entity.posZ;
 							float f6 = MathHelper.sqrt_double(d11 * d11 + d12 * d12) / (float) range;
-							float f5 = ((1.0F - f6 * f6) * 0.3F + 0.5F) * rainStrength;
+							float f5 = ((1.0F - f6 * f6) * 0.3F + 0.5F) * alphaRatio;
 							mutable.set(gridX, i3, gridZ);
 							int i4 = (world.getCombinedLight(mutable, 0) * 3 + 15728880) / 4;
 							int j4 = i4 >> 16 & 65535;
