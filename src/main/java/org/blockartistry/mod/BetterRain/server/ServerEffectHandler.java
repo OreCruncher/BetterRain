@@ -32,7 +32,6 @@ import gnu.trove.map.hash.TIntIntHashMap;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.World;
-
 import java.util.List;
 import java.util.Set;
 
@@ -60,7 +59,7 @@ public final class ServerEffectHandler {
 
 	// Minimum distance between auroras, squared
 	private static final long MIN_AURORA_DISTANCE_SQ = 400 * 400;
-
+	
 	public static void initialize() {
 		FMLCommonHandler.instance().bus().register(new ServerEffectHandler());
 	}

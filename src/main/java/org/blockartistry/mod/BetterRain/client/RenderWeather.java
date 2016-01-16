@@ -31,6 +31,7 @@ import org.blockartistry.mod.BetterRain.client.aurora.AuroraRenderer;
 import org.blockartistry.mod.BetterRain.client.rain.RainProperties;
 import org.blockartistry.mod.BetterRain.client.rain.RainSnowRenderer;
 import org.blockartistry.mod.BetterRain.data.BiomeRegistry;
+import org.blockartistry.mod.BetterRain.util.WorldUtils;
 import org.blockartistry.mod.BetterRain.util.XorShiftRandom;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -43,24 +44,33 @@ import net.minecraft.client.particle.EntitySmokeFX;
 import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.MathHelper;
+import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
+import net.minecraft.world.gen.NoiseGeneratorSimplex;
 
 @SideOnly(Side.CLIENT)
 public final class RenderWeather {
-	
+
 	private static final List<IAtmosRenderer> renderList = new ArrayList<IAtmosRenderer>();
+
 	public static void register(final IAtmosRenderer renderer) {
 		renderList.add(renderer);
 	}
-	
+
 	static {
 		register(new RainSnowRenderer());
 		register(new AuroraRenderer());
 	}
 
-	private static final XorShiftRandom random = new XorShiftRandom();
-
 	private static final int RANGE_FACTOR = 10;
+
+	private static final XorShiftRandom random = new XorShiftRandom();
+	private static final NoiseGeneratorSimplex gen = new NoiseGeneratorSimplex(random);
+
+	private static float calculateRainSoundVolume(final World world) {
+		return MathHelper.clamp_float((float) (RainProperties.getCurrentRainVolume()
+				+ gen.func_151605_a(WorldUtils.getClockTime(world) / 100, 1) / 5.0F), 0.0F, 1.0F);
+	}
 
 	/*
 	 * Render rain particles.
@@ -89,7 +99,7 @@ public final class RenderWeather {
 		double spawnZ = 0.0D;
 		int particlesSpawned = 0;
 
-		int particleCount = (int) (250.0F * rainStrengthFactor * rainStrengthFactor); 
+		int particleCount = (int) (250.0F * rainStrengthFactor * rainStrengthFactor);
 
 		if (theThis.mc.gameSettings.particleSetting == 1)
 			particleCount >>= 1;
@@ -101,8 +111,9 @@ public final class RenderWeather {
 			final BiomeGenBase biome = worldclient.getBiomeGenForCoords(locX, locZ);
 			final boolean hasDust = WeatherUtils.biomeHasDust(biome);
 
-			if (locY <= playerY + RANGE_FACTOR && locY >= playerY - RANGE_FACTOR && (hasDust
-					|| (BiomeRegistry.hasPrecipitation(biome) && biome.getFloatTemperature(locX, locY, locZ) >= 0.15F))) {
+			if (locY <= playerY + RANGE_FACTOR && locY >= playerY - RANGE_FACTOR
+					&& (hasDust || (BiomeRegistry.hasPrecipitation(biome)
+							&& biome.getFloatTemperature(locX, locY, locZ) >= 0.15F))) {
 
 				final Block block = worldclient.getBlock(locX, locY - 1, locZ);
 				final double posX = locX + random.nextFloat();
@@ -134,10 +145,11 @@ public final class RenderWeather {
 		if (particlesSpawned > 0 && random.nextInt(3) < theThis.rainSoundCounter++) {
 			theThis.rainSoundCounter = 0;
 
-			final boolean hasDust = WeatherUtils.biomeHasDust(worldclient.getBiomeGenForCoords((int) spawnX, (int) spawnZ));
+			final boolean hasDust = WeatherUtils
+					.biomeHasDust(worldclient.getBiomeGenForCoords((int) spawnX, (int) spawnZ));
 			final String sound = hasDust ? RainProperties.getIntensity().getDustSound()
 					: RainProperties.getIntensity().getRainSound();
-			final float volume = RainProperties.getCurrentRainVolume();
+			final float volume = calculateRainSoundVolume(worldclient);
 			float pitch = 1.0F;
 			if (spawnY > entity.posY + 1.0D && worldclient.getPrecipitationHeight(playerX, playerZ) > playerY)
 				pitch = 0.5F;
@@ -151,7 +163,7 @@ public final class RenderWeather {
 	 * Redirect from EntityRenderer.
 	 */
 	public static void renderRainSnow(final EntityRenderer theThis, final float partialTicks) {
-		for(final IAtmosRenderer renderer: renderList)
+		for (final IAtmosRenderer renderer : renderList)
 			renderer.render(theThis, partialTicks);
 	}
 }
