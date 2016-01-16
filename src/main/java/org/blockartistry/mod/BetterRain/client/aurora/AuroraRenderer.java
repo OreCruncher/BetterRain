@@ -80,7 +80,7 @@ public final class AuroraRenderer implements IAtmosRenderer {
 
 		final Color base = aurora.getBaseColor();
 		final Color fade = aurora.getFadeColor();
-		final int alpha = aurora.getAlpha();
+		final float alpha = aurora.getAlpha() / 255.0F;
 		final double zero = 0.0D;
 
 		GlStateManager.pushMatrix();

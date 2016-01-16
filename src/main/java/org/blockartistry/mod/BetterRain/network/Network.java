@@ -46,8 +46,8 @@ public final class Network {
 		network.registerMessage(PacketAurora.class, PacketAurora.class, ++discriminator, Side.CLIENT);
 	}
 
-	public static void sendRainIntensity(final float intensity, final int rainPhase, final int dimension) {
-		network.sendToDimension(new PacketRainIntensity(intensity, rainPhase, dimension), dimension);
+	public static void sendRainIntensity(final float intensity, final int dimension) {
+		network.sendToDimension(new PacketRainIntensity(intensity, dimension), dimension);
 	}
 	
 	public static void sendAurora(final AuroraData data, final int dimension) {

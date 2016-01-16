@@ -27,13 +27,9 @@ package org.blockartistry.mod.BetterRain.client.rain;
 import org.blockartistry.mod.BetterRain.BetterRain;
 import org.blockartistry.mod.BetterRain.ModOptions;
 import org.blockartistry.mod.BetterRain.data.DimensionEffectData;
-import org.blockartistry.mod.BetterRain.data.RainPhase;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.EntityRenderer;
-import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.StatCollector;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.fml.relauncher.Side;
 
@@ -48,7 +44,6 @@ public enum RainProperties {
 	private static float intensityLevel = 0.0F;
 	private static RainProperties intensity = VANILLA;
 	private static float fogDensity = 0.0F;
-	private static RainPhase rainPhase = RainPhase.NOT_RAINING;
 
 	private final float level;
 	private final ResourceLocation rainTexture;
@@ -149,28 +144,6 @@ public enum RainProperties {
 			else
 				intensity = HEAVY;
 		}
-	}
-
-	/**
-	 * Sets the phase in the current rain cycle to the specified
-	 * value.
-	 */
-	public static void setRainPhase(final int phase) {
-		final RainPhase newCycle = RainPhase.values()[phase];
-		if (newCycle != rainPhase) {
-			String msg = null;
-			if (newCycle == RainPhase.STARTING)
-				msg = StatCollector.translateToLocal("msg.RainStarting");
-			else if (newCycle == RainPhase.STOPPING)
-				msg = StatCollector.translateToLocal("msg.RainStopping");
-			if (msg != null)
-				Minecraft.getMinecraft().thePlayer.addChatComponentMessage(new ChatComponentText(msg));
-		}
-		rainPhase = newCycle;
-	}
-
-	public static RainPhase getRainPhase() {
-		return rainPhase;
 	}
 
 	/**

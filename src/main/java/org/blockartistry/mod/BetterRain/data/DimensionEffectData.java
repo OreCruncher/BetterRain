@@ -56,13 +56,11 @@ public final class DimensionEffectData implements INBTSerialization {
 		public final static String INTENSITY = "s";
 		public final static String MIN_INTENSITY = "min";
 		public final static String MAX_INTENSITY = "max";
-		public final static String RAIN_PHASE = "p";
 		public final static String AURORA_LIST = "al";
 	};
 
 	private int dimensionId = 0;
 	private float intensity = 0.0F;
-	private int rainPhase = 0;
 	private float minIntensity = ModOptions.getDefaultMinRainIntensity();
 	private float maxIntensity = ModOptions.getDefaultMaxRainIntensity();
 	private Set<AuroraData> auroras = new HashSet<AuroraData>();
@@ -86,14 +84,6 @@ public final class DimensionEffectData implements INBTSerialization {
 		this.intensity = MathHelper.clamp_float(intensity, MIN_INTENSITY, MAX_INTENSITY);
 	}
 	
-	public int getRainPhase() {
-		return this.rainPhase;
-	}
-	
-	public void setRainPhase(final int phase) {
-		this.rainPhase = phase;
-	}
-
 	public float getMinRainIntensity() {
 		return this.minIntensity;
 	}
@@ -130,7 +120,6 @@ public final class DimensionEffectData implements INBTSerialization {
 	public void readFromNBT(@Nonnull final NBTTagCompound nbt) {
 		this.dimensionId = nbt.getInteger(NBT.DIMENSION);
 		this.intensity = MathHelper.clamp_float(nbt.getFloat(NBT.INTENSITY), MIN_INTENSITY, MAX_INTENSITY);
-		this.rainPhase = nbt.getByte(NBT.RAIN_PHASE);
 		if (nbt.hasKey(NBT.MIN_INTENSITY))
 			this.minIntensity = MathHelper.clamp_float(nbt.getFloat(NBT.MIN_INTENSITY), MIN_INTENSITY, MAX_INTENSITY);
 		if (nbt.hasKey(NBT.MAX_INTENSITY))
@@ -149,7 +138,6 @@ public final class DimensionEffectData implements INBTSerialization {
 	public void writeToNBT(@Nonnull final NBTTagCompound nbt) {
 		nbt.setInteger(NBT.DIMENSION, this.dimensionId);
 		nbt.setFloat(NBT.INTENSITY, this.intensity);
-		nbt.setByte(NBT.RAIN_PHASE, (byte)this.rainPhase);
 		nbt.setFloat(NBT.MIN_INTENSITY, this.minIntensity);
 		nbt.setFloat(NBT.MAX_INTENSITY, this.maxIntensity);
 		final NBTTagList list = new NBTTagList();
@@ -175,8 +163,6 @@ public final class DimensionEffectData implements INBTSerialization {
 		builder.append(",").append(FORMATTER.format(this.maxIntensity * 100));
 		builder.append("]");
 		builder.append(", auroras: ").append(this.auroras.size());
-		builder.append(", phase: ");
-		builder.append(RainPhase.values()[this.rainPhase]);
 		return builder.toString();
 	}
 }

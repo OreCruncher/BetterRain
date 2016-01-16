@@ -25,7 +25,6 @@
 package org.blockartistry.mod.BetterRain.server;
 
 import gnu.trove.map.hash.TIntIntHashMap;
-import gnu.trove.map.hash.TIntObjectHashMap;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.World;
@@ -39,7 +38,6 @@ import java.util.Set;
 
 import org.blockartistry.mod.BetterRain.ModLog;
 import org.blockartistry.mod.BetterRain.ModOptions;
-import org.blockartistry.mod.BetterRain.data.RainPhase;
 import org.blockartistry.mod.BetterRain.data.AuroraData;
 import org.blockartistry.mod.BetterRain.data.AuroraPreset;
 import org.blockartistry.mod.BetterRain.data.ColorPair;
@@ -69,28 +67,6 @@ public final class ServerEffectHandler {
 
 	private final ElementRule rule = ModOptions.getDimensionRule();
 
-	private static final TIntObjectHashMap<Float> rainStrengths = new TIntObjectHashMap<Float>();
-
-	private static void processRainCycle(final World world, final DimensionEffectData data) {
-		Float lastStrength = rainStrengths.get(data.getDimensionId());
-		if (lastStrength == null)
-			lastStrength = new Float(0.0F);
-
-		RainPhase rainState = RainPhase.values()[data.getRainPhase()];
-		final float currentRainStrength = world.getRainStrength(1.0F);
-
-		if (currentRainStrength <= 0.0F)
-			rainState = RainPhase.NOT_RAINING;
-		else if (currentRainStrength == 1.0F)
-			rainState = RainPhase.RAINING;
-		else if (currentRainStrength > lastStrength)
-			rainState = RainPhase.STARTING;
-		else if (currentRainStrength < lastStrength)
-			rainState = RainPhase.STOPPING;
-		data.setRainPhase(rainState.ordinal());
-		rainStrengths.put(data.getDimensionId(), new Float(currentRainStrength));
-	}
-
 	@SubscribeEvent
 	public void tickEvent(final TickEvent.WorldTickEvent event) {
 
@@ -101,21 +77,18 @@ public final class ServerEffectHandler {
 		}
 
 		float sendIntensity = RESET;
-		int sendPhase = RainPhase.NOT_RAINING.ordinal();
 		final World world = event.world;
 		final int dimensionId = world.provider.getDimensionId();
 
 		// Have to be a surface world and match the dimension rule
 		if (world.provider.isSurfaceWorld() && rule.isOk(dimensionId)) {
 			final DimensionEffectData data = DimensionEffectData.get(world);
-			processRainCycle(world, data);
 			sendIntensity = data.getRainIntensity();
-			sendPhase = data.getRainPhase();
 		}
 
 		// Set the rain intensity for all players in the current
 		// dimension.
-		Network.sendRainIntensity(sendIntensity, sendPhase, dimensionId);
+		Network.sendRainIntensity(sendIntensity, dimensionId);
 	}
 
 	private static boolean isAuroraInRange(final EntityPlayerMP player, final Set<AuroraData> data) {
