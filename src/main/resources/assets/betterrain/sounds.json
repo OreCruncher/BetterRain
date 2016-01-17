@@ -7,12 +7,14 @@
 			"ambient/weather/rain_calm3",
 			"ambient/weather/rain_calm4"
 		]
+		
 	},
 	"dust":{
 		"category":"weather",
 		"sounds":[
 			"ambient/weather/dust"
 		]
+		
 	},
 	"ice":{
 		"category":"weather",
@@ -21,5 +23,15 @@
 			"ambient/ice/crack2",
 			"ambient/ice/crack3"
 		]
+		
+	},
+	"frog":{
+		"category":"weather",
+		"sounds":[
+			"ambient/frog/croak1",
+			"ambient/frog/croak2",
+			"ambient/frog/croak3"
+		]
+		
 	}
 }
