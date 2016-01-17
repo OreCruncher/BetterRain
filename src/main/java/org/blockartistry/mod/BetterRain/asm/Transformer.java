@@ -28,6 +28,7 @@ import static org.objectweb.asm.Opcodes.*;
 
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
+import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.InsnList;
 import org.objectweb.asm.tree.InsnNode;
@@ -52,6 +53,9 @@ public class Transformer implements IClassTransformer {
 		} else if("net.minecraft.block.BlockLiquid".equals(name) || "ahv".equals(name)) {
 			logger.debug("Transforming BlockLiquid...");
 			return transformBlockLiquid(basicClass);
+		} else if("net.minecraft.block.BlockIce".equals(name) || "ahp".equals(name)) {
+			logger.debug("Transforming BlockIce...");
+			return transformBlockIce(basicClass);
 		} else if("net.minecraft.world.WorldServer".equals(name) || "le".equals(name)) {
 			logger.debug("Transforming WorldServer...");
 			return transformWorldServer(basicClass);
@@ -59,7 +63,7 @@ public class Transformer implements IClassTransformer {
 			logger.debug("Transforming World...");
 			return transformWorld(basicClass);
 		}
-
+		
 		return basicClass;
 	}
 
@@ -200,6 +204,42 @@ public class Transformer implements IClassTransformer {
 				break;
 			}
 		}
+
+		final ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_MAXS);
+		cn.accept(cw);
+		return cw.toByteArray();
+	}
+
+	private byte[] transformBlockIce(final byte[] classBytes) {
+
+		final String names[];
+
+		if (TransformLoader.runtimeDeobEnabled)
+			names = new String[] { "func_180655_c" };
+		else
+			names = new String[] { "randomDisplayTick" };
+
+		final String targetName[] = new String[] { "randomDisplayTick" };
+
+		final ClassReader cr = new ClassReader(classBytes);
+		final ClassNode cn = new ClassNode(ASM5);
+		cr.accept(cn, 0);
+
+		// BlockIce does not supply a randomDisplayTick() method, so we
+		// add one.  A simple redirect to our handling routine.
+		final String desc = "(Lnet/minecraft/world/World;Lnet/minecraft/util/BlockPos;Lnet/minecraft/block/state/IBlockState;Ljava/util/Random;)V";
+		final MethodNode m = new MethodNode(Opcodes.ACC_PUBLIC, names[0], desc, null, null);
+		m.localVariables.clear();
+		m.instructions.clear();
+		m.instructions.add(new VarInsnNode(ALOAD, 1));
+		m.instructions.add(new VarInsnNode(ALOAD, 2));
+		m.instructions.add(new VarInsnNode(ALOAD, 3));
+		m.instructions.add(new VarInsnNode(ALOAD, 4));
+		final String sig = "(Lnet/minecraft/world/World;Lnet/minecraft/util/BlockPos;Lnet/minecraft/block/state/IBlockState;Ljava/util/Random;)V";
+		m.instructions.add(new MethodInsnNode(INVOKESTATIC,
+				"org/blockartistry/mod/BetterRain/client/fx/BlockIceHandler", targetName[0], sig, false));
+		m.instructions.add(new InsnNode(RETURN));
+		cn.methods.add(m);
 
 		final ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_MAXS);
 		cn.accept(cw);
