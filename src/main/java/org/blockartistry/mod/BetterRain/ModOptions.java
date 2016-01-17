@@ -110,6 +110,8 @@ public final class ModOptions {
 	protected static final String CATEGORY_SOUND = "sound";
 	protected static final String CONFIG_ENABLE_ICE_CRACK = "Ice Cracking";
 	protected static boolean enableIceCrackSound = true;
+	protected static final String CONFIG_ENABLE_FROG_SOUNDS = "Frog Croaks";
+	protected static boolean enableFrogCroakSound = true;
 
 	public static void load(final Configuration config) {
 
@@ -338,5 +340,9 @@ public final class ModOptions {
 	
 	public static boolean getEnableIceCrackSound() {
 		return enableIceCrackSound;
+	}
+	
+	public static boolean getEnableFrogCroakSound() {
+		return enableFrogCroakSound;
 	}
 }

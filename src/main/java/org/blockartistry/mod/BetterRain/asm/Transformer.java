@@ -50,20 +50,25 @@ public class Transformer implements IClassTransformer {
 		if ("net.minecraft.client.renderer.EntityRenderer".equals(name) || "bfk".equals(name)) {
 			logger.debug("Transforming EntityRenderer...");
 			return transformEntityRenderer(basicClass);
-		} else if("net.minecraft.block.BlockLiquid".equals(name) || "ahv".equals(name)) {
+		} else if ("net.minecraft.block.BlockLiquid".equals(name) || "ahv".equals(name)) {
 			logger.debug("Transforming BlockLiquid...");
 			return transformBlockLiquid(basicClass);
-		} else if("net.minecraft.block.BlockIce".equals(name) || "ahp".equals(name)) {
+		} else if ("net.minecraft.block.BlockIce".equals(name) || "ahp".equals(name)) {
 			logger.debug("Transforming BlockIce...");
-			return transformBlockIce(basicClass);
-		} else if("net.minecraft.world.WorldServer".equals(name) || "le".equals(name)) {
+			return transformAddRandomDisplayTick(basicClass,
+					"org/blockartistry/mod/BetterRain/client/fx/BlockIceHandler");
+		} else if ("net.minecraft.block.BlockLilyPad".equals(name) || "akn".equals(name)) {
+			logger.debug("Transforming BlockLilyPad...");
+			return transformAddRandomDisplayTick(basicClass,
+					"org/blockartistry/mod/BetterRain/client/fx/BlockLilyPadHandler");
+		} else if ("net.minecraft.world.WorldServer".equals(name) || "le".equals(name)) {
 			logger.debug("Transforming WorldServer...");
 			return transformWorldServer(basicClass);
-		} else if("net.minecraft.world.World".equals(name) || "adm".equals(name)) {
+		} else if ("net.minecraft.world.World".equals(name) || "adm".equals(name)) {
 			logger.debug("Transforming World...");
 			return transformWorld(basicClass);
 		}
-		
+
 		return basicClass;
 	}
 
@@ -132,8 +137,8 @@ public class Transformer implements IClassTransformer {
 				list.add(new VarInsnNode(ALOAD, 3));
 				list.add(new VarInsnNode(ALOAD, 4));
 				final String sig = "(Lnet/minecraft/world/World;Lnet/minecraft/util/BlockPos;Lnet/minecraft/block/state/IBlockState;Ljava/util/Random;)V";
-				list.add(new MethodInsnNode(INVOKESTATIC, "org/blockartistry/mod/BetterRain/client/fx/BlockLiquidHandler", targetName[0], sig,
-						false));
+				list.add(new MethodInsnNode(INVOKESTATIC,
+						"org/blockartistry/mod/BetterRain/client/fx/BlockLiquidHandler", targetName[0], sig, false));
 				m.instructions.insertBefore(m.instructions.getFirst(), list);
 				break;
 			}
@@ -176,7 +181,7 @@ public class Transformer implements IClassTransformer {
 		cn.accept(cw);
 		return cw.toByteArray();
 	}
-	
+
 	private byte[] transformWorld(final byte[] classBytes) {
 		final String names[];
 
@@ -210,12 +215,12 @@ public class Transformer implements IClassTransformer {
 		return cw.toByteArray();
 	}
 
-	private byte[] transformBlockIce(final byte[] classBytes) {
+	private byte[] transformAddRandomDisplayTick(final byte[] classBytes, final String targetClass) {
 
 		final String names[];
 
 		if (TransformLoader.runtimeDeobEnabled)
-			names = new String[] { "func_180655_c" };
+			names = new String[] { "func_149734_b" };
 		else
 			names = new String[] { "randomDisplayTick" };
 
@@ -225,8 +230,6 @@ public class Transformer implements IClassTransformer {
 		final ClassNode cn = new ClassNode(ASM5);
 		cr.accept(cn, 0);
 
-		// BlockIce does not supply a randomDisplayTick() method, so we
-		// add one.  A simple redirect to our handling routine.
 		final String desc = "(Lnet/minecraft/world/World;Lnet/minecraft/util/BlockPos;Lnet/minecraft/block/state/IBlockState;Ljava/util/Random;)V";
 		final MethodNode m = new MethodNode(Opcodes.ACC_PUBLIC, names[0], desc, null, null);
 		m.localVariables.clear();
@@ -236,8 +239,7 @@ public class Transformer implements IClassTransformer {
 		m.instructions.add(new VarInsnNode(ALOAD, 3));
 		m.instructions.add(new VarInsnNode(ALOAD, 4));
 		final String sig = "(Lnet/minecraft/world/World;Lnet/minecraft/util/BlockPos;Lnet/minecraft/block/state/IBlockState;Ljava/util/Random;)V";
-		m.instructions.add(new MethodInsnNode(INVOKESTATIC,
-				"org/blockartistry/mod/BetterRain/client/fx/BlockIceHandler", targetName[0], sig, false));
+		m.instructions.add(new MethodInsnNode(INVOKESTATIC, targetClass, targetName[0], sig, false));
 		m.instructions.add(new InsnNode(RETURN));
 		cn.methods.add(m);
 
