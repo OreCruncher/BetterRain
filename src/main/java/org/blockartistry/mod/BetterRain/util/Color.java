@@ -29,30 +29,56 @@ import net.minecraft.util.Vec3;
 /**
  * Holds an RGB triple. See: http://www.rapidtables.com/web/color/RGB_Color.htm
  */
-public final class Color {
+public class Color {
 
-	public static final Color RED = new Color(255, 0, 0);
-	public static final Color ORANGE = new Color(255, 127, 0);
-	public static final Color YELLOW = new Color(255, 255, 0);
-	public static final Color LGREEN = new Color(127, 255, 0);
-	public static final Color GREEN = new Color(0, 255, 0);
-	public static final Color TURQOISE = new Color(0, 255, 127);
-	public static final Color CYAN = new Color(0, 255, 255);
-	public static final Color AUQUAMARINE = new Color(0, 127, 255);
-	public static final Color BLUE = new Color(0, 0, 255);
-	public static final Color VIOLET = new Color(127, 0, 255);
-	public static final Color MAGENTA = new Color(255, 0, 255);
-	public static final Color RASPBERRY = new Color(255, 0, 127);
-	public static final Color BLACK = new Color(0, 0, 0);
-	public static final Color WHITE = new Color(255, 255, 255);
-	public static final Color PURPLE = new Color(80, 0, 80);
-	public static final Color INDIGO = new Color(75, 0, 130);
-	public static final Color NAVY = new Color(0, 0, 128);
-	public static final Color TAN = new Color(210, 180, 140);
+	private static class ImmutableColor extends Color {
+
+		public ImmutableColor(final int red, final int green, final int blue) {
+			super(red, green, blue);
+		}
+
+		@Override
+		public Color scale(final float scaleFactor) {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public Color mix(final float red, final float green, final float blue) {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public Color adjust(final Vec3 adjust, final Color target) {
+			throw new UnsupportedOperationException();
+		}
+	}
+
+	public static final Color RED = new ImmutableColor(255, 0, 0);
+	public static final Color ORANGE = new ImmutableColor(255, 127, 0);
+	public static final Color YELLOW = new ImmutableColor(255, 255, 0);
+	public static final Color LGREEN = new ImmutableColor(127, 255, 0);
+	public static final Color GREEN = new ImmutableColor(0, 255, 0);
+	public static final Color TURQOISE = new ImmutableColor(0, 255, 127);
+	public static final Color CYAN = new ImmutableColor(0, 255, 255);
+	public static final Color AUQUAMARINE = new ImmutableColor(0, 127, 255);
+	public static final Color BLUE = new ImmutableColor(0, 0, 255);
+	public static final Color VIOLET = new ImmutableColor(127, 0, 255);
+	public static final Color MAGENTA = new ImmutableColor(255, 0, 255);
+	public static final Color RASPBERRY = new ImmutableColor(255, 0, 127);
+	public static final Color BLACK = new ImmutableColor(0, 0, 0);
+	public static final Color WHITE = new ImmutableColor(255, 255, 255);
+	public static final Color PURPLE = new ImmutableColor(80, 0, 80);
+	public static final Color INDIGO = new ImmutableColor(75, 0, 130);
+	public static final Color NAVY = new ImmutableColor(0, 0, 128);
+	public static final Color TAN = new ImmutableColor(210, 180, 140);
 
 	public float red;
 	public float green;
 	public float blue;
+
+	public Color(final Color color) {
+		this(color.red, color.green, color.blue);
+	}
 
 	public Color(final int red, final int green, final int blue) {
 		this(red / 255.0F, green / 255.0F, blue / 255.0F);
@@ -83,7 +109,29 @@ public final class Color {
 		return new Vec3(deltaRed, deltaGreen, deltaBlue);
 	}
 
-	public void adjust(final Vec3 adjust, final Color target) {
+	public Color scale(final float scaleFactor) {
+		this.red *= scaleFactor;
+		this.green *= scaleFactor;
+		this.blue *= scaleFactor;
+		return this;
+	}
+
+	public static Color scale(final Color color, final float scaleFactor) {
+		return new Color(color).scale(scaleFactor);
+	}
+
+	public Color mix(final Color color) {
+		return mix(color.red, color.green, color.blue);
+	}
+
+	public Color mix(final float red, final float green, final float blue) {
+		this.red = (this.red + red) / 2.0F;
+		this.green = (this.green + green) / 2.0F;
+		this.blue = (this.blue + blue) / 2.0F;
+		return this;
+	}
+
+	public Color adjust(final Vec3 adjust, final Color target) {
 		this.red += adjust.xCoord;
 		if ((adjust.xCoord < 0.0F && this.red < target.red) || (adjust.xCoord > 0.0F && this.red > target.red)) {
 			this.red = target.red;
@@ -99,7 +147,7 @@ public final class Color {
 		if ((adjust.zCoord < 0.0F && this.blue < target.blue) || (adjust.zCoord > 0.0F && this.blue > target.blue)) {
 			this.blue = target.blue;
 		}
-
+		return this;
 	}
 
 	@Override

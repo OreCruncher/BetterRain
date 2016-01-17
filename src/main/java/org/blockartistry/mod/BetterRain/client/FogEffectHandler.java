@@ -74,10 +74,7 @@ public class FogEffectHandler {
 	private static Color currentFogColor = null;
 	private static Color targetFogColor = null;
 	private static Vec3 fogColorTransitionAdjustments = null;
-
-	private static float darkScaleRed = 1.0F;
-	private static float darkScaleGreen = 1.0F;
-	private static float darkScaleBlue = 1.0F;
+	private static float brightnessFactor = 1.0F;
 
 	private FogEffectHandler() {
 	}
@@ -176,14 +173,13 @@ public class FogEffectHandler {
 		// on the scaled adjustments per tick.
 		currentFogColor.adjust(fogColorTransitionAdjustments, targetFogColor);
 
-		// Calculate the darken factor to apply to the color.
-		float celestialAngle = WorldUtils.getCelestialAngle(world, 0.0F);
-		float baseScale = MathHelper.clamp_float(MathStuff.cos(celestialAngle * MathStuff.PI_F * 2.0F) * 2.0F + 0.5F,
-				0.0F, 1.0F);
+		// Calculate the brightness factor to apply to the color. Need
+		// to darken it a bit when it gets night.
+		final float celestialAngle = WorldUtils.getCelestialAngle(world, 0.0F);
+		final float baseScale = MathHelper
+				.clamp_float(MathStuff.cos(celestialAngle * MathStuff.PI_F * 2.0F) * 2.0F + 0.5F, 0.0F, 1.0F);
 
-		darkScaleRed = baseScale * 0.94F + 0.06F;
-		darkScaleGreen = baseScale * 0.94F + 0.06F;
-		darkScaleBlue = baseScale * 0.91F + 0.09F;
+		brightnessFactor = baseScale * 0.75F + 0.25F;
 	}
 
 	/*
@@ -201,9 +197,10 @@ public class FogEffectHandler {
 		if (block.getMaterial() == Material.lava || block.getMaterial() == Material.water)
 			return;
 
-		event.red = (event.red + (currentFogColor.red * darkScaleRed)) / 2.0F;
-		event.green = (event.green + (currentFogColor.green * darkScaleGreen)) / 2.0F;
-		event.blue = (event.blue + (currentFogColor.blue * darkScaleBlue)) / 2.0F;
+		final Color color = Color.scale(currentFogColor, brightnessFactor).mix(event.red, event.green, event.blue);
+		event.red = color.red;
+		event.green = color.green;
+		event.blue = color.blue;
 		event.setResult(Result.ALLOW);
 	}
 
