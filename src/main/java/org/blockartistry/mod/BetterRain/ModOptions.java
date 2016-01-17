@@ -106,6 +106,10 @@ public final class ModOptions {
 	protected static final String CATEGORY_BIOMES = "biomes";
 	protected static final String CONFIG_BIOME_CONFIG_FILES = "Config Files";
 	protected static String[] biomeConfigFiles = {};
+	
+	protected static final String CATEGORY_SOUND = "sound";
+	protected static final String CONFIG_ENABLE_ICE_CRACK = "Ice Cracking";
+	protected static boolean enableIceCrackSound = true;
 
 	public static void load(final Configuration config) {
 
@@ -212,6 +216,11 @@ public final class ModOptions {
 		// CATEGORY: Biomes
 		comment = "Configuration files for configuring Biome Registry";
 		biomeConfigFiles = config.getStringList(CONFIG_BIOME_CONFIG_FILES, CATEGORY_BIOMES, biomeConfigFiles, comment);
+		
+		// CATEGORY: Sound
+		comment = "Enable ice cracking sound for ice blocks";
+		enableIceCrackSound = config.getBoolean(CONFIG_ENABLE_ICE_CRACK, CATEGORY_SOUND, enableIceCrackSound,
+				comment);
 
 	}
 
@@ -325,5 +334,9 @@ public final class ModOptions {
 	
 	public static String[] getBiomeConfigFiles() {
 		return biomeConfigFiles;
+	}
+	
+	public static boolean getEnableIceCrackSound() {
+		return enableIceCrackSound;
 	}
 }

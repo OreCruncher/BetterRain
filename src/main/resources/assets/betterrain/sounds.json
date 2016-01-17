@@ -1,17 +1,25 @@
 {
-  "rain": {
-    "category": "weather",
-    "sounds": [
-      "ambient/weather/rain_calm1",
-      "ambient/weather/rain_calm2",
-      "ambient/weather/rain_calm3",
-      "ambient/weather/rain_calm4"
-    ]
-  },
-  "dust" : {
-    "category": "weather",
-    "sounds": [
-      "ambient/weather/dust"
-    ]
-  }
+	"rain":{
+		"category":"weather",
+		"sounds":[
+			"ambient/weather/rain_calm1",
+			"ambient/weather/rain_calm2",
+			"ambient/weather/rain_calm3",
+			"ambient/weather/rain_calm4"
+		]
+	},
+	"dust":{
+		"category":"weather",
+		"sounds":[
+			"ambient/weather/dust"
+		]
+	},
+	"ice":{
+		"category":"weather",
+		"sounds":[
+			"ambient/ice/crack1",
+			"ambient/ice/crack2",
+			"ambient/ice/crack3"
+		]
+	}
 }
