@@ -22,34 +22,32 @@
  * THE SOFTWARE.
  */
 
-package org.blockartistry.mod.BetterRain.client.liquid;
+package org.blockartistry.mod.BetterRain.client.fx;
 
 import net.minecraft.client.particle.EffectRenderer;
+import net.minecraft.client.particle.EntityBubbleFX;
 import net.minecraft.client.particle.EntityFX;
-import net.minecraft.client.particle.EntityFlameFX;
 import net.minecraft.world.World;
 
 /*
- * A special hidden entity that generates vertically moving flame entity
- * particles while it is alive.  These can randomly spawn on top of
- * lava blocks to give the effect of a fire jet.  The EntityFireJetFX
- * itself does not render - it is just a way to maintain state across
- * several ticks while it spews fire particles.
+ * A special hidden entity that generates vertically moving buble entity
+ * particles while it is alive.  These spawn in water blocks at are
+ * above another solid block.  The EntityBubbleJetFX does not render
+ * - it is just a way to maintain state across several ticks while it
+ * spews bubble particles.
  */
-public class EntityFireJetFX extends EntityJetFX {
+public class EntityBubbleJetFX extends EntityJetFX {
 
-	private static final String FIRE_SOUND = "minecraft:fire.fire";
-
-	protected EntityFireJetFX(final int strength, final World world, final double x, final double y, final double z) {
+	protected EntityBubbleJetFX(final int strength, final World world, final double x, final double y, final double z) {
 		super(strength, world, x, y, z);
 	}
 
+	@Override
 	protected EntityFX spawnJetParticle(final World world, final EffectRenderer renderer) {
-		final EntityFlameFX flame = new EntityFlameFX(world, this.posX, this.posY, this.posZ, 0.0D,
-				this.jetStrength / 10.0D, 0.0D);
-		flame.flameScale *= this.jetStrength;
-		renderer.addEffect(flame);
-		world.playSound(this.posX, this.posY, this.posZ, FIRE_SOUND, this.jetStrength, 1.0F, false);
-		return flame;
+		final EntityBubbleFX bubble = new EntityBubbleFX(world, this.posX, this.posY, this.posZ, 0.0D,
+				0.5D + this.jetStrength / 10.0D, 0.0D);
+		renderer.addEffect(bubble);
+		return bubble;
 	}
+
 }

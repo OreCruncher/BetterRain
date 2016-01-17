@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package org.blockartistry.mod.BetterRain.client.liquid;
+package org.blockartistry.mod.BetterRain.client.fx;
 
 import org.blockartistry.mod.BetterRain.util.XorShiftRandom;
 
