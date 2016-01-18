@@ -45,6 +45,10 @@ public final class PlayerUtils {
 		return player.worldObj.provider.getDimensionId();
 	}
 	
+	public static boolean isUnderGround(final EntityPlayer player, final int offset) {
+		return (player.posY + offset) < WorldUtils.getSeaLevel(player.worldObj);
+	}
+	
 	@SideOnly(Side.CLIENT)
 	public static int getClientPlayerDimension() {
 		return getPlayerDimension(FMLClientHandler.instance().getClient().thePlayer);

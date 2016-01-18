@@ -28,6 +28,7 @@ import java.io.File;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang3.StringUtils;
 import org.blockartistry.mod.BetterRain.BetterRain;
 import org.blockartistry.mod.BetterRain.ModLog;
 import org.blockartistry.mod.BetterRain.ModOptions;
@@ -39,7 +40,25 @@ import net.minecraft.world.biome.BiomeGenBase;
 
 public final class BiomeRegistry {
 
+	private static int reloadCount = 0;
 	private static final TIntObjectHashMap<Entry> registry = new TIntObjectHashMap<Entry>();
+
+	public static final class BiomeSound {
+		public final String sound;
+		public final float volume;
+		public final float pitch;
+		public final boolean atDay;
+		public final boolean atNight;
+
+		protected BiomeSound(final String sound, final float volume, final float pitch, final boolean day,
+				final boolean night) {
+			this.sound = sound;
+			this.volume = volume;
+			this.pitch = pitch;
+			this.atDay = day;
+			this.atNight = night;
+		}
+	}
 
 	private static class Entry {
 
@@ -53,9 +72,18 @@ public final class BiomeRegistry {
 		public Color fogColor;
 		public float fogDensity;
 
+		public String sound;
+		public float volume;
+		public float pitch;
+		public boolean atDay;
+		public boolean atNight;
+
 		public Entry(final BiomeGenBase biome) {
 			this.biome = biome;
 			this.hasPrecipitation = biome.canSpawnLightningBolt() || biome.getEnableSnow();
+
+			this.volume = this.pitch = 1.0F;
+			this.atDay = this.atNight = true;
 		}
 
 		@Override
@@ -78,12 +106,27 @@ public final class BiomeRegistry {
 				builder.append(" fogColor:").append(this.fogColor.toString());
 				builder.append(" fogDensity:").append(this.fogDensity);
 			}
+			if (this.sound != null) {
+				builder.append("; sound:").append(this.sound);
+				builder.append(" (volume:").append(this.volume);
+				builder.append(", pitch:").append(this.pitch);
+				builder.append(", day:").append(Boolean.toString(this.atDay));
+				builder.append(", night:").append(Boolean.toString(this.atNight));
+				builder.append(")");
+			}
 			return builder.toString();
 		}
 	}
 
+	public static int getReloadCount() {
+		return reloadCount;
+	}
+	
 	public static void initialize() {
 
+		reloadCount++;
+		registry.clear();
+		
 		final BiomeGenBase[] biomeArray = BiomeGenBase.getBiomeGenArray();
 		for (int i = 0; i < biomeArray.length; i++)
 			if (biomeArray[i] != null) {
@@ -112,6 +155,10 @@ public final class BiomeRegistry {
 		return registry.get(biome.biomeID).hasFog;
 	}
 
+	public static boolean hasSound(final BiomeGenBase biome) {
+		return !StringUtils.isEmpty(registry.get(biome.biomeID).sound);
+	}
+
 	public static Color getDustColor(final BiomeGenBase biome) {
 		return registry.get(biome.biomeID).dustColor;
 	}
@@ -124,6 +171,13 @@ public final class BiomeRegistry {
 		return registry.get(biome.biomeID).fogDensity;
 	}
 
+	public static BiomeSound getSound(final BiomeGenBase biome) {
+		final Entry entry = registry.get(biome.biomeID);
+		if (StringUtils.isEmpty(entry.sound))
+			return null;
+		return new BiomeSound(entry.sound, entry.volume, entry.pitch, entry.atDay, entry.atNight);
+	}
+
 	private static void processConfig() {
 		process(BiomeConfig.load(BetterRain.MOD_ID));
 
@@ -133,9 +187,9 @@ public final class BiomeRegistry {
 			if (theFile.exists()) {
 				try {
 					final BiomeConfig config = BiomeConfig.load(theFile);
-					if(config != null)
+					if (config != null)
 						process(config);
-					else 
+					else
 						ModLog.warn("Unable to process biome config file " + file);
 				} catch (final Exception ex) {
 					ModLog.error("Unable to process biome config file " + file, ex);
@@ -172,6 +226,16 @@ public final class BiomeRegistry {
 						if (rgb.length == 3)
 							biomeEntry.dustColor = new Color(rgb[0], rgb[1], rgb[2]);
 					}
+					if (entry.sound != null)
+						biomeEntry.sound = entry.sound;
+					if (entry.volume != null)
+						biomeEntry.volume = entry.volume.floatValue();
+					if (entry.pitch != null)
+						biomeEntry.pitch = entry.pitch.floatValue();
+					if (entry.atDay != null)
+						biomeEntry.atDay = entry.atDay.booleanValue();
+					if (entry.atNight != null)
+						biomeEntry.atNight = entry.atNight.booleanValue();
 				}
 			}
 		}

@@ -56,6 +56,9 @@ public class Transformer implements IClassTransformer {
 		} else if ("net.minecraft.block.BlockIce".equals(name) || "ahp".equals(name)) {
 			logger.debug("Transforming BlockIce...");
 			return transformAddRandomDisplayTick(basicClass);
+		} else if ("net.minecraft.block.BlockPackedIce".equals(name) || "ain".equals(name)) {
+			logger.debug("Transforming BlockPackedIce...");
+			return transformAddRandomDisplayTick(basicClass);
 		} else if ("net.minecraft.block.BlockLilyPad".equals(name) || "akn".equals(name)) {
 			logger.debug("Transforming BlockLilyPad...");
 			return transformAddRandomDisplayTick(basicClass);

@@ -27,6 +27,7 @@ package org.blockartistry.mod.BetterRain.proxy;
 import org.blockartistry.mod.BetterRain.client.AuroraEffectHandler;
 import org.blockartistry.mod.BetterRain.client.ClientEffectHandler;
 import org.blockartistry.mod.BetterRain.client.FogEffectHandler;
+import org.blockartistry.mod.BetterRain.client.fx.PlayerSoundManager;
 
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 
@@ -38,5 +39,6 @@ public class ProxyClient extends Proxy {
 		ClientEffectHandler.initialize();
 		AuroraEffectHandler.initialize();
 		FogEffectHandler.initialize();
+		PlayerSoundManager.initialize();
 	}
 }

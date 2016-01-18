@@ -32,6 +32,7 @@ import org.blockartistry.mod.BetterRain.server.ServerEffectHandler;
 
 import net.minecraft.command.ICommandManager;
 import net.minecraft.command.ServerCommandManager;
+import net.minecraft.init.Blocks;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
@@ -44,6 +45,8 @@ public class Proxy {
 		// Register early to give the background process a good amount
 		// of seed to get the mod version data
 		VersionCheck.register();
+		
+		Blocks.packed_ice.setTickRandomly(true);
 	}
 
 	public void init(final FMLInitializationEvent event) {

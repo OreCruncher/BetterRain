@@ -27,6 +27,7 @@ package org.blockartistry.mod.BetterRain.commands;
 import java.text.DecimalFormat;
 import java.util.List;
 
+import org.blockartistry.mod.BetterRain.data.BiomeRegistry;
 import org.blockartistry.mod.BetterRain.data.DimensionEffectData;
 
 import com.google.common.collect.ImmutableList;
@@ -86,6 +87,9 @@ public final class CommandRain extends CommandBase {
 				} else if ("reset".compareToIgnoreCase(parms[0]) == 0) {
 					world.provider.resetRainAndThunder();
 					player.addChatMessage(new ChatComponentText(StatCollector.translateToLocal("msg.RainReset")));
+				} else if("reload".compareToIgnoreCase(parms[0]) == 0) {
+					BiomeRegistry.initialize();
+					player.addChatMessage(new ChatComponentText(StatCollector.translateToLocal("msg.BiomeReload")));
 				} else {
 					final double d = parseDouble(parms[0], 0.0D, 100.0D) / 100.0D;
 					data.setRainIntensity((float) d);
