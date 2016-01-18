@@ -33,5 +33,33 @@
 			"ambient/frog/croak3"
 		]
 		
+	},
+	"wind":{
+		"category":"ambient",
+		"sounds":[
+			"ambient/outside/wind"
+		]
+		
+	},
+	"crickets":{
+		"category":"ambient",
+		"sounds":[
+			"ambient/outside/crickets"
+		]
+		
+	},
+	"forest":{
+		"category":"ambient",
+		"sounds":[
+			"ambient/outside/forest"
+		]
+		
+	},
+	"beach":{
+		"category":"ambient",
+		"sounds":[
+			"ambient/outside/beach"
+		]
+		
 	}
 }

@@ -37,6 +37,7 @@ import cpw.mods.fml.relauncher.Side;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockIce;
 import net.minecraft.block.BlockLilyPad;
+import net.minecraft.block.BlockPackedIce;
 import net.minecraft.world.World;
 
 @SideOnly(Side.CLIENT)
@@ -67,14 +68,16 @@ public class BlockSoundHandler {
 
 	static {
 		if (ModOptions.getEnableIceCrackSound()) {
-			handlers.put(BlockIce.class,
-					new SoundHandler(ModOptions.getIceCrackSoundChance(), "ice", ModOptions.getIceCrackScaleFactor()) {
-						@Override
-						public void doSound(final World world, final int x, final int y, final int z) {
-							world.playSound(x + 0.5D, y + 0.5D, z + 0.5D, this.sound, 0.3F * this.scale, 0.1F, false);
-						}
-					});
+			final SoundHandler handler = new SoundHandler(ModOptions.getIceCrackSoundChance(), "ice",
+					ModOptions.getIceCrackScaleFactor()) {
+				@Override
+				public void doSound(final World world, final int x, final int y, final int z) {
+					world.playSound(x + 0.5D, y + 0.5D, z + 0.5D, this.sound, 0.3F * this.scale, 0.1F, false);
+				}
+			};
 
+			handlers.put(BlockIce.class, handler);
+			handlers.put(BlockPackedIce.class, handler);
 		}
 
 		if (ModOptions.getEnableFrogCroakSound()) {

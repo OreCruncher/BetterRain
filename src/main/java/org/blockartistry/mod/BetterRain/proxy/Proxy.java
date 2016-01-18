@@ -36,6 +36,7 @@ import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import net.minecraft.command.ICommandManager;
 import net.minecraft.command.ServerCommandManager;
+import net.minecraft.init.Blocks;
 import net.minecraft.server.MinecraftServer;
 
 public class Proxy {
@@ -44,6 +45,8 @@ public class Proxy {
 		// Register early to give the background process a good amount
 		// of seed to get the mod version data
 		VersionCheck.register();
+		
+		Blocks.packed_ice.setTickRandomly(true);
 	}
 
 	public void init(FMLInitializationEvent event) {

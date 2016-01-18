@@ -54,6 +54,17 @@ final class BiomeConfig {
 		public String fogColor = null;
 		@SerializedName("fogDensity")
 		public Float fogDensity= null;
+		
+		@SerializedName("sound")
+		public String sound = null;
+		@SerializedName("volume")
+		public Float volume = null;
+		@SerializedName("pitch")
+		public Float pitch = null;
+		@SerializedName("atDay")
+		public Boolean atDay = null;
+		@SerializedName("atNight")
+		public Boolean atNight = null;
 	}
 
 	public List<Entry> entries = ImmutableList.of();
