@@ -30,6 +30,7 @@ import java.util.Random;
 
 import org.blockartistry.mod.BetterRain.BetterRain;
 import org.blockartistry.mod.BetterRain.ModOptions;
+import org.blockartistry.mod.BetterRain.util.XorShiftRandom;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockIce;
@@ -43,51 +44,50 @@ import net.minecraftforge.fml.relauncher.Side;
 @SideOnly(Side.CLIENT)
 public class BlockSoundHandler {
 
-	private static final boolean ENABLE_ICE_CRACK_SOUND = ModOptions.getEnableIceCrackSound();
-	private static final boolean ENABLE_FROG_SOUNDS = ModOptions.getEnableFrogCroakSound();
+	private static final Random random = new XorShiftRandom();
 
-	private interface IBlockSoundHandler {
-		int chance();
+	private static abstract class SoundHandler {
 
-		void doSound(final World world, final int x, final int y, final int z, final Random random);
+		protected final int chance;
+		protected final String sound;
+		protected final float scale;
+
+		public SoundHandler(final int chance, final String sound, final float scale) {
+			this.chance = chance;
+			this.sound = BetterRain.MOD_ID + ":" + sound;
+			this.scale = scale;
+		}
+
+		public boolean trigger() {
+			return random.nextInt(chance) == 0;
+		}
+
+		public abstract void doSound(final World world, final int x, final int y, final int z);
 	};
 
-	private static Map<Class<? extends Block>, IBlockSoundHandler> handlers = new IdentityHashMap<Class<? extends Block>, IBlockSoundHandler>();
+	private static Map<Class<? extends Block>, SoundHandler> handlers = new IdentityHashMap<Class<? extends Block>, SoundHandler>();
 
 	static {
-		if (ENABLE_ICE_CRACK_SOUND) {
-			handlers.put(BlockIce.class, new IBlockSoundHandler() {
-
-				private final String ICE_SOUND = BetterRain.MOD_ID + ":ice";
-
-				@Override
-				public int chance() {
-					return 10000;
-				}
-
-				@Override
-				public void doSound(final World world, final int x, final int y, final int z, final Random random) {
-					world.playSound(x + 0.5D, y + 0.5D, z + 0.5D, ICE_SOUND, 0.3F, 0.1F, false);
-				}
-			});
+		if (ModOptions.getEnableIceCrackSound()) {
+			handlers.put(BlockIce.class,
+					new SoundHandler(ModOptions.getIceCrackSoundChance(), "ice", ModOptions.getIceCrackScaleFactor()) {
+						@Override
+						public void doSound(final World world, final int x, final int y, final int z) {
+							world.playSound(x + 0.5D, y + 0.5D, z + 0.5D, this.sound, 0.3F * this.scale, 0.1F, false);
+						}
+					});
 
 		}
 
-		if (ENABLE_FROG_SOUNDS) {
-			handlers.put(BlockLilyPad.class, new IBlockSoundHandler() {
-
-				private final String FROG_SOUND = BetterRain.MOD_ID + ":frog";
+		if (ModOptions.getEnableFrogCroakSound()) {
+			handlers.put(BlockLilyPad.class, new SoundHandler(ModOptions.getFrogCroakSoundChance(), "frog",
+					ModOptions.getFrogCroakScaleFactor()) {
 				private final float[] pitch = { 0.8F, 1.0F, 1.0F, 1.2F, 1.2F, 1.2F };
 
 				@Override
-				public int chance() {
-					return 25;
-				}
-
-				@Override
-				public void doSound(final World world, final int x, final int y, final int z, final Random random) {
-					world.playSound(x + 0.5D, y + 0.5D, z + 0.5D, FROG_SOUND, 2.0F, pitch[random.nextInt(pitch.length)],
-							false);
+				public void doSound(final World world, final int x, final int y, final int z) {
+					world.playSound(x + 0.5D, y + 0.5D, z + 0.5D, this.sound, 2.0F * this.scale,
+							pitch[random.nextInt(pitch.length)], false);
 				}
 			});
 		}
@@ -99,9 +99,9 @@ public class BlockSoundHandler {
 	 */
 	public static void randomDisplayTick(final World world, final BlockPos pos, final IBlockState state,
 			final Random random) {
-		final IBlockSoundHandler handler = handlers.get(state.getBlock().getClass());
-		if (handlers != null && random.nextInt(handler.chance()) == 0)
-			handler.doSound(world, pos.getX(), pos.getY(), pos.getZ(), random);
+		final SoundHandler handler = handlers.get(state.getBlock().getClass());
+		if (handlers != null && handler.trigger())
+			handler.doSound(world, pos.getX(), pos.getY(), pos.getZ());
 	}
 
 }

@@ -218,7 +218,7 @@ public class Transformer implements IClassTransformer {
 		final String names[];
 
 		if (TransformLoader.runtimeDeobEnabled)
-			names = new String[] { "func_149734_b" };
+			names = new String[] { "func_180655_c" };
 		else
 			names = new String[] { "randomDisplayTick" };
 

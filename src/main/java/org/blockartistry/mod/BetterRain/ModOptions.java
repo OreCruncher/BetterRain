@@ -106,12 +106,22 @@ public final class ModOptions {
 	protected static final String CATEGORY_BIOMES = "biomes";
 	protected static final String CONFIG_BIOME_CONFIG_FILES = "Config Files";
 	protected static String[] biomeConfigFiles = {};
-	
+
 	protected static final String CATEGORY_SOUND = "sound";
-	protected static final String CONFIG_ENABLE_ICE_CRACK = "Ice Cracking";
+	protected static final String CONFIG_SOUND_ENABLED = "Enabled";
+	protected static final String COMMENT_SOUND_ENABLED = "Enable client side sound effect";
+	protected static final String CONFIG_SOUND_CHANCE = "Chance";
+	protected static final String COMMENT_SOUND_CHANCE = "1-in-N chance for sound spawn";
+	protected static final String CONFIG_SOUND_SCALING_FACTOR = "Scaling Factor";
+	protected static final String COMMENT_SOUND_SCALING_FACTOR = "Factor to apply to sound volume";
+	protected static final String CATEGORY_SOUND_ICE_CRACK = "sound.Ice Cracking";
 	protected static boolean enableIceCrackSound = true;
-	protected static final String CONFIG_ENABLE_FROG_SOUNDS = "Frog Croaks";
+	protected static int iceCrackSoundChance = 10000;
+	protected static float iceCrackScaleFactor = 1.0F;
+	protected static final String CATEGORY_SOUND_FROGS = "sound.Frog Croaks";
 	protected static boolean enableFrogCroakSound = true;
+	protected static int frogCroakSoundChance = 25;
+	protected static float frogCroakScaleFactor = 1.0F;
 
 	public static void load(final Configuration config) {
 
@@ -136,8 +146,7 @@ public final class ModOptions {
 		allowDesertDust = config.getBoolean(CONFIG_ALLOW_DESERT_DUST, CATEGORY_RAIN, allowDesertDust, comment);
 
 		comment = "Reset rain/thunder when all players sleep";
-		resetRainOnSleep = config.getBoolean(CONFIG_RESET_RAIN_ON_SLEEP, CATEGORY_RAIN, resetRainOnSleep,
-				comment);
+		resetRainOnSleep = config.getBoolean(CONFIG_RESET_RAIN_ON_SLEEP, CATEGORY_RAIN, resetRainOnSleep, comment);
 
 		// CATEGORY: General
 		comment = "Comma separated dimension ID list";
@@ -218,11 +227,21 @@ public final class ModOptions {
 		// CATEGORY: Biomes
 		comment = "Configuration files for configuring Biome Registry";
 		biomeConfigFiles = config.getStringList(CONFIG_BIOME_CONFIG_FILES, CATEGORY_BIOMES, biomeConfigFiles, comment);
-		
+
 		// CATEGORY: Sound
-		comment = "Enable ice cracking sound for ice blocks";
-		enableIceCrackSound = config.getBoolean(CONFIG_ENABLE_ICE_CRACK, CATEGORY_SOUND, enableIceCrackSound,
-				comment);
+		enableIceCrackSound = config.getBoolean(CONFIG_SOUND_ENABLED, CATEGORY_SOUND_ICE_CRACK, enableIceCrackSound,
+				COMMENT_SOUND_ENABLED);
+		iceCrackSoundChance = config.getInt(CONFIG_SOUND_CHANCE, CATEGORY_SOUND_ICE_CRACK, iceCrackSoundChance, 1,
+				Integer.MAX_VALUE, COMMENT_SOUND_CHANCE);
+		iceCrackScaleFactor = config.getFloat(CONFIG_SOUND_SCALING_FACTOR, CATEGORY_SOUND_ICE_CRACK,
+				iceCrackScaleFactor, 0.0F, 5.0F, COMMENT_SOUND_SCALING_FACTOR);
+
+		enableFrogCroakSound = config.getBoolean(CONFIG_SOUND_ENABLED, CATEGORY_SOUND_FROGS, enableFrogCroakSound,
+				COMMENT_SOUND_ENABLED);
+		frogCroakSoundChance = config.getInt(CONFIG_SOUND_CHANCE, CATEGORY_SOUND_FROGS, frogCroakSoundChance, 1,
+				Integer.MAX_VALUE, COMMENT_SOUND_CHANCE);
+		frogCroakScaleFactor = config.getFloat(CONFIG_SOUND_SCALING_FACTOR, CATEGORY_SOUND_FROGS, frogCroakScaleFactor,
+				0.0F, 5.0F, COMMENT_SOUND_SCALING_FACTOR);
 
 	}
 
@@ -253,7 +272,7 @@ public final class ModOptions {
 	public static float getDesertFogFactor() {
 		return desertFogFactor;
 	}
-	
+
 	public static boolean getResetRainOnSleep() {
 		return resetRainOnSleep;
 	}
@@ -333,16 +352,32 @@ public final class ModOptions {
 	public static boolean getEnableBiomeFog() {
 		return enableBiomeFog;
 	}
-	
+
 	public static String[] getBiomeConfigFiles() {
 		return biomeConfigFiles;
 	}
-	
+
 	public static boolean getEnableIceCrackSound() {
 		return enableIceCrackSound;
 	}
-	
+
 	public static boolean getEnableFrogCroakSound() {
 		return enableFrogCroakSound;
+	}
+
+	public static int getIceCrackSoundChance() {
+		return iceCrackSoundChance;
+	}
+
+	public static int getFrogCroakSoundChance() {
+		return frogCroakSoundChance;
+	}
+	
+	public static float getIceCrackScaleFactor() {
+		return iceCrackScaleFactor;
+	}
+	
+	public static float getFrogCroakScaleFactor() {
+		return frogCroakScaleFactor;
 	}
 }

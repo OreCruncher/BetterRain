@@ -17,7 +17,7 @@
 		
 	},
 	"ice":{
-		"category":"weather",
+		"category":"ambient",
 		"sounds":[
 			"ambient/ice/crack1",
 			"ambient/ice/crack2",
@@ -26,7 +26,7 @@
 		
 	},
 	"frog":{
-		"category":"weather",
+		"category":"ambient",
 		"sounds":[
 			"ambient/frog/croak1",
 			"ambient/frog/croak2",
