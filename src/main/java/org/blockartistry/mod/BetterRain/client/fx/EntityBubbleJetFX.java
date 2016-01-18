@@ -24,6 +24,8 @@
 
 package org.blockartistry.mod.BetterRain.client.fx;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.particle.EffectRenderer;
 import net.minecraft.client.particle.EntityBubbleFX;
 import net.minecraft.client.particle.EntityFX;
@@ -36,6 +38,7 @@ import net.minecraft.world.World;
  * - it is just a way to maintain state across several ticks while it
  * spews bubble particles.
  */
+@SideOnly(Side.CLIENT)
 public class EntityBubbleJetFX extends EntityJetFX {
 
 	protected EntityBubbleJetFX(final int strength, final World world, final double x, final double y, final double z) {

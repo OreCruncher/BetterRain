@@ -24,6 +24,8 @@
 
 package org.blockartistry.mod.BetterRain.client.fx;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.particle.EffectRenderer;
 import net.minecraft.client.particle.EntityFX;
 import net.minecraft.client.particle.EntityFlameFX;
@@ -36,6 +38,7 @@ import net.minecraft.world.World;
  * itself does not render - it is just a way to maintain state across
  * several ticks while it spews fire particles.
  */
+@SideOnly(Side.CLIENT)
 public class EntityFireJetFX extends EntityJetFX {
 
 	private static final String FIRE_SOUND = "minecraft:fire.fire";
