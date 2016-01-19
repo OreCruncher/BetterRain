@@ -23,6 +23,7 @@
 
 package org.blockartistry.mod.BetterRain.util;
 
+import codechicken.lib.math.MathHelper;
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -35,7 +36,9 @@ public final class PlayerUtils {
 	}
 
 	public static BiomeGenBase getPlayerBiome(final EntityPlayer player) {
-		return player.worldObj.getBiomeGenForCoords((int) player.posX, (int) player.posZ);
+		final int theX = MathHelper.floor_double(player.posX);
+		final int theZ = MathHelper.floor_double(player.posZ);
+		return player.worldObj.getBiomeGenForCoords(theX, theZ);
 	}
 
 	public static int getPlayerDimension(final EntityPlayer player) {
@@ -45,7 +48,7 @@ public final class PlayerUtils {
 	}
 
 	public static boolean isUnderGround(final EntityPlayer player, final int offset) {
-		return (player.posY + offset) < WorldUtils.getSeaLevel(player.worldObj);
+		return MathHelper.floor_double(player.posY + offset) < WorldUtils.getSeaLevel(player.worldObj);
 	}
 
 	private static final int RANGE = 3;
@@ -60,8 +63,9 @@ public final class PlayerUtils {
 		int seeSky = 0;
 		for (int x = -RANGE; x <= RANGE; x++)
 			for (int z = -RANGE; z <= RANGE; z++) {
-				final int y = entity.worldObj.getTopSolidOrLiquidBlock((int) (x + entity.posX),
-						(int) (z + entity.posZ));
+				final int theX = MathHelper.floor_double(x + entity.posX);
+				final int theZ = MathHelper.floor_double(z + entity.posZ);
+				final int y = entity.worldObj.getTopSolidOrLiquidBlock(theX, theZ);
 				if ((y - targetY) < 3) {
 					if (++seeSky >= AREA)
 						return false;
