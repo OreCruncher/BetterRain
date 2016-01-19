@@ -37,6 +37,17 @@ import com.google.gson.stream.JsonReader;
 
 final class BiomeConfig {
 
+	public static class SoundRecord {
+		@SerializedName("sound")
+		public String sound = null;
+		@SerializedName("conditions")
+		public String conditions = ".*";
+		@SerializedName("volume")
+		public Float volume = null;
+		@SerializedName("pitch")
+		public Float pitch = null;
+	}
+	
 	public static class Entry {
 		@SerializedName("biomeName")
 		public String biomeName = null;
@@ -54,17 +65,10 @@ final class BiomeConfig {
 		public String fogColor = null;
 		@SerializedName("fogDensity")
 		public Float fogDensity= null;
-		
-		@SerializedName("sound")
-		public String sound = null;
-		@SerializedName("volume")
-		public Float volume = null;
-		@SerializedName("pitch")
-		public Float pitch = null;
-		@SerializedName("atDay")
-		public Boolean atDay = null;
-		@SerializedName("atNight")
-		public Boolean atNight = null;
+		@SerializedName("soundReset")
+		public Boolean soundReset = null;
+		@SerializedName("sounds")
+		public List<SoundRecord> sounds = ImmutableList.of();
 	}
 
 	public List<Entry> entries = ImmutableList.of();

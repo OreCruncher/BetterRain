@@ -79,7 +79,7 @@ public class PlayerSoundManager {
 		}
 
 		public boolean shouldFade() {
-			return !shouldPlay(this.player.worldObj, this.sound) || isInside(this.player);
+			return isInside(this.player) || !this.sound.matches(getConditions(this.player.worldObj));
 		}
 
 		@Override
@@ -133,9 +133,15 @@ public class PlayerSoundManager {
 		return seeSky < area;
 	}
 
-	private static boolean shouldPlay(final World world, final BiomeSound sound) {
-		final boolean isDay = WorldUtils.isDaytime(world);
-		return sound.atDay && isDay || sound.atNight && !isDay;
+	private static String getConditions(final World world) {
+		final StringBuilder builder = new StringBuilder();
+		if (WorldUtils.isDaytime(world))
+			builder.append("day");
+		else
+			builder.append("night");
+		if (world.getRainStrength(1.0F) > 0.0F)
+			builder.append("raining");
+		return builder.toString();
 	}
 
 	private static boolean didReloadOccur() {
@@ -180,8 +186,9 @@ public class PlayerSoundManager {
 		}
 
 		currentBiome = playerBiome;
-		final BiomeSound sound = BiomeRegistry.getSound(playerBiome);
-		if (currentSound == null && sound != null && shouldPlay(world, sound) && !isInside(mc.thePlayer)) {
+		final String conditions = getConditions(world);
+		final BiomeSound sound = BiomeRegistry.getSound(currentBiome, conditions);
+		if (currentSound == null && sound != null && !isInside(mc.thePlayer)) {
 			currentSound = new PlayerSound(mc.thePlayer, sound);
 			mc.getSoundHandler().playSound(currentSound);
 		}
