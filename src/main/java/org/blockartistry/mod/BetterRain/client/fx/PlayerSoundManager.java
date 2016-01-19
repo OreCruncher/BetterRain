@@ -33,7 +33,6 @@ import org.blockartistry.mod.BetterRain.util.WorldUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.MovingSound;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
@@ -45,7 +44,7 @@ import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 
 public class PlayerSoundManager {
 
-	private static final int INSIDE_Y_ADJUST = 3;
+	private static final int INSIDE_Y_ADJUST = 4;
 	private static final float VOLUME_INCREMENT = 0.02F;
 
 	private static int reloadTracker = 0;
@@ -116,24 +115,6 @@ public class PlayerSoundManager {
 		}
 	}
 
-	private static boolean isInside(final EntityPlayer entity) {
-		// If the player is underground
-		if (PlayerUtils.isUnderGround(entity, INSIDE_Y_ADJUST))
-			return true;
-
-		final int range = 3;
-		final int area = (range * 2 + 1) * (range * 2 + 1) / 2;
-		int seeSky = 0;
-		for (int x = -range; x <= range; x++)
-			for (int z = -range; z <= range; z++) {
-				final int y = entity.worldObj.getTopSolidOrLiquidBlock(new BlockPos(x + entity.posX,0,
-						z + entity.posZ)).getY();
-				if (y <= (entity.posY + 1))
-					seeSky++;
-			}
-		return seeSky < area;
-	}
-
 	private static String getConditions(final World world) {
 		final StringBuilder builder = new StringBuilder();
 		if (WorldUtils.isDaytime(world))
@@ -172,7 +153,7 @@ public class PlayerSoundManager {
 			return;
 
 		// Dead player or they are covered with blocks
-		if (mc.thePlayer.isDead || isInside(mc.thePlayer)) {
+		if (mc.thePlayer.isDead || PlayerUtils.isInside(mc.thePlayer, INSIDE_Y_ADJUST)) {
 			if (currentSound != null) {
 				currentSound.fadeAway();
 				currentSound = null;
