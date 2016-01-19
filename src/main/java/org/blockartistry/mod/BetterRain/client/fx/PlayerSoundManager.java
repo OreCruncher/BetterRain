@@ -24,6 +24,7 @@
 
 package org.blockartistry.mod.BetterRain.client.fx;
 
+import org.blockartistry.mod.BetterRain.ModOptions;
 import org.blockartistry.mod.BetterRain.data.BiomeRegistry;
 import org.blockartistry.mod.BetterRain.data.BiomeRegistry.BiomeSound;
 import org.blockartistry.mod.BetterRain.util.PlayerUtils;
@@ -78,8 +79,8 @@ public class PlayerSoundManager {
 			this.fadeAway = true;
 		}
 
-		public boolean shouldFade() {
-			return isInside(this.player) || !this.sound.matches(getConditions(this.player.worldObj));
+		public boolean sameSound(final BiomeSound snd) {
+			return this.sound.equals(snd);
 		}
 
 		@Override
@@ -153,14 +154,15 @@ public class PlayerSoundManager {
 		return false;
 	}
 
-	// Class state management
-	private static BiomeGenBase currentBiome = null;
+	// Current active background sound
 	private static PlayerSound currentSound = null;
 
 	public static void initialize() {
-		final PlayerSoundManager manager = new PlayerSoundManager();
-		MinecraftForge.EVENT_BUS.register(manager);
-		FMLCommonHandler.instance().bus().register(manager);
+		if (ModOptions.getEnableBiomeSounds()) {
+			final PlayerSoundManager manager = new PlayerSoundManager();
+			MinecraftForge.EVENT_BUS.register(manager);
+			FMLCommonHandler.instance().bus().register(manager);
+		}
 	}
 
 	@SubscribeEvent(priority = EventPriority.LOWEST)
@@ -170,8 +172,8 @@ public class PlayerSoundManager {
 		if (world == null || event.phase != Phase.START)
 			return;
 
-		// Handle dead player - no sound for that - at the moment.
-		if (mc.thePlayer.isDead) {
+		// Dead player or they are covered with blocks
+		if (mc.thePlayer.isDead || isInside(mc.thePlayer)) {
 			if (currentSound != null) {
 				currentSound.fadeAway();
 				currentSound = null;
@@ -179,16 +181,18 @@ public class PlayerSoundManager {
 			return;
 		}
 
+		final String conditions = getConditions(world);
 		final BiomeGenBase playerBiome = PlayerUtils.getPlayerBiome(mc.thePlayer);
-		if (currentSound != null && (didReloadOccur() || currentBiome != playerBiome || currentSound.shouldFade())) {
-			currentSound.fadeAway();
-			currentSound = null;
+		final BiomeSound sound = BiomeRegistry.getSound(playerBiome, conditions);
+
+		if (currentSound != null) {
+			if (didReloadOccur() || sound == null || !currentSound.sameSound(sound)) {
+				currentSound.fadeAway();
+				currentSound = null;
+			}
 		}
 
-		currentBiome = playerBiome;
-		final String conditions = getConditions(world);
-		final BiomeSound sound = BiomeRegistry.getSound(currentBiome, conditions);
-		if (currentSound == null && sound != null && !isInside(mc.thePlayer)) {
+		if (currentSound == null && sound != null) {
 			currentSound = new PlayerSound(mc.thePlayer, sound);
 			mc.getSoundHandler().playSound(currentSound);
 		}
