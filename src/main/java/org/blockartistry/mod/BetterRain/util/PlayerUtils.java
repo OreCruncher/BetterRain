@@ -30,23 +30,46 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.biome.BiomeGenBase;
 
 public final class PlayerUtils {
-	
-	private PlayerUtils() {}
-	
+
+	private PlayerUtils() {
+	}
+
 	public static BiomeGenBase getPlayerBiome(final EntityPlayer player) {
 		return player.worldObj.getBiomeGenForCoords((int) player.posX, (int) player.posZ);
 	}
 
 	public static int getPlayerDimension(final EntityPlayer player) {
-		if(player == null || player.worldObj == null)
+		if (player == null || player.worldObj == null)
 			return -256;
 		return player.worldObj.provider.dimensionId;
 	}
-	
+
 	public static boolean isUnderGround(final EntityPlayer player, final int offset) {
 		return (player.posY + offset) < WorldUtils.getSeaLevel(player.worldObj);
 	}
-	
+
+	private static final int RANGE = 3;
+	private static final int AREA = (RANGE * 2 + 1) * (RANGE * 2 + 1) / 2;
+
+	public static boolean isInside(final EntityPlayer entity, final int yOffset) {
+		// If the player is underground
+		if (PlayerUtils.isUnderGround(entity, yOffset))
+			return true;
+
+		final int targetY = (int) entity.posY;
+		int seeSky = 0;
+		for (int x = -RANGE; x <= RANGE; x++)
+			for (int z = -RANGE; z <= RANGE; z++) {
+				final int y = entity.worldObj.getTopSolidOrLiquidBlock((int) (x + entity.posX),
+						(int) (z + entity.posZ));
+				if ((y - targetY) < 3) {
+					if (++seeSky >= AREA)
+						return false;
+				}
+			}
+		return true;
+	}
+
 	@SideOnly(Side.CLIENT)
 	public static int getClientPlayerDimension() {
 		return getPlayerDimension(FMLClientHandler.instance().getClient().thePlayer);

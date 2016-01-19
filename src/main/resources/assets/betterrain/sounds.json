@@ -61,5 +61,12 @@
 			"ambient/outside/beach"
 		]
 		
+	},
+	"river":{
+		"category":"ambient",
+		"sounds":[
+			"ambient/outside/river"
+		]
+		
 	}
 }

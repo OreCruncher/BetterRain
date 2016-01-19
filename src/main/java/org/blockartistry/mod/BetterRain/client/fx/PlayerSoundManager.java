@@ -116,24 +116,6 @@ public class PlayerSoundManager {
 		}
 	}
 
-	private static boolean isInside(final EntityPlayer entity) {
-		// If the player is underground
-		if (PlayerUtils.isUnderGround(entity, INSIDE_Y_ADJUST))
-			return true;
-
-		final int range = 3;
-		final int area = (range * 2 + 1) * (range * 2 + 1) / 2;
-		int seeSky = 0;
-		for (int x = -range; x <= range; x++)
-			for (int z = -range; z <= range; z++) {
-				final int y = entity.worldObj.getTopSolidOrLiquidBlock((int) (x + entity.posX),
-						(int) (z + entity.posZ));
-				if (y <= (entity.posY + 1))
-					seeSky++;
-			}
-		return seeSky < area;
-	}
-
 	private static String getConditions(final World world) {
 		final StringBuilder builder = new StringBuilder();
 		if (WorldUtils.isDaytime(world))
@@ -173,7 +155,7 @@ public class PlayerSoundManager {
 			return;
 
 		// Dead player or they are covered with blocks
-		if (mc.thePlayer.isDead || isInside(mc.thePlayer)) {
+		if (mc.thePlayer.isDead || PlayerUtils.isInside(mc.thePlayer, INSIDE_Y_ADJUST)) {
 			if (currentSound != null) {
 				currentSound.fadeAway();
 				currentSound = null;

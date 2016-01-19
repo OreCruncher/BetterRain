@@ -60,6 +60,16 @@
 			
 		},
 		{
+			"biomeName":"(?i)(?!.*frozen.*)(.*river.*)",
+			"sounds":[
+				{
+					"sound":"betterrain:river"
+				}
+				
+			]
+			
+		},
+		{
 			"biomeName":"Deep Ocean",
 			"soundReset":true,
 			"sounds":[
