@@ -63,6 +63,17 @@ public final class BiomeRegistry {
 			return Pattern.matches(this.conditions, conditions);
 		}
 
+		@Override
+		public boolean equals(final Object anObj) {
+			if (this == anObj)
+				return true;
+			if (!(anObj instanceof BiomeSound))
+				return false;
+			final BiomeSound s = (BiomeSound) anObj;
+			return this.volume == s.volume && this.pitch == s.pitch && this.sound.equals(s.sound)
+					&& this.conditions.equals(s.conditions);
+		}
+
 		public String toString() {
 			final StringBuilder builder = new StringBuilder();
 			builder.append('[').append(this.sound);

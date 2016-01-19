@@ -108,6 +108,8 @@ public final class ModOptions {
 	protected static String[] biomeConfigFiles = {};
 
 	protected static final String CATEGORY_SOUND = "sound";
+	protected static final String CONFIG_ENABLE_BIOME_SOUNDS = "Enable Biome Sounds";
+	protected static boolean enableBiomeSounds = true;
 	protected static final String CONFIG_SOUND_ENABLED = "Enabled";
 	protected static final String COMMENT_SOUND_ENABLED = "Enable client side sound effect";
 	protected static final String CONFIG_SOUND_CHANCE = "Chance";
@@ -229,6 +231,10 @@ public final class ModOptions {
 		biomeConfigFiles = config.getStringList(CONFIG_BIOME_CONFIG_FILES, CATEGORY_BIOMES, biomeConfigFiles, comment);
 
 		// CATEGORY: Sound
+		comment = "Enable biome sounds";
+		enableBiomeSounds = config.getBoolean(CONFIG_ENABLE_BIOME_SOUNDS, CATEGORY_SOUND, enableBiomeSounds,
+				comment);
+
 		enableIceCrackSound = config.getBoolean(CONFIG_SOUND_ENABLED, CATEGORY_SOUND_ICE_CRACK, enableIceCrackSound,
 				COMMENT_SOUND_ENABLED);
 		iceCrackSoundChance = config.getInt(CONFIG_SOUND_CHANCE, CATEGORY_SOUND_ICE_CRACK, iceCrackSoundChance, 1,
@@ -357,6 +363,10 @@ public final class ModOptions {
 		return biomeConfigFiles;
 	}
 
+	public static boolean getEnableBiomeSounds() {
+		return enableBiomeSounds;
+	}
+	
 	public static boolean getEnableIceCrackSound() {
 		return enableIceCrackSound;
 	}
