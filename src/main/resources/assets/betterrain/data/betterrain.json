@@ -1,7 +1,7 @@
 {
 	"entries":[
 		{
-			"biomeName":"(?i)(?!.*forest.*|.*jungle.*)(.*hills.*|.*plateau.*|.*wasteland.*)",
+			"biomeName":"(?i)(?!.*forest.*|.*jungle.*|.*\\+.*|.*savanna.*)(.*hills.*|.*plateau.*|.*wasteland.*|.*canyon.*|tundra)",
 			"sounds":[
 				{
 					"sound":"betterrain:wind",
@@ -22,7 +22,7 @@
 			
 		},
 		{
-			"biomeName":"(?i)(.*plains.*|.*meadow.*|grassland)",
+			"biomeName":"(?i)(?!.*ice.*)(.*plains.*|.*meadow.*|grassland|wetlands|prairie)",
 			"sounds":[
 				{
 					"sound":"betterrain:crickets",
@@ -34,7 +34,7 @@
 			
 		},
 		{
-			"biomeName":"(?i)(?!.*dead.*|.*flower.*|.*fungi.*|.*frost.*)(.*forest.*|.*cherry.*|.*orchard.*)",
+			"biomeName":"(?i)(?!.*dead.*|.*flower.*|.*fungi.*|.*frost.*)(.*forest.*|.*cherry.*|.*orchard.*|.*woods.*|woodland)",
 			"sounds":[
 				{
 					"sound":"betterrain:forest",
@@ -61,6 +61,7 @@
 		},
 		{
 			"biomeName":"Deep Ocean",
+			"soundReset":true,
 			"sounds":[
 				{
 					"sound":"betterrain:beach",
@@ -88,7 +89,7 @@
 			
 		},
 		{
-			"biomeName":"(?i)(.*fen.*|.*bog.*|.*marsh.*|.*moor.*|.*bayou.*)",
+			"biomeName":"(?i)(.*fen.*|.*bog.*|.*marsh.*|.*moor.*|.*bayou.*|quagmire)",
 			"sounds":[
 				{
 					"sound":"betterrain:crickets",

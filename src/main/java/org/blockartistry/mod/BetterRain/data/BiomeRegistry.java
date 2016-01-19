@@ -128,7 +128,6 @@ public final class BiomeRegistry {
 					builder.append(sound.toString()).append(',');
 				builder.append(']');
 			}
-			builder.append(")");
 			return builder.toString();
 		}
 	}
