@@ -25,6 +25,8 @@
 package org.blockartistry.mod.BetterRain.data;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -32,6 +34,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.blockartistry.mod.BetterRain.BetterRain;
 import org.blockartistry.mod.BetterRain.ModLog;
 import org.blockartistry.mod.BetterRain.ModOptions;
+import org.blockartistry.mod.BetterRain.data.BiomeConfig.SoundRecord;
 import org.blockartistry.mod.BetterRain.util.Color;
 import org.blockartistry.mod.BetterRain.util.MyUtils;
 
@@ -45,18 +48,30 @@ public final class BiomeRegistry {
 
 	public static final class BiomeSound {
 		public final String sound;
+		public final String conditions;
 		public final float volume;
 		public final float pitch;
-		public final boolean atDay;
-		public final boolean atNight;
 
-		protected BiomeSound(final String sound, final float volume, final float pitch, final boolean day,
-				final boolean night) {
-			this.sound = sound;
-			this.volume = volume;
-			this.pitch = pitch;
-			this.atDay = day;
-			this.atNight = night;
+		protected BiomeSound(final SoundRecord record) {
+			this.sound = record.sound;
+			this.conditions = record.conditions;
+			this.volume = record.volume == null ? 1.0F : record.volume.floatValue();
+			this.pitch = record.pitch == null ? 1.0F : record.pitch.floatValue();
+		}
+
+		public boolean matches(final String conditions) {
+			return Pattern.matches(this.conditions, conditions);
+		}
+
+		public String toString() {
+			final StringBuilder builder = new StringBuilder();
+			builder.append('[').append(this.sound);
+			if (!StringUtils.isEmpty(this.conditions))
+				builder.append('(').append(this.conditions).append(')');
+			builder.append(", v:").append(this.volume);
+			builder.append(", p:").append(this.pitch);
+			builder.append(']');
+			return builder.toString();
 		}
 	}
 
@@ -72,18 +87,19 @@ public final class BiomeRegistry {
 		public Color fogColor;
 		public float fogDensity;
 
-		public String sound;
-		public float volume;
-		public float pitch;
-		public boolean atDay;
-		public boolean atNight;
+		public List<BiomeSound> sounds;
 
 		public Entry(final BiomeGenBase biome) {
 			this.biome = biome;
 			this.hasPrecipitation = biome.canSpawnLightningBolt() || biome.getEnableSnow();
+			this.sounds = new ArrayList<BiomeSound>();
+		}
 
-			this.volume = this.pitch = 1.0F;
-			this.atDay = this.atNight = true;
+		public BiomeSound findMatch(final String conditions) {
+			for (final BiomeSound sound : this.sounds)
+				if (sound.matches(conditions))
+					return sound;
+			return null;
 		}
 
 		@Override
@@ -106,14 +122,13 @@ public final class BiomeRegistry {
 				builder.append(" fogColor:").append(this.fogColor.toString());
 				builder.append(" fogDensity:").append(this.fogDensity);
 			}
-			if (this.sound != null) {
-				builder.append("; sound:").append(this.sound);
-				builder.append(" (volume:").append(this.volume);
-				builder.append(", pitch:").append(this.pitch);
-				builder.append(", day:").append(Boolean.toString(this.atDay));
-				builder.append(", night:").append(Boolean.toString(this.atNight));
-				builder.append(")");
+			if (!this.sounds.isEmpty()) {
+				builder.append("; sounds [");
+				for (final BiomeSound sound : this.sounds)
+					builder.append(sound.toString()).append(',');
+				builder.append(']');
 			}
+			builder.append(")");
 			return builder.toString();
 		}
 	}
@@ -121,12 +136,12 @@ public final class BiomeRegistry {
 	public static int getReloadCount() {
 		return reloadCount;
 	}
-	
+
 	public static void initialize() {
 
 		reloadCount++;
 		registry.clear();
-		
+
 		final BiomeGenBase[] biomeArray = BiomeGenBase.getBiomeGenArray();
 		for (int i = 0; i < biomeArray.length; i++)
 			if (biomeArray[i] != null) {
@@ -155,10 +170,6 @@ public final class BiomeRegistry {
 		return registry.get(biome.biomeID).hasFog;
 	}
 
-	public static boolean hasSound(final BiomeGenBase biome) {
-		return !StringUtils.isEmpty(registry.get(biome.biomeID).sound);
-	}
-
 	public static Color getDustColor(final BiomeGenBase biome) {
 		return registry.get(biome.biomeID).dustColor;
 	}
@@ -171,11 +182,8 @@ public final class BiomeRegistry {
 		return registry.get(biome.biomeID).fogDensity;
 	}
 
-	public static BiomeSound getSound(final BiomeGenBase biome) {
-		final Entry entry = registry.get(biome.biomeID);
-		if (StringUtils.isEmpty(entry.sound))
-			return null;
-		return new BiomeSound(entry.sound, entry.volume, entry.pitch, entry.atDay, entry.atNight);
+	public static BiomeSound getSound(final BiomeGenBase biome, final String conditions) {
+		return registry.get(biome.biomeID).findMatch(conditions);
 	}
 
 	private static void processConfig() {
@@ -226,16 +234,11 @@ public final class BiomeRegistry {
 						if (rgb.length == 3)
 							biomeEntry.dustColor = new Color(rgb[0], rgb[1], rgb[2]);
 					}
-					if (entry.sound != null)
-						biomeEntry.sound = entry.sound;
-					if (entry.volume != null)
-						biomeEntry.volume = entry.volume.floatValue();
-					if (entry.pitch != null)
-						biomeEntry.pitch = entry.pitch.floatValue();
-					if (entry.atDay != null)
-						biomeEntry.atDay = entry.atDay.booleanValue();
-					if (entry.atNight != null)
-						biomeEntry.atNight = entry.atNight.booleanValue();
+					if (entry.soundReset != null && entry.soundReset.booleanValue())
+						biomeEntry.sounds = new ArrayList<BiomeSound>();
+					for (final SoundRecord sr : entry.sounds) {
+						biomeEntry.sounds.add(new BiomeSound(sr));
+					}
 				}
 			}
 		}
