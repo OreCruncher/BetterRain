@@ -51,16 +51,18 @@ public final class BiomeRegistry {
 		public final String conditions;
 		public final float volume;
 		public final float pitch;
+		private final Pattern pattern;
 
 		protected BiomeSound(final SoundRecord record) {
 			this.sound = record.sound;
-			this.conditions = record.conditions;
+			this.conditions = StringUtils.isEmpty(record.conditions) ? ".*" : record.conditions;
 			this.volume = record.volume == null ? 1.0F : record.volume.floatValue();
 			this.pitch = record.pitch == null ? 1.0F : record.pitch.floatValue();
+			this.pattern = Pattern.compile(this.conditions);
 		}
 
 		public boolean matches(final String conditions) {
-			return Pattern.matches(this.conditions, conditions);
+			return pattern.matcher(conditions).matches();
 		}
 
 		@Override
