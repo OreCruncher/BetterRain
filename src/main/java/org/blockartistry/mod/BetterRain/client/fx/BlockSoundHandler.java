@@ -101,7 +101,7 @@ public class BlockSoundHandler {
 	public static void randomDisplayTick(final Block theThis, final World world, final int x, final int y, final int z,
 			final Random random) {
 		final SoundHandler handler = handlers.get(theThis.getClass());
-		if (handlers != null && handler.trigger())
+		if (handler != null && handler.trigger())
 			handler.doSound(world, x, y, z);
 	}
 
