@@ -68,5 +68,19 @@
 			"ambient/outside/river"
 		]
 		
+	},
+	"taiga":{
+		"category":"ambient",
+		"sounds":[
+			"ambient/outside/taiga"
+		]
+		
+	},
+	"jungle":{
+		"category":"ambient",
+		"sounds":[
+			"ambient/outside/jungle"
+		]
+		
 	}
 }

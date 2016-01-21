@@ -30,6 +30,8 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.util.MathHelper;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.relauncher.Side;
@@ -55,32 +57,43 @@ public final class AuroraRenderer implements IAtmosRenderer {
 		}
 	}
 
+	public static float moonlightFactor(final World world) {
+		final float moonFactor = 1.0F - WorldUtils.getMoonPhaseFactor(world) * 1.1F;
+		if(moonFactor <= 0.0F)
+			return 0.0F;
+		return MathHelper.clamp_float(moonFactor * moonFactor, 0.0F, 1.0F);
+	}
+
 	public static void renderAurora(final float partialTick, final Aurora aurora) {
+
+		final Minecraft mc = FMLClientHandler.instance().getClient();
+		final float alpha = (aurora.getAlpha() * moonlightFactor(mc.theWorld)) / 255.0F;
+		if (alpha <= 0.0F)
+			return;
+
 		final Tessellator tess = Tessellator.getInstance();
 		final WorldRenderer renderer = tess.getWorldRenderer();
-		final Minecraft minecraft = FMLClientHandler.instance().getClient();
 		final float tranY;
 		if (HEIGHT_PLAYER_RELATIVE) {
 			// Fix height above player
 			tranY = PLAYER_FIXED_HEIGHT;
 		} else {
 			// Adjust to keep aurora at the same altitude
-			tranY = WorldUtils.getCloudHeight(minecraft.theWorld) + 5 - (float) (minecraft.thePlayer.lastTickPosY
-					+ (minecraft.thePlayer.posY - minecraft.thePlayer.lastTickPosY) * partialTick);
+			tranY = WorldUtils.getCloudHeight(mc.theWorld) + 5 - (float) (mc.thePlayer.lastTickPosY
+					+ (mc.thePlayer.posY - mc.thePlayer.lastTickPosY) * partialTick);
 		}
 
-		final double tranX = aurora.posX - (minecraft.thePlayer.lastTickPosX
-				+ (minecraft.thePlayer.posX - minecraft.thePlayer.lastTickPosX) * partialTick);
+		final double tranX = aurora.posX
+				- (mc.thePlayer.lastTickPosX + (mc.thePlayer.posX - mc.thePlayer.lastTickPosX) * partialTick);
 
-		final double tranZ = aurora.posZ - (minecraft.thePlayer.lastTickPosZ
-				+ (minecraft.thePlayer.posZ - minecraft.thePlayer.lastTickPosZ) * partialTick);
+		final double tranZ = aurora.posZ
+				- (mc.thePlayer.lastTickPosZ + (mc.thePlayer.posZ - mc.thePlayer.lastTickPosZ) * partialTick);
 
 		if (ANIMATE)
 			aurora.translate(partialTick);
 
 		final Color base = aurora.getBaseColor();
 		final Color fade = aurora.getFadeColor();
-		final float alpha = aurora.getAlpha() / 255.0F;
 		final double zero = 0.0D;
 
 		GlStateManager.pushMatrix();
@@ -131,7 +144,7 @@ public final class AuroraRenderer implements IAtmosRenderer {
 				renderer.pos(posX2, posY2, posZ2).color(fade.red, fade.green, fade.blue, 0).endVertex();
 				renderer.pos(posX2, zero, posZ2).color(base.red, base.green, base.blue, alpha).endVertex();
 				tess.draw();
-				
+
 				// Bottom
 				renderer.begin(GL11.GL_TRIANGLE_FAN, DefaultVertexFormats.POSITION_COLOR);
 				renderer.pos(posX, zero, posZ).color(base.red, base.green, base.blue, alpha).endVertex();
