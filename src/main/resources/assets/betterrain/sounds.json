@@ -82,5 +82,14 @@
 			"ambient/outside/jungle"
 		]
 		
+	},
+	"soulsand":{
+		"category":"ambient",
+		"sounds":[
+			"ambient/soulsand/soulsand1",
+			"ambient/soulsand/soulsand2",
+			"ambient/soulsand/soulsand3"
+		]
+		
 	}
 }

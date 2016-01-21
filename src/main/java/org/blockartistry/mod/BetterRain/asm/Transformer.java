@@ -51,7 +51,8 @@ public class Transformer implements IClassTransformer {
 
 	private static final List<String> soundTickClasses = ImmutableList.<String> builder()
 			.add("net.minecraft.block.BlockIce", "ahp").add("net.minecraft.block.BlockPackedIce", "ain")
-			.add("net.minecraft.block.BlockLilyPad", "akn").add("net.minecraft.block.BlockRedstoneOre", "aja").build();
+			.add("net.minecraft.block.BlockLilyPad", "akn").add("net.minecraft.block.BlockRedstoneOre", "aja")
+			.add("net.minecraft.block.BlockSoulSand", "ajq").build();
 	
 	private static final List<String> liquidTickClasses = ImmutableList.<String> builder()
 			.add("net.minecraft.block.BlockLiquid", "ahv")
