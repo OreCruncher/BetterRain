@@ -30,6 +30,8 @@ import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.util.MathHelper;
+import net.minecraft.world.World;
 
 import org.blockartistry.mod.BetterRain.ModOptions;
 import org.blockartistry.mod.BetterRain.client.AuroraEffectHandler;
@@ -52,35 +54,46 @@ public final class AuroraRenderer implements IAtmosRenderer {
 		}
 	}
 
-	private static void setColor(final Color color, final int alpha) {
-		Tessellator.instance.setColorRGBA_F(color.red, color.green, color.blue, alpha / 255.0F);
+	private static void setColor(final Color color, final float alpha) {
+		Tessellator.instance.setColorRGBA_F(color.red, color.green, color.blue, alpha);
+	}
+
+	public static float moonlightFactor(final World world) {
+		final float moonFactor = 1.0F - WorldUtils.getMoonPhaseFactor(world) * 1.1F;
+		if(moonFactor <= 0.0F)
+			return 0.0F;
+		return MathHelper.clamp_float(moonFactor * moonFactor, 0.0F, 1.0F);
 	}
 
 	public static void renderAurora(final float partialTick, final Aurora aurora) {
+
+		final Minecraft mc = FMLClientHandler.instance().getClient();
+		final float alpha = (aurora.getAlpha() * moonlightFactor(mc.theWorld)) / 255.0F;
+		if (alpha <= 0)
+			return;
+		
 		final Tessellator tess = Tessellator.instance;
-		final Minecraft minecraft = FMLClientHandler.instance().getClient();
 		final float tranY;
 		if (HEIGHT_PLAYER_RELATIVE) {
 			// Fix height above player
 			tranY = PLAYER_FIXED_HEIGHT;
 		} else {
 			// Adjust to keep aurora at the same altitude
-			tranY = WorldUtils.getCloudHeight(minecraft.theWorld) + 5 - (float) (minecraft.thePlayer.lastTickPosY
-					+ (minecraft.thePlayer.posY - minecraft.thePlayer.lastTickPosY) * partialTick);
+			tranY = WorldUtils.getCloudHeight(mc.theWorld) + 5 - (float) (mc.thePlayer.lastTickPosY
+					+ (mc.thePlayer.posY - mc.thePlayer.lastTickPosY) * partialTick);
 		}
 
-		final double tranX = aurora.posX - (minecraft.thePlayer.lastTickPosX
-				+ (minecraft.thePlayer.posX - minecraft.thePlayer.lastTickPosX) * partialTick);
+		final double tranX = aurora.posX - (mc.thePlayer.lastTickPosX
+				+ (mc.thePlayer.posX - mc.thePlayer.lastTickPosX) * partialTick);
 
-		final double tranZ = aurora.posZ - (minecraft.thePlayer.lastTickPosZ
-				+ (minecraft.thePlayer.posZ - minecraft.thePlayer.lastTickPosZ) * partialTick);
+		final double tranZ = aurora.posZ - (mc.thePlayer.lastTickPosZ
+				+ (mc.thePlayer.posZ - mc.thePlayer.lastTickPosZ) * partialTick);
 
 		if (ANIMATE)
 			aurora.translate(partialTick);
 
 		final Color base = aurora.getBaseColor();
 		final Color fade = aurora.getFadeColor();
-		final int alpha = aurora.getAlpha();
 		final double lowY = 0.0D;
 		final double lowY2 = 0.0D;
 

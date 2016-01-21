@@ -107,7 +107,7 @@ public final class ServerEffectHandler {
 	 * is less than half full.
 	 */
 	private static boolean okToSpawnAurora(final World world) {
-		return WorldUtils.isNighttime(world) && WorldUtils.getMoonPhaseFactor(world) < 0.5F;
+		return WorldUtils.isNighttime(world);
 	}
 
 	private static final int CHECK_INTERVAL = 100; // Ticks
