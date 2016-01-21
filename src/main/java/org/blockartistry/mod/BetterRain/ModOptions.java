@@ -128,6 +128,10 @@ public final class ModOptions {
 	protected static boolean enableRedstoneOreSound = true;
 	protected static int redstoneOreSoundChance = 100;
 	protected static float redstoneOreScaleFactor = 1.0F;
+	protected static final String CATEGORY_SOUND_SOULSAND = "sound.Soul Sand";
+	protected static boolean enableSoulSandSound = true;
+	protected static int soulSandSoundChance = 8000;
+	protected static float soulSandScaleFactor = 1.0F;
 
 	public static void load(final Configuration config) {
 
@@ -258,7 +262,14 @@ public final class ModOptions {
 				1, Integer.MAX_VALUE, COMMENT_SOUND_CHANCE);
 		redstoneOreScaleFactor = config.getFloat(CONFIG_SOUND_SCALING_FACTOR, CATEGORY_SOUND_REDSTONE_ORE,
 				redstoneOreScaleFactor, 0.0F, 5.0F, COMMENT_SOUND_SCALING_FACTOR);
-	}
+
+		enableSoulSandSound = config.getBoolean(CONFIG_SOUND_ENABLED, CATEGORY_SOUND_SOULSAND,
+				enableSoulSandSound, COMMENT_SOUND_ENABLED);
+		soulSandSoundChance = config.getInt(CONFIG_SOUND_CHANCE, CATEGORY_SOUND_SOULSAND, soulSandSoundChance,
+				1, Integer.MAX_VALUE, COMMENT_SOUND_CHANCE);
+		soulSandScaleFactor = config.getFloat(CONFIG_SOUND_SCALING_FACTOR, CATEGORY_SOUND_SOULSAND,
+				soulSandScaleFactor, 0.0F, 5.0F, COMMENT_SOUND_SCALING_FACTOR);
+}
 
 	public static boolean getEnableDebugLogging() {
 		return enableDebugLogging;
@@ -411,5 +422,17 @@ public final class ModOptions {
 
 	public static float getRedstoneOreScaleFactor() {
 		return redstoneOreScaleFactor;
+	}
+
+	public static boolean getEnableSoulSandSound() {
+		return enableSoulSandSound;
+	}
+
+	public static int getSoulSandSoundChance() {
+		return soulSandSoundChance;
+	}
+
+	public static float getSoulSandScaleFactor() {
+		return soulSandScaleFactor;
 	}
 }

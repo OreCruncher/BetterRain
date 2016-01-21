@@ -32,6 +32,7 @@ import org.blockartistry.mod.BetterRain.ModOptions;
 import org.blockartistry.mod.BetterRain.client.fx.blocks.IceBlockHandler;
 import org.blockartistry.mod.BetterRain.client.fx.blocks.LilyPadBlockHandler;
 import org.blockartistry.mod.BetterRain.client.fx.blocks.RedstoneOreBlockHandler;
+import org.blockartistry.mod.BetterRain.client.fx.blocks.SoulSandBlockHandler;
 import org.blockartistry.mod.BetterRain.client.fx.blocks.SoundHandler;
 import cpw.mods.fml.relauncher.SideOnly;
 import cpw.mods.fml.relauncher.Side;
@@ -40,6 +41,7 @@ import net.minecraft.block.BlockIce;
 import net.minecraft.block.BlockLilyPad;
 import net.minecraft.block.BlockPackedIce;
 import net.minecraft.block.BlockRedstoneOre;
+import net.minecraft.block.BlockSoulSand;
 import net.minecraft.init.Blocks;
 import net.minecraft.world.World;
 
@@ -65,6 +67,11 @@ public class BlockSoundHandler {
 
 		if (ModOptions.getEnableRedstoneOreSound()) {
 			handlers.put(BlockRedstoneOre.class, new RedstoneOreBlockHandler());
+		}
+		
+		if(ModOptions.getEnableSoulSandSound()) {
+			handlers.put(BlockSoulSand.class, new SoulSandBlockHandler());
+			Blocks.soul_sand.setTickRandomly(true);
 		}
 	}
 
