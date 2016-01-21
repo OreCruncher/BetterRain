@@ -28,15 +28,18 @@ import java.util.IdentityHashMap;
 import java.util.Map;
 import java.util.Random;
 
-import org.blockartistry.mod.BetterRain.BetterRain;
 import org.blockartistry.mod.BetterRain.ModOptions;
-import org.blockartistry.mod.BetterRain.util.XorShiftRandom;
-
+import org.blockartistry.mod.BetterRain.client.fx.blocks.IceBlockHandler;
+import org.blockartistry.mod.BetterRain.client.fx.blocks.LilyPadBlockHandler;
+import org.blockartistry.mod.BetterRain.client.fx.blocks.RedstoneOreBlockHandler;
+import org.blockartistry.mod.BetterRain.client.fx.blocks.SoundHandler;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockIce;
 import net.minecraft.block.BlockLilyPad;
 import net.minecraft.block.BlockPackedIce;
+import net.minecraft.block.BlockRedstoneOre;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.init.Blocks;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -45,54 +48,25 @@ import net.minecraftforge.fml.relauncher.Side;
 @SideOnly(Side.CLIENT)
 public class BlockSoundHandler {
 
-	private static final Random random = new XorShiftRandom();
-
-	private static abstract class SoundHandler {
-
-		protected final int chance;
-		protected final String sound;
-		protected final float scale;
-
-		public SoundHandler(final int chance, final String sound, final float scale) {
-			this.chance = chance;
-			this.sound = BetterRain.MOD_ID + ":" + sound;
-			this.scale = scale;
-		}
-
-		public boolean trigger() {
-			return random.nextInt(chance) == 0;
-		}
-
-		public abstract void doSound(final World world, final int x, final int y, final int z);
-	};
-
 	private static Map<Class<? extends Block>, SoundHandler> handlers = new IdentityHashMap<Class<? extends Block>, SoundHandler>();
 
-	static {
+	public static void initialize() {
 		if (ModOptions.getEnableIceCrackSound()) {
-			final SoundHandler handler = new SoundHandler(ModOptions.getIceCrackSoundChance(), "ice",
-					ModOptions.getIceCrackScaleFactor()) {
-				@Override
-				public void doSound(final World world, final int x, final int y, final int z) {
-					world.playSound(x + 0.5D, y + 0.5D, z + 0.5D, this.sound, 0.3F * this.scale, 0.1F, false);
-				}
-			};
-
+			final SoundHandler handler = new IceBlockHandler();
 			handlers.put(BlockIce.class, handler);
 			handlers.put(BlockPackedIce.class, handler);
+
+			// These blocks don't tick randomly
+			// so they need to be configured.
+			Blocks.packed_ice.setTickRandomly(true);
 		}
 
 		if (ModOptions.getEnableFrogCroakSound()) {
-			handlers.put(BlockLilyPad.class, new SoundHandler(ModOptions.getFrogCroakSoundChance(), "frog",
-					ModOptions.getFrogCroakScaleFactor()) {
-				private final float[] pitch = { 0.8F, 1.0F, 1.0F, 1.2F, 1.2F, 1.2F };
+			handlers.put(BlockLilyPad.class, new LilyPadBlockHandler());
+		}
 
-				@Override
-				public void doSound(final World world, final int x, final int y, final int z) {
-					world.playSound(x + 0.5D, y + 0.5D, z + 0.5D, this.sound, 0.4F * this.scale,
-							pitch[random.nextInt(pitch.length)], false);
-				}
-			});
+		if (ModOptions.getEnableRedstoneOreSound()) {
+			handlers.put(BlockRedstoneOre.class, new RedstoneOreBlockHandler());
 		}
 	}
 
@@ -106,5 +80,4 @@ public class BlockSoundHandler {
 		if (handler != null && handler.trigger())
 			handler.doSound(world, pos.getX(), pos.getY(), pos.getZ());
 	}
-
 }

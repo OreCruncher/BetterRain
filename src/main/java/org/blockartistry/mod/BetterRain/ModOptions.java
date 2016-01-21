@@ -124,6 +124,10 @@ public final class ModOptions {
 	protected static boolean enableFrogCroakSound = true;
 	protected static int frogCroakSoundChance = 25;
 	protected static float frogCroakScaleFactor = 1.0F;
+	protected static final String CATEGORY_SOUND_REDSTONE_ORE = "sound.Redstone Ore";
+	protected static boolean enableRedstoneOreSound = true;
+	protected static int redstoneOreSoundChance = 100;
+	protected static float redstoneOreScaleFactor = 1.0F;
 
 	public static void load(final Configuration config) {
 
@@ -232,8 +236,7 @@ public final class ModOptions {
 
 		// CATEGORY: Sound
 		comment = "Enable biome sounds";
-		enableBiomeSounds = config.getBoolean(CONFIG_ENABLE_BIOME_SOUNDS, CATEGORY_SOUND, enableBiomeSounds,
-				comment);
+		enableBiomeSounds = config.getBoolean(CONFIG_ENABLE_BIOME_SOUNDS, CATEGORY_SOUND, enableBiomeSounds, comment);
 
 		enableIceCrackSound = config.getBoolean(CONFIG_SOUND_ENABLED, CATEGORY_SOUND_ICE_CRACK, enableIceCrackSound,
 				COMMENT_SOUND_ENABLED);
@@ -249,6 +252,12 @@ public final class ModOptions {
 		frogCroakScaleFactor = config.getFloat(CONFIG_SOUND_SCALING_FACTOR, CATEGORY_SOUND_FROGS, frogCroakScaleFactor,
 				0.0F, 5.0F, COMMENT_SOUND_SCALING_FACTOR);
 
+		enableRedstoneOreSound = config.getBoolean(CONFIG_SOUND_ENABLED, CATEGORY_SOUND_REDSTONE_ORE,
+				enableRedstoneOreSound, COMMENT_SOUND_ENABLED);
+		redstoneOreSoundChance = config.getInt(CONFIG_SOUND_CHANCE, CATEGORY_SOUND_REDSTONE_ORE, redstoneOreSoundChance,
+				1, Integer.MAX_VALUE, COMMENT_SOUND_CHANCE);
+		redstoneOreScaleFactor = config.getFloat(CONFIG_SOUND_SCALING_FACTOR, CATEGORY_SOUND_REDSTONE_ORE,
+				redstoneOreScaleFactor, 0.0F, 5.0F, COMMENT_SOUND_SCALING_FACTOR);
 	}
 
 	public static boolean getEnableDebugLogging() {
@@ -366,28 +375,41 @@ public final class ModOptions {
 	public static boolean getEnableBiomeSounds() {
 		return enableBiomeSounds;
 	}
-	
+
+	// Block sounds
 	public static boolean getEnableIceCrackSound() {
 		return enableIceCrackSound;
-	}
-
-	public static boolean getEnableFrogCroakSound() {
-		return enableFrogCroakSound;
 	}
 
 	public static int getIceCrackSoundChance() {
 		return iceCrackSoundChance;
 	}
 
-	public static int getFrogCroakSoundChance() {
-		return frogCroakSoundChance;
-	}
-	
 	public static float getIceCrackScaleFactor() {
 		return iceCrackScaleFactor;
 	}
-	
+
+	public static boolean getEnableFrogCroakSound() {
+		return enableFrogCroakSound;
+	}
+
+	public static int getFrogCroakSoundChance() {
+		return frogCroakSoundChance;
+	}
+
 	public static float getFrogCroakScaleFactor() {
 		return frogCroakScaleFactor;
+	}
+
+	public static boolean getEnableRedstoneOreSound() {
+		return enableRedstoneOreSound;
+	}
+
+	public static int getRedstoneOreSoundChance() {
+		return redstoneOreSoundChance;
+	}
+
+	public static float getRedstoneOreScaleFactor() {
+		return redstoneOreScaleFactor;
 	}
 }

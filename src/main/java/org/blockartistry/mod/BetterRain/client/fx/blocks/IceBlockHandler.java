@@ -22,25 +22,18 @@
  * THE SOFTWARE.
  */
 
-package org.blockartistry.mod.BetterRain.proxy;
+package org.blockartistry.mod.BetterRain.client.fx.blocks;
 
-import org.blockartistry.mod.BetterRain.client.AuroraEffectHandler;
-import org.blockartistry.mod.BetterRain.client.ClientEffectHandler;
-import org.blockartistry.mod.BetterRain.client.FogEffectHandler;
-import org.blockartistry.mod.BetterRain.client.fx.BlockSoundHandler;
-import org.blockartistry.mod.BetterRain.client.fx.PlayerSoundManager;
+import org.blockartistry.mod.BetterRain.BetterRain;
+import org.blockartistry.mod.BetterRain.ModOptions;
 
-import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.relauncher.Side;
 
-public class ProxyClient extends Proxy {
+@SideOnly(Side.CLIENT)
+public class IceBlockHandler extends SoundHandler {
 
-	@Override
-	public void init(final FMLInitializationEvent event) {
-		super.init(event);
-		ClientEffectHandler.initialize();
-		AuroraEffectHandler.initialize();
-		FogEffectHandler.initialize();
-		BlockSoundHandler.initialize();
-		PlayerSoundManager.initialize();
+	public IceBlockHandler() {
+		super(ModOptions.getIceCrackSoundChance(), BetterRain.MOD_ID + ":ice", ModOptions.getIceCrackScaleFactor(), 0.3F, 0.1F);
 	}
 }
