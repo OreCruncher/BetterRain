@@ -143,6 +143,17 @@
 			"dustColor":"204,185,102"
 		},
 		{
+			"biomeName":"(?i)(the end|sky)",
+			"sounds":[
+				{
+					"sound":"betterrain:theend",
+					"volume":0.2
+				}
+				
+			]
+			
+		},
+		{
 			"biomeName":"(?i)(.*taiga.*|.*frozen.*|.*ice.*|.*tundra.*|.*polar.*|.*snow.*|.*glacier.*|.*arctic.*)",
 			"aurora":true
 		}

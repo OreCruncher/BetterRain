@@ -47,6 +47,13 @@ public class PlayerSoundManager {
 	private static final int INSIDE_Y_ADJUST = 4;
 	private static final float VOLUME_INCREMENT = 0.02F;
 
+	private static final String CONDITION_TOKEN_RAINING = "raining";
+	private static final String CONDITION_TOKEN_DAY = "day";
+	private static final String CONDITION_TOKEN_NIGHT = "night";
+	private static final String CONDITION_TOKEN_NETHER = "nether";
+	private static final String CONDITION_TOKEN_END = "end";
+	private static final String CONDITION_TOKEN_SKY = "sky";
+
 	private static int reloadTracker = 0;
 
 	private static class PlayerSound extends MovingSound {
@@ -118,11 +125,17 @@ public class PlayerSoundManager {
 	private static String getConditions(final World world) {
 		final StringBuilder builder = new StringBuilder();
 		if (WorldUtils.isDaytime(world))
-			builder.append("day");
+			builder.append(CONDITION_TOKEN_DAY);
 		else
-			builder.append("night");
+			builder.append(CONDITION_TOKEN_NIGHT);
 		if (world.getRainStrength(1.0F) > 0.0F)
-			builder.append("raining");
+			builder.append(CONDITION_TOKEN_RAINING);
+		if (world.provider.getDimensionId() == -1)
+			builder.append(CONDITION_TOKEN_NETHER);
+		if (world.provider.getDimensionId() == 1)
+			builder.append(CONDITION_TOKEN_END);
+		if (WorldUtils.hasSky(world))
+			builder.append(CONDITION_TOKEN_SKY);
 		return builder.toString();
 	}
 
