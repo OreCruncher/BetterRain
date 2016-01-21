@@ -26,6 +26,8 @@ package org.blockartistry.mod.BetterRain.asm;
 
 import static org.objectweb.asm.Opcodes.*;
 
+import java.util.List;
+
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Opcodes;
@@ -35,6 +37,9 @@ import org.objectweb.asm.tree.InsnNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.VarInsnNode;
+
+import com.google.common.collect.ImmutableList;
+
 import net.minecraft.launchwrapper.IClassTransformer;
 
 import org.apache.logging.log4j.LogManager;
@@ -44,24 +49,32 @@ public class Transformer implements IClassTransformer {
 
 	private static final Logger logger = LogManager.getLogger("BetterRain Transform");
 
+	private static final List<String> soundTickClasses = ImmutableList.<String> builder()
+			.add("net.minecraft.block.BlockIce", "alp").add("net.minecraft.block.BlockPackedIce", "amo")
+			.add("net.minecraft.block.BlockLilyPad", "aoj").add("net.minecraft.block.BlockRedstoneOre", "amz").build();
+
+	private static final List<String> liquidTickClasses = ImmutableList.<String> builder()
+			.add("net.minecraft.block.BlockLiquid", "alw").build();
+
 	@Override
-	public byte[] transform(String name, String transformedName, byte[] basicClass) {
+	public byte[] transform(final String name, final String transformedName, byte[] basicClass) {
+
+		// Random display tick transforms
+		if (soundTickClasses.contains(name)) {
+			logger.debug("Transforming " + name);
+			basicClass = transformRandomDisplayTick(basicClass,
+					"org/blockartistry/mod/BetterRain/client/fx/BlockSoundHandler");
+		}
+
+		if (liquidTickClasses.contains(name)) {
+			logger.debug("Transforming liquid " + name);
+			basicClass = transformRandomDisplayTick(basicClass,
+					"org/blockartistry/mod/BetterRain/client/fx/BlockLiquidHandler");
+		}
 
 		if ("net.minecraft.client.renderer.EntityRenderer".equals(name) || "blt".equals(name)) {
 			logger.debug("Transforming EntityRenderer...");
 			return transformEntityRenderer(basicClass);
-		} else if ("net.minecraft.block.BlockLiquid".equals(name) || "alw".equals(name)) {
-			logger.debug("Transforming BlockLiquid...");
-			return transformBlockLiquid(basicClass);
-		} else if ("net.minecraft.block.BlockIce".equals(name) || "alp".equals(name)) {
-			logger.debug("Transforming BlockIce...");
-			return transformAddRandomDisplayTick(basicClass);
-		} else if ("net.minecraft.block.BlockPackedIce".equals(name) || "amo".equals(name)) {
-			logger.debug("Transforming BlockPackedIce...");
-			return transformAddRandomDisplayTick(basicClass);
-		} else if ("net.minecraft.block.BlockLilyPad".equals(name) || "aoj".equals(name)) {
-			logger.debug("Transforming BlockLilyPad...");
-			return transformAddRandomDisplayTick(basicClass);
 		} else if ("net.minecraft.world.WorldServer".equals(name) || "mt".equals(name)) {
 			logger.debug("Transforming WorldServer...");
 			return transformWorldServer(basicClass);
@@ -107,43 +120,6 @@ public class Transformer implements IClassTransformer {
 				m.instructions.add(new MethodInsnNode(INVOKESTATIC,
 						"org/blockartistry/mod/BetterRain/client/RenderWeather", targetName[1], sig, false));
 				m.instructions.add(new InsnNode(RETURN));
-			}
-		}
-
-		final ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_MAXS);
-		cn.accept(cw);
-		return cw.toByteArray();
-	}
-
-	private byte[] transformBlockLiquid(final byte[] classBytes) {
-		final String names[];
-
-		if (TransformLoader.runtimeDeobEnabled)
-			names = new String[] { "func_149734_b" };
-		else
-			names = new String[] { "randomDisplayTick" };
-
-		final String targetName[] = new String[] { "randomDisplayTick" };
-
-		final ClassReader cr = new ClassReader(classBytes);
-		final ClassNode cn = new ClassNode(ASM5);
-		cr.accept(cn, 0);
-
-		for (final MethodNode m : cn.methods) {
-			if (m.name.equals(names[0])) {
-				logger.debug("Hooking " + names[0]);
-				InsnList list = new InsnList();
-				list.add(new VarInsnNode(ALOAD, 0));
-				list.add(new VarInsnNode(ALOAD, 1));
-				list.add(new VarInsnNode(ILOAD, 2));
-				list.add(new VarInsnNode(ILOAD, 3));
-				list.add(new VarInsnNode(ILOAD, 4));
-				list.add(new VarInsnNode(ALOAD, 5));
-				final String sig = "(Lnet/minecraft/block/Block;Lnet/minecraft/world/World;IIILjava/util/Random;)V";
-				list.add(new MethodInsnNode(INVOKESTATIC,
-						"org/blockartistry/mod/BetterRain/client/fx/BlockLiquidHandler", targetName[0], sig, false));
-				m.instructions.insertBefore(m.instructions.getFirst(), list);
-				break;
 			}
 		}
 
@@ -218,7 +194,7 @@ public class Transformer implements IClassTransformer {
 		return cw.toByteArray();
 	}
 
-	private byte[] transformAddRandomDisplayTick(final byte[] classBytes) {
+	private byte[] transformRandomDisplayTick(final byte[] classBytes, final String handlerClass) {
 
 		final String names[];
 
@@ -233,26 +209,38 @@ public class Transformer implements IClassTransformer {
 		final ClassNode cn = new ClassNode(ASM5);
 		cr.accept(cn, 0);
 
-		// BlockIce does not supply a randomDisplayTick() method, so we
-		// add one. A simple redirect to our handling routine.
-		final String desc = "(Lnet/minecraft/world/World;IIILjava/util/Random;)V";
-		final MethodNode m = new MethodNode(Opcodes.ACC_PUBLIC, names[0], desc, null, null);
-		m.localVariables.clear();
-		m.instructions.clear();
-		m.instructions.add(new VarInsnNode(ALOAD, 0));
-		m.instructions.add(new VarInsnNode(ALOAD, 1));
-		m.instructions.add(new VarInsnNode(ILOAD, 2));
-		m.instructions.add(new VarInsnNode(ILOAD, 3));
-		m.instructions.add(new VarInsnNode(ILOAD, 4));
-		m.instructions.add(new VarInsnNode(ALOAD, 5));
+		InsnList list = new InsnList();
+		list.add(new VarInsnNode(ALOAD, 0));
+		list.add(new VarInsnNode(ALOAD, 1));
+		list.add(new VarInsnNode(ILOAD, 2));
+		list.add(new VarInsnNode(ILOAD, 3));
+		list.add(new VarInsnNode(ILOAD, 4));
+		list.add(new VarInsnNode(ALOAD, 5));
 		final String sig = "(Lnet/minecraft/block/Block;Lnet/minecraft/world/World;IIILjava/util/Random;)V";
-		m.instructions.add(new MethodInsnNode(INVOKESTATIC,
-				"org/blockartistry/mod/BetterRain/client/fx/BlockSoundHandler", targetName[0], sig, false));
-		m.instructions.add(new InsnNode(RETURN));
-		cn.methods.add(m);
+		list.add(new MethodInsnNode(INVOKESTATIC, handlerClass, targetName[0], sig, false));
+
+		MethodNode m = findMethod(cn.methods, names[0]);
+		if (m == null) {
+			list.add(new InsnNode(RETURN));
+			final String desc = "(Lnet/minecraft/world/World;IIILjava/util/Random;)V";
+			m = new MethodNode(Opcodes.ACC_PUBLIC, names[0], desc, null, null);
+			m.localVariables.clear();
+			m.instructions = list;
+			cn.methods.add(m);
+		} else {
+			m.instructions.insertBefore(m.instructions.getFirst(), list);
+		}
 
 		final ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_MAXS);
 		cn.accept(cw);
 		return cw.toByteArray();
+	}
+
+	// Helper methods
+	private static MethodNode findMethod(final List<MethodNode> methods, final String name) {
+		for (final MethodNode node : methods)
+			if (node.name.equals(name))
+				return node;
+		return null;
 	}
 }

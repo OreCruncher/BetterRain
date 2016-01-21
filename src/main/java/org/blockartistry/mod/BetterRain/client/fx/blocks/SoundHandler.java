@@ -22,25 +22,49 @@
  * THE SOFTWARE.
  */
 
-package org.blockartistry.mod.BetterRain.proxy;
+package org.blockartistry.mod.BetterRain.client.fx.blocks;
 
-import org.blockartistry.mod.BetterRain.client.AuroraEffectHandler;
-import org.blockartistry.mod.BetterRain.client.ClientEffectHandler;
-import org.blockartistry.mod.BetterRain.client.FogEffectHandler;
-import org.blockartistry.mod.BetterRain.client.fx.BlockSoundHandler;
-import org.blockartistry.mod.BetterRain.client.fx.PlayerSoundManager;
+import java.util.Random;
 
-import cpw.mods.fml.common.event.FMLInitializationEvent;
+import org.blockartistry.mod.BetterRain.util.XorShiftRandom;
 
-public class ProxyClient extends Proxy {
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.world.World;
 
-	@Override
-	public void init(final FMLInitializationEvent event) {
-		super.init(event);
-		ClientEffectHandler.initialize();
-		AuroraEffectHandler.initialize();
-		FogEffectHandler.initialize();
-		BlockSoundHandler.initialize();
-		PlayerSoundManager.initialize();
+@SideOnly(Side.CLIENT)
+public abstract class SoundHandler {
+
+	protected static final Random random = new XorShiftRandom();
+
+	protected final int chance;
+	protected final String sound;
+	protected final float scale;
+	protected final float volume;
+	protected final float pitch;
+
+	public SoundHandler(final int chance, final String sound, final float scale, final float volume, final float pitch) {
+		this.chance = chance;
+		this.sound = sound;
+		this.scale = scale;
+		this.volume = volume;
+		this.pitch = pitch;
 	}
-}
+
+	public boolean trigger() {
+		return random.nextInt(chance) == 0;
+	}
+	
+	public float getVolume() {
+		return this.volume;
+	}
+	
+	public float getPitch() {
+		return this.pitch;
+	}
+
+	public void doSound(final World world, final int x, final int y, final int z) {
+		world.playSound(x + 0.5D, y + 0.5D, z + 0.5D, this.sound, getVolume() * this.scale, getPitch(), false);
+	}
+};
+
