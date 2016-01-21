@@ -91,5 +91,12 @@
 			"ambient/soulsand/soulsand3"
 		]
 		
+	},
+	"theend":{
+		"category":"ambient",
+		"sounds":[
+			"ambient/end/end"
+		]
+		
 	}
 }
