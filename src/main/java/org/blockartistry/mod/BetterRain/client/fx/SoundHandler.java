@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package org.blockartistry.mod.BetterRain.client.fx.blocks;
+package org.blockartistry.mod.BetterRain.client.fx;
 
 import java.util.Random;
 
@@ -37,13 +37,22 @@ public abstract class SoundHandler {
 
 	protected static final Random random = new XorShiftRandom();
 
-	protected final int chance;
 	protected final String sound;
-	protected final float scale;
-	protected final float volume;
-	protected final float pitch;
+	protected int chance;
+	protected float scale;
+	protected float volume;
+	protected float pitch;
 
-	public SoundHandler(final int chance, final String sound, final float scale, final float volume, final float pitch) {
+	public SoundHandler(final String sound) {
+		this(100, sound);
+	}
+
+	public SoundHandler(final int chance, final String sound) {
+		this(chance, sound, 1.0F, 1.0F, 1.0F);
+	}
+
+	public SoundHandler(final int chance, final String sound, final float scale, final float volume,
+			final float pitch) {
 		this.chance = chance;
 		this.sound = sound;
 		this.scale = scale;
@@ -51,20 +60,43 @@ public abstract class SoundHandler {
 		this.pitch = pitch;
 	}
 
+	public SoundHandler setChance(final int chance) {
+		this.chance = chance;
+		return this;
+	}
+
+	public SoundHandler setVolume(final float volume) {
+		this.volume = volume;
+		return this;
+	}
+
+	public SoundHandler setPitch(final float pitch) {
+		this.pitch = pitch;
+		return this;
+	}
+
+	public SoundHandler setScale(final float scale) {
+		this.scale = scale;
+		return this;
+	}
+
 	public boolean trigger() {
 		return random.nextInt(chance) == 0;
 	}
-	
+
 	public float getVolume() {
 		return this.volume;
 	}
-	
+
 	public float getPitch() {
 		return this.pitch;
 	}
 
+	public float getScale() {
+		return this.scale;
+	}
+
 	public void doSound(final World world, final int x, final int y, final int z) {
-		world.playSound(x + 0.5D, y + 0.5D, z + 0.5D, this.sound, getVolume() * this.scale, getPitch(), false);
+		world.playSound(x + 0.5D, y + 0.5D, z + 0.5D, this.sound, getVolume() * getScale(), getPitch(), false);
 	}
 };
-

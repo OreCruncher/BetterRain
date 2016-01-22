@@ -22,26 +22,16 @@
  * THE SOFTWARE.
  */
 
-package org.blockartistry.mod.BetterRain.client.fx.blocks;
+package org.blockartistry.mod.BetterRain.client.fx;
 
-import org.blockartistry.mod.BetterRain.BetterRain;
-import org.blockartistry.mod.BetterRain.ModOptions;
-
-import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
-public class LilyPadBlockHandler extends SoundHandler {
+public class BasicSoundHandler extends SoundHandler {
 
-	private static final float[] pitch = { 0.8F, 1.0F, 1.0F, 1.2F, 1.2F, 1.2F };
-
-	public LilyPadBlockHandler() {
-		super(ModOptions.getFrogCroakSoundChance(), BetterRain.MOD_ID + ":frog", ModOptions.getFrogCroakScaleFactor(),
-				0.4F, 1.0F);
+	public BasicSoundHandler(final String sound) {
+		super(sound);
 	}
 
-	@Override
-	public float getPitch() {
-		return pitch[random.nextInt(pitch.length)];
-	}
 }
