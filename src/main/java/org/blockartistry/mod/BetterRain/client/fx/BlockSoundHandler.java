@@ -28,12 +28,9 @@ import java.util.IdentityHashMap;
 import java.util.Map;
 import java.util.Random;
 
+import org.blockartistry.mod.BetterRain.BetterRain;
 import org.blockartistry.mod.BetterRain.ModOptions;
-import org.blockartistry.mod.BetterRain.client.fx.blocks.IceBlockHandler;
-import org.blockartistry.mod.BetterRain.client.fx.blocks.LilyPadBlockHandler;
-import org.blockartistry.mod.BetterRain.client.fx.blocks.RedstoneOreBlockHandler;
-import org.blockartistry.mod.BetterRain.client.fx.blocks.SoulSandBlockHandler;
-import org.blockartistry.mod.BetterRain.client.fx.blocks.SoundHandler;
+
 import cpw.mods.fml.relauncher.SideOnly;
 import cpw.mods.fml.relauncher.Side;
 import net.minecraft.block.Block;
@@ -52,7 +49,10 @@ public class BlockSoundHandler {
 
 	public static void initialize() {
 		if (ModOptions.getEnableIceCrackSound()) {
-			final SoundHandler handler = new IceBlockHandler();
+			final SoundHandler handler = new BasicSoundHandler(BetterRain.MOD_ID + ":ice");
+			handler.setChance(ModOptions.getIceCrackSoundChance());
+			handler.setScale(ModOptions.getIceCrackScaleFactor());
+			handler.setVolume(0.3F);
 			handlers.put(BlockIce.class, handler);
 			handlers.put(BlockPackedIce.class, handler);
 
@@ -62,15 +62,27 @@ public class BlockSoundHandler {
 		}
 
 		if (ModOptions.getEnableFrogCroakSound()) {
-			handlers.put(BlockLilyPad.class, new LilyPadBlockHandler());
+			final SoundHandler handler = new VariablePitchSoundHandler(BetterRain.MOD_ID + ":frog");
+			handler.setChance(ModOptions.getFrogCroakSoundChance());
+			handler.setScale(ModOptions.getFrogCroakScaleFactor());
+			handler.setVolume(0.4F);
+			handlers.put(BlockLilyPad.class, handler);
 		}
 
 		if (ModOptions.getEnableRedstoneOreSound()) {
-			handlers.put(BlockRedstoneOre.class, new RedstoneOreBlockHandler());
+			final SoundHandler handler = new BasicSoundHandler("minecraft:random.fizz");
+			handler.setChance(ModOptions.getRedstoneOreSoundChance());
+			handler.setScale(ModOptions.getRedstoneOreScaleFactor());
+			handler.setVolume(0.3F);
+			handlers.put(BlockRedstoneOre.class, handler);
 		}
-		
-		if(ModOptions.getEnableSoulSandSound()) {
-			handlers.put(BlockSoulSand.class, new SoulSandBlockHandler());
+
+		if (ModOptions.getEnableSoulSandSound()) {
+			final SoundHandler handler = new VariablePitchSoundHandler(BetterRain.MOD_ID + ":soulsand");
+			handler.setChance(ModOptions.getSoulSandSoundChance());
+			handler.setScale(ModOptions.getSoulSandScaleFactor());
+			handler.setVolume(0.2F);
+			handlers.put(BlockSoulSand.class, handler);
 			Blocks.soul_sand.setTickRandomly(true);
 		}
 	}

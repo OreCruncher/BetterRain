@@ -22,19 +22,23 @@
  * THE SOFTWARE.
  */
 
-package org.blockartistry.mod.BetterRain.client.fx.blocks;
+package org.blockartistry.mod.BetterRain.client.fx;
 
-import org.blockartistry.mod.BetterRain.ModOptions;
-
-import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import cpw.mods.fml.relauncher.Side;
 
 @SideOnly(Side.CLIENT)
-public class RedstoneOreBlockHandler extends SoundHandler {
+public class VariablePitchSoundHandler extends SoundHandler {
 
-	public RedstoneOreBlockHandler() {
-		super(ModOptions.getRedstoneOreSoundChance(), "minecraft:random.fizz", ModOptions.getRedstoneOreScaleFactor(),
-				0.3F, 1.0F);
+	private static final float[] pitch = { 0.8F, 1.0F, 1.0F, 1.2F, 1.2F, 1.2F };
+
+	public VariablePitchSoundHandler(final String sound) {
+		super(sound);
+	}
+
+	@Override
+	public float getPitch() {
+		return pitch[random.nextInt(pitch.length)];
 	}
 
 }
