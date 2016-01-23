@@ -147,8 +147,8 @@ public final class VersionCheck implements Runnable {
 	private VersionCheck() {
 	}
 
-	private static final String CURSE_PROJECT_NAME = "238891-better-rain";
-	private static final String MOD_NAME_TEMPLATE = "BetterRain-1.8.9-[].jar";
+	private static final String CURSE_PROJECT_NAME = "238891";
+	private static final String MOD_NAME_TEMPLATE = "DynamicSurroundings-1.8.9-[].jar";
 
 	public static void register() {
 
@@ -171,7 +171,7 @@ public final class VersionCheck implements Runnable {
 
 		if (event.player instanceof EntityPlayer) {
 			if (status == UpdateStatus.OUTDATED) {
-				final String msg = StatCollector.translateToLocalFormatted("msg.NewVersionAvailable.betterrain",
+				final String msg = StatCollector.translateToLocalFormatted("msg.NewVersionAvailable.dsurround",
 						BetterRain.MOD_NAME, currentVersion, CURSE_PROJECT_NAME);
 				final IChatComponent component = IChatComponent.Serializer.jsonToComponent(msg);
 				event.player.addChatMessage(component);
@@ -253,7 +253,7 @@ public final class VersionCheck implements Runnable {
 			ModLog.warn("Version check failed");
 			break;
 		case CURRENT:
-			ModLog.info("BetterRain version [%s] is the same or newer than the current version [%s]", modVersion,
+			ModLog.info("Dynamic Surroundings version [%s] is the same or newer than the current version [%s]", modVersion,
 					currentVersion);
 			break;
 		case OUTDATED:

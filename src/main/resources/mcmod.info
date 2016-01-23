@@ -1,8 +1,8 @@
 [
 {
   "modid": "betterrain",
-  "name": "BetterRain",
-  "description": "Improves the Minecraft precipitation experience",
+  "name": "Dynamic Surroundings",
+  "description": "Improving Minecraft's sight and sound experience",
   "version": "$version",
   "mcversion": "$mcversion",
   "url": "https://github.com/OreCruncher/BetterRain/wiki",
