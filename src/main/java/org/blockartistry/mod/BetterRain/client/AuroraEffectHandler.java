@@ -25,11 +25,6 @@
 package org.blockartistry.mod.BetterRain.client;
 
 import cpw.mods.fml.client.FMLClientHandler;
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.eventhandler.EventPriority;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.gameevent.TickEvent;
-import cpw.mods.fml.common.gameevent.TickEvent.Phase;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import java.util.HashSet;
@@ -42,22 +37,21 @@ import org.blockartistry.mod.BetterRain.data.AuroraData;
 import org.blockartistry.mod.BetterRain.util.PlayerUtils;
 import org.blockartistry.mod.BetterRain.util.WorldUtils;
 import net.minecraft.client.entity.EntityClientPlayerMP;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
-import net.minecraftforge.common.MinecraftForge;
 
 @SideOnly(Side.CLIENT)
-public final class AuroraEffectHandler {
+public final class AuroraEffectHandler implements IClientEffectHandler {
 
 	// Aurora information
-	private static final boolean AURORA_ENABLE = ModOptions.getAuroraEnable();
 	private static int auroraDimension = 0;
 	private static final Set<AuroraData> auroras = new HashSet<AuroraData>();
 	public static Aurora currentAurora;
 
 	public static void addAurora(final AuroraData data) {
-		if (!AURORA_ENABLE)
+		if(!ModOptions.getAuroraEnable())
 			return;
-
+		
 		if (auroraDimension != data.dimensionId || PlayerUtils.getClientPlayerDimension() != data.dimensionId) {
 			auroras.clear();
 			currentAurora = null;
@@ -66,16 +60,10 @@ public final class AuroraEffectHandler {
 		auroras.add(data);
 	}
 
-	private AuroraEffectHandler() {
+	public AuroraEffectHandler() {
 	}
 
-	public static void initialize() {
-		final AuroraEffectHandler handler = new AuroraEffectHandler();
-		MinecraftForge.EVENT_BUS.register(handler);
-		FMLCommonHandler.instance().bus().register(handler);
-	}
-
-	private Aurora getClosestAurora(final TickEvent.ClientTickEvent event) {
+	private Aurora getClosestAurora() {
 		if (auroraDimension != PlayerUtils.getClientPlayerDimension()) {
 			auroras.clear();
 		}
@@ -112,26 +100,20 @@ public final class AuroraEffectHandler {
 		return currentAurora;
 	}
 
-	/*
-	 * Need to get called every tick to process the dust fade timer as well as
-	 * aurora processing.
-	 */
-	@SubscribeEvent(priority = EventPriority.LOWEST)
-	public void clientTick(final TickEvent.ClientTickEvent event) {
-		if(!AURORA_ENABLE || event.phase != Phase.END)
-			return;
-		
-		final World world = FMLClientHandler.instance().getClient().theWorld;
-		if (world == null)
-			return;
+	@Override
+	public boolean hasEvents() {
+		return false;
+	}
 
+	@Override
+	public void process(final World world, final EntityPlayer player) {
 		if (auroras.size() > 0) {
 			if (WorldUtils.isDaytime(world)) {
 				auroras.clear();
 				currentAurora = null;
 			} else {
-				final Aurora aurora = getClosestAurora(event);
-				if(aurora != null) {
+				final Aurora aurora = getClosestAurora();
+				if (aurora != null) {
 					aurora.update();
 					if (aurora.isAlive() && WorldUtils.isSunrise(world)) {
 						ModLog.info("Aurora fade...");
