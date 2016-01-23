@@ -24,15 +24,24 @@
 
 package org.blockartistry.mod.BetterRain.client;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.blockartistry.mod.BetterRain.ModOptions;
 import org.blockartistry.mod.BetterRain.client.rain.RainProperties;
 
 import net.minecraft.client.audio.ISound;
 import net.minecraft.client.audio.PositionedSoundRecord;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.World;
 import net.minecraftforge.client.event.sound.PlaySoundEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.client.FMLClientHandler;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import net.minecraftforge.fml.relauncher.Side;
 
 @SideOnly(Side.CLIENT)
@@ -40,12 +49,31 @@ public class ClientEffectHandler {
 	
 	private static final boolean ALWAYS_OVERRIDE_SOUND = ModOptions.getAlwaysOverrideSound();
 
+	private static final List<IClientEffectHandler> effectHandlers = new ArrayList<IClientEffectHandler>();
+	
+	public static void register(final IClientEffectHandler handler) {
+		effectHandlers.add(handler);
+		if(handler.hasEvents()) {
+			MinecraftForge.EVENT_BUS.register(handler);
+		}
+	}
+	
+
 	private ClientEffectHandler() {
 	}
 
 	public static void initialize() {
 		final ClientEffectHandler handler = new ClientEffectHandler();
 		MinecraftForge.EVENT_BUS.register(handler);
+		
+		register(new FogEffectHandler());
+		
+		if(ModOptions.getAuroraEnable())
+			register(new AuroraEffectHandler());
+		
+		if(ModOptions.getEnableBiomeSounds())
+			register(new PlayerSoundEffectHandler());
+
 	}
 
 	/*
@@ -69,4 +97,16 @@ public class ClientEffectHandler {
 		}
 	}
 
+	@SubscribeEvent(priority = EventPriority.LOWEST)
+	public void clientTick(final TickEvent.ClientTickEvent event) {
+		if(event.phase != Phase.START)
+			return;
+		final World world = FMLClientHandler.instance().getClient().theWorld;
+		if (world == null)
+			return;
+		final EntityPlayer player = FMLClientHandler.instance().getClient().thePlayer;
+		for(final IClientEffectHandler handler: effectHandlers)
+			handler.process(world, player);
+
+	}
 }

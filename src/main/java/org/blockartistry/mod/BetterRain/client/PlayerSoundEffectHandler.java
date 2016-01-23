@@ -22,29 +22,26 @@
  * THE SOFTWARE.
  */
 
-package org.blockartistry.mod.BetterRain.client.fx;
+package org.blockartistry.mod.BetterRain.client;
 
-import org.blockartistry.mod.BetterRain.ModOptions;
 import org.blockartistry.mod.BetterRain.data.BiomeRegistry;
 import org.blockartistry.mod.BetterRain.data.BiomeRegistry.BiomeSound;
 import org.blockartistry.mod.BetterRain.util.PlayerUtils;
 import org.blockartistry.mod.BetterRain.util.WorldUtils;
 
+import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.relauncher.Side;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.MovingSound;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.eventhandler.EventPriority;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 
-public class PlayerSoundManager {
+@SideOnly(Side.CLIENT)
+public class PlayerSoundEffectHandler implements IClientEffectHandler {
 
-	private static final int INSIDE_Y_ADJUST = 4;
+	private static final int INSIDE_Y_ADJUST = 3;
 	private static final float VOLUME_INCREMENT = 0.02F;
 
 	private static final String CONDITION_TOKEN_RAINING = "raining";
@@ -151,22 +148,15 @@ public class PlayerSoundManager {
 	// Current active background sound
 	private static PlayerSound currentSound = null;
 
-	public static void initialize() {
-		if (ModOptions.getEnableBiomeSounds()) {
-			final PlayerSoundManager manager = new PlayerSoundManager();
-			MinecraftForge.EVENT_BUS.register(manager);
-		}
+	@Override
+	public boolean hasEvents() {
+		return false;
 	}
-
-	@SubscribeEvent(priority = EventPriority.LOWEST)
-	public void clientTick(final TickEvent.ClientTickEvent event) {
-		final Minecraft mc = Minecraft.getMinecraft();
-		final World world = mc.theWorld;
-		if (world == null || event.phase != Phase.START)
-			return;
-
+	
+	@Override
+	public void process(final World world, final EntityPlayer player) {
 		// Dead player or they are covered with blocks
-		if (mc.thePlayer.isDead || PlayerUtils.isInside(mc.thePlayer, INSIDE_Y_ADJUST)) {
+		if (player.isDead || PlayerUtils.isInside(player, INSIDE_Y_ADJUST)) {
 			if (currentSound != null) {
 				currentSound.fadeAway();
 				currentSound = null;
@@ -175,7 +165,7 @@ public class PlayerSoundManager {
 		}
 
 		final String conditions = getConditions(world);
-		final BiomeGenBase playerBiome = PlayerUtils.getPlayerBiome(mc.thePlayer);
+		final BiomeGenBase playerBiome = PlayerUtils.getPlayerBiome(player);
 		final BiomeSound sound = BiomeRegistry.getSound(playerBiome, conditions);
 
 		if (currentSound != null) {
@@ -186,8 +176,8 @@ public class PlayerSoundManager {
 		}
 
 		if (currentSound == null && sound != null) {
-			currentSound = new PlayerSound(mc.thePlayer, sound);
-			mc.getSoundHandler().playSound(currentSound);
+			currentSound = new PlayerSound(player, sound);
+			Minecraft.getMinecraft().getSoundHandler().playSound(currentSound);
 		}
 	}
 }

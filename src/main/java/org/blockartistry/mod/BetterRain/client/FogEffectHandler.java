@@ -37,23 +37,20 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ActiveRenderInfo;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.client.event.EntityViewRenderEvent;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.eventhandler.Event.Result;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import net.minecraftforge.fml.relauncher.Side;
 
 @SideOnly(Side.CLIENT)
-public class FogEffectHandler {
+public class FogEffectHandler implements IClientEffectHandler {
 
 	private static final boolean ENABLE_ELEVATION_HAZE = ModOptions.getEnableElevationHaze();
 	private static final boolean ENABLE_DESERT_FOG = ModOptions.getAllowDesertFog();
@@ -76,25 +73,20 @@ public class FogEffectHandler {
 	private static Vec3 fogColorTransitionAdjustments = null;
 	private static float brightnessFactor = 1.0F;
 
-	private FogEffectHandler() {
+	public FogEffectHandler() {
 	}
 
-	public static void initialize() {
-		final FogEffectHandler handler = new FogEffectHandler();
-		MinecraftForge.EVENT_BUS.register(handler);
+	@Override
+	public boolean hasEvents() {
+		return true;
 	}
 
-	/*
-	 * Need to get called every tick to calculate the effect of fog.
-	 */
-	@SubscribeEvent(priority = EventPriority.LOWEST)
-	public void clientTick(final TickEvent.ClientTickEvent event) {
-		final World world = FMLClientHandler.instance().getClient().theWorld;
-		if (world == null || !WorldUtils.hasSky(world) || event.phase != Phase.START)
+	@Override
+	public void process(final World world, final EntityPlayer player) {
+		if (!WorldUtils.hasSky(world))
 			return;
 
-		final Minecraft mc = Minecraft.getMinecraft();
-		final BiomeGenBase biome = PlayerUtils.getPlayerBiome(mc.thePlayer);
+		final BiomeGenBase biome = PlayerUtils.getPlayerBiome(player);
 
 		if (currentFogColor == null)
 			currentFogColor = new Color(world.getFogColor(1.0F));
@@ -107,7 +99,7 @@ public class FogEffectHandler {
 		float heightFog = 0.0F;
 
 		final int cutOff = WorldUtils.getSeaLevel(world) - FOG_Y_CUTOFF;
-		final int posY = MathHelper.floor_double(mc.thePlayer.posY + mc.thePlayer.getEyeHeight());
+		final int posY = MathHelper.floor_double(player.posY + player.getEyeHeight());
 
 		// If the player Y is higher than the cutoff Y then assess desert
 		// and elevation haze. Don't want to do needless calculations if they
@@ -117,8 +109,8 @@ public class FogEffectHandler {
 				biomeFog = BiomeRegistry.getFogDensity(biome);
 
 			if (ENABLE_DESERT_FOG && BiomeRegistry.hasDust(biome)) {
-				final int posX = MathHelper.floor_double(mc.thePlayer.posX);
-				final int posZ = MathHelper.floor_double(mc.thePlayer.posZ);
+				final int posX = MathHelper.floor_double(player.posX);
+				final int posZ = MathHelper.floor_double(player.posZ);
 
 				if (!Minecraft.getMinecraft().theWorld.provider.doesXZShowFog(posX, posZ))
 					dustFog = RainProperties.getFogDensity() * DESERT_DUST_FACTOR;

@@ -22,18 +22,18 @@
  * THE SOFTWARE.
  */
 
-package org.blockartistry.mod.BetterRain.proxy;
+package org.blockartistry.mod.BetterRain.client;
 
-import org.blockartistry.mod.BetterRain.client.ClientEffectHandler;
-import org.blockartistry.mod.BetterRain.client.fx.BlockSoundHandler;
-import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.relauncher.Side;
 
-public class ProxyClient extends Proxy {
+@SideOnly(Side.CLIENT)
+public interface IClientEffectHandler {
+	
+	void process(final World world, final EntityPlayer player);
+	
+	boolean hasEvents();
 
-	@Override
-	public void init(final FMLInitializationEvent event) {
-		super.init(event);
-		ClientEffectHandler.initialize();
-		BlockSoundHandler.initialize();
-	}
 }
