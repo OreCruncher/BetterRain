@@ -42,7 +42,7 @@ import cpw.mods.fml.common.event.FMLServerStartingEvent;
 @Mod(modid = BetterRain.MOD_ID, useMetadata = true, dependencies = BetterRain.DEPENDENCIES, version = BetterRain.VERSION)
 public class BetterRain {
 	public static final String MOD_ID = "betterrain";
-	public static final String MOD_NAME = "BetterRain";
+	public static final String MOD_NAME = "Dynamic Surroundings";
 	public static final String VERSION = "@VERSION@";
 	public static final String DEPENDENCIES = "";
 
