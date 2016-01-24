@@ -24,32 +24,17 @@
 
 package org.blockartistry.mod.DynSurround.client.fx;
 
-import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraft.client.particle.EntityBubbleFX;
+import cpw.mods.fml.relauncher.Side;
 import net.minecraft.client.particle.EntityFX;
 import net.minecraft.world.World;
 
 /*
- * A special hidden entity that generates vertically moving buble entity
- * particles while it is alive.  These spawn in water blocks at are
- * above another solid block.  The EntityBubbleJetFX does not render
- * - it is just a way to maintain state across several ticks while it
- * spews bubble particles.
+ * Lifted from Minecraft/Forge 1.8.9
  */
 @SideOnly(Side.CLIENT)
-public class EntityBubbleJetFX implements IParticleFactory {
-
-	public static final IParticleFactory factory = new EntityBubbleJetFX();
-
-	protected EntityBubbleJetFX() {
-	}
-
-	@Override
-	public EntityFX getEntityFX(int jetStrength, World world, double x, double y, double z, double sX, double sY,
-			double sZ, int... notUsed) {
-		final EntityFX bubble = new EntityBubbleFX(world, x, y, z, 0.0D, 0.5D + jetStrength / 10.0D, 0.0D);
-		return bubble;
-	}
-
+public interface IParticleFactory {
+	EntityFX getEntityFX(final int particleID, final World worldIn, final double xCoordIn, final double yCoordIn,
+			final double zCoordIn, final double xSpeedIn, final double ySpeedIn, final double zSpeedIn,
+			final int... p_178902_15_);
 }

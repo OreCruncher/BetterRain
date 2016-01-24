@@ -29,7 +29,6 @@ import org.blockartistry.mod.DynSurround.util.XorShiftRandom;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.particle.EffectRenderer;
 import net.minecraft.client.particle.EntityFX;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.world.World;
@@ -40,30 +39,28 @@ import net.minecraft.world.World;
  * serves as a particle factory.
  */
 @SideOnly(Side.CLIENT)
-public abstract class EntityJetFX extends EntityFX {
+public class EntityJetFX extends EntityFX {
 
 	protected final int jetStrength;
+	protected final IParticleFactory factory;
 
-	protected EntityJetFX(final int strength, final World world, final double x, final double y, final double z) {
+	public EntityJetFX(final int strength, final IParticleFactory factory, final World world, final double x,
+			final double y, final double z) {
 		super(world, x, y, z);
 
 		this.setAlphaF(0.0F);
 		this.jetStrength = strength;
 		this.particleMaxAge = (XorShiftRandom.shared.nextInt(strength) + 2) * 20;
+		this.factory = factory;
 	}
 
 	/*
 	 * Nothing to render so optimize out
 	 */
 	@Override
-	public void renderParticle(final Tessellator tess, final float x, final float y, final float z, final float dX,
-			final float dY, final float dZ) {
+	public void renderParticle(Tessellator p_70539_1_, float p_70539_2_, float p_70539_3_, float p_70539_4_,
+			float p_70539_5_, float p_70539_6_, float p_70539_7_) {
 	}
-
-	/*
-	 * Override in derived class to provide jet particle spawning.
-	 */
-	protected abstract EntityFX spawnJetParticle(final World world, final EffectRenderer renderer);
 
 	/*
 	 * During update see if a particle needs to be spawned so that it can rise
@@ -74,13 +71,14 @@ public abstract class EntityJetFX extends EntityFX {
 
 		// Check to see if a particle needs to be generated
 		if (this.particleAge % 3 == 0) {
-			final Minecraft minecraft = Minecraft.getMinecraft();
-			spawnJetParticle(minecraft.theWorld, minecraft.effectRenderer);
+			final Minecraft mc = Minecraft.getMinecraft();
+			final EntityFX effect = this.factory.getEntityFX(this.jetStrength, mc.theWorld, this.posX, this.posY,
+					this.posZ, 0, 0, 0);
+			mc.effectRenderer.addEffect(effect);
 		}
 
 		if (this.particleAge++ >= this.particleMaxAge) {
 			this.setDead();
 		}
 	}
-
 }

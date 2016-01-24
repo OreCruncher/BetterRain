@@ -75,7 +75,7 @@ public class BlockLiquidHandler {
 				// strength. Strength affects life span, size of flame
 				// particle, and the sound volume.
 				final int lavaBlocks = countBlocks(world, x, y, z, theThis, -1);
-				effect = new EntityFireJetFX(lavaBlocks, world, x + 0.5D, y + 1.1D, z + 0.5D);
+				effect = new EntityJetFX(lavaBlocks, EntityFireJetFX.factory, world, x + 0.5D, y + 1.1D, z + 0.5D);
 			}
 		} else if (ENABLE_WATER_BUBBLES && theThis == Blocks.water) {
 			if (RANDOM.nextInt(WATERBUBBLE_SPAWN_CHANCE) == 0 && world.getBlock(x, y - 1, z).getMaterial().isSolid()) {
@@ -83,7 +83,7 @@ public class BlockLiquidHandler {
 				// the jet strength. Strength affects life span of the jet
 				// as well as the speed at which the bubbles rise.
 				final int waterBlocks = countBlocks(world, x, y, z, theThis, 1);
-				effect = new EntityBubbleJetFX(waterBlocks, world, x + 0.5D, y + 0.1D, z + 0.5D);
+				effect = new EntityJetFX(waterBlocks, EntityBubbleJetFX.factory, world, x + 0.5D, y + 0.1D, z + 0.5D);
 			}
 		}
 
