@@ -1,6 +1,6 @@
 [
 {
-  "modid": "betterrain",
+  "modid": "dsurround",
   "name": "Dynamic Surroundings",
   "description": "Improving Minecraft's sight and sound experience",
   "version": "$version",
@@ -9,7 +9,7 @@
   "updateUrl": "",
   "authorList": ["OreCruncher"],
   "credits": "Wirsbo for the original BetterRain mod; MrRube for Aurora Rubealis 1.4.7 mod",
-  "logoFile": "assets/betterrain/textures/logo.png",
+  "logoFile": "assets/dsurround/textures/logo.png",
   "screenshots": [],
   "dependencies": []
 }
