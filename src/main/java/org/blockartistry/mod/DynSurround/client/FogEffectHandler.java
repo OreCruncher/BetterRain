@@ -83,9 +83,6 @@ public class FogEffectHandler implements IClientEffectHandler {
 
 	@Override
 	public void process(final World world, final EntityPlayer player) {
-		if (!WorldUtils.hasSky(world))
-			return;
-
 		final BiomeGenBase biome = PlayerUtils.getPlayerBiome(player);
 
 		if (currentFogColor == null)
@@ -116,7 +113,7 @@ public class FogEffectHandler implements IClientEffectHandler {
 					dustFog = RainProperties.getFogDensity() * DESERT_DUST_FACTOR;
 			}
 
-			if (ENABLE_ELEVATION_HAZE) {
+			if (ENABLE_ELEVATION_HAZE && WorldUtils.hasSky(world)) {
 				final float factor = 1.0F + world.getRainStrength(1.0F);
 				final float skyHeight = WorldUtils.getSkyHeight(world) / factor;
 				final float groundLevel = WorldUtils.getSeaLevel(world);
