@@ -46,18 +46,17 @@ import net.minecraftforge.fml.relauncher.Side;
 
 @SideOnly(Side.CLIENT)
 public class ClientEffectHandler {
-	
+
 	private static final boolean ALWAYS_OVERRIDE_SOUND = ModOptions.getAlwaysOverrideSound();
 
 	private static final List<IClientEffectHandler> effectHandlers = new ArrayList<IClientEffectHandler>();
-	
+
 	public static void register(final IClientEffectHandler handler) {
 		effectHandlers.add(handler);
-		if(handler.hasEvents()) {
+		if (handler.hasEvents()) {
 			MinecraftForge.EVENT_BUS.register(handler);
 		}
 	}
-	
 
 	private ClientEffectHandler() {
 	}
@@ -65,15 +64,17 @@ public class ClientEffectHandler {
 	public static void initialize() {
 		final ClientEffectHandler handler = new ClientEffectHandler();
 		MinecraftForge.EVENT_BUS.register(handler);
-		
+
 		register(new FogEffectHandler());
-		
-		if(ModOptions.getAuroraEnable())
+
+		if (ModOptions.getAuroraEnable())
 			register(new AuroraEffectHandler());
-		
-		if(ModOptions.getEnableBiomeSounds())
+
+		if (ModOptions.getEnableBiomeSounds())
 			register(new PlayerSoundEffectHandler());
 
+		if (ModOptions.getSuppressPotionParticleEffect())
+			register(new PotionParticleScrubHandler());
 	}
 
 	/*
@@ -99,13 +100,13 @@ public class ClientEffectHandler {
 
 	@SubscribeEvent(priority = EventPriority.LOWEST)
 	public void clientTick(final TickEvent.ClientTickEvent event) {
-		if(event.phase != Phase.START)
+		if (event.phase != Phase.START)
 			return;
 		final World world = FMLClientHandler.instance().getClient().theWorld;
 		if (world == null)
 			return;
 		final EntityPlayer player = FMLClientHandler.instance().getClient().thePlayer;
-		for(final IClientEffectHandler handler: effectHandlers)
+		for (final IClientEffectHandler handler : effectHandlers)
 			handler.process(world, player);
 
 	}
