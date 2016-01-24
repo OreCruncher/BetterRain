@@ -124,7 +124,7 @@ processResources
 jar {
     
     manifest {
-        	attributes('FMLCorePlugin': 'org.blockartistry.mod.BetterRain.asm.TransformLoader', 'FMLCorePluginContainsFMLMod': 'true', 'FMLAT': 'betterrain_at.cfg')
+        	attributes('FMLCorePlugin': 'org.blockartistry.mod.DynSurround.asm.TransformLoader', 'FMLCorePluginContainsFMLMod': 'true', 'FMLAT': 'dsurround_at.cfg')
     }
 }
 
@@ -141,7 +141,7 @@ task deobfJar(type: Jar) {
     classifier = 'dev'
     
     manifest {
-        	attributes('FMLCorePlugin': 'org.blockartistry.mod.BetterRain.asm.TransformLoader', 'FMLCorePluginContainsFMLMod': 'true', 'FMLAT': 'betterrain_at.cfg')
+        	attributes('FMLCorePlugin': 'org.blockartistry.mod.DynSurround.asm.TransformLoader', 'FMLCorePluginContainsFMLMod': 'true', 'FMLAT': 'dsurround_at.cfg')
     }
 }
 
