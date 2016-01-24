@@ -47,7 +47,7 @@
 			
 		},
 		{
-			"biomeName":"(?i)(?!.*dead.*|.*flower.*|.*fungi.*|.*frost.*|.*snow.*)(.*forest.*|.*cherry.*|.*orchard.*|.*woods.*|wetland|woodland|thicket)",
+			"biomeName":"(?i)(?!.*dead.*|.*flower.*|.*fungi.*|.*frost.*|.*snow.*)(.*forest.*|.*cherry.*|.*orchard.*|.*wood.*|.*wetland.*|thicket)",
 			"sounds":[
 				{
 					"sound":"dsurround:forest",
