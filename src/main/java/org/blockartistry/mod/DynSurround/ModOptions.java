@@ -133,6 +133,10 @@ public final class ModOptions {
 	protected static int soulSandSoundChance = 8000;
 	protected static float soulSandScaleFactor = 1.0F;
 
+	protected static final String CATEGORY_PLAYER = "player";
+	protected static final String CONFIG_SUPPRESS_POTION_PARTICLES = "Suppress Potion Particles";
+	protected static boolean suppressPotionParticles = false;
+
 	public static void load(final Configuration config) {
 
 		// CATEGORY: Logging
@@ -178,6 +182,11 @@ public final class ModOptions {
 		comment = "Elevation override for dimensions if needed (dimension,sea level,sky height)";
 		elevationOverrides = config.getStringList(CONFIG_ELEVATION_OVERRIDES, CATEGORY_GENERAL, elevationOverrides,
 				comment);
+
+		// CATEGORY: Player
+		comment = "Suppress player's potion particles from rendering";
+		suppressPotionParticles = config.getBoolean(CONFIG_SUPPRESS_POTION_PARTICLES, CATEGORY_PLAYER,
+				suppressPotionParticles, comment);
 
 		// CATEGORY: Aurora
 		comment = "Whether to enable Aurora processing on server/client";
@@ -434,5 +443,9 @@ public final class ModOptions {
 
 	public static float getSoulSandScaleFactor() {
 		return soulSandScaleFactor;
+	}
+	
+	public static boolean getSuppressPotionParticleEffect() {
+		return suppressPotionParticles;
 	}
 }

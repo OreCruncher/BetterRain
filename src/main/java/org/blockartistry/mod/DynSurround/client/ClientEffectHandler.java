@@ -75,6 +75,9 @@ public class ClientEffectHandler {
 
 		if (ModOptions.getEnableBiomeSounds())
 			register(new PlayerSoundEffectHandler());
+
+		if (ModOptions.getSuppressPotionParticleEffect())
+			register(new PotionParticleScrubHandler());
 	}
 
 	/*
