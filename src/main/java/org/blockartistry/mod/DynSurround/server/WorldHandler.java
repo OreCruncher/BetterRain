@@ -29,7 +29,6 @@ import java.util.Random;
 import org.blockartistry.mod.DynSurround.ModLog;
 import org.blockartistry.mod.DynSurround.data.DimensionEffectData;
 import org.blockartistry.mod.DynSurround.data.DimensionEffectDataFile;
-import org.blockartistry.mod.DynSurround.util.WorldUtils;
 import org.blockartistry.mod.DynSurround.util.XorShiftRandom;
 
 import net.minecraft.util.MathHelper;
@@ -47,7 +46,7 @@ public class WorldHandler {
 
 	public static void updateWeatherBody(final World world) {
 
-		if (world.isRemote || !WorldUtils.hasSky(world))
+		if (world.isRemote)
 			return;
 
 		final int dimensionId = world.provider.dimensionId;
