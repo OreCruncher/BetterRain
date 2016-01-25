@@ -25,15 +25,12 @@
 package org.blockartistry.mod.DynSurround.data;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.List;
 
+import org.blockartistry.mod.DynSurround.util.JsonUtils;
+
 import com.google.common.collect.ImmutableList;
-import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
-import com.google.gson.stream.JsonReader;
 
 final class BiomeConfig {
 
@@ -73,62 +70,11 @@ final class BiomeConfig {
 
 	public List<Entry> entries = ImmutableList.of();
 
-	@SuppressWarnings("unused")
 	public static BiomeConfig load(final File file) throws Exception {
-		InputStream stream = null;
-
-		try {
-			stream = new FileInputStream(file);
-			if (stream != null)
-				return load(stream);
-		} finally {
-			try {
-				if (stream != null)
-					stream.close();
-			} catch (final Throwable t) {
-				;
-			}
-		}
-		return new BiomeConfig();
+		return JsonUtils.load(file, BiomeConfig.class);
 	}
 
-	public static BiomeConfig load(final String modId) {
-		final String fileName = modId.replaceAll("[^a-zA-Z0-9.-]", "_");
-		InputStream stream = null;
-
-		try {
-			stream = BiomeConfig.class.getResourceAsStream("/assets/dsurround/data/" + fileName + ".json");
-			if (stream != null)
-				return load(stream);
-		} finally {
-			try {
-				if (stream != null)
-					stream.close();
-			} catch (final Throwable t) {
-				;
-			}
-		}
-		return new BiomeConfig();
+	public static BiomeConfig load(final String modId) throws Exception {
+		return JsonUtils.load(modId, BiomeConfig.class);
 	}
-
-	protected static BiomeConfig load(final InputStream stream) {
-		InputStreamReader reader = null;
-		JsonReader reader2 = null;
-
-		try {
-			reader = new InputStreamReader(stream);
-			reader2 = new JsonReader(reader);
-			return (BiomeConfig) new Gson().fromJson(reader, BiomeConfig.class);
-		} finally {
-			try {
-				if (reader2 != null)
-					reader2.close();
-				if (reader != null)
-					reader.close();
-			} catch (final Exception ex) {
-				;
-			}
-		}
-	}
-
 }

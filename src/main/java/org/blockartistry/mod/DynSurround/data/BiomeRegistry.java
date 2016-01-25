@@ -199,7 +199,11 @@ public final class BiomeRegistry {
 	}
 
 	private static void processConfig() {
-		process(BiomeConfig.load(Module.MOD_ID));
+		try {
+			process(BiomeConfig.load(Module.MOD_ID));
+		} catch (final Exception e) {
+			e.printStackTrace();
+		}
 
 		final String[] configFiles = ModOptions.getBiomeConfigFiles();
 		for (final String file : configFiles) {

@@ -25,6 +25,8 @@ package org.blockartistry.mod.DynSurround.util;
 
 import javax.annotation.Nonnull;
 
+import org.blockartistry.mod.DynSurround.data.world.WorldData;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.MathHelper;
@@ -51,7 +53,7 @@ public final class PlayerUtils {
 	}
 
 	public static boolean isUnderGround(final EntityPlayer player, final int offset) {
-		return MathHelper.floor_double(player.posY + offset) < WorldUtils.getSeaLevel(player.worldObj);
+		return MathHelper.floor_double(player.posY + offset) < WorldData.getSeaLevel(player.worldObj);
 	}
 
 	private static final int RANGE = 3;

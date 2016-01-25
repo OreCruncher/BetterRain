@@ -39,8 +39,8 @@ import net.minecraftforge.fml.relauncher.Side;
 import org.blockartistry.mod.DynSurround.ModOptions;
 import org.blockartistry.mod.DynSurround.client.AuroraEffectHandler;
 import org.blockartistry.mod.DynSurround.client.IAtmosRenderer;
+import org.blockartistry.mod.DynSurround.data.world.WorldData;
 import org.blockartistry.mod.DynSurround.util.Color;
-import org.blockartistry.mod.DynSurround.util.WorldUtils;
 import org.lwjgl.opengl.GL11;
 
 @SideOnly(Side.CLIENT)
@@ -58,8 +58,8 @@ public final class AuroraRenderer implements IAtmosRenderer {
 	}
 
 	public static float moonlightFactor(final World world) {
-		final float moonFactor = 1.0F - WorldUtils.getMoonPhaseFactor(world) * 1.1F;
-		if(moonFactor <= 0.0F)
+		final float moonFactor = 1.0F - WorldData.getMoonPhaseFactor(world) * 1.1F;
+		if (moonFactor <= 0.0F)
 			return 0.0F;
 		return MathHelper.clamp_float(moonFactor * moonFactor, 0.0F, 1.0F);
 	}
@@ -79,7 +79,7 @@ public final class AuroraRenderer implements IAtmosRenderer {
 			tranY = PLAYER_FIXED_HEIGHT;
 		} else {
 			// Adjust to keep aurora at the same altitude
-			tranY = WorldUtils.getCloudHeight(mc.theWorld) + 5 - (float) (mc.thePlayer.lastTickPosY
+			tranY = WorldData.getCloudHeight(mc.theWorld) + 5 - (float) (mc.thePlayer.lastTickPosY
 					+ (mc.thePlayer.posY - mc.thePlayer.lastTickPosY) * partialTick);
 		}
 
