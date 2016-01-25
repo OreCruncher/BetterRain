@@ -44,7 +44,7 @@ import net.minecraft.world.World;
  */
 public class BlockLiquidHandler {
 
-	private static final Random RANDOM = XorShiftRandom.shared;
+	private static final Random RANDOM = new XorShiftRandom();
 	private static final boolean ENABLE_FIREJETS = ModOptions.getEnableFireJets();
 	private static final boolean ENABLE_WATER_BUBBLES = ModOptions.getEnableBubbleJets();
 	private static final int FIREJET_SPAWN_CHANCE = ModOptions.getFireJetsSpawnChance();
@@ -77,8 +77,9 @@ public class BlockLiquidHandler {
 				// strength. Strength affects life span, size of flame
 				// particle, and the sound volume.
 				final int lavaBlocks = countBlocks(world, x, y, z, theThis, -1);
+				final int jetType = RANDOM.nextInt(3) == 0 ? EntityJetFX.LAVA : EntityJetFX.FIRE;
 				effect = ParticleFactory.jet.getEntityFX(lavaBlocks, world, x + 0.5D, y + 1.1D, z + 0.5D, 0, 0, 0,
-						EntityJetFX.FIRE);
+						jetType);
 			}
 		} else if (ENABLE_WATER_BUBBLES && theThis == Blocks.water) {
 			if (RANDOM.nextInt(WATERBUBBLE_SPAWN_CHANCE) == 0 && world.getBlock(x, y - 1, z).getMaterial().isSolid()) {
