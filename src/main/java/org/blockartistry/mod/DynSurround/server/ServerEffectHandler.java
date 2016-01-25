@@ -81,7 +81,7 @@ public final class ServerEffectHandler {
 		final int dimensionId = world.provider.getDimensionId();
 
 		// Have to be a surface world and match the dimension rule
-		if (world.provider.isSurfaceWorld() && rule.isOk(dimensionId)) {
+		if (rule.isOk(dimensionId)) {
 			final DimensionEffectData data = DimensionEffectData.get(world);
 			sendIntensity = data.getRainIntensity();
 		}

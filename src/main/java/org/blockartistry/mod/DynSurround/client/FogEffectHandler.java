@@ -35,7 +35,6 @@ import org.lwjgl.opengl.GL11;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ActiveRenderInfo;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.MathHelper;
@@ -106,11 +105,7 @@ public class FogEffectHandler implements IClientEffectHandler {
 				biomeFog = BiomeRegistry.getFogDensity(biome);
 
 			if (ENABLE_DESERT_FOG && BiomeRegistry.hasDust(biome)) {
-				final int posX = MathHelper.floor_double(player.posX);
-				final int posZ = MathHelper.floor_double(player.posZ);
-
-				if (!Minecraft.getMinecraft().theWorld.provider.doesXZShowFog(posX, posZ))
-					dustFog = RainProperties.getFogDensity() * DESERT_DUST_FACTOR;
+				dustFog = RainProperties.getFogDensity() * DESERT_DUST_FACTOR;
 			}
 
 			if (ENABLE_ELEVATION_HAZE && WorldUtils.hasSky(world)) {
