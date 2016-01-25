@@ -131,7 +131,7 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 			builder.append(CONDITION_TOKEN_NETHER);
 		if (world.provider.dimensionId == 1)
 			builder.append(CONDITION_TOKEN_END);
-		if (WorldData.hasSky(world))
+		if (WorldData.hasHaze(world))
 			builder.append(CONDITION_TOKEN_SKY);
 		return builder.toString();
 	}

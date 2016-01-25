@@ -23,7 +23,10 @@
 
 package org.blockartistry.mod.DynSurround.data.world;
 
+import java.io.File;
+
 import org.blockartistry.mod.DynSurround.ModOptions;
+import org.blockartistry.mod.DynSurround.Module;
 import org.blockartistry.mod.DynSurround.util.MyUtils;
 
 import gnu.trove.map.hash.TIntObjectHashMap;
@@ -41,7 +44,7 @@ public final class WorldData {
 	protected Integer seaLevel;
 	protected Integer skyHeight;
 	protected Integer cloudHeight;
-	protected Boolean hasSky;
+	protected Boolean hasHaze;
 	protected Boolean hasAuroras;
 
 	public static void initialize() {
@@ -55,6 +58,30 @@ public final class WorldData {
 				data.skyHeight = values[2];
 				data.cloudHeight = data.skyHeight / 2;
 			}
+		}
+
+		try {
+			final File dimFile = new File(Module.dataDirectory(), "dimensions.json");
+			if (dimFile.exists()) {
+				final DimensionConfig cfg = DimensionConfig.load(dimFile);
+				for (final DimensionConfig.Entry entry : cfg.entries) {
+					if (entry.dimensionId != null) {
+						final WorldData data = getData(entry.dimensionId);
+						if (entry.hasAurora != null)
+							data.hasAuroras = entry.hasAurora;
+						if (entry.hasHaze != null)
+							data.hasHaze = entry.hasHaze;
+						if (entry.cloudHeight != null)
+							data.cloudHeight = entry.cloudHeight;
+						if (entry.seaLevel != null)
+							data.seaLevel = entry.seaLevel;
+						if (entry.skyHeight != null)
+							data.skyHeight = entry.skyHeight;
+					}
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 
@@ -73,12 +100,12 @@ public final class WorldData {
 				this.seaLevel = provider.getAverageGroundLevel();
 			if (this.skyHeight == null)
 				this.skyHeight = provider.getHeight();
-			if (this.hasSky == null)
-				this.hasSky = !provider.hasNoSky;
+			if (this.hasHaze == null)
+				this.hasHaze = !provider.hasNoSky;
 			if (this.hasAuroras == null)
 				this.hasAuroras = !provider.hasNoSky;
 			if (this.cloudHeight == null)
-				this.cloudHeight = this.hasSky ? this.skyHeight / 2 : this.skyHeight;
+				this.cloudHeight = this.hasHaze ? this.skyHeight / 2 : this.skyHeight;
 			this.initialized = true;
 		}
 		return this;
@@ -100,8 +127,8 @@ public final class WorldData {
 		return this.cloudHeight.intValue();
 	}
 
-	public boolean getHasSky() {
-		return this.hasSky.booleanValue();
+	public boolean getHasHaze() {
+		return this.hasHaze.booleanValue();
 	}
 
 	public boolean getHasAuroras() {
@@ -141,8 +168,8 @@ public final class WorldData {
 		return world.getWorldTime() % 24000L;
 	}
 
-	public static boolean hasSky(final World world) {
-		return getData(world).getHasSky();
+	public static boolean hasHaze(final World world) {
+		return getData(world).getHasHaze();
 	}
 
 	public static int getSeaLevel(final World world) {
