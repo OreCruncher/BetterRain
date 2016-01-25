@@ -27,7 +27,9 @@ package org.blockartistry.mod.DynSurround.client;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.blockartistry.mod.DynSurround.client.aurora.AuroraRenderer;
+import org.blockartistry.mod.DynSurround.client.fx.particle.ParticleFactory;
 import org.blockartistry.mod.DynSurround.client.storm.StormRenderer;
 import org.blockartistry.mod.DynSurround.client.storm.StormProperties;
 import org.blockartistry.mod.DynSurround.data.BiomeRegistry;
@@ -38,11 +40,10 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.particle.EntityFX;
-import net.minecraft.client.particle.EntityRainFX;
-import net.minecraft.client.particle.EntitySmokeFX;
 import net.minecraft.client.particle.IParticleFactory;
 import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.entity.Entity;
+import net.minecraft.init.Blocks;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
@@ -73,6 +74,32 @@ public final class RenderWeather {
 	private static float calculateRainSoundVolume(final World world) {
 		return MathHelper.clamp_float((float) (StormProperties.getCurrentVolume()
 				+ gen.func_151605_a(DiurnalUtils.getClockTime(world) / 100, 1) / 5.0F), 0.0F, 1.0F);
+	}
+
+	private static EntityFX getBlockParticleFX(final Block block, final boolean dust, final World world, final double x,
+			final double y, final double z) {
+		if (dust)
+			return null;
+
+		IParticleFactory factory = null;
+
+		if (block == Blocks.soul_sand) {
+			return null;
+		} else if (block == Blocks.netherrack && random.nextInt(20) == 0) {
+			factory = ParticleFactory.lavaSpark;
+		} else if (block.getMaterial() == Material.lava) {
+			factory = ParticleFactory.smoke;
+		} else if (block.getMaterial() != Material.air) {
+			factory = ParticleFactory.rain;
+		}
+
+		return factory != null ? factory.getEntityFX(0, world, x, y, z, 0, 0, 0) : null;
+	}
+
+	private static String getBlockSoundFX(final Block block, final boolean hasDust, final World world) {
+		if (block == Blocks.netherrack)
+			return "minecraft:liquid.lavapop";
+		return hasDust ? StormProperties.getIntensity().getDustSound() : StormProperties.getIntensity().getStormSound();
 	}
 
 	/*
@@ -124,42 +151,37 @@ public final class RenderWeather {
 				final double posY = precipHeight.getY() + 0.1F - block.getBlockBoundsMinY();
 				final double posZ = locZ + random.nextFloat();
 
-				IParticleFactory factory = null;
-				if (block.getMaterial() == Material.lava) {
-					if (!hasDust)
-						factory = new EntitySmokeFX.Factory();
-				} else if (block.getMaterial() != Material.air) {
-					if (random.nextInt(++particlesSpawned) == 0) {
-						spawnX = posX;
-						spawnY = posY;
-						spawnZ = posZ;
-					}
+				final EntityFX particle = getBlockParticleFX(block, hasDust, worldclient, posX, posY, posZ);
+				if (particle != null)
+					theThis.mc.effectRenderer.addEffect(particle);
 
-					if (!hasDust)
-						factory = new EntityRainFX.Factory();
-				}
-
-				if (factory != null) {
-					final EntityFX effect = factory.getEntityFX(0, worldclient, posX, posY, posZ, 0.0D, 0.0D, 0.0D);
-					theThis.mc.effectRenderer.addEffect(effect);
+				if (random.nextInt(++particlesSpawned) == 0) {
+					spawnX = posX;
+					spawnY = posY;
+					spawnZ = posZ;
 				}
 			}
 		}
 
 		// Handle precipitation sounds
 		if (particlesSpawned > 0 && random.nextInt(3) < theThis.rainSoundCounter++) {
+			final int theX = MathHelper.floor_double(spawnX);
+			final int theY = MathHelper.floor_double(spawnY);
+			final int theZ = MathHelper.floor_double(spawnZ);
 			theThis.rainSoundCounter = 0;
 
-			final BlockPos coord = new BlockPos(spawnX, 0, spawnZ);
+			final BlockPos coord = new BlockPos(theX, theY, theZ);
 			final boolean hasDust = WeatherUtils.biomeHasDust(worldclient.getBiomeGenForCoords(coord));
-			final String sound = hasDust ? StormProperties.getIntensity().getDustSound()
-					: StormProperties.getIntensity().getStormSound();
-			final float volume = calculateRainSoundVolume(worldclient);
-			float pitch = 1.0F;
-			if (spawnY > entity.posY + 1.0D
-					&& worldclient.getPrecipitationHeight(new BlockPos(playerX, 0, playerZ)).getY() > playerY)
-				pitch = 0.5F;
-			theThis.mc.theWorld.playSound(spawnX, spawnY, spawnZ, sound, volume, pitch, false);
+			final Block block = worldclient.getBlockState(coord.down()).getBlock();
+			final String sound = getBlockSoundFX(block, hasDust, worldclient);
+			if (!StringUtils.isEmpty(sound)) {
+				final float volume = calculateRainSoundVolume(worldclient);
+				float pitch = 1.0F;
+				if (spawnY > entity.posY + 1.0D
+						&& worldclient.getPrecipitationHeight(new BlockPos(playerX, 0, playerZ)).getY() > playerY)
+					pitch = 0.5F;
+				theThis.mc.theWorld.playSound(spawnX, spawnY, spawnZ, sound, volume, pitch, false);
+			}
 		}
 	}
 

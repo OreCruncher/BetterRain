@@ -50,7 +50,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 @SideOnly(Side.CLIENT)
 public class BlockLiquidHandler {
 
-	private static final Random RANDOM = XorShiftRandom.shared;
+	private static final Random RANDOM = new XorShiftRandom();
 	private static final boolean ENABLE_FIREJETS = ModOptions.getEnableFireJets();
 	private static final boolean ENABLE_WATER_BUBBLES = ModOptions.getEnableBubbleJets();
 	private static final int FIREJET_SPAWN_CHANCE = ModOptions.getFireJetsSpawnChance();
@@ -79,8 +79,9 @@ public class BlockLiquidHandler {
 				// strength. Strength affects life span, size of flame
 				// particle, and the sound volume.
 				final int lavaBlocks = countBlocks(world, pos, subjectBlock, EnumFacing.DOWN);
+				final int jetType = RANDOM.nextInt(3) == 0 ? EntityJetFX.LAVA : EntityJetFX.FIRE;
 				effect = ParticleFactory.jet.getEntityFX(lavaBlocks, world, pos.getX() + 0.5D, pos.getY() + 1.1D,
-						pos.getZ() + 0.5D, 0, 0, 0, EntityJetFX.FIRE);
+						pos.getZ() + 0.5D, 0, 0, 0, jetType);
 			}
 		} else if (ENABLE_WATER_BUBBLES && subjectBlock == Blocks.water) {
 			if (RANDOM.nextInt(WATERBUBBLE_SPAWN_CHANCE) == 0

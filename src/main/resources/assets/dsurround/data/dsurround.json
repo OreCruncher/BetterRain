@@ -156,6 +156,11 @@
 		{
 			"biomeName":"(?i)(.*taiga.*|.*frozen.*|.*ice.*|.*tundra.*|.*polar.*|.*snow.*|.*glacier.*|.*arctic.*)",
 			"aurora":true
+		},
+		{
+			"biomeName":"Hell",
+			"dust":true,
+			"dustColor":"255,0,0"
 		}
 		
 	]
