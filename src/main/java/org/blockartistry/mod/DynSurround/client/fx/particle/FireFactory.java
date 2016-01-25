@@ -22,35 +22,37 @@
  * THE SOFTWARE.
  */
 
-package org.blockartistry.mod.DynSurround.client.fx;
+package org.blockartistry.mod.DynSurround.client.fx.particle;
 
-import net.minecraft.client.particle.EntityBubbleFX;
 import net.minecraft.client.particle.EntityFX;
+import net.minecraft.client.particle.EntityFlameFX;
 import net.minecraft.client.particle.IParticleFactory;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 /*
- * A special hidden entity that generates vertically moving buble entity
- * particles while it is alive.  These spawn in water blocks at are
- * above another solid block.  The EntityBubbleJetFX does not render
- * - it is just a way to maintain state across several ticks while it
- * spews bubble particles.
+ * A special hidden entity that generates vertically moving flame entity
+ * particles while it is alive.  These can randomly spawn on top of
+ * lava blocks to give the effect of a fire jet.  The FireFactory
+ * itself does not render - it is just a way to maintain state across
+ * several ticks while it spews fire particles.
  */
 @SideOnly(Side.CLIENT)
-public final class EntityBubbleJetFX implements IParticleFactory {
-	
-	public static final IParticleFactory factory = new EntityBubbleJetFX();
+public final class FireFactory implements IParticleFactory {
 
-	private EntityBubbleJetFX() {
+	private static final String FIRE_SOUND = "minecraft:fire.fire";
+
+	public FireFactory() {
 	}
 
 	@Override
-	public EntityFX getEntityFX(int jetStrength, World world, double x, double y, double z,
-			double sX, double sY, double sZ, int... notUsed) {
-		final EntityFX bubble = new EntityBubbleFX.Factory().getEntityFX(0, world, x, y, z, 0.0D,
-				0.5D + jetStrength / 10.0D, 0.0D);
-		return bubble;
+	public EntityFX getEntityFX(final int jetStrength, final World world, final double x, final double y,
+			final double z, final double sX, final double sY, final double sZ, final int... notUsed) {
+		final EntityFlameFX flame = (EntityFlameFX) new EntityFlameFX.Factory().getEntityFX(0, world, x, y, z, 0.0D,
+				jetStrength / 10.0D, 0.0D);
+		flame.flameScale *= jetStrength;
+		world.playSound(x, y, z, FIRE_SOUND, jetStrength, 1.0F, false);
+		return flame;
 	}
 }

@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package org.blockartistry.mod.DynSurround.client.fx;
+package org.blockartistry.mod.DynSurround.client.fx.particle;
 
 import org.blockartistry.mod.DynSurround.util.XorShiftRandom;
 
@@ -43,10 +43,13 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 @SideOnly(Side.CLIENT)
 public class EntityJetFX extends EntityFX {
 
+	public static final int BUBBLE = 0;
+	public static final int FIRE = 1;
+
 	protected final int jetStrength;
 	protected final IParticleFactory factory;
 
-	protected EntityJetFX(final int strength, final IParticleFactory factory, final World world, final double x,
+	public EntityJetFX(final int strength, final IParticleFactory factory, final World world, final double x,
 			final double y, final double z) {
 		super(world, x, y, z);
 
@@ -85,4 +88,24 @@ public class EntityJetFX extends EntityFX {
 		}
 	}
 
+	public static class Factory implements IParticleFactory {
+
+		private static IParticleFactory getFactory(final int type) {
+			switch (type) {
+			case BUBBLE:
+				return ParticleFactory.bubbleJet;
+			case FIRE:
+				return ParticleFactory.fireJet;
+			default:
+				return ParticleFactory.bubbleJet;
+			}
+		}
+
+		@Override
+		public EntityFX getEntityFX(int particleID, World world, double x, double y, double z, double dX, double dY,
+				double dZ, int... misc) {
+			return new EntityJetFX(particleID, getFactory(misc[0]), world, x, y, z);
+		}
+
+	}
 }
