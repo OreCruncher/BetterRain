@@ -22,8 +22,9 @@
  * THE SOFTWARE.
  */
 
-package org.blockartistry.mod.DynSurround.client.fx;
+package org.blockartistry.mod.DynSurround.client.fx.particle;
 
+import org.blockartistry.mod.DynSurround.client.fx.IParticleFactory;
 import org.blockartistry.mod.DynSurround.util.XorShiftRandom;
 
 import cpw.mods.fml.relauncher.Side;
@@ -40,6 +41,9 @@ import net.minecraft.world.World;
  */
 @SideOnly(Side.CLIENT)
 public class EntityJetFX extends EntityFX {
+
+	public static final int BUBBLE = 0;
+	public static final int FIRE = 1;
 
 	protected final int jetStrength;
 	protected final IParticleFactory factory;
@@ -80,5 +84,26 @@ public class EntityJetFX extends EntityFX {
 		if (this.particleAge++ >= this.particleMaxAge) {
 			this.setDead();
 		}
+	}
+
+	public static class Factory implements IParticleFactory {
+
+		private static IParticleFactory getFactory(final int type) {
+			switch (type) {
+			case BUBBLE:
+				return ParticleFactory.bubbleJet;
+			case FIRE:
+				return ParticleFactory.fireJet;
+			default:
+				return ParticleFactory.bubbleJet;
+			}
+		}
+
+		@Override
+		public EntityFX getEntityFX(int particleID, World world, double x, double y, double z, double dX, double dY,
+				double dZ, int... misc) {
+			return new EntityJetFX(particleID, getFactory(misc[0]), world, x, y, z);
+		}
+
 	}
 }

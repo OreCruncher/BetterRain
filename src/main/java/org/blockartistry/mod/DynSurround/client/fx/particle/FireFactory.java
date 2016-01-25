@@ -22,7 +22,9 @@
  * THE SOFTWARE.
  */
 
-package org.blockartistry.mod.DynSurround.client.fx;
+package org.blockartistry.mod.DynSurround.client.fx.particle;
+
+import org.blockartistry.mod.DynSurround.client.fx.IParticleFactory;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -33,18 +35,16 @@ import net.minecraft.world.World;
 /*
  * A special hidden entity that generates vertically moving flame entity
  * particles while it is alive.  These can randomly spawn on top of
- * lava blocks to give the effect of a fire jet.  The EntityFireJetFX
+ * lava blocks to give the effect of a fire jet.  The FireFactory
  * itself does not render - it is just a way to maintain state across
  * several ticks while it spews fire particles.
  */
 @SideOnly(Side.CLIENT)
-public class EntityFireJetFX implements IParticleFactory {
-
-	public static final IParticleFactory factory = new EntityFireJetFX();
+public class FireFactory implements IParticleFactory {
 
 	private static final String FIRE_SOUND = "minecraft:fire.fire";
 
-	private EntityFireJetFX() {
+	public FireFactory() {
 	}
 
 	@Override

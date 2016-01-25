@@ -22,7 +22,9 @@
  * THE SOFTWARE.
  */
 
-package org.blockartistry.mod.DynSurround.client.fx;
+package org.blockartistry.mod.DynSurround.client.fx.particle;
+
+import org.blockartistry.mod.DynSurround.client.fx.IParticleFactory;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -33,16 +35,14 @@ import net.minecraft.world.World;
 /*
  * A special hidden entity that generates vertically moving buble entity
  * particles while it is alive.  These spawn in water blocks at are
- * above another solid block.  The EntityBubbleJetFX does not render
+ * above another solid block.  The BubbleFactory does not render
  * - it is just a way to maintain state across several ticks while it
  * spews bubble particles.
  */
 @SideOnly(Side.CLIENT)
-public class EntityBubbleJetFX implements IParticleFactory {
+public class BubbleFactory implements IParticleFactory {
 
-	public static final IParticleFactory factory = new EntityBubbleJetFX();
-
-	protected EntityBubbleJetFX() {
+	protected BubbleFactory() {
 	}
 
 	@Override

@@ -27,6 +27,8 @@ package org.blockartistry.mod.DynSurround.client.fx;
 import java.util.Random;
 
 import org.blockartistry.mod.DynSurround.ModOptions;
+import org.blockartistry.mod.DynSurround.client.fx.particle.ParticleFactory;
+import org.blockartistry.mod.DynSurround.client.fx.particle.EntityJetFX;
 import org.blockartistry.mod.DynSurround.util.XorShiftRandom;
 
 import net.minecraft.block.Block;
@@ -75,7 +77,8 @@ public class BlockLiquidHandler {
 				// strength. Strength affects life span, size of flame
 				// particle, and the sound volume.
 				final int lavaBlocks = countBlocks(world, x, y, z, theThis, -1);
-				effect = new EntityJetFX(lavaBlocks, EntityFireJetFX.factory, world, x + 0.5D, y + 1.1D, z + 0.5D);
+				effect = ParticleFactory.jet.getEntityFX(lavaBlocks, world, x + 0.5D, y + 1.1D, z + 0.5D, 0, 0, 0,
+						EntityJetFX.FIRE);
 			}
 		} else if (ENABLE_WATER_BUBBLES && theThis == Blocks.water) {
 			if (RANDOM.nextInt(WATERBUBBLE_SPAWN_CHANCE) == 0 && world.getBlock(x, y - 1, z).getMaterial().isSolid()) {
@@ -83,7 +86,8 @@ public class BlockLiquidHandler {
 				// the jet strength. Strength affects life span of the jet
 				// as well as the speed at which the bubbles rise.
 				final int waterBlocks = countBlocks(world, x, y, z, theThis, 1);
-				effect = new EntityJetFX(waterBlocks, EntityBubbleJetFX.factory, world, x + 0.5D, y + 0.1D, z + 0.5D);
+				effect = ParticleFactory.jet.getEntityFX(waterBlocks, world, x + 0.5D, y + 1.1D, z + 0.5D, 0, 0, 0,
+						EntityJetFX.BUBBLE);
 			}
 		}
 
