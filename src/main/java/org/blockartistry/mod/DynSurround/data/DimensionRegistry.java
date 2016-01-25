@@ -21,23 +21,20 @@
  * THE SOFTWARE.
  */
 
-package org.blockartistry.mod.DynSurround.data.world;
+package org.blockartistry.mod.DynSurround.data;
 
 import java.io.File;
 
+import org.blockartistry.mod.DynSurround.ModLog;
 import org.blockartistry.mod.DynSurround.ModOptions;
 import org.blockartistry.mod.DynSurround.Module;
-import org.blockartistry.mod.DynSurround.util.MyUtils;
-
 import gnu.trove.map.hash.TIntObjectHashMap;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldProvider;
 
-public final class WorldData {
+public final class DimensionRegistry {
 
-	private static boolean useCelestial = true;
-	private static final TIntObjectHashMap<WorldData> dimensionData = new TIntObjectHashMap<WorldData>();
-	private static final IDiurnalProvider DIURNAL = useCelestial ? new CelestialProvider() : new WallClockProvider();
+	private static final TIntObjectHashMap<DimensionRegistry> dimensionData = new TIntObjectHashMap<DimensionRegistry>();
 
 	protected final int dimensionId;
 	protected boolean initialized;
@@ -46,55 +43,63 @@ public final class WorldData {
 	protected Integer cloudHeight;
 	protected Boolean hasHaze;
 	protected Boolean hasAuroras;
+	protected Boolean hasWeather;
 
 	public static void initialize() {
-
-		// Initialize data from the config file
-		for (final String entry : ModOptions.getElevationOverrides()) {
-			final int[] values = MyUtils.splitToInts(entry, ',');
-			if (values.length == 3) {
-				final WorldData data = getData(values[0]);
-				data.seaLevel = values[1];
-				data.skyHeight = values[2];
-				data.cloudHeight = data.skyHeight / 2;
-			}
-		}
-
 		try {
-			final File dimFile = new File(Module.dataDirectory(), "dimensions.json");
-			if (dimFile.exists()) {
-				final DimensionConfig cfg = DimensionConfig.load(dimFile);
-				for (final DimensionConfig.Entry entry : cfg.entries) {
-					if (entry.dimensionId != null) {
-						final WorldData data = getData(entry.dimensionId);
-						if (entry.hasAurora != null)
-							data.hasAuroras = entry.hasAurora;
-						if (entry.hasHaze != null)
-							data.hasHaze = entry.hasHaze;
-						if (entry.cloudHeight != null)
-							data.cloudHeight = entry.cloudHeight;
-						if (entry.seaLevel != null)
-							data.seaLevel = entry.seaLevel;
-						if (entry.skyHeight != null)
-							data.skyHeight = entry.skyHeight;
-					}
-				}
-			}
+			process(DimensionConfig.load("dimensions"));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+
+		for (final String file : ModOptions.getDimensionConfigFiles()) {
+			final File theFile = new File(Module.dataDirectory(), file);
+			if (theFile.exists()) {
+				try {
+					final DimensionConfig config = DimensionConfig.load(theFile);
+					if (config != null)
+						process(config);
+					else
+						ModLog.warn("Unable to process dimension config file " + file);
+				} catch (final Exception ex) {
+					ModLog.error("Unable to process dimension config file " + file, ex);
+				}
+			} else {
+				ModLog.warn("Could not locate dimension config file [%s]", file);
+			}
+		}
 	}
 
-	protected WorldData(final int dimensionId) {
+	private static void process(final DimensionConfig config) {
+		for (final DimensionConfig.Entry entry : config.entries) {
+			if (entry.dimensionId != null) {
+				final DimensionRegistry data = getData(entry.dimensionId);
+				if (entry.hasAurora != null)
+					data.hasAuroras = entry.hasAurora;
+				if (entry.hasHaze != null)
+					data.hasHaze = entry.hasHaze;
+				if (entry.hasWeather != null)
+					data.hasWeather = entry.hasWeather;
+				if (entry.cloudHeight != null)
+					data.cloudHeight = entry.cloudHeight;
+				if (entry.seaLevel != null)
+					data.seaLevel = entry.seaLevel;
+				if (entry.skyHeight != null)
+					data.skyHeight = entry.skyHeight;
+			}
+		}
+	}
+
+	protected DimensionRegistry(final int dimensionId) {
 		this.dimensionId = dimensionId;
 	}
 
-	protected WorldData(final World world) {
+	protected DimensionRegistry(final World world) {
 		this.dimensionId = world.provider.getDimensionId();
 		initialize(world.provider);
 	}
 
-	protected WorldData initialize(final WorldProvider provider) {
+	protected DimensionRegistry initialize(final WorldProvider provider) {
 		if (!this.initialized) {
 			if (this.seaLevel == null)
 				this.seaLevel = provider.getAverageGroundLevel();
@@ -104,6 +109,8 @@ public final class WorldData {
 				this.hasHaze = !provider.getHasNoSky();
 			if (this.hasAuroras == null)
 				this.hasAuroras = !provider.getHasNoSky();
+			if (this.hasWeather == null)
+				this.hasWeather = !provider.getHasNoSky();
 			if (this.cloudHeight == null)
 				this.cloudHeight = this.hasHaze ? this.skyHeight / 2 : this.skyHeight;
 			this.initialized = true;
@@ -135,37 +142,28 @@ public final class WorldData {
 		return this.hasAuroras.booleanValue();
 	}
 
-	protected static WorldData getData(final int dimensionId) {
-		WorldData data = dimensionData.get(dimensionId);
+	public boolean getHasWeather() {
+		return this.hasWeather.booleanValue();
+	}
+
+	protected static DimensionRegistry getData(final int dimensionId) {
+		DimensionRegistry data = dimensionData.get(dimensionId);
 		if (data == null) {
-			data = new WorldData(dimensionId);
+			data = new DimensionRegistry(dimensionId);
 			dimensionData.put(dimensionId, data);
 		}
 		return data;
 	}
 
-	public static WorldData getData(final World world) {
-		WorldData data = dimensionData.get(world.provider.getDimensionId());
+	public static DimensionRegistry getData(final World world) {
+		DimensionRegistry data = dimensionData.get(world.provider.getDimensionId());
 		if (data == null) {
-			data = new WorldData(world);
+			data = new DimensionRegistry(world);
 			dimensionData.put(world.provider.getDimensionId(), data);
 		} else {
 			data.initialize(world.provider);
 		}
 		return data;
-	}
-
-	public static float getCelestialAngle(final World world, final float partialTickTime) {
-		final float angle = world.getCelestialAngle(partialTickTime);
-		return angle >= 1.0F ? angle - 1.0F : angle;
-	}
-
-	public static float getMoonPhaseFactor(final World world) {
-		return world.getCurrentMoonPhaseFactor();
-	}
-
-	public static long getClockTime(final World world) {
-		return world.getWorldTime() % 24000L;
 	}
 
 	public static boolean hasHaze(final World world) {
@@ -188,15 +186,7 @@ public final class WorldData {
 		return getData(world).getHasAuroras();
 	}
 
-	public static boolean isDaytime(final World world) {
-		return DIURNAL.isDaytime(world);
-	}
-
-	public static boolean isNighttime(final World world) {
-		return DIURNAL.isNighttime(world);
-	}
-
-	public static boolean isSunrise(final World world) {
-		return DIURNAL.isSunrise(world);
+	public static boolean hasWeather(final World world) {
+		return getData(world).getHasWeather();
 	}
 }

@@ -21,32 +21,43 @@
  * THE SOFTWARE.
  */
 
-package org.blockartistry.mod.DynSurround.data.world;
+package org.blockartistry.mod.DynSurround.data;
 
-import net.minecraft.world.World;
+import java.io.File;
+import java.util.List;
 
-public class WallClockProvider  implements IDiurnalProvider {
-	@Override
-	public boolean isDaytime(final World world) {
-		final long time = WorldData.getClockTime(world);
-		return time < 13000;
+import org.blockartistry.mod.DynSurround.util.JsonUtils;
+
+import com.google.common.collect.ImmutableList;
+import com.google.gson.annotations.SerializedName;
+
+public final class DimensionConfig {
+
+	public final static class Entry {
+		@SerializedName("dimId")
+		public Integer dimensionId = null;
+		@SerializedName("seaLevel")
+		public Integer seaLevel = null;
+		@SerializedName("skyHeight")
+		public Integer skyHeight = null;
+		@SerializedName("cloudHeight")
+		public Integer cloudHeight = null;
+		@SerializedName("haze")
+		public Boolean hasHaze = null;
+		@SerializedName("aurora")
+		public Boolean hasAurora = null;
+		@SerializedName("weather")
+		public Boolean hasWeather = null;
 	}
 
-	@Override
-	public boolean isNighttime(final World world) {
-		final long time = WorldData.getClockTime(world);
-		return time >= 13000 && time < 22220L;
-	}
+	@SerializedName("entries")
+	public List<Entry> entries = ImmutableList.of();
 
-	@Override
-	public boolean isSunrise(final World world) {
-		final long time = WorldData.getClockTime(world);
-		return time >= 22220L;
+	public static DimensionConfig load(final File file) throws Exception {
+		return JsonUtils.load(file, DimensionConfig.class);
 	}
-
-	@Override
-	public boolean isSunset(final World world) {
-		final long time = WorldData.getClockTime(world);
-		return time >= 12000 && time < 14000;
+	
+	public static DimensionConfig load(final String modId) throws Exception {
+		return JsonUtils.load(modId, DimensionConfig.class);
 	}
 }
