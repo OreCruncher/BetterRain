@@ -26,8 +26,8 @@ package org.blockartistry.mod.DynSurround.client;
 
 import org.blockartistry.mod.DynSurround.data.BiomeRegistry;
 import org.blockartistry.mod.DynSurround.data.BiomeRegistry.BiomeSound;
+import org.blockartistry.mod.DynSurround.data.world.WorldData;
 import org.blockartistry.mod.DynSurround.util.PlayerUtils;
-import org.blockartistry.mod.DynSurround.util.WorldUtils;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -121,7 +121,7 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 
 	private static String getConditions(final World world) {
 		final StringBuilder builder = new StringBuilder();
-		if (WorldUtils.isDaytime(world))
+		if (WorldData.isDaytime(world))
 			builder.append(CONDITION_TOKEN_DAY);
 		else
 			builder.append(CONDITION_TOKEN_NIGHT);
@@ -131,7 +131,7 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 			builder.append(CONDITION_TOKEN_NETHER);
 		if (world.provider.dimensionId == 1)
 			builder.append(CONDITION_TOKEN_END);
-		if (WorldUtils.hasSky(world))
+		if (WorldData.hasSky(world))
 			builder.append(CONDITION_TOKEN_SKY);
 		return builder.toString();
 	}

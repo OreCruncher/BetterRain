@@ -23,6 +23,8 @@
 
 package org.blockartistry.mod.DynSurround.util;
 
+import org.blockartistry.mod.DynSurround.data.world.WorldData;
+
 import codechicken.lib.math.MathHelper;
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.relauncher.Side;
@@ -48,7 +50,7 @@ public final class PlayerUtils {
 	}
 
 	public static boolean isUnderGround(final EntityPlayer player, final int offset) {
-		return MathHelper.floor_double(player.posY + offset) < WorldUtils.getSeaLevel(player.worldObj);
+		return MathHelper.floor_double(player.posY + offset) < WorldData.getSeaLevel(player.worldObj);
 	}
 
 	private static final int RANGE = 3;

@@ -27,10 +27,10 @@ package org.blockartistry.mod.DynSurround.client;
 import org.blockartistry.mod.DynSurround.ModOptions;
 import org.blockartistry.mod.DynSurround.client.rain.RainProperties;
 import org.blockartistry.mod.DynSurround.data.BiomeRegistry;
+import org.blockartistry.mod.DynSurround.data.world.WorldData;
 import org.blockartistry.mod.DynSurround.util.Color;
 import org.blockartistry.mod.DynSurround.util.MathStuff;
 import org.blockartistry.mod.DynSurround.util.PlayerUtils;
-import org.blockartistry.mod.DynSurround.util.WorldUtils;
 import org.lwjgl.opengl.GL11;
 
 import cpw.mods.fml.common.eventhandler.EventPriority;
@@ -94,7 +94,7 @@ public class FogEffectHandler implements IClientEffectHandler {
 		float dustFog = 0.0F;
 		float heightFog = 0.0F;
 
-		final int cutOff = WorldUtils.getSeaLevel(world) - FOG_Y_CUTOFF;
+		final int cutOff = WorldData.getSeaLevel(world) - FOG_Y_CUTOFF;
 		final int posY = MathHelper.floor_double(player.posY + player.getEyeHeight());
 
 		// If the player Y is higher than the cutoff Y then assess desert
@@ -108,10 +108,10 @@ public class FogEffectHandler implements IClientEffectHandler {
 				dustFog = RainProperties.getFogDensity() * DESERT_DUST_FACTOR;
 			}
 
-			if (ENABLE_ELEVATION_HAZE && WorldUtils.hasSky(world)) {
+			if (ENABLE_ELEVATION_HAZE && WorldData.hasSky(world)) {
 				final float factor = 1.0F + world.getRainStrength(1.0F);
-				final float skyHeight = WorldUtils.getSkyHeight(world) / factor;
-				final float groundLevel = WorldUtils.getSeaLevel(world);
+				final float skyHeight = WorldData.getSkyHeight(world) / factor;
+				final float groundLevel = WorldData.getSeaLevel(world);
 				final float ratio = (posY - groundLevel) / (skyHeight - groundLevel);
 				heightFog = ratio * ratio * ratio * ratio * ELEVATION_HAZE_FACTOR;
 			}
@@ -159,7 +159,7 @@ public class FogEffectHandler implements IClientEffectHandler {
 
 		// Calculate the brightness factor to apply to the color. Need
 		// to darken it a bit when it gets night.
-		final float celestialAngle = WorldUtils.getCelestialAngle(world, 0.0F);
+		final float celestialAngle = WorldData.getCelestialAngle(world, 0.0F);
 		final float baseScale = MathHelper
 				.clamp_float(MathStuff.cos(celestialAngle * MathStuff.PI_F * 2.0F) * 2.0F + 0.5F, 0.0F, 1.0F);
 

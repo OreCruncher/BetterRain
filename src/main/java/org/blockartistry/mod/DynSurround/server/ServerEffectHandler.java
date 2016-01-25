@@ -42,10 +42,10 @@ import org.blockartistry.mod.DynSurround.data.AuroraPreset;
 import org.blockartistry.mod.DynSurround.data.BiomeRegistry;
 import org.blockartistry.mod.DynSurround.data.ColorPair;
 import org.blockartistry.mod.DynSurround.data.DimensionEffectData;
+import org.blockartistry.mod.DynSurround.data.world.WorldData;
 import org.blockartistry.mod.DynSurround.network.Network;
 import org.blockartistry.mod.DynSurround.util.ElementRule;
 import org.blockartistry.mod.DynSurround.util.PlayerUtils;
-import org.blockartistry.mod.DynSurround.util.WorldUtils;
 
 public final class ServerEffectHandler {
 
@@ -107,7 +107,7 @@ public final class ServerEffectHandler {
 	 * is less than half full.
 	 */
 	private static boolean okToSpawnAurora(final World world) {
-		return WorldUtils.isNighttime(world);
+		return WorldData.isNighttime(world);
 	}
 
 	private static final int CHECK_INTERVAL = 100; // Ticks
@@ -116,14 +116,14 @@ public final class ServerEffectHandler {
 	protected void processAuroras(final TickEvent.WorldTickEvent event) {
 
 		final World world = event.world;
-		if (world == null || !WorldUtils.hasSky(world))
+		if (world == null || !WorldData.hasAuroras(world))
 			return;
 
 		final Set<AuroraData> data = DimensionEffectData.get(world).getAuroraList();
 
 		// Daylight hours clear the aurora list. No auroras should be
 		// showing at this time.
-		if (WorldUtils.isDaytime(world)) {
+		if (WorldData.isDaytime(world)) {
 			data.clear();
 		} else {
 			final int tickCount = tickCounters.get(world.provider.dimensionId) + 1;

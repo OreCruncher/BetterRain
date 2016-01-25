@@ -31,7 +31,7 @@ import org.blockartistry.mod.DynSurround.client.aurora.AuroraRenderer;
 import org.blockartistry.mod.DynSurround.client.rain.RainProperties;
 import org.blockartistry.mod.DynSurround.client.rain.RainSnowRenderer;
 import org.blockartistry.mod.DynSurround.data.BiomeRegistry;
-import org.blockartistry.mod.DynSurround.util.WorldUtils;
+import org.blockartistry.mod.DynSurround.data.world.WorldData;
 import org.blockartistry.mod.DynSurround.util.XorShiftRandom;
 
 import cpw.mods.fml.relauncher.Side;
@@ -70,7 +70,7 @@ public final class RenderWeather {
 
 	private static float calculateRainSoundVolume(final World world) {
 		return MathHelper.clamp_float((float) (RainProperties.getCurrentRainVolume()
-				+ gen.func_151605_a(WorldUtils.getClockTime(world) / 100, 1) / 5.0F), 0.0F, 1.0F);
+				+ gen.func_151605_a(WorldData.getClockTime(world) / 100, 1) / 5.0F), 0.0F, 1.0F);
 	}
 
 	/*

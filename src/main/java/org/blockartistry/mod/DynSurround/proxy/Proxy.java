@@ -27,6 +27,7 @@ package org.blockartistry.mod.DynSurround.proxy;
 import org.blockartistry.mod.DynSurround.VersionCheck;
 import org.blockartistry.mod.DynSurround.commands.CommandRain;
 import org.blockartistry.mod.DynSurround.data.BiomeRegistry;
+import org.blockartistry.mod.DynSurround.data.world.WorldData;
 import org.blockartistry.mod.DynSurround.network.Network;
 import org.blockartistry.mod.DynSurround.server.ServerEffectHandler;
 
@@ -53,6 +54,7 @@ public class Proxy {
 
 	public void postInit(final FMLPostInitializationEvent event) {
 		BiomeRegistry.initialize();
+		WorldData.initialize();
 	}
 
 	public void serverStarting(final FMLServerStartingEvent event) {
