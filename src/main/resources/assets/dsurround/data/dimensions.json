@@ -1,0 +1,12 @@
+{
+	"entries":[
+		{
+			"dimId":-1,
+			"weather":true,
+			"haze":false,
+			"aurora":false
+		}
+		
+	]
+	
+}

@@ -42,9 +42,9 @@ import org.blockartistry.mod.DynSurround.data.AuroraPreset;
 import org.blockartistry.mod.DynSurround.data.BiomeRegistry;
 import org.blockartistry.mod.DynSurround.data.ColorPair;
 import org.blockartistry.mod.DynSurround.data.DimensionEffectData;
-import org.blockartistry.mod.DynSurround.data.world.WorldData;
+import org.blockartistry.mod.DynSurround.data.DimensionRegistry;
 import org.blockartistry.mod.DynSurround.network.Network;
-import org.blockartistry.mod.DynSurround.util.ElementRule;
+import org.blockartistry.mod.DynSurround.util.DiurnalUtils;
 import org.blockartistry.mod.DynSurround.util.PlayerUtils;
 
 public final class ServerEffectHandler {
@@ -64,8 +64,6 @@ public final class ServerEffectHandler {
 		FMLCommonHandler.instance().bus().register(new ServerEffectHandler());
 	}
 
-	private final ElementRule rule = ModOptions.getDimensionRule();
-
 	@SubscribeEvent
 	public void tickEvent(final TickEvent.WorldTickEvent event) {
 
@@ -75,15 +73,10 @@ public final class ServerEffectHandler {
 			return;
 		}
 
-		float sendIntensity = RESET;
 		final World world = event.world;
 		final int dimensionId = world.provider.dimensionId;
-
-		// Have to be a surface world and match the dimension rule
-		if (rule.isOk(dimensionId)) {
-			final DimensionEffectData data = DimensionEffectData.get(world);
-			sendIntensity = data.getRainIntensity();
-		}
+		final float sendIntensity = DimensionRegistry.hasWeather(world) ? DimensionEffectData.get(world).getRainIntensity()
+				: RESET;
 
 		// Set the rain intensity for all players in the current
 		// dimension.
@@ -107,7 +100,7 @@ public final class ServerEffectHandler {
 	 * is less than half full.
 	 */
 	private static boolean okToSpawnAurora(final World world) {
-		return WorldData.isNighttime(world);
+		return DiurnalUtils.isNighttime(world);
 	}
 
 	private static final int CHECK_INTERVAL = 100; // Ticks
@@ -116,14 +109,14 @@ public final class ServerEffectHandler {
 	protected void processAuroras(final TickEvent.WorldTickEvent event) {
 
 		final World world = event.world;
-		if (world == null || !WorldData.hasAuroras(world))
+		if (world == null || !DimensionRegistry.hasAuroras(world))
 			return;
 
 		final Set<AuroraData> data = DimensionEffectData.get(world).getAuroraList();
 
 		// Daylight hours clear the aurora list. No auroras should be
 		// showing at this time.
-		if (WorldData.isDaytime(world)) {
+		if (DiurnalUtils.isDaytime(world)) {
 			data.clear();
 		} else {
 			final int tickCount = tickCounters.get(world.provider.dimensionId) + 1;

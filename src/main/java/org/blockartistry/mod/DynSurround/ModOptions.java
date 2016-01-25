@@ -24,10 +24,6 @@
 
 package org.blockartistry.mod.DynSurround;
 
-import org.blockartistry.mod.DynSurround.util.ElementRule;
-import org.blockartistry.mod.DynSurround.util.MyUtils;
-import org.blockartistry.mod.DynSurround.util.ElementRule.Rule;
-
 import net.minecraft.util.MathHelper;
 import net.minecraftforge.common.config.Configuration;
 
@@ -66,16 +62,10 @@ public final class ModOptions {
 	protected static boolean enableBiomeFog = true;
 
 	protected static final String CATEGORY_GENERAL = "general";
-	protected static final String CONFIG_DIMENSION_LIST = "Dimensions";
-	protected static int[] dimensions = {};
-	protected static final String CONFIG_DIMENSION_BLACKLIST = "Black List";
-	protected static boolean dimensionListAsBlacklist = true;
 	protected static final String CONFIG_MIN_RAIN_STRENGTH = "Default Minimum Rain Strength";
 	protected static float defaultMinRainStrength = 0.0F;
 	protected static final String CONFIG_MAX_RAIN_STRENGTH = "Default Maximum Rain Strength";
 	protected static float defaultMaxRainStrength = 1.0F;
-	protected static final String CONFIG_ELEVATION_OVERRIDES = "Elevation Overrides";
-	protected static String[] elevationOverrides = {};
 
 	protected static final String CATEGORY_AURORA = "aurora";
 	protected static final String CONFIG_AURORA_ENABLED = "Enabled";
@@ -106,6 +96,10 @@ public final class ModOptions {
 	protected static final String CATEGORY_BIOMES = "biomes";
 	protected static final String CONFIG_BIOME_CONFIG_FILES = "Config Files";
 	protected static String[] biomeConfigFiles = {};
+
+	protected static final String CATEGORY_DIMENSIONS = "dimensions";
+	protected static final String CONFIG_DIMENSION_CONFIG_FILES = "Config Files";
+	protected static String[] dimensionConfigFiles = {};
 
 	protected static final String CATEGORY_SOUND = "sound";
 	protected static final String CONFIG_ENABLE_BIOME_SOUNDS = "Enable Biome Sounds";
@@ -163,14 +157,6 @@ public final class ModOptions {
 		resetRainOnSleep = config.getBoolean(CONFIG_RESET_RAIN_ON_SLEEP, CATEGORY_RAIN, resetRainOnSleep, comment);
 
 		// CATEGORY: General
-		comment = "Comma separated dimension ID list";
-		String temp = config.getString(CONFIG_DIMENSION_LIST, CATEGORY_GENERAL, "1,-1", comment);
-		dimensions = MyUtils.splitToInts(temp, ',');
-
-		comment = "Treat dimension ID list as a black list";
-		dimensionListAsBlacklist = config.getBoolean(CONFIG_DIMENSION_BLACKLIST, CATEGORY_GENERAL,
-				dimensionListAsBlacklist, comment);
-
 		comment = "Default minimum rain strength for a dimension";
 		defaultMinRainStrength = MathHelper.clamp_float(config.getFloat(CONFIG_MIN_RAIN_STRENGTH, CATEGORY_GENERAL,
 				defaultMinRainStrength, 0.0F, 1.0F, comment), 0.0F, 1.0F);
@@ -178,10 +164,6 @@ public final class ModOptions {
 		comment = "Default maximum rain strength for a dimension";
 		defaultMaxRainStrength = MathHelper.clamp_float(config.getFloat(CONFIG_MAX_RAIN_STRENGTH, CATEGORY_GENERAL,
 				defaultMaxRainStrength, 0.0F, 1.0F, comment), defaultMinRainStrength, 1.0F);
-
-		comment = "Elevation override for dimensions if needed (dimension,sea level,sky height)";
-		elevationOverrides = config.getStringList(CONFIG_ELEVATION_OVERRIDES, CATEGORY_GENERAL, elevationOverrides,
-				comment);
 
 		// CATEGORY: Player
 		comment = "Suppress player's potion particles from rendering";
@@ -246,6 +228,11 @@ public final class ModOptions {
 		// CATEGORY: Biomes
 		comment = "Configuration files for configuring Biome Registry";
 		biomeConfigFiles = config.getStringList(CONFIG_BIOME_CONFIG_FILES, CATEGORY_BIOMES, biomeConfigFiles, comment);
+
+		// CATEGORY: Dimensions
+		comment = "Configuration files for configuring Dimension Registry";
+		dimensionConfigFiles = config.getStringList(CONFIG_DIMENSION_CONFIG_FILES, CATEGORY_DIMENSIONS,
+				dimensionConfigFiles, comment);
 
 		// CATEGORY: Sound
 		comment = "Enable biome sounds";
@@ -312,18 +299,6 @@ public final class ModOptions {
 		return resetRainOnSleep;
 	}
 
-	public static int[] getDimensionList() {
-		return dimensions;
-	}
-
-	public static boolean getDimensionListAsBlacklist() {
-		return dimensionListAsBlacklist;
-	}
-
-	public static ElementRule getDimensionRule() {
-		return new ElementRule(dimensionListAsBlacklist ? Rule.MUST_NOT_BE_IN : Rule.MUST_BE_IN, dimensions);
-	}
-
 	public static float getDefaultMinRainIntensity() {
 		return defaultMinRainStrength;
 	}
@@ -364,10 +339,6 @@ public final class ModOptions {
 		return elevationHazeFactor;
 	}
 
-	public static String[] getElevationOverrides() {
-		return elevationOverrides;
-	}
-
 	public static boolean getEnableFireJets() {
 		return enableFireJets;
 	}
@@ -390,6 +361,10 @@ public final class ModOptions {
 
 	public static String[] getBiomeConfigFiles() {
 		return biomeConfigFiles;
+	}
+	
+	public static String[] getDimensionConfigFiles() {
+		return dimensionConfigFiles;
 	}
 
 	public static boolean getEnableBiomeSounds() {
@@ -444,7 +419,7 @@ public final class ModOptions {
 	public static float getSoulSandScaleFactor() {
 		return soulSandScaleFactor;
 	}
-	
+
 	public static boolean getSuppressPotionParticleEffect() {
 		return suppressPotionParticles;
 	}

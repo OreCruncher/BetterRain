@@ -34,7 +34,7 @@ import org.blockartistry.mod.DynSurround.ModLog;
 import org.blockartistry.mod.DynSurround.ModOptions;
 import org.blockartistry.mod.DynSurround.client.aurora.Aurora;
 import org.blockartistry.mod.DynSurround.data.AuroraData;
-import org.blockartistry.mod.DynSurround.data.world.WorldData;
+import org.blockartistry.mod.DynSurround.util.DiurnalUtils;
 import org.blockartistry.mod.DynSurround.util.PlayerUtils;
 
 import net.minecraft.client.entity.EntityClientPlayerMP;
@@ -109,14 +109,14 @@ public final class AuroraEffectHandler implements IClientEffectHandler {
 	@Override
 	public void process(final World world, final EntityPlayer player) {
 		if (auroras.size() > 0) {
-			if (WorldData.isDaytime(world)) {
+			if (DiurnalUtils.isDaytime(world)) {
 				auroras.clear();
 				currentAurora = null;
 			} else {
 				final Aurora aurora = getClosestAurora();
 				if (aurora != null) {
 					aurora.update();
-					if (aurora.isAlive() && WorldData.isSunrise(world)) {
+					if (aurora.isAlive() && DiurnalUtils.isSunrise(world)) {
 						ModLog.info("Aurora fade...");
 						aurora.die();
 					}
