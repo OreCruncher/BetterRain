@@ -25,7 +25,7 @@
 package org.blockartistry.mod.DynSurround.client;
 
 import org.blockartistry.mod.DynSurround.ModOptions;
-import org.blockartistry.mod.DynSurround.client.rain.RainProperties;
+import org.blockartistry.mod.DynSurround.client.storm.StormProperties;
 import org.blockartistry.mod.DynSurround.data.BiomeRegistry;
 
 import net.minecraft.world.biome.BiomeGenBase;
@@ -35,6 +35,6 @@ public class WeatherUtils {
 	private static final boolean BLOW_DUST = ModOptions.getAllowDesertDust();
 
 	public static boolean biomeHasDust(final BiomeGenBase biome) {
-		return BLOW_DUST && BiomeRegistry.hasDust(biome) && !RainProperties.doVanillaRain();
+		return BLOW_DUST && BiomeRegistry.hasDust(biome) && !StormProperties.doVanilla();
 	}
 }
