@@ -108,7 +108,7 @@ public class FogEffectHandler implements IClientEffectHandler {
 				dustFog = RainProperties.getFogDensity() * DESERT_DUST_FACTOR;
 			}
 
-			if (ENABLE_ELEVATION_HAZE && WorldData.hasSky(world)) {
+			if (ENABLE_ELEVATION_HAZE && WorldData.hasHaze(world)) {
 				final float factor = 1.0F + world.getRainStrength(1.0F);
 				final float skyHeight = WorldData.getSkyHeight(world) / factor;
 				final float groundLevel = WorldData.getSeaLevel(world);
