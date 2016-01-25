@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package org.blockartistry.mod.DynSurround.client.rain;
+package org.blockartistry.mod.DynSurround.client.storm;
 
 import org.blockartistry.mod.DynSurround.ModOptions;
 import org.blockartistry.mod.DynSurround.Module;
@@ -35,7 +35,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.fml.relauncher.Side;
 
 @SideOnly(Side.CLIENT)
-public enum RainProperties {
+public enum StormProperties {
 
 	VANILLA, NONE(0.0F, "calm"), CALM(0.1F, "calm"), LIGHT(0.33F, "light"), NORMAL(0.66F, "normal"), HEAVY(1.0F,
 			"heavy");
@@ -43,7 +43,7 @@ public enum RainProperties {
 	private static final float SOUND_LEVEL = ModOptions.getSoundLevel();
 
 	private static float intensityLevel = 0.0F;
-	private static RainProperties intensity = VANILLA;
+	private static StormProperties intensity = VANILLA;
 	private static float fogDensity = 0.0F;
 
 	private final float level;
@@ -53,7 +53,7 @@ public enum RainProperties {
 	private final String rainSound;
 	private final String dustSound;
 
-	private RainProperties() {
+	private StormProperties() {
 		this.level = -10.0F;
 		this.rainTexture = EntityRenderer.locationRainPng;
 		this.snowTexture = EntityRenderer.locationSnowPng;
@@ -62,7 +62,7 @@ public enum RainProperties {
 		this.dustSound = String.format("%s:%s", Module.MOD_ID, "dust");
 	}
 
-	private RainProperties(final float level, final String intensity) {
+	private StormProperties(final float level, final String intensity) {
 		this.level = level;
 		this.rainTexture = new ResourceLocation(Module.MOD_ID,
 				String.format("textures/environment/rain_%s.png", intensity));
@@ -74,7 +74,7 @@ public enum RainProperties {
 		this.dustSound = String.format("%s:%s", Module.MOD_ID, "dust");
 	}
 
-	public static RainProperties getIntensity() {
+	public static StormProperties getIntensity() {
 		return intensity;
 	}
 
@@ -86,7 +86,7 @@ public enum RainProperties {
 		return fogDensity;
 	}
 
-	public String getRainSound() {
+	public String getStormSound() {
 		return this.rainSound;
 	}
 
@@ -94,11 +94,11 @@ public enum RainProperties {
 		return this.dustSound;
 	}
 
-	public static float getCurrentRainVolume() {
-		return (doVanillaRain() ? 0.66F : intensityLevel) * SOUND_LEVEL;
+	public static float getCurrentVolume() {
+		return (doVanilla() ? 0.66F : intensityLevel) * SOUND_LEVEL;
 	}
 
-	public static ResourceLocation getCurrentRainSound() {
+	public static ResourceLocation getCurrentStormSound() {
 		return new ResourceLocation(intensity.rainSound);
 	}
 
@@ -106,7 +106,7 @@ public enum RainProperties {
 		return new ResourceLocation(intensity.dustSound);
 	}
 
-	public static boolean doVanillaRain() {
+	public static boolean doVanilla() {
 		return intensity == VANILLA;
 	}
 
@@ -153,8 +153,8 @@ public enum RainProperties {
 	 */
 	public static void setTextures() {
 		// AT transform removed final and made public.
-		RainSnowRenderer.locationRainPng = intensity.rainTexture;
-		RainSnowRenderer.locationSnowPng = intensity.snowTexture;
-		RainSnowRenderer.locationDustPng = intensity.dustTexture;
+		StormRenderer.locationRainPng = intensity.rainTexture;
+		StormRenderer.locationSnowPng = intensity.snowTexture;
+		StormRenderer.locationDustPng = intensity.dustTexture;
 	}
 }

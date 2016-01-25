@@ -28,7 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.blockartistry.mod.DynSurround.ModOptions;
-import org.blockartistry.mod.DynSurround.client.rain.RainProperties;
+import org.blockartistry.mod.DynSurround.client.storm.StormProperties;
 
 import net.minecraft.client.audio.ISound;
 import net.minecraft.client.audio.PositionedSoundRecord;
@@ -90,10 +90,10 @@ public class ClientEffectHandler {
 	 */
 	@SubscribeEvent
 	public void soundEvent(final PlaySoundEvent event) {
-		if ((ALWAYS_OVERRIDE_SOUND || !RainProperties.doVanillaRain()) && replaceRainSound(event.name)) {
+		if ((ALWAYS_OVERRIDE_SOUND || !StormProperties.doVanilla()) && replaceRainSound(event.name)) {
 			final ISound sound = event.sound;
-			event.result = new PositionedSoundRecord(RainProperties.getCurrentRainSound(),
-					RainProperties.getCurrentRainVolume(), sound.getPitch(), sound.getXPosF(), sound.getYPosF(),
+			event.result = new PositionedSoundRecord(StormProperties.getCurrentStormSound(),
+					StormProperties.getCurrentVolume(), sound.getPitch(), sound.getXPosF(), sound.getYPosF(),
 					sound.getZPosF());
 		}
 	}

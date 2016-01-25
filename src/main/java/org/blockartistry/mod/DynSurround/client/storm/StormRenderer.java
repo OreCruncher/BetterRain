@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package org.blockartistry.mod.DynSurround.client.rain;
+package org.blockartistry.mod.DynSurround.client.storm;
 
 import org.blockartistry.mod.DynSurround.Module;
 import org.blockartistry.mod.DynSurround.client.IAtmosRenderer;
@@ -48,7 +48,7 @@ import net.minecraftforge.client.IRenderHandler;
 import net.minecraftforge.fml.relauncher.Side;
 
 @SideOnly(Side.CLIENT)
-public class RainSnowRenderer implements IAtmosRenderer {
+public class StormRenderer implements IAtmosRenderer {
 
 	private static final XorShiftRandom random = new XorShiftRandom();
 
@@ -77,7 +77,7 @@ public class RainSnowRenderer implements IAtmosRenderer {
 	 */
 	public void render(final EntityRenderer renderer, final float partialTicks) {
 
-		RainProperties.setTextures();
+		StormProperties.setTextures();
 		final World world = renderer.mc.theWorld;
 
 		IRenderHandler r = world.provider.getWeatherRenderer();
@@ -91,8 +91,8 @@ public class RainSnowRenderer implements IAtmosRenderer {
 			return;
 		
 		final float alphaRatio;
-		if(RainProperties.getIntensityLevel() > 0.0F)
-			alphaRatio = world.rainingStrength / RainProperties.getIntensityLevel();
+		if(StormProperties.getIntensityLevel() > 0.0F)
+			alphaRatio = world.rainingStrength / StormProperties.getIntensityLevel();
 		else
 			alphaRatio = rainStrength;
 

@@ -25,7 +25,7 @@
 package org.blockartistry.mod.DynSurround.client;
 
 import org.blockartistry.mod.DynSurround.ModOptions;
-import org.blockartistry.mod.DynSurround.client.rain.RainProperties;
+import org.blockartistry.mod.DynSurround.client.storm.StormProperties;
 import org.blockartistry.mod.DynSurround.data.BiomeRegistry;
 import org.blockartistry.mod.DynSurround.data.DimensionRegistry;
 import org.blockartistry.mod.DynSurround.util.Color;
@@ -106,7 +106,7 @@ public class FogEffectHandler implements IClientEffectHandler {
 				biomeFog = BiomeRegistry.getFogDensity(biome);
 
 			if (ENABLE_DESERT_FOG && BiomeRegistry.hasDust(biome)) {
-				dustFog = RainProperties.getFogDensity() * DESERT_DUST_FACTOR;
+				dustFog = StormProperties.getFogDensity() * DESERT_DUST_FACTOR;
 			}
 
 			if (ENABLE_ELEVATION_HAZE && DimensionRegistry.hasHaze(world)) {

@@ -28,8 +28,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.blockartistry.mod.DynSurround.client.aurora.AuroraRenderer;
-import org.blockartistry.mod.DynSurround.client.rain.RainProperties;
-import org.blockartistry.mod.DynSurround.client.rain.RainSnowRenderer;
+import org.blockartistry.mod.DynSurround.client.storm.StormRenderer;
+import org.blockartistry.mod.DynSurround.client.storm.StormProperties;
 import org.blockartistry.mod.DynSurround.data.BiomeRegistry;
 import org.blockartistry.mod.DynSurround.util.DiurnalUtils;
 import org.blockartistry.mod.DynSurround.util.XorShiftRandom;
@@ -61,7 +61,7 @@ public final class RenderWeather {
 	}
 
 	static {
-		register(new RainSnowRenderer());
+		register(new StormRenderer());
 		register(new AuroraRenderer());
 	}
 
@@ -71,7 +71,7 @@ public final class RenderWeather {
 	private static final NoiseGeneratorSimplex gen = new NoiseGeneratorSimplex(random);
 
 	private static float calculateRainSoundVolume(final World world) {
-		return MathHelper.clamp_float((float) (RainProperties.getCurrentRainVolume()
+		return MathHelper.clamp_float((float) (StormProperties.getCurrentVolume()
 				+ gen.func_151605_a(DiurnalUtils.getClockTime(world) / 100, 1) / 5.0F), 0.0F, 1.0F);
 	}
 
@@ -152,8 +152,8 @@ public final class RenderWeather {
 
 			final BlockPos coord = new BlockPos(spawnX, 0, spawnZ);
 			final boolean hasDust = WeatherUtils.biomeHasDust(worldclient.getBiomeGenForCoords(coord));
-			final String sound = hasDust ? RainProperties.getIntensity().getDustSound()
-					: RainProperties.getIntensity().getRainSound();
+			final String sound = hasDust ? StormProperties.getIntensity().getDustSound()
+					: StormProperties.getIntensity().getStormSound();
 			final float volume = calculateRainSoundVolume(worldclient);
 			float pitch = 1.0F;
 			if (spawnY > entity.posY + 1.0D
