@@ -21,17 +21,41 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 package org.blockartistry.mod.DynSurround.client.fx;
 
-import cpw.mods.fml.relauncher.SideOnly;
+import java.util.Random;
+
 import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.block.Block;
+import net.minecraft.world.World;
 
 @SideOnly(Side.CLIENT)
-public class BasicSoundHandler extends SoundEffect {
+public abstract class BlockEffect {
 
-	public BasicSoundHandler(final String sound) {
-		super(sound);
+	private int chance;
+
+	public BlockEffect() {
+		this(100);
+	}
+	
+	public BlockEffect(final int chance) {
+		this.chance = chance;
+	}
+	
+	public void setChance(final int chance) {
+		this.chance = chance;
+	}
+	
+	public int getChance() {
+		return this.chance;
 	}
 
+	public boolean trigger(final Block block, final World world, final int x, final int y, final int z,
+			final Random random) {
+		return random.nextInt(getChance()) == 0;
+	}
+
+	public abstract void doEffect(final Block block, final World world, final int x, final int y, final int z,
+			final Random random);
 }

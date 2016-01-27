@@ -26,67 +26,63 @@ package org.blockartistry.mod.DynSurround.client.fx;
 
 import java.util.Random;
 
-import org.blockartistry.mod.DynSurround.client.fx.BlockEffectHandler.IBlockEffect;
 import cpw.mods.fml.relauncher.SideOnly;
 import cpw.mods.fml.relauncher.Side;
 import net.minecraft.block.Block;
 import net.minecraft.world.World;
 
 @SideOnly(Side.CLIENT)
-public abstract class SoundEffect implements IBlockEffect {
+public class SoundEffect extends BlockEffect {
+
+	private static final float[] pitchDelta = { -0.2F, 0.0F, 0.0F, 0.2F, 0.2F, 0.2F };
 
 	protected final String sound;
-	protected int chance;
 	protected float scale;
 	protected float volume;
 	protected float pitch;
+	protected boolean variablePitch;
 
 	public SoundEffect(final String sound) {
 		this(100, sound);
 	}
 
 	public SoundEffect(final int chance, final String sound) {
-		this(chance, sound, 1.0F, 1.0F, 1.0F);
+		this(chance, sound, 1.0F, 1.0F, 1.0F, false);
 	}
 
-	public SoundEffect(final int chance, final String sound, final float scale, final float volume,
-			final float pitch) {
-		this.chance = chance;
+	public SoundEffect(final int chance, final String sound, final float scale, final float volume, final float pitch,
+			final boolean variable) {
+		super(chance);
 		this.sound = sound;
 		this.scale = scale;
 		this.volume = volume;
 		this.pitch = pitch;
+		this.variablePitch = variable;
 	}
 
-	public SoundEffect setChance(final int chance) {
-		this.chance = chance;
-		return this;
-	}
-
-	public SoundEffect setVolume(final float volume) {
+	public void setVolume(final float volume) {
 		this.volume = volume;
-		return this;
 	}
 
-	public SoundEffect setPitch(final float pitch) {
+	public void setPitch(final float pitch) {
 		this.pitch = pitch;
-		return this;
 	}
 
-	public SoundEffect setScale(final float scale) {
+	public void setVariablePitch(final boolean flag) {
+		this.variablePitch = flag;
+	}
+
+	public void setScale(final float scale) {
 		this.scale = scale;
-		return this;
-	}
-
-	public boolean trigger(final Block block, final World world, final int x, final int y, final int z, final Random random) {
-		return random.nextInt(chance) == 0;
 	}
 
 	public float getVolume() {
 		return this.volume;
 	}
 
-	public float getPitch() {
+	public float getPitch(final Random rand) {
+		if (rand != null && this.variablePitch)
+			return this.pitch + pitchDelta[rand.nextInt(pitchDelta.length)];
 		return this.pitch;
 	}
 
@@ -94,7 +90,8 @@ public abstract class SoundEffect implements IBlockEffect {
 		return this.scale;
 	}
 
-	public void doEffect(final Block block, final World world, final int x, final int y, final int z, final Random random) {
-		world.playSound(x + 0.5D, y + 0.5D, z + 0.5D, this.sound, getVolume() * getScale(), getPitch(), false);
+	public void doEffect(final Block block, final World world, final int x, final int y, final int z,
+			final Random random) {
+		world.playSound(x + 0.5D, y + 0.5D, z + 0.5D, this.sound, getVolume() * getScale(), getPitch(random), false);
 	}
-};
+}

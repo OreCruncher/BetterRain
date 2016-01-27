@@ -54,19 +54,12 @@ public class BlockEffectHandler implements IClientEffectHandler {
 	private static final int RANGE = 16;
 	private static final int CHECK_COUNT = 1000;
 
-	public static interface IBlockEffect {
-		boolean trigger(final Block block, final World world, final int x, final int y, final int z,
-				final Random random);
+	private static final Map<Block, List<BlockEffect>> effects = new IdentityHashMap<Block, List<BlockEffect>>();
 
-		void doEffect(final Block block, final World world, final int x, final int y, final int z, final Random random);
-	}
-
-	private static final Map<Block, List<IBlockEffect>> effects = new IdentityHashMap<Block, List<IBlockEffect>>();
-
-	public static void register(final Block block, final IBlockEffect effect) {
-		List<IBlockEffect> chain = effects.get(block);
+	public static void register(final Block block, final BlockEffect effect) {
+		List<BlockEffect> chain = effects.get(block);
 		if (chain == null) {
-			effects.put(block, chain = new ArrayList<IBlockEffect>());
+			effects.put(block, chain = new ArrayList<BlockEffect>());
 		}
 		chain.add(effect);
 	}
@@ -86,9 +79,9 @@ public class BlockEffectHandler implements IClientEffectHandler {
 			final int z = playerZ + random.nextInt(RANGE) - random.nextInt(RANGE);
 			final Block block = world.getBlock(x, y, z);
 			if (block != Blocks.air) {
-				final List<IBlockEffect> chain = effects.get(block);
+				final List<BlockEffect> chain = effects.get(block);
 				if (chain != null) {
-					for (final IBlockEffect effect : chain)
+					for (final BlockEffect effect : chain)
 						if (effect.trigger(block, world, x, y, z, random))
 							effect.doEffect(block, world, x, y, z, random);
 				}
@@ -104,15 +97,14 @@ public class BlockEffectHandler implements IClientEffectHandler {
 	public static void initialize() {
 
 		// Particles
-		final BlockLiquidHandler jets = new BlockLiquidHandler();
 		if (ModOptions.getEnableFireJets())
-			register(Blocks.lava, jets);
+			register(Blocks.lava, new JetEffect.Fire());
 		if (ModOptions.getEnableBubbleJets())
-			register(Blocks.water, jets);
+			register(Blocks.water, new JetEffect.Bubble());
 
 		// Sounds
 		if (ModOptions.getEnableIceCrackSound()) {
-			final SoundEffect handler = new BasicSoundHandler(Module.MOD_ID + ":ice");
+			final SoundEffect handler = new SoundEffect(Module.MOD_ID + ":ice");
 			handler.setChance(ModOptions.getIceCrackSoundChance());
 			handler.setScale(ModOptions.getIceCrackScaleFactor());
 			handler.setVolume(0.3F);
@@ -121,15 +113,16 @@ public class BlockEffectHandler implements IClientEffectHandler {
 		}
 
 		if (ModOptions.getEnableFrogCroakSound()) {
-			final SoundEffect handler = new VariablePitchSoundHandler(Module.MOD_ID + ":frog");
+			final SoundEffect handler = new SoundEffect(Module.MOD_ID + ":frog");
 			handler.setChance(ModOptions.getFrogCroakSoundChance());
 			handler.setScale(ModOptions.getFrogCroakScaleFactor());
 			handler.setVolume(0.4F);
+			handler.setVariablePitch(true);
 			BlockEffectHandler.register(Blocks.waterlily, handler);
 		}
 
 		if (ModOptions.getEnableRedstoneOreSound()) {
-			final SoundEffect handler = new BasicSoundHandler("minecraft:random.fizz");
+			final SoundEffect handler = new SoundEffect("minecraft:random.fizz");
 			handler.setChance(ModOptions.getRedstoneOreSoundChance());
 			handler.setScale(ModOptions.getRedstoneOreScaleFactor());
 			handler.setVolume(0.3F);
@@ -137,10 +130,11 @@ public class BlockEffectHandler implements IClientEffectHandler {
 		}
 
 		if (ModOptions.getEnableSoulSandSound()) {
-			final SoundEffect handler = new VariablePitchSoundHandler(Module.MOD_ID + ":soulsand");
+			final SoundEffect handler = new SoundEffect(Module.MOD_ID + ":soulsand");
 			handler.setChance(ModOptions.getSoulSandSoundChance());
 			handler.setScale(ModOptions.getSoulSandScaleFactor());
 			handler.setVolume(0.2F);
+			handler.setVariablePitch(true);
 			BlockEffectHandler.register(Blocks.soul_sand, handler);
 		}
 	}

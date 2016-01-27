@@ -32,12 +32,10 @@ import org.blockartistry.mod.DynSurround.client.fx.particle.ParticleFactory;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-import org.blockartistry.mod.DynSurround.client.fx.BlockEffectHandler.IBlockEffect;
 import org.blockartistry.mod.DynSurround.client.fx.particle.EntityJetFX;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.EntityFX;
-import net.minecraft.init.Blocks;
 import net.minecraft.world.World;
 
 /*
@@ -46,10 +44,8 @@ import net.minecraft.world.World;
  * liquid block.
  */
 @SideOnly(Side.CLIENT)
-public class BlockLiquidHandler implements IBlockEffect {
+public abstract class JetEffect extends BlockEffect {
 
-	private static final int FIREJET_SPAWN_CHANCE = ModOptions.getFireJetsSpawnChance();
-	private static final int WATERBUBBLE_SPAWN_CHANCE = ModOptions.getBubbleJetSpawnChance();
 	private static final int MAX_STRENGTH = 10;
 
 	private static int countBlocks(final World world, final int x, final int y, final int z, final Block block,
@@ -65,41 +61,48 @@ public class BlockLiquidHandler implements IBlockEffect {
 		return count;
 	}
 
-	public boolean trigger(final Block block, final World world, final int x, final int y, final int z,
-			final Random random) {
-		if (block == Blocks.lava) {
-			if (random.nextInt(FIREJET_SPAWN_CHANCE) == 0 && world.isAirBlock(x, y + 1, z)) {
-				return true;
-			}
-		} else if (block == Blocks.water) {
-			if (random.nextInt(WATERBUBBLE_SPAWN_CHANCE) == 0 && world.getBlock(x, y - 1, z).getMaterial().isSolid()) {
-				return true;
-			}
-		}
-		return false;
+	public JetEffect(final int chance) {
+		super(chance);
 	}
 
-	public void doEffect(final Block theThis, final World world, final int x, final int y, final int z,
-			final Random random) {
-		EntityFX effect = null;
-		if (theThis == Blocks.lava) {
-			// The number of lava blocks beneath determines the jet
-			// strength. Strength affects life span, size of flame
-			// particle, and the sound volume.
-			final int lavaBlocks = countBlocks(world, x, y, z, theThis, -1);
+	public static class Fire extends JetEffect {
+		public Fire() {
+			super(ModOptions.getFireJetsSpawnChance());
+		}
+
+		@Override
+		public boolean trigger(final Block block, final World world, final int x, final int y, final int z,
+				final Random random) {
+			return super.trigger(block, world, x, y, z, random) && world.isAirBlock(x, y + 1, z);
+		}
+
+		public void doEffect(final Block block, final World world, final int x, final int y, final int z,
+				final Random random) {
+			final int lavaBlocks = countBlocks(world, x, y, z, block, -1);
 			final int jetType = random.nextInt(3) == 0 ? EntityJetFX.LAVA : EntityJetFX.FIRE;
-			effect = ParticleFactory.jet.getEntityFX(lavaBlocks, world, x + 0.5D, y + 1.1D, z + 0.5D, 0, 0, 0, jetType);
-		} else if (theThis == Blocks.water) {
-			// The number of water blocks in the water column determines
-			// the jet strength. Strength affects life span of the jet
-			// as well as the speed at which the bubbles rise.
-			final int waterBlocks = countBlocks(world, x, y, z, theThis, 1);
-			effect = ParticleFactory.jet.getEntityFX(waterBlocks, world, x + 0.5D, y + 1.1D, z + 0.5D, 0, 0, 0,
-					EntityJetFX.BUBBLE);
-		}
-
-		if (effect != null)
+			final EntityFX effect = ParticleFactory.jet.getEntityFX(lavaBlocks, world, x + 0.5D, y + 1.1D, z + 0.5D, 0, 0, 0,
+					jetType);
 			Minecraft.getMinecraft().effectRenderer.addEffect(effect);
+		}
 	}
 
+	public static class Bubble extends JetEffect {
+		public Bubble() {
+			super(ModOptions.getBubbleJetSpawnChance());
+		}
+
+		@Override
+		public boolean trigger(final Block block, final World world, final int x, final int y, final int z,
+				final Random random) {
+			return super.trigger(block, world, x, y, z, random) && world.getBlock(x, y - 1, z).getMaterial().isSolid();
+		}
+
+		public void doEffect(final Block block, final World world, final int x, final int y, final int z,
+				final Random random) {
+			final int waterBlocks = countBlocks(world, x, y, z, block, 1);
+			final EntityFX effect = ParticleFactory.jet.getEntityFX(waterBlocks, world, x + 0.5D, y + 1.1D, z + 0.5D, 0, 0, 0,
+					EntityJetFX.BUBBLE);
+			Minecraft.getMinecraft().effectRenderer.addEffect(effect);
+		}
+	}
 }
