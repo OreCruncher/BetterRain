@@ -27,6 +27,7 @@ package org.blockartistry.mod.DynSurround.data;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -46,12 +47,15 @@ public final class BiomeRegistry {
 	private static int reloadCount = 0;
 	private static final TIntObjectHashMap<Entry> registry = new TIntObjectHashMap<Entry>();
 
+	public static final BiomeGenBase UNDERGROUND = new FakeBiome(-1, "Underground");
+	public static final BiomeGenBase INSIDE = new FakeBiome(-2, "Inside");
+
 	public static final class BiomeSound {
 		public final String sound;
 		public final String conditions;
+		private final Pattern pattern;
 		public final float volume;
 		public final float pitch;
-		private final Pattern pattern;
 
 		protected BiomeSound(final SoundRecord record) {
 			this.sound = record.sound;
@@ -102,10 +106,15 @@ public final class BiomeRegistry {
 
 		public List<BiomeSound> sounds;
 
+		public int spotSoundChance;
+		public List<BiomeSound> spotSounds;
+
 		public Entry(final BiomeGenBase biome) {
 			this.biome = biome;
 			this.hasPrecipitation = biome.canSpawnLightningBolt() || biome.getEnableSnow();
 			this.sounds = new ArrayList<BiomeSound>();
+			this.spotSounds = new ArrayList<BiomeSound>();
+			this.spotSoundChance = 600;
 		}
 
 		public BiomeSound findMatch(final String conditions) {
@@ -160,6 +169,10 @@ public final class BiomeRegistry {
 				registry.put(biomeArray[i].biomeID, new Entry(biomeArray[i]));
 			}
 
+		// Add our fake underground biome
+		registry.put(UNDERGROUND.biomeID, new Entry(UNDERGROUND));
+		registry.put(INSIDE.biomeID, new Entry(INSIDE));
+
 		processConfig();
 
 		for (final Entry entry : registry.valueCollection())
@@ -196,6 +209,22 @@ public final class BiomeRegistry {
 
 	public static BiomeSound getSound(final BiomeGenBase biome, final String conditions) {
 		return registry.get(biome.biomeID).findMatch(conditions);
+	}
+
+	public static BiomeSound getSpotSound(final BiomeGenBase biome, final String conditions, final Random random) {
+		final Entry e = registry.get(biome.biomeID);
+		if (e == null || e.spotSounds.isEmpty() || random.nextInt(e.spotSoundChance) != 0)
+			return null;
+
+		final List<BiomeSound> candidates = new ArrayList<BiomeSound>();
+		for (final BiomeSound s : e.spotSounds)
+			if (s.matches(conditions))
+				candidates.add(s);
+		if (candidates.isEmpty())
+			return null;
+		if (candidates.size() == 1)
+			return candidates.get(0);
+		return candidates.get(random.nextInt(candidates.size()));
 	}
 
 	private static void processConfig() {
@@ -250,10 +279,20 @@ public final class BiomeRegistry {
 						if (rgb.length == 3)
 							biomeEntry.dustColor = new Color(rgb[0], rgb[1], rgb[2]);
 					}
-					if (entry.soundReset != null && entry.soundReset.booleanValue())
+					if (entry.soundReset != null && entry.soundReset.booleanValue()) {
 						biomeEntry.sounds = new ArrayList<BiomeSound>();
+						biomeEntry.spotSounds = new ArrayList<BiomeSound>();
+					}
+
+					if (entry.spotSoundChance != null)
+						biomeEntry.spotSoundChance = entry.spotSoundChance.intValue();
+
 					for (final SoundRecord sr : entry.sounds) {
-						biomeEntry.sounds.add(new BiomeSound(sr));
+						final BiomeSound s = new BiomeSound(sr);
+						if (sr.spotSound != null && sr.spotSound.booleanValue())
+							biomeEntry.spotSounds.add(s);
+						else
+							biomeEntry.sounds.add(s);
 					}
 				}
 			}

@@ -27,11 +27,15 @@ package org.blockartistry.mod.DynSurround.client;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.fml.relauncher.Side;
 
+import java.util.Random;
+
 import org.blockartistry.mod.DynSurround.data.BiomeRegistry;
 import org.blockartistry.mod.DynSurround.data.BiomeRegistry.BiomeSound;
 import org.blockartistry.mod.DynSurround.data.DimensionRegistry;
 import org.blockartistry.mod.DynSurround.util.DiurnalUtils;
 import org.blockartistry.mod.DynSurround.util.PlayerUtils;
+import org.blockartistry.mod.DynSurround.util.XorShiftRandom;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.MovingSound;
 import net.minecraft.entity.player.EntityPlayer;
@@ -42,7 +46,7 @@ import net.minecraft.world.biome.BiomeGenBase;
 @SideOnly(Side.CLIENT)
 public class PlayerSoundEffectHandler implements IClientEffectHandler {
 
-	private static final int INSIDE_Y_ADJUST = 3;
+	private static final Random RANDOM = new XorShiftRandom();
 	private static final float VOLUME_INCREMENT = 0.02F;
 
 	private static final String CONDITION_TOKEN_RAINING = "raining";
@@ -60,6 +64,11 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 		private final BiomeSound sound;
 
 		public PlayerSound(final EntityPlayer player, final BiomeSound sound) {
+			this(player, sound, true);
+		}
+		
+		public PlayerSound(final EntityPlayer player, final BiomeSound sound, final boolean repeat) {
+
 			super(new ResourceLocation(sound.sound));
 
 			// Don't set volume to 0; MC will optimize out
@@ -157,7 +166,7 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 	@Override
 	public void process(final World world, final EntityPlayer player) {
 		// Dead player or they are covered with blocks
-		if (player.isDead || PlayerUtils.isInside(player, INSIDE_Y_ADJUST)) {
+		if (player.isDead) {
 			if (currentSound != null) {
 				currentSound.fadeAway();
 				currentSound = null;
@@ -166,8 +175,8 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 		}
 
 		final String conditions = getConditions(world);
-		final BiomeGenBase playerBiome = PlayerUtils.getPlayerBiome(player);
-		final BiomeSound sound = BiomeRegistry.getSound(playerBiome, conditions);
+		final BiomeGenBase playerBiome = PlayerUtils.getPlayerBiome(player, false);
+		BiomeSound sound = BiomeRegistry.getSound(playerBiome, conditions);
 
 		if (currentSound != null) {
 			if (didReloadOccur() || sound == null || !currentSound.sameSound(sound)) {
@@ -179,6 +188,12 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 		if (currentSound == null && sound != null) {
 			currentSound = new PlayerSound(player, sound);
 			Minecraft.getMinecraft().getSoundHandler().playSound(currentSound);
+		}
+		
+		sound = BiomeRegistry.getSpotSound(playerBiome, conditions, RANDOM);
+		if (sound != null) {
+			final PlayerSound spotSound = new PlayerSound(player, sound, false);
+			Minecraft.getMinecraft().getSoundHandler().playSound(spotSound);
 		}
 	}
 }

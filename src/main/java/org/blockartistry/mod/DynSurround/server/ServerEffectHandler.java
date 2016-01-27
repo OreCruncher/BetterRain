@@ -124,7 +124,7 @@ public final class ServerEffectHandler {
 							.getConfigurationManager().playerEntityList;
 
 					for (final EntityPlayerMP player : players) {
-						if (!BiomeRegistry.hasAurora(PlayerUtils.getPlayerBiome(player)))
+						if (!BiomeRegistry.hasAurora(PlayerUtils.getPlayerBiome(player, false)))
 							continue;
 						if (isAuroraInRange(player, data))
 							continue;
