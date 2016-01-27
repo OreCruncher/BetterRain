@@ -24,12 +24,17 @@
 
 package org.blockartistry.mod.DynSurround.client.fx;
 
+import java.util.Random;
+
+import org.blockartistry.mod.DynSurround.util.XorShiftRandom;
+
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
-public class VariablePitchSoundHandler extends SoundHandler {
+public class VariablePitchSoundHandler extends SoundEffect {
 
+	private static final Random random = new XorShiftRandom();
 	private static final float[] pitch = { 0.8F, 1.0F, 1.0F, 1.2F, 1.2F, 1.2F };
 
 	public VariablePitchSoundHandler(final String sound) {

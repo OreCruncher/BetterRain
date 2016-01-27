@@ -28,7 +28,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
-public class BasicSoundHandler extends SoundHandler {
+public class BasicSoundHandler extends SoundEffect {
 
 	public BasicSoundHandler(final String sound) {
 		super(sound);

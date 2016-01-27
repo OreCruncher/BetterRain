@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.blockartistry.mod.DynSurround.ModOptions;
+import org.blockartistry.mod.DynSurround.client.fx.BlockEffectHandler;
 import org.blockartistry.mod.DynSurround.client.storm.StormProperties;
 
 import net.minecraft.client.audio.ISound;
@@ -66,6 +67,7 @@ public class ClientEffectHandler {
 		MinecraftForge.EVENT_BUS.register(handler);
 
 		register(new FogEffectHandler());
+		register(new BlockEffectHandler());
 
 		if (ModOptions.getAuroraEnable())
 			register(new AuroraEffectHandler());
