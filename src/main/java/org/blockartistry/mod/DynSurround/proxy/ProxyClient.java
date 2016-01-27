@@ -25,7 +25,7 @@
 package org.blockartistry.mod.DynSurround.proxy;
 
 import org.blockartistry.mod.DynSurround.client.ClientEffectHandler;
-import org.blockartistry.mod.DynSurround.client.fx.BlockSoundHandler;
+import org.blockartistry.mod.DynSurround.client.fx.BlockEffectHandler;
 
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 
@@ -34,7 +34,7 @@ public class ProxyClient extends Proxy {
 	@Override
 	public void init(final FMLInitializationEvent event) {
 		super.init(event);
+		BlockEffectHandler.initialize();
 		ClientEffectHandler.initialize();
-		BlockSoundHandler.initialize();
 	}
 }

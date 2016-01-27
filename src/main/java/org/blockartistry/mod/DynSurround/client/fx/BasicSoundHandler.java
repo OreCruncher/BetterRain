@@ -28,7 +28,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 import cpw.mods.fml.relauncher.Side;
 
 @SideOnly(Side.CLIENT)
-public class BasicSoundHandler extends SoundHandler {
+public class BasicSoundHandler extends SoundEffect {
 
 	public BasicSoundHandler(final String sound) {
 		super(sound);

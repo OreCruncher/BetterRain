@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.blockartistry.mod.DynSurround.ModOptions;
+import org.blockartistry.mod.DynSurround.client.fx.BlockEffectHandler;
 import org.blockartistry.mod.DynSurround.client.storm.StormProperties;
 
 import cpw.mods.fml.client.FMLClientHandler;
@@ -69,6 +70,7 @@ public class ClientEffectHandler {
 		FMLCommonHandler.instance().bus().register(handler);
 
 		register(new FogEffectHandler());
+		register(new BlockEffectHandler());
 
 		if (ModOptions.getAuroraEnable())
 			register(new AuroraEffectHandler());

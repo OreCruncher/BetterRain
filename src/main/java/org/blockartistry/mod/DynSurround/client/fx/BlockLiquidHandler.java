@@ -28,9 +28,12 @@ import java.util.Random;
 
 import org.blockartistry.mod.DynSurround.ModOptions;
 import org.blockartistry.mod.DynSurround.client.fx.particle.ParticleFactory;
-import org.blockartistry.mod.DynSurround.client.fx.particle.EntityJetFX;
-import org.blockartistry.mod.DynSurround.util.XorShiftRandom;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
+import org.blockartistry.mod.DynSurround.client.fx.BlockEffectHandler.IBlockEffect;
+import org.blockartistry.mod.DynSurround.client.fx.particle.EntityJetFX;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.EntityFX;
@@ -42,11 +45,9 @@ import net.minecraft.world.World;
  * routine in order to generate particle effects based on the
  * liquid block.
  */
-public class BlockLiquidHandler {
+@SideOnly(Side.CLIENT)
+public class BlockLiquidHandler implements IBlockEffect {
 
-	private static final Random RANDOM = new XorShiftRandom();
-	private static final boolean ENABLE_FIREJETS = ModOptions.getEnableFireJets();
-	private static final boolean ENABLE_WATER_BUBBLES = ModOptions.getEnableBubbleJets();
 	private static final int FIREJET_SPAWN_CHANCE = ModOptions.getFireJetsSpawnChance();
 	private static final int WATERBUBBLE_SPAWN_CHANCE = ModOptions.getBubbleJetSpawnChance();
 	private static final int MAX_STRENGTH = 10;
@@ -64,32 +65,37 @@ public class BlockLiquidHandler {
 		return count;
 	}
 
-	/*
-	 * Hooked into BlockLiquid.randomDisplayTick(). Goal is to spawn EntityJetFX
-	 * particles as a client side effect.
-	 */
-	public static void randomDisplayTick(final Block theThis, final World world, final int x, final int y, final int z,
+	public boolean trigger(final Block block, final World world, final int x, final int y, final int z,
+			final Random random) {
+		if (block == Blocks.lava) {
+			if (random.nextInt(FIREJET_SPAWN_CHANCE) == 0 && world.isAirBlock(x, y + 1, z)) {
+				return true;
+			}
+		} else if (block == Blocks.water) {
+			if (random.nextInt(WATERBUBBLE_SPAWN_CHANCE) == 0 && world.getBlock(x, y - 1, z).getMaterial().isSolid()) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public void doEffect(final Block theThis, final World world, final int x, final int y, final int z,
 			final Random random) {
 		EntityFX effect = null;
-		if (ENABLE_FIREJETS && theThis == Blocks.lava) {
-			if (RANDOM.nextInt(FIREJET_SPAWN_CHANCE) == 0 && world.isAirBlock(x, y + 1, z)) {
-				// The number of lava blocks beneath determines the jet
-				// strength. Strength affects life span, size of flame
-				// particle, and the sound volume.
-				final int lavaBlocks = countBlocks(world, x, y, z, theThis, -1);
-				final int jetType = RANDOM.nextInt(3) == 0 ? EntityJetFX.LAVA : EntityJetFX.FIRE;
-				effect = ParticleFactory.jet.getEntityFX(lavaBlocks, world, x + 0.5D, y + 1.1D, z + 0.5D, 0, 0, 0,
-						jetType);
-			}
-		} else if (ENABLE_WATER_BUBBLES && theThis == Blocks.water) {
-			if (RANDOM.nextInt(WATERBUBBLE_SPAWN_CHANCE) == 0 && world.getBlock(x, y - 1, z).getMaterial().isSolid()) {
-				// The number of water blocks in the water column determines
-				// the jet strength. Strength affects life span of the jet
-				// as well as the speed at which the bubbles rise.
-				final int waterBlocks = countBlocks(world, x, y, z, theThis, 1);
-				effect = ParticleFactory.jet.getEntityFX(waterBlocks, world, x + 0.5D, y + 1.1D, z + 0.5D, 0, 0, 0,
-						EntityJetFX.BUBBLE);
-			}
+		if (theThis == Blocks.lava) {
+			// The number of lava blocks beneath determines the jet
+			// strength. Strength affects life span, size of flame
+			// particle, and the sound volume.
+			final int lavaBlocks = countBlocks(world, x, y, z, theThis, -1);
+			final int jetType = random.nextInt(3) == 0 ? EntityJetFX.LAVA : EntityJetFX.FIRE;
+			effect = ParticleFactory.jet.getEntityFX(lavaBlocks, world, x + 0.5D, y + 1.1D, z + 0.5D, 0, 0, 0, jetType);
+		} else if (theThis == Blocks.water) {
+			// The number of water blocks in the water column determines
+			// the jet strength. Strength affects life span of the jet
+			// as well as the speed at which the bubbles rise.
+			final int waterBlocks = countBlocks(world, x, y, z, theThis, 1);
+			effect = ParticleFactory.jet.getEntityFX(waterBlocks, world, x + 0.5D, y + 1.1D, z + 0.5D, 0, 0, 0,
+					EntityJetFX.BUBBLE);
 		}
 
 		if (effect != null)

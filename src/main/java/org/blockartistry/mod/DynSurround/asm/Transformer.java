@@ -26,19 +26,13 @@ package org.blockartistry.mod.DynSurround.asm;
 
 import static org.objectweb.asm.Opcodes.*;
 
-import java.util.List;
-
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
-import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.ClassNode;
-import org.objectweb.asm.tree.InsnList;
 import org.objectweb.asm.tree.InsnNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.VarInsnNode;
-
-import com.google.common.collect.ImmutableList;
 
 import net.minecraft.launchwrapper.IClassTransformer;
 
@@ -49,30 +43,8 @@ public class Transformer implements IClassTransformer {
 
 	private static final Logger logger = LogManager.getLogger("dsurround Transform");
 
-	private static final List<String> soundTickClasses = ImmutableList.<String> builder()
-			.add("net.minecraft.block.BlockIce", "alp").add("net.minecraft.block.BlockPackedIce", "amo")
-			.add("net.minecraft.block.BlockLilyPad", "aoj").add("net.minecraft.block.BlockRedstoneOre", "amz")
-			.add("net.minecraft.block.BlockSoulSand", "ano").build();
-
-	private static final List<String> liquidTickClasses = ImmutableList.<String> builder()
-			.add("net.minecraft.block.BlockLiquid", "alw").build();
-
 	@Override
 	public byte[] transform(final String name, final String transformedName, byte[] basicClass) {
-
-		// Random display tick transforms
-		if (soundTickClasses.contains(name)) {
-			logger.debug("Transforming " + name);
-			basicClass = transformRandomDisplayTick(basicClass,
-					"org/blockartistry/mod/DynSurround/client/fx/BlockSoundHandler");
-		}
-
-		if (liquidTickClasses.contains(name)) {
-			logger.debug("Transforming liquid " + name);
-			basicClass = transformRandomDisplayTick(basicClass,
-					"org/blockartistry/mod/DynSurround/client/fx/BlockLiquidHandler");
-		}
-
 		if ("net.minecraft.client.renderer.EntityRenderer".equals(name) || "blt".equals(name)) {
 			logger.debug("Transforming EntityRenderer...");
 			return transformEntityRenderer(basicClass);
@@ -195,6 +167,7 @@ public class Transformer implements IClassTransformer {
 		return cw.toByteArray();
 	}
 
+	/*
 	private byte[] transformRandomDisplayTick(final byte[] classBytes, final String handlerClass) {
 
 		final String names[];
@@ -244,4 +217,5 @@ public class Transformer implements IClassTransformer {
 				return node;
 		return null;
 	}
+	*/
 }
