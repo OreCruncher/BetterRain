@@ -98,5 +98,15 @@
 			"ambient/end/end"
 		]
 		
+	},
+	"owl":{
+		"category":"ambient",
+		"sounds":[
+			"ambient/owl/owl1",
+			"ambient/owl/owl2",
+			"ambient/owl/owl3"
+		]
+		
 	}
+	
 }

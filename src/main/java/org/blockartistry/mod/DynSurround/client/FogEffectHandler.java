@@ -83,7 +83,7 @@ public class FogEffectHandler implements IClientEffectHandler {
 
 	@Override
 	public void process(final World world, final EntityPlayer player) {
-		final BiomeGenBase biome = PlayerUtils.getPlayerBiome(player);
+		final BiomeGenBase biome = PlayerUtils.getPlayerBiome(player, false);
 
 		if (currentFogColor == null)
 			currentFogColor = new Color(world.getFogColor(1.0F));
@@ -101,10 +101,10 @@ public class FogEffectHandler implements IClientEffectHandler {
 		// If the player Y is higher than the cutoff Y then assess desert
 		// and elevation haze. Don't want to do needless calculations if they
 		// are under ground.
-		if (posY >= cutOff) {
-			if (ENABLE_BIOME_FOG && BiomeRegistry.hasFog(biome))
-				biomeFog = BiomeRegistry.getFogDensity(biome);
+		if (ENABLE_BIOME_FOG && BiomeRegistry.hasFog(biome))
+			biomeFog = BiomeRegistry.getFogDensity(biome);
 
+		if (posY >= cutOff) {
 			if (ENABLE_DESERT_FOG && BiomeRegistry.hasDust(biome)) {
 				dustFog = StormProperties.getFogDensity() * DESERT_DUST_FACTOR;
 			}

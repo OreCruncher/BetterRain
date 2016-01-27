@@ -43,6 +43,8 @@ final class BiomeConfig {
 		public Float volume = null;
 		@SerializedName("pitch")
 		public Float pitch = null;
+		@SerializedName("spot")
+		public Boolean spotSound = null;
 	}
 	
 	public static class Entry {
@@ -64,6 +66,8 @@ final class BiomeConfig {
 		public Float fogDensity= null;
 		@SerializedName("soundReset")
 		public Boolean soundReset = null;
+		@SerializedName("spotSoundChance")
+		public Integer spotSoundChance = null;
 		@SerializedName("sounds")
 		public List<SoundRecord> sounds = ImmutableList.of();
 	}

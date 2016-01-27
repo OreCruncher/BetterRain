@@ -57,6 +57,12 @@
 					"sound":"dsurround:crickets",
 					"conditions":"(?i)(?!.*raining.*).*night.*",
 					"volume":0.1
+				},
+				{
+					"sound":"dsurround:owl",
+					"conditions":"(?i)(?!.*raining.*).*night.*",
+					"volume":0.7,
+					"spot":true
 				}
 				
 			]
@@ -69,6 +75,19 @@
 					"sound":"dsurround:taiga",
 					"conditions":"(?i)(?!.*raining.*).*day.*",
 					"volume":0.7
+				}
+				
+			]
+			
+		},
+		{
+			"biomeName":"(?i)(.*taiga.*)",
+			"sounds":[
+				{
+					"sound":"dsurround:owl",
+					"conditions":"(?i)(?!.*raining.*).*night.*",
+					"volume":0.7,
+					"spot":true
 				}
 				
 			]

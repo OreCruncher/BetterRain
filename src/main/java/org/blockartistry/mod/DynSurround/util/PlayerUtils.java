@@ -23,6 +23,7 @@
 
 package org.blockartistry.mod.DynSurround.util;
 
+import org.blockartistry.mod.DynSurround.data.BiomeRegistry;
 import org.blockartistry.mod.DynSurround.data.DimensionRegistry;
 
 import codechicken.lib.math.MathHelper;
@@ -34,10 +35,19 @@ import net.minecraft.world.biome.BiomeGenBase;
 
 public final class PlayerUtils {
 
+	private static final int INSIDE_Y_ADJUST = 3;
+
 	private PlayerUtils() {
 	}
 
-	public static BiomeGenBase getPlayerBiome(final EntityPlayer player) {
+	public static BiomeGenBase getPlayerBiome(final EntityPlayer player, final boolean getTrue) {
+		if(!getTrue) {
+			if(isUnderGround(player, INSIDE_Y_ADJUST))
+				return BiomeRegistry.UNDERGROUND;
+			if(isInside(player, INSIDE_Y_ADJUST))
+				return BiomeRegistry.INSIDE;
+		}
+		
 		final int theX = MathHelper.floor_double(player.posX);
 		final int theZ = MathHelper.floor_double(player.posZ);
 		return player.worldObj.getBiomeGenForCoords(theX, theZ);
@@ -57,6 +67,11 @@ public final class PlayerUtils {
 	private static final int AREA = (RANGE * 2 + 1) * (RANGE * 2 + 1) / 2;
 
 	public static boolean isInside(final EntityPlayer entity, final int yOffset) {
+		// The Nether/End do not have the idea of inside
+		final int dimension = PlayerUtils.getPlayerDimension(entity);
+		if(dimension == 1 || dimension == -1)
+			return false;
+		
 		// If the player is underground
 		if (PlayerUtils.isUnderGround(entity, yOffset))
 			return true;
