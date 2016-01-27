@@ -66,6 +66,8 @@ public final class ModOptions {
 	protected static float defaultMinRainStrength = 0.0F;
 	protected static final String CONFIG_MAX_RAIN_STRENGTH = "Default Maximum Rain Strength";
 	protected static float defaultMaxRainStrength = 1.0F;
+	protected static final String CONFIG_FX_RANGE = "Special Effect Range";
+	protected static int specialEffectRange = 16;
 
 	protected static final String CATEGORY_AURORA = "aurora";
 	protected static final String CONFIG_AURORA_ENABLED = "Enabled";
@@ -164,6 +166,10 @@ public final class ModOptions {
 		comment = "Default maximum rain strength for a dimension";
 		defaultMaxRainStrength = MathHelper.clamp_float(config.getFloat(CONFIG_MAX_RAIN_STRENGTH, CATEGORY_GENERAL,
 				defaultMaxRainStrength, 0.0F, 1.0F, comment), defaultMinRainStrength, 1.0F);
+
+		comment = "Block radius/range around player for special effect application";
+		specialEffectRange = config.getInt(CONFIG_FX_RANGE, CATEGORY_GENERAL, specialEffectRange, 8, 32,
+				comment);
 
 		// CATEGORY: Player
 		comment = "Suppress player's potion particles from rendering";
@@ -307,6 +313,10 @@ public final class ModOptions {
 		return defaultMaxRainStrength;
 	}
 
+	public static int getSpecialEffectRange() {
+		return specialEffectRange;
+	}
+	
 	public static boolean getAuroraHeightPlayerRelative() {
 		return auroraHeightPlayerRelative;
 	}
