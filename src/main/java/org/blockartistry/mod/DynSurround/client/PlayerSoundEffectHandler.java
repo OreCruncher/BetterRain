@@ -76,7 +76,7 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 			this.volume = 0.01F;
 			this.pitch = sound.pitch;
 			this.player = player;
-			this.repeat = true;
+			this.repeat = repeat;
 			this.fadeAway = false;
 
 			// Repeat delay

@@ -49,13 +49,18 @@ public final class BiomeRegistry {
 
 	public static final BiomeGenBase UNDERGROUND = new FakeBiome(-1, "Underground");
 	public static final BiomeGenBase INSIDE = new FakeBiome(-2, "Inside");
-
+	
+	// This is for cases when the biome coming in doesn't make sense
+	// and should default to something to avoid crap.
+	private static final BiomeGenBase WTF = new FakeBiome(-256, "(FooBar)");
+	
 	public static final class BiomeSound {
 		public final String sound;
 		public final String conditions;
 		private final Pattern pattern;
 		public final float volume;
 		public final float pitch;
+		public final int weight;
 
 		protected BiomeSound(final SoundRecord record) {
 			this.sound = record.sound;
@@ -63,6 +68,7 @@ public final class BiomeRegistry {
 			this.volume = record.volume == null ? 1.0F : record.volume.floatValue();
 			this.pitch = record.pitch == null ? 1.0F : record.pitch.floatValue();
 			this.pattern = Pattern.compile(this.conditions);
+			this.weight = record.weight == null ? 1 : record.weight.intValue();
 		}
 
 		public boolean matches(final String conditions) {
@@ -169,62 +175,81 @@ public final class BiomeRegistry {
 				registry.put(biomeArray[i].biomeID, new Entry(biomeArray[i]));
 			}
 
-		// Add our fake underground biome
+		// Add our fake biomes
 		registry.put(UNDERGROUND.biomeID, new Entry(UNDERGROUND));
 		registry.put(INSIDE.biomeID, new Entry(INSIDE));
+		registry.put(WTF.biomeID, new Entry(WTF));
 
 		processConfig();
 
 		for (final Entry entry : registry.valueCollection())
 			ModLog.info(entry.toString());
 	}
+	
+	private static Entry get(final BiomeGenBase biome) {
+		if(biome == null)
+			return registry.get(WTF.biomeID);
+		final Entry entry = registry.get(biome.biomeID);
+		return entry != null ? entry : registry.get(WTF.biomeID);
+	}
 
 	public static boolean hasDust(final BiomeGenBase biome) {
-		return registry.get(biome.biomeID).hasDust;
+		return get(biome).hasDust;
 	}
 
 	public static boolean hasPrecipitation(final BiomeGenBase biome) {
-		return registry.get(biome.biomeID).hasPrecipitation;
+		return get(biome).hasPrecipitation;
 	}
 
 	public static boolean hasAurora(final BiomeGenBase biome) {
-		return registry.get(biome.biomeID).hasAurora;
+		return get(biome).hasAurora;
 	}
 
 	public static boolean hasFog(final BiomeGenBase biome) {
-		return registry.get(biome.biomeID).hasFog;
+		return get(biome).hasFog;
 	}
 
 	public static Color getDustColor(final BiomeGenBase biome) {
-		return registry.get(biome.biomeID).dustColor;
+		return get(biome).dustColor;
 	}
 
 	public static Color getFogColor(final BiomeGenBase biome) {
-		return registry.get(biome.biomeID).fogColor;
+		return get(biome).fogColor;
 	}
 
 	public static float getFogDensity(final BiomeGenBase biome) {
-		return registry.get(biome.biomeID).fogDensity;
+		return get(biome).fogDensity;
 	}
 
 	public static BiomeSound getSound(final BiomeGenBase biome, final String conditions) {
-		return registry.get(biome.biomeID).findMatch(conditions);
+		return get(biome).findMatch(conditions);
 	}
 
 	public static BiomeSound getSpotSound(final BiomeGenBase biome, final String conditions, final Random random) {
-		final Entry e = registry.get(biome.biomeID);
+		final Entry e = get(biome);
 		if (e == null || e.spotSounds.isEmpty() || random.nextInt(e.spotSoundChance) != 0)
 			return null;
 
+		int totalWeight = 0;
 		final List<BiomeSound> candidates = new ArrayList<BiomeSound>();
 		for (final BiomeSound s : e.spotSounds)
-			if (s.matches(conditions))
+			if (s.matches(conditions)) {
 				candidates.add(s);
-		if (candidates.isEmpty())
+				totalWeight += s.weight;
+			}
+		if(totalWeight <= 0)
 			return null;
+		
+		
 		if (candidates.size() == 1)
 			return candidates.get(0);
-		return candidates.get(random.nextInt(candidates.size()));
+		
+		int targetWeight = random.nextInt(totalWeight);
+		int i = 0;
+		for (i = candidates.size(); (targetWeight -= candidates.get(i - 1).weight) >= 0; i--)
+			;
+
+		return candidates.get(i - 1);
 	}
 
 	private static void processConfig() {

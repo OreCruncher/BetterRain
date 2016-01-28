@@ -107,6 +107,29 @@
 			"ambient/owl/owl3"
 		]
 		
+	},
+	"underground":{
+		"category":"ambient",
+		"sounds":[
+			"ambient/underground/ambient"
+		]
+		
+	},
+	"rockfall":{
+		"category":"ambient",
+		"sounds":[
+			"ambient/underground/rockfall1",
+			"ambient/underground/rockfall2",
+			"ambient/underground/rockfall3"
+		]
+		
+	},
+	"monstergrowl":{
+		"category":"ambient",
+		"sounds":[
+			"ambient/underground/monster_growl1"
+		]
+		
 	}
 	
 }

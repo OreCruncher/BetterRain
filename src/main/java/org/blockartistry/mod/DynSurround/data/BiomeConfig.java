@@ -45,6 +45,8 @@ final class BiomeConfig {
 		public Float pitch = null;
 		@SerializedName("spot")
 		public Boolean spotSound = null;
+		@SerializedName("weight")
+		public Integer weight = null;
 	}
 	
 	public static class Entry {
