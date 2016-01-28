@@ -45,6 +45,7 @@ public class EntityJetFX extends EntityFX {
 	public static final int BUBBLE = 0;
 	public static final int FIRE = 1;
 	public static final int LAVA = 2;
+	public static final int STEAM = 3;
 
 	protected final int jetStrength;
 	protected final IParticleFactory factory;
@@ -97,6 +98,8 @@ public class EntityJetFX extends EntityFX {
 				return ParticleFactory.fireJet;
 			case LAVA:
 				return ParticleFactory.lavaJet;
+			case STEAM:
+				return ParticleFactory.steamJet;
 			default:
 				return ParticleFactory.bubbleJet;
 			}
@@ -107,6 +110,8 @@ public class EntityJetFX extends EntityFX {
 				double dZ, int... misc) {
 			if (misc[0] == LAVA || misc[0] == FIRE)
 				world.playSound(x, y, z, "minecraft:fire.fire", 1.0F + particleID / 10.0F, 1.0F, false);
+			else if(misc[0] == STEAM)
+				world.playSound(x, y, z, "minecraft:random.fizz", particleID / 10.0F, 1.0F, false);
 			return new EntityJetFX(particleID, getFactory(misc[0]), world, x, y, z);
 		}
 
