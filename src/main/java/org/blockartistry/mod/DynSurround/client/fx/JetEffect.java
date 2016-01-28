@@ -169,7 +169,7 @@ public abstract class JetEffect extends BlockEffect {
 
 		public void doEffect(final Block block, final World world, final int x, final int y, final int z,
 				final Random random) {
-			final IBlockState state = block.getDefaultState();
+			final IBlockState state = world.getBlockState(new BlockPos(x, y, z));
 			final EntityJetFX effect = new EntityDustJetFX(2, world, x + 0.5D, y - 0.2D, z + 0.5D, state);
 			addEffect(effect);
 		}

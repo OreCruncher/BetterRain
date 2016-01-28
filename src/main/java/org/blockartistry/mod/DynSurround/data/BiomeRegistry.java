@@ -63,6 +63,7 @@ public final class BiomeRegistry {
 		public final float volume;
 		public final float pitch;
 		public final int weight;
+		public final boolean isSpot;
 
 		protected BiomeSound(final String sound, final float volume, final float pitch) {
 			this.sound = sound;
@@ -71,6 +72,7 @@ public final class BiomeRegistry {
 			this.conditions = ".*";
 			this.pattern = null;
 			this.weight = 0;
+			this.isSpot = true;
 		}
 
 		protected BiomeSound(final SoundRecord record) {
@@ -79,7 +81,8 @@ public final class BiomeRegistry {
 			this.volume = record.volume == null ? 1.0F : record.volume.floatValue();
 			this.pitch = record.pitch == null ? 1.0F : record.pitch.floatValue();
 			this.pattern = Pattern.compile(this.conditions);
-			this.weight = record.weight == null ? 1 : record.weight.intValue();
+			this.weight = record.weight == null ? 10 : record.weight.intValue();
+			this.isSpot = record.spotSound != null && record.spotSound.booleanValue();
 		}
 
 		public boolean matches(final String conditions) {
@@ -104,6 +107,8 @@ public final class BiomeRegistry {
 				builder.append('(').append(this.conditions).append(')');
 			builder.append(", v:").append(this.volume);
 			builder.append(", p:").append(this.pitch);
+			if (this.isSpot)
+				builder.append(", w:").append(this.weight);
 			builder.append(']');
 			return builder.toString();
 		}
@@ -161,9 +166,18 @@ public final class BiomeRegistry {
 				builder.append(" fogColor:").append(this.fogColor.toString());
 				builder.append(" fogDensity:").append(this.fogDensity);
 			}
+
 			if (!this.sounds.isEmpty()) {
 				builder.append("; sounds [");
 				for (final BiomeSound sound : this.sounds)
+					builder.append(sound.toString()).append(',');
+				builder.append(']');
+			}
+
+			if (!this.spotSounds.isEmpty()) {
+				builder.append("; spot sound chance:").append(this.spotSoundChance);
+				builder.append(" spot sounds [");
+				for (final BiomeSound sound : this.spotSounds)
 					builder.append(sound.toString()).append(',');
 				builder.append(']');
 			}
