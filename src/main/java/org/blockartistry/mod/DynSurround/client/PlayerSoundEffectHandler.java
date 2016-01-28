@@ -37,6 +37,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.MovingSound;
+import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
@@ -70,7 +71,7 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 			super(new ResourceLocation(sound.sound));
 			// Don't set volume to 0; MC will optimize out
 			this.sound = sound;
-			this.volume = 0.01F;
+			this.volume = repeat ? 0.01F : sound.volume;
 			this.field_147663_c = sound.pitch;
 			this.player = player;
 			this.repeat = repeat;
@@ -160,6 +161,19 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 		return false;
 	}
 
+	public static void playSoundAtPlayer(EntityPlayer player, final BiomeSound sound, final int tickDelay) {
+		if(player == null)
+			player = Minecraft.getMinecraft().thePlayer;
+		
+		final SoundHandler handler = Minecraft.getMinecraft().getSoundHandler();
+		final PlayerSound s = new PlayerSound(player, sound, false);
+		
+		if(tickDelay == 0)
+			handler.playSound(s);
+		else
+			handler.playDelayedSound(s, tickDelay);
+	}
+	
 	@Override
 	public void process(final World world, final EntityPlayer player) {
 		// Dead player or they are covered with blocks
@@ -189,8 +203,7 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 
 		sound = BiomeRegistry.getSpotSound(playerBiome, conditions, RANDOM);
 		if (sound != null) {
-			final PlayerSound spotSound = new PlayerSound(player, sound, false);
-			Minecraft.getMinecraft().getSoundHandler().playSound(spotSound);
+			playSoundAtPlayer(player, sound, 0);
 		}
 	}
 }

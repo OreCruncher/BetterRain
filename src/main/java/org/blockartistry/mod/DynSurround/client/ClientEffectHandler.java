@@ -30,6 +30,7 @@ import java.util.List;
 import org.blockartistry.mod.DynSurround.ModOptions;
 import org.blockartistry.mod.DynSurround.client.fx.BlockEffectHandler;
 import org.blockartistry.mod.DynSurround.client.storm.StormProperties;
+import org.blockartistry.mod.DynSurround.data.BiomeRegistry;
 
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -41,10 +42,12 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.audio.ISound;
 import net.minecraft.client.audio.PositionedSoundRecord;
+import net.minecraft.client.particle.EntityDropParticleFX;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.sound.PlaySoundEvent17;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.entity.EntityEvent.EntityConstructing;
 
 @SideOnly(Side.CLIENT)
 public class ClientEffectHandler {
@@ -100,6 +103,13 @@ public class ClientEffectHandler {
 			event.result = new PositionedSoundRecord(StormProperties.getCurrentStormSound(),
 					StormProperties.getCurrentVolume(), sound.getPitch(), sound.getXPosF(), sound.getYPosF(),
 					sound.getZPosF());
+		}
+	}
+
+	@SubscribeEvent
+	public void entityCreateEvent(final EntityConstructing event) {
+		if (event.entity instanceof EntityDropParticleFX) {
+			PlayerSoundEffectHandler.playSoundAtPlayer(null, BiomeRegistry.WATER_DRIP, 50);
 		}
 	}
 
