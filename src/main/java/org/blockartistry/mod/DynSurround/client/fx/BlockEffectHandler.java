@@ -104,6 +104,8 @@ public class BlockEffectHandler implements IClientEffectHandler {
 			register(Blocks.lava, new JetEffect.Fire());
 		if (ModOptions.getEnableBubbleJets())
 			register(Blocks.water, new JetEffect.Bubble());
+		if (ModOptions.getEnableSteamJets())
+			register(Blocks.water, new JetEffect.Steam());
 
 		// Sounds
 		if (ModOptions.getEnableIceCrackSound()) {

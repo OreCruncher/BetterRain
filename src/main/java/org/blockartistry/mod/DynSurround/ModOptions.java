@@ -94,6 +94,10 @@ public final class ModOptions {
 	protected static boolean enableBubbleJets = true;
 	protected static final String CONFIG_BUBBLEJETS_CHANCE = "Bubblejet Spawn Chance";
 	protected static int bubbleJetSpawnChance = 1800;
+	protected static final String CONFIG_STEAMJETS_ENABLED = "Steamjets Enabled";
+	protected static boolean enableSteamJets = true;
+	protected static final String CONFIG_STEAMJETS_CHANCE = "Streamjets Chance";
+	protected static int steamJetSpawnChance = 10;
 
 	protected static final String CATEGORY_BIOMES = "biomes";
 	protected static final String CONFIG_BIOME_CONFIG_FILES = "Config Files";
@@ -213,6 +217,14 @@ public final class ModOptions {
 		bubbleJetSpawnChance = config.getInt(CONFIG_BUBBLEJETS_CHANCE, CATEGORY_JETS, bubbleJetSpawnChance, 300,
 				Integer.MAX_VALUE, comment);
 
+		comment = "Enable steamjets around water/lava";
+		enableSteamJets = config.getBoolean(CONFIG_STEAMJETS_ENABLED, CATEGORY_JETS, enableSteamJets, comment);
+
+		comment = "1-in-N chance per random tick a streamjet will spawn";
+		steamJetSpawnChance = config.getInt(CONFIG_STEAMJETS_CHANCE, CATEGORY_JETS, steamJetSpawnChance, 10,
+				Integer.MAX_VALUE, comment);
+
+		
 		// CATEGORY: Fog
 		comment = "Allow desert fog when raining";
 		allowDesertFog = config.getBoolean(CONFIG_ALLOW_DESERT_FOG, CATEGORY_FOG, allowDesertFog, comment);
@@ -363,6 +375,14 @@ public final class ModOptions {
 
 	public static int getBubbleJetSpawnChance() {
 		return bubbleJetSpawnChance;
+	}
+
+	public static boolean getEnableSteamJets() {
+		return enableSteamJets;
+	}
+
+	public static int getSteamJetSpawnChance() {
+		return steamJetSpawnChance;
 	}
 
 	public static boolean getEnableBiomeFog() {
