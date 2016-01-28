@@ -25,21 +25,36 @@
 package org.blockartistry.mod.DynSurround.client.fx.particle;
 
 import net.minecraftforge.fml.relauncher.SideOnly;
-
-import net.minecraft.client.particle.EntityLavaFX;
-import net.minecraft.client.particle.EntityRainFX;
-import net.minecraft.client.particle.EntitySmokeFX;
-import net.minecraft.client.particle.IParticleFactory;
 import net.minecraftforge.fml.relauncher.Side;
+import net.minecraft.client.particle.EntityFX;
+import net.minecraft.client.particle.EntityFlameFX;
+import net.minecraft.client.particle.EntityLavaFX;
+import net.minecraft.world.World;
 
 @SideOnly(Side.CLIENT)
-public class ParticleFactory {
+public class EntityFireJetFX extends EntityJetFX {
 
-	private ParticleFactory() {
+	protected final boolean isLava;
+
+	public EntityFireJetFX(final int strength, final World world, final double x, final double y, final double z) {
+		super(strength, world, x, y, z);
+		this.isLava = RANDOM.nextInt(3) == 0;
 	}
 
-	public static final IParticleFactory lavaSpark = new EntityLavaFX.Factory();
-	public static final IParticleFactory smoke = new EntitySmokeFX.Factory();
-	public static final IParticleFactory rain = new EntityRainFX.Factory();
-	
+	@Override
+	public void playSound() {
+		this.worldObj.playSound(this.posX, this.posY, this.posZ, "minecraft:fire.fire", 1.0F + this.jetStrength / 10.0F,
+				1.0F, false);
+	}
+
+	@Override
+	protected EntityFX getJetParticle() {
+		if (this.isLava) {
+			return new EntityLavaFX.Factory().getEntityFX(0, this.worldObj, this.posX, this.posY, this.posZ, 0, 0, 0);
+		}
+		final EntityFlameFX flame = (EntityFlameFX) new EntityFlameFX.Factory().getEntityFX(0, this.worldObj, this.posX,
+				this.posY, this.posZ, 0.0D, this.jetStrength / 10.0D, 0.0D);
+		flame.flameScale *= this.jetStrength;
+		return flame;
+	}
 }

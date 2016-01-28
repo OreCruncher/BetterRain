@@ -27,14 +27,16 @@ package org.blockartistry.mod.DynSurround.client.fx;
 import java.util.Random;
 
 import org.blockartistry.mod.DynSurround.ModOptions;
-import org.blockartistry.mod.DynSurround.client.fx.particle.ParticleFactory;
-
+import org.blockartistry.mod.DynSurround.client.fx.particle.EntityBubbleJetFX;
+import org.blockartistry.mod.DynSurround.client.fx.particle.EntityDustJetFX;
+import org.blockartistry.mod.DynSurround.client.fx.particle.EntityFireJetFX;
 import org.blockartistry.mod.DynSurround.client.fx.particle.EntityJetFX;
+import org.blockartistry.mod.DynSurround.client.fx.particle.EntitySteamJetFX;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.particle.EntityFX;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
@@ -72,6 +74,11 @@ public abstract class JetEffect extends BlockEffect {
 		super(chance);
 	}
 
+	protected void addEffect(final EntityJetFX fx) {
+		Minecraft.getMinecraft().effectRenderer.addEffect(fx);
+		fx.playSound();
+	}
+
 	public static class Fire extends JetEffect {
 		public Fire() {
 			super(ModOptions.getFireJetsSpawnChance());
@@ -86,10 +93,9 @@ public abstract class JetEffect extends BlockEffect {
 		public void doEffect(final Block block, final World world, final int x, final int y, final int z,
 				final Random random) {
 			final int lavaBlocks = countBlocks(world, x, y, z, block, -1);
-			final int jetType = random.nextInt(3) == 0 ? EntityJetFX.LAVA : EntityJetFX.FIRE;
-			final EntityFX effect = ParticleFactory.jet.getEntityFX(lavaBlocks, world, x + 0.5D, y + 1.1D, z + 0.5D, 0,
-					0, 0, jetType);
-			Minecraft.getMinecraft().effectRenderer.addEffect(effect);
+			final double spawnHeight = jetSpawnHeight(world, x, y, z);
+			final EntityJetFX effect = new EntityFireJetFX(lavaBlocks, world, x + 0.5D, spawnHeight, z + 0.5D);
+			addEffect(effect);
 		}
 	}
 
@@ -108,9 +114,8 @@ public abstract class JetEffect extends BlockEffect {
 		public void doEffect(final Block block, final World world, final int x, final int y, final int z,
 				final Random random) {
 			final int waterBlocks = countBlocks(world, x, y, z, block, 1);
-			final EntityFX effect = ParticleFactory.jet.getEntityFX(waterBlocks, world, x + 0.5D, y + 0.1D, z + 0.5D, 0,
-					0, 0, EntityJetFX.BUBBLE);
-			Minecraft.getMinecraft().effectRenderer.addEffect(effect);
+			final EntityJetFX effect = new EntityBubbleJetFX(waterBlocks, world, x + 0.5D, y + 0.1D, z + 0.5D);
+			addEffect(effect);
 		}
 	}
 
@@ -145,9 +150,28 @@ public abstract class JetEffect extends BlockEffect {
 				final Random random) {
 			final int strength = lavaCount(world, x, y, z);
 			final double spawnHeight = jetSpawnHeight(world, x, y, z);
-			final EntityFX effect = ParticleFactory.jet.getEntityFX(strength, world, x + 0.5D, spawnHeight, z + 0.5D, 0,
-					0, 0, EntityJetFX.STEAM);
-			Minecraft.getMinecraft().effectRenderer.addEffect(effect);
+			final EntityJetFX effect = new EntitySteamJetFX(strength, world, x + 0.5D, spawnHeight, z + 0.5D);
+			addEffect(effect);
+		}
+	}
+
+	public static class Dust extends JetEffect {
+
+		public Dust() {
+			super(ModOptions.getDustJetSpawnChance());
+		}
+
+		@Override
+		public boolean trigger(final Block block, final World world, final int x, final int y, final int z,
+				final Random random) {
+			return super.trigger(block, world, x, y, z, random) && world.isAirBlock(new BlockPos(x, y - 1, z));
+		}
+
+		public void doEffect(final Block block, final World world, final int x, final int y, final int z,
+				final Random random) {
+			final IBlockState state = block.getDefaultState();
+			final EntityJetFX effect = new EntityDustJetFX(2, world, x + 0.5D, y - 0.2D, z + 0.5D, state);
+			addEffect(effect);
 		}
 	}
 }

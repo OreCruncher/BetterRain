@@ -25,21 +25,21 @@
 package org.blockartistry.mod.DynSurround.client.fx.particle;
 
 import net.minecraftforge.fml.relauncher.SideOnly;
-
-import net.minecraft.client.particle.EntityLavaFX;
-import net.minecraft.client.particle.EntityRainFX;
-import net.minecraft.client.particle.EntitySmokeFX;
-import net.minecraft.client.particle.IParticleFactory;
 import net.minecraftforge.fml.relauncher.Side;
+import net.minecraft.client.particle.EntityBubbleFX;
+import net.minecraft.client.particle.EntityFX;
+import net.minecraft.world.World;
 
 @SideOnly(Side.CLIENT)
-public class ParticleFactory {
+public class EntityBubbleJetFX extends EntityJetFX {
 
-	private ParticleFactory() {
+	public EntityBubbleJetFX(final int strength, final World world, final double x, final double y, final double z) {
+		super(strength, world, x, y, z);
 	}
 
-	public static final IParticleFactory lavaSpark = new EntityLavaFX.Factory();
-	public static final IParticleFactory smoke = new EntitySmokeFX.Factory();
-	public static final IParticleFactory rain = new EntityRainFX.Factory();
-	
+	@Override
+	protected EntityFX getJetParticle() {
+		return new EntityBubbleFX.Factory().getEntityFX(0, this.worldObj, this.posX, this.posY, this.posZ, 0.0D,
+				0.5D + this.jetStrength / 10.0D, 0.0D);
+	}
 }

@@ -98,6 +98,10 @@ public final class ModOptions {
 	protected static boolean enableSteamJets = true;
 	protected static final String CONFIG_STEAMJETS_CHANCE = "Streamjets Chance";
 	protected static int steamJetSpawnChance = 10;
+	protected static final String CONFIG_DUSTJETS_ENABLED = "Dustjets Enabled";
+	protected static boolean enableDustJets = true;
+	protected static final String CONFIG_DUSTJETS_CHANCE = "Dustjets Chance";
+	protected static int dustJetSpawnChance = 500;
 
 	protected static final String CATEGORY_BIOMES = "biomes";
 	protected static final String CONFIG_BIOME_CONFIG_FILES = "Config Files";
@@ -172,8 +176,7 @@ public final class ModOptions {
 				defaultMaxRainStrength, 0.0F, 1.0F, comment), defaultMinRainStrength, 1.0F);
 
 		comment = "Block radius/range around player for special effect application";
-		specialEffectRange = config.getInt(CONFIG_FX_RANGE, CATEGORY_GENERAL, specialEffectRange, 8, 32,
-				comment);
+		specialEffectRange = config.getInt(CONFIG_FX_RANGE, CATEGORY_GENERAL, specialEffectRange, 8, 32, comment);
 
 		// CATEGORY: Player
 		comment = "Suppress player's potion particles from rendering";
@@ -207,14 +210,14 @@ public final class ModOptions {
 		enableFireJets = config.getBoolean(CONFIG_FIREJETS_ENABLED, CATEGORY_JETS, enableFireJets, comment);
 
 		comment = "1-in-N chance per random tick a firejet will spawn on lava blocks";
-		fireJetsSpawnChance = config.getInt(CONFIG_FIREJET_CHANCE, CATEGORY_JETS, fireJetsSpawnChance, 300,
+		fireJetsSpawnChance = config.getInt(CONFIG_FIREJET_CHANCE, CATEGORY_JETS, fireJetsSpawnChance, 10,
 				Integer.MAX_VALUE, comment);
 
 		comment = "Enable bubblejet spawn in water";
 		enableBubbleJets = config.getBoolean(CONFIG_BUBBLEJETS_ENABLED, CATEGORY_JETS, enableBubbleJets, comment);
 
 		comment = "1-in-N chance per random tick a bubblejet will spawn in water";
-		bubbleJetSpawnChance = config.getInt(CONFIG_BUBBLEJETS_CHANCE, CATEGORY_JETS, bubbleJetSpawnChance, 300,
+		bubbleJetSpawnChance = config.getInt(CONFIG_BUBBLEJETS_CHANCE, CATEGORY_JETS, bubbleJetSpawnChance, 10,
 				Integer.MAX_VALUE, comment);
 
 		comment = "Enable steamjets around water/lava";
@@ -224,7 +227,13 @@ public final class ModOptions {
 		steamJetSpawnChance = config.getInt(CONFIG_STEAMJETS_CHANCE, CATEGORY_JETS, steamJetSpawnChance, 10,
 				Integer.MAX_VALUE, comment);
 
-		
+		comment = "Enable dustjets at the bottom of blocks";
+		enableDustJets = config.getBoolean(CONFIG_DUSTJETS_ENABLED, CATEGORY_JETS, enableDustJets, comment);
+
+		comment = "1-in-N chance per random tick a dustjet will spawn";
+		dustJetSpawnChance = config.getInt(CONFIG_DUSTJETS_CHANCE, CATEGORY_JETS, dustJetSpawnChance, 10,
+				Integer.MAX_VALUE, comment);
+
 		// CATEGORY: Fog
 		comment = "Allow desert fog when raining";
 		allowDesertFog = config.getBoolean(CONFIG_ALLOW_DESERT_FOG, CATEGORY_FOG, allowDesertFog, comment);
@@ -328,7 +337,7 @@ public final class ModOptions {
 	public static int getSpecialEffectRange() {
 		return specialEffectRange;
 	}
-	
+
 	public static boolean getAuroraHeightPlayerRelative() {
 		return auroraHeightPlayerRelative;
 	}
@@ -385,6 +394,14 @@ public final class ModOptions {
 		return steamJetSpawnChance;
 	}
 
+	public static boolean getEnableDustJets() {
+		return enableDustJets;
+	}
+
+	public static int getDustJetSpawnChance() {
+		return dustJetSpawnChance;
+	}
+
 	public static boolean getEnableBiomeFog() {
 		return enableBiomeFog;
 	}
@@ -392,7 +409,7 @@ public final class ModOptions {
 	public static String[] getBiomeConfigFiles() {
 		return biomeConfigFiles;
 	}
-	
+
 	public static String[] getDimensionConfigFiles() {
 		return dimensionConfigFiles;
 	}

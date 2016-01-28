@@ -25,21 +25,36 @@
 package org.blockartistry.mod.DynSurround.client.fx.particle;
 
 import net.minecraftforge.fml.relauncher.SideOnly;
-
-import net.minecraft.client.particle.EntityLavaFX;
-import net.minecraft.client.particle.EntityRainFX;
-import net.minecraft.client.particle.EntitySmokeFX;
-import net.minecraft.client.particle.IParticleFactory;
 import net.minecraftforge.fml.relauncher.Side;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.particle.EntityBlockDustFX;
+import net.minecraft.client.particle.EntityFX;
+import net.minecraft.world.World;
 
 @SideOnly(Side.CLIENT)
-public class ParticleFactory {
+public class EntityDustJetFX extends EntityJetFX {
 
-	private ParticleFactory() {
+	protected static final class EntityDustFX extends EntityBlockDustFX {
+
+		public EntityDustFX(final World world, final double x, final double y, final double z, final IBlockState block) {
+			super(world, x + RANDOM.nextGaussian() * 0.2D, y, z + RANDOM.nextGaussian() * 0.2D, 0, 0, 0, block);
+			this.multipleParticleScaleBy(0.2F);
+			this.setPosition(this.posX, this.posY, this.posZ);
+		}
+
 	}
 
-	public static final IParticleFactory lavaSpark = new EntityLavaFX.Factory();
-	public static final IParticleFactory smoke = new EntitySmokeFX.Factory();
-	public static final IParticleFactory rain = new EntityRainFX.Factory();
-	
+	protected final IBlockState blockState;
+
+	public EntityDustJetFX(final int strength, final World world, final double x, final double y, final double z,
+			final IBlockState state) {
+		super(strength, world, x, y, z, 2);
+		this.blockState = state;
+	}
+
+	@Override
+	protected EntityFX getJetParticle() {
+		return new EntityDustFX(this.worldObj, this.posX, this.posY, this.posZ, this.blockState).func_174845_l();
+	}
+
 }
