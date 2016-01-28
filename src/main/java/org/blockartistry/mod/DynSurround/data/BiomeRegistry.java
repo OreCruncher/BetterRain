@@ -49,11 +49,13 @@ public final class BiomeRegistry {
 
 	public static final BiomeGenBase UNDERGROUND = new FakeBiome(-1, "Underground");
 	public static final BiomeGenBase INSIDE = new FakeBiome(-2, "Inside");
-	
+
+	public static final BiomeSound WATER_DRIP = new BiomeSound(Module.MOD_ID + ":waterdrops", 0.5F, 1.0F);
+
 	// This is for cases when the biome coming in doesn't make sense
 	// and should default to something to avoid crap.
 	private static final BiomeGenBase WTF = new FakeBiome(-256, "(FooBar)");
-	
+
 	public static final class BiomeSound {
 		public final String sound;
 		public final String conditions;
@@ -61,6 +63,15 @@ public final class BiomeRegistry {
 		public final float volume;
 		public final float pitch;
 		public final int weight;
+
+		protected BiomeSound(final String sound, final float volume, final float pitch) {
+			this.sound = sound;
+			this.volume = volume;
+			this.pitch = pitch;
+			this.conditions = ".*";
+			this.pattern = null;
+			this.weight = 0;
+		}
 
 		protected BiomeSound(final SoundRecord record) {
 			this.sound = record.sound;
@@ -185,9 +196,9 @@ public final class BiomeRegistry {
 		for (final Entry entry : registry.valueCollection())
 			ModLog.info(entry.toString());
 	}
-	
+
 	private static Entry get(final BiomeGenBase biome) {
-		if(biome == null)
+		if (biome == null)
 			return registry.get(WTF.biomeID);
 		final Entry entry = registry.get(biome.biomeID);
 		return entry != null ? entry : registry.get(WTF.biomeID);
@@ -237,13 +248,12 @@ public final class BiomeRegistry {
 				candidates.add(s);
 				totalWeight += s.weight;
 			}
-		if(totalWeight <= 0)
+		if (totalWeight <= 0)
 			return null;
-		
-		
+
 		if (candidates.size() == 1)
 			return candidates.get(0);
-		
+
 		int targetWeight = random.nextInt(totalWeight);
 		int i = 0;
 		for (i = candidates.size(); (targetWeight -= candidates.get(i - 1).weight) >= 0; i--)

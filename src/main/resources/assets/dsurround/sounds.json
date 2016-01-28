@@ -130,6 +130,14 @@
 			"ambient/underground/monster_growl1"
 		]
 		
+	},
+	"waterdrops":{
+		"category":"ambient",
+		"sounds":[
+			"ambient/droplets/water1",
+			"ambient/droplets/water2"
+		]
+		
 	}
 	
 }
