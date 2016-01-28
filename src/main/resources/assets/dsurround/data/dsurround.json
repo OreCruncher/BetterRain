@@ -180,6 +180,30 @@
 			"biomeName":"Hell",
 			"dust":true,
 			"dustColor":"255,0,0"
+		},
+		{
+			"biomeName":"Underground",
+			"sounds":[
+				{
+					"sound":"dsurround:underground",
+					"volume":0.3
+				},
+				{
+					"sound":"dsurround:rockfall",
+					"volume":0.3,
+					"spot":true,
+					"weight":30
+				},
+				{
+					"sound":"dsurround:monstergrowl",
+					"conditions":"(?i).*night.*",
+					"volume":0.3,
+					"spot":true,
+					"weight":10
+				}
+				
+			]
+			
 		}
 		
 	]
