@@ -59,6 +59,7 @@ public class FogEffectHandler implements IClientEffectHandler {
 	private static final int FOG_Y_CUTOFF = 3;
 	private static final float DESERT_DUST_FACTOR = ModOptions.getDesertFogFactor();
 	private static final float ELEVATION_HAZE_FACTOR = ModOptions.getElevationHazeFactor();
+	private static final float BIOME_FOG_FACTOR = ModOptions.getBiomeFogFactor();
 
 	// The delta indicates how much per tick the density will shift
 	// toward the target.
@@ -102,7 +103,7 @@ public class FogEffectHandler implements IClientEffectHandler {
 		// and elevation haze. Don't want to do needless calculations if they
 		// are under ground.
 		if (ENABLE_BIOME_FOG && BiomeRegistry.hasFog(biome))
-			biomeFog = BiomeRegistry.getFogDensity(biome);
+			biomeFog = BiomeRegistry.getFogDensity(biome) * BIOME_FOG_FACTOR;
 
 		if (posY >= cutOff) {
 			if (ENABLE_DESERT_FOG && BiomeRegistry.hasDust(biome)) {

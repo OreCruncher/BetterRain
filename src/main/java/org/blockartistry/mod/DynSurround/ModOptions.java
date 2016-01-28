@@ -60,6 +60,8 @@ public final class ModOptions {
 	protected static float elevationHazeFactor = 1.0F;
 	protected static final String CONFIG_ENABLE_BIOME_FOG = "Biome Fog";
 	protected static boolean enableBiomeFog = true;
+	protected static final String CONFIG_BIOME_FOG_FACTOR = "Biome Fog Factor";
+	protected static float biomeFogFactor = 1.0F;
 
 	protected static final String CATEGORY_GENERAL = "general";
 	protected static final String CONFIG_MIN_RAIN_STRENGTH = "Default Minimum Rain Strength";
@@ -252,6 +254,9 @@ public final class ModOptions {
 		comment = "Enable biome specific fog density and color";
 		enableBiomeFog = config.getBoolean(CONFIG_ENABLE_BIOME_FOG, CATEGORY_FOG, enableBiomeFog, comment);
 
+		comment = "Visibility factor to apply to biome fog (higher is thicker)";
+		biomeFogFactor = config.getFloat(CONFIG_BIOME_FOG_FACTOR, CATEGORY_FOG, biomeFogFactor, 0.0F, 5.0F, comment);
+
 		// CATEGORY: Biomes
 		comment = "Configuration files for configuring Biome Registry";
 		biomeConfigFiles = config.getStringList(CONFIG_BIOME_CONFIG_FILES, CATEGORY_BIOMES, biomeConfigFiles, comment);
@@ -404,6 +409,10 @@ public final class ModOptions {
 
 	public static boolean getEnableBiomeFog() {
 		return enableBiomeFog;
+	}
+	
+	public static float getBiomeFogFactor() {
+		return biomeFogFactor;
 	}
 
 	public static String[] getBiomeConfigFiles() {
