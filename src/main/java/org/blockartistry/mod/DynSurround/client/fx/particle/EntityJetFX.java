@@ -24,7 +24,8 @@
 
 package org.blockartistry.mod.DynSurround.client.fx.particle;
 
-import org.blockartistry.mod.DynSurround.client.fx.IParticleFactory;
+import java.util.Random;
+
 import org.blockartistry.mod.DynSurround.util.XorShiftRandom;
 
 import cpw.mods.fml.relauncher.Side;
@@ -40,24 +41,26 @@ import net.minecraft.world.World;
  * serves as a particle factory.
  */
 @SideOnly(Side.CLIENT)
-public class EntityJetFX extends EntityFX {
+public abstract class EntityJetFX extends EntityFX {
 
-	public static final int BUBBLE = 0;
-	public static final int FIRE = 1;
-	public static final int LAVA = 2;
-	public static final int STEAM = 3;
-
+	protected static final Random RANDOM = new XorShiftRandom();
+	
 	protected final int jetStrength;
-	protected final IParticleFactory factory;
+	protected final int updateFrequency;
 
-	public EntityJetFX(final int strength, final IParticleFactory factory, final World world, final double x,
+	public EntityJetFX(final int strength, final World world, final double x,
 			final double y, final double z) {
+		this(strength, world, x, y, z, 3);
+	}
+	
+	public EntityJetFX(final int strength, final World world, final double x,
+			final double y, final double z, final int freq) {
 		super(world, x, y, z);
 
 		this.setAlphaF(0.0F);
 		this.jetStrength = strength;
+		this.updateFrequency = freq;
 		this.particleMaxAge = (XorShiftRandom.shared.nextInt(strength) + 2) * 20;
-		this.factory = factory;
 	}
 
 	/*
@@ -67,7 +70,18 @@ public class EntityJetFX extends EntityFX {
 	public void renderParticle(Tessellator p_70539_1_, float p_70539_2_, float p_70539_3_, float p_70539_4_,
 			float p_70539_5_, float p_70539_6_, float p_70539_7_) {
 	}
+	
+	/*
+	 * Override in derived class to provide particle for the
+	 * jet.
+	 */
+	protected abstract EntityFX getJetParticle();
 
+	/*
+	 * Hook to play sound when the jet is created
+	 */
+	public void playSound() { }
+	
 	/*
 	 * During update see if a particle needs to be spawned so that it can rise
 	 * up.
@@ -76,44 +90,12 @@ public class EntityJetFX extends EntityFX {
 	public void onUpdate() {
 
 		// Check to see if a particle needs to be generated
-		if (this.particleAge % 3 == 0) {
-			final Minecraft mc = Minecraft.getMinecraft();
-			final EntityFX effect = this.factory.getEntityFX(this.jetStrength, mc.theWorld, this.posX, this.posY,
-					this.posZ, 0, 0, 0);
-			mc.effectRenderer.addEffect(effect);
+		if (this.particleAge % this.updateFrequency == 0) {
+			Minecraft.getMinecraft().effectRenderer.addEffect(getJetParticle());
 		}
 
 		if (this.particleAge++ >= this.particleMaxAge) {
 			this.setDead();
 		}
-	}
-
-	public static class Factory implements IParticleFactory {
-
-		private static IParticleFactory getFactory(final int type) {
-			switch (type) {
-			case BUBBLE:
-				return ParticleFactory.bubbleJet;
-			case FIRE:
-				return ParticleFactory.fireJet;
-			case LAVA:
-				return ParticleFactory.lavaJet;
-			case STEAM:
-				return ParticleFactory.steamJet;
-			default:
-				return ParticleFactory.bubbleJet;
-			}
-		}
-
-		@Override
-		public EntityFX getEntityFX(int particleID, World world, double x, double y, double z, double dX, double dY,
-				double dZ, int... misc) {
-			if (misc[0] == LAVA || misc[0] == FIRE)
-				world.playSound(x, y, z, "minecraft:fire.fire", 1.0F + particleID / 10.0F, 1.0F, false);
-			else if(misc[0] == STEAM)
-				world.playSound(x, y, z, "minecraft:random.fizz", particleID / 10.0F, 1.0F, false);
-			return new EntityJetFX(particleID, getFactory(misc[0]), world, x, y, z);
-		}
-
 	}
 }

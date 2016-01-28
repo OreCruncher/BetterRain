@@ -24,45 +24,37 @@
 
 package org.blockartistry.mod.DynSurround.client.fx.particle;
 
-import org.blockartistry.mod.DynSurround.client.fx.IParticleFactory;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.block.Block;
+import net.minecraft.client.particle.EntityBlockDustFX;
 import net.minecraft.client.particle.EntityFX;
-import net.minecraft.client.particle.EntityLavaFX;
-import net.minecraft.client.particle.EntityRainFX;
-import net.minecraft.client.particle.EntitySmokeFX;
 import net.minecraft.world.World;
 
 @SideOnly(Side.CLIENT)
-public class ParticleFactory {
+public class EntityDustJetFX extends EntityJetFX {
 
-	private ParticleFactory() {
+	protected static final class EntityDustFX extends EntityBlockDustFX {
+
+		public EntityDustFX(final World world, final double x, final double y, final double z, final Block block) {
+			super(world, x + RANDOM.nextGaussian() * 0.2D, y, z + RANDOM.nextGaussian() * 0.2D, 0, 0, 0, block, 0);
+			this.multipleParticleScaleBy(0.2F);
+			this.setPosition(this.posX, this.posY, this.posZ);
+		}
+
 	}
 
-	public static final IParticleFactory lavaSpark = new IParticleFactory() {
-		@Override
-		public EntityFX getEntityFX(int particleID, World world, double x, double y, double z, double dX, double dY,
-				double dZ, int... misc) {
-			final EntityLavaFX fx = new EntityLavaFX(world, x, y, z);
-			return fx;
-		}
-	};
+	protected final Block block;
 
-	public static final IParticleFactory smoke = new IParticleFactory() {
-		@Override
-		public EntityFX getEntityFX(int particleID, World world, double x, double y, double z, double dX, double dY,
-				double dZ, int... misc) {
-			final EntitySmokeFX fx = new EntitySmokeFX(world, x, y, z, dX, dY, dZ);
-			return fx;
-		}
-	};
+	public EntityDustJetFX(final int strength, final World world, final double x, final double y, final double z,
+			final Block block) {
+		super(strength, world, x, y, z, 2);
+		this.block = block;
+	}
 
-	public static final IParticleFactory rain = new IParticleFactory() {
-		@Override
-		public EntityFX getEntityFX(int particleID, World world, double x, double y, double z, double dX, double dY,
-				double dZ, int... misc) {
-			final EntityRainFX fx = new EntityRainFX(world, x, y, z);
-			return fx;
-		}
-	};
+	@Override
+	protected EntityFX getJetParticle() {
+		return new EntityDustFX(this.worldObj, this.posX, this.posY, this.posZ, this.block);
+	}
+
 }

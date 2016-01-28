@@ -105,6 +105,14 @@ public class BlockEffectHandler implements IClientEffectHandler {
 		if (ModOptions.getEnableSteamJets())
 			register(Blocks.water, new JetEffect.Steam());
 
+		if(ModOptions.getEnableDustJets()) {
+			final JetEffect effect = new JetEffect.Dust();
+			register(Blocks.stone, effect);
+			register(Blocks.dirt, effect);
+			register(Blocks.gravel, effect);
+			register(Blocks.sand, effect);
+		}
+		
 		// Sounds
 		if (ModOptions.getEnableIceCrackSound()) {
 			final SoundEffect handler = new SoundEffect(Module.MOD_ID + ":ice");

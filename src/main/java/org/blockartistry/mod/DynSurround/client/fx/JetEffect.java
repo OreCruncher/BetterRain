@@ -27,16 +27,18 @@ package org.blockartistry.mod.DynSurround.client.fx;
 import java.util.Random;
 
 import org.blockartistry.mod.DynSurround.ModOptions;
-import org.blockartistry.mod.DynSurround.client.fx.particle.ParticleFactory;
-
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
+import org.blockartistry.mod.DynSurround.client.fx.particle.EntityBubbleJetFX;
+import org.blockartistry.mod.DynSurround.client.fx.particle.EntityDustJetFX;
+import org.blockartistry.mod.DynSurround.client.fx.particle.EntityFireJetFX;
 import org.blockartistry.mod.DynSurround.client.fx.particle.EntityJetFX;
+import org.blockartistry.mod.DynSurround.client.fx.particle.EntitySteamJetFX;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.particle.EntityFX;
 import net.minecraft.init.Blocks;
 import net.minecraft.world.World;
 
@@ -62,7 +64,7 @@ public abstract class JetEffect extends BlockEffect {
 		}
 		return count;
 	}
-	
+
 	// Takes into account partial blocks because of flow
 	private static double jetSpawnHeight(final World world, final int x, final int y, final int z) {
 		final int meta = world.getBlockMetadata(x, y, z);
@@ -71,6 +73,11 @@ public abstract class JetEffect extends BlockEffect {
 
 	public JetEffect(final int chance) {
 		super(chance);
+	}
+
+	protected void addEffect(final EntityJetFX fx) {
+		Minecraft.getMinecraft().effectRenderer.addEffect(fx);
+		fx.playSound();
 	}
 
 	public static class Fire extends JetEffect {
@@ -87,11 +94,9 @@ public abstract class JetEffect extends BlockEffect {
 		public void doEffect(final Block block, final World world, final int x, final int y, final int z,
 				final Random random) {
 			final int lavaBlocks = countBlocks(world, x, y, z, block, -1);
-			final int jetType = random.nextInt(3) == 0 ? EntityJetFX.LAVA : EntityJetFX.FIRE;
 			final double spawnHeight = jetSpawnHeight(world, x, y, z);
-			final EntityFX effect = ParticleFactory.jet.getEntityFX(lavaBlocks, world, x + 0.5D, spawnHeight, z + 0.5D, 0,
-					0, 0, jetType);
-			Minecraft.getMinecraft().effectRenderer.addEffect(effect);
+			final EntityJetFX effect = new EntityFireJetFX(lavaBlocks, world, x + 0.5D, spawnHeight, z + 0.5D);
+			addEffect(effect);
 		}
 	}
 
@@ -109,9 +114,8 @@ public abstract class JetEffect extends BlockEffect {
 		public void doEffect(final Block block, final World world, final int x, final int y, final int z,
 				final Random random) {
 			final int waterBlocks = countBlocks(world, x, y, z, block, 1);
-			final EntityFX effect = ParticleFactory.jet.getEntityFX(waterBlocks, world, x + 0.5D, y + 0.1D, z + 0.5D, 0,
-					0, 0, EntityJetFX.BUBBLE);
-			Minecraft.getMinecraft().effectRenderer.addEffect(effect);
+			final EntityJetFX effect = new EntityBubbleJetFX(waterBlocks, world, x + 0.5D, y + 0.1D, z + 0.5D);
+			addEffect(effect);
 		}
 	}
 
@@ -144,9 +148,27 @@ public abstract class JetEffect extends BlockEffect {
 				final Random random) {
 			final int strength = lavaCount(world, x, y, z);
 			final double spawnHeight = jetSpawnHeight(world, x, y, z);
-			final EntityFX effect = ParticleFactory.jet.getEntityFX(strength, world, x + 0.5D, spawnHeight, z + 0.5D, 0, 0,
-					0, EntityJetFX.STEAM);
-			Minecraft.getMinecraft().effectRenderer.addEffect(effect);
+			final EntityJetFX effect = new EntitySteamJetFX(strength, world, x + 0.5D, spawnHeight, z + 0.5D);
+			addEffect(effect);
+		}
+	}
+
+	public static class Dust extends JetEffect {
+
+		public Dust() {
+			super(ModOptions.getDustJetSpawnChance());
+		}
+
+		@Override
+		public boolean trigger(final Block block, final World world, final int x, final int y, final int z,
+				final Random random) {
+			return super.trigger(block, world, x, y, z, random) && world.isAirBlock(x, y - 1, z);
+		}
+
+		public void doEffect(final Block block, final World world, final int x, final int y, final int z,
+				final Random random) {
+			final EntityJetFX effect = new EntityDustJetFX(2, world, x + 0.5D, y - 0.2D, z + 0.5D, block);
+			addEffect(effect);
 		}
 	}
 }

@@ -24,45 +24,22 @@
 
 package org.blockartistry.mod.DynSurround.client.fx.particle;
 
-import org.blockartistry.mod.DynSurround.client.fx.IParticleFactory;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.client.particle.EntityBubbleFX;
 import net.minecraft.client.particle.EntityFX;
-import net.minecraft.client.particle.EntityLavaFX;
-import net.minecraft.client.particle.EntityRainFX;
-import net.minecraft.client.particle.EntitySmokeFX;
 import net.minecraft.world.World;
 
 @SideOnly(Side.CLIENT)
-public class ParticleFactory {
+public class EntityBubbleJetFX extends EntityJetFX {
 
-	private ParticleFactory() {
+	public EntityBubbleJetFX(final int strength, final World world, final double x, final double y, final double z) {
+		super(strength, world, x, y, z);
 	}
 
-	public static final IParticleFactory lavaSpark = new IParticleFactory() {
-		@Override
-		public EntityFX getEntityFX(int particleID, World world, double x, double y, double z, double dX, double dY,
-				double dZ, int... misc) {
-			final EntityLavaFX fx = new EntityLavaFX(world, x, y, z);
-			return fx;
-		}
-	};
-
-	public static final IParticleFactory smoke = new IParticleFactory() {
-		@Override
-		public EntityFX getEntityFX(int particleID, World world, double x, double y, double z, double dX, double dY,
-				double dZ, int... misc) {
-			final EntitySmokeFX fx = new EntitySmokeFX(world, x, y, z, dX, dY, dZ);
-			return fx;
-		}
-	};
-
-	public static final IParticleFactory rain = new IParticleFactory() {
-		@Override
-		public EntityFX getEntityFX(int particleID, World world, double x, double y, double z, double dX, double dY,
-				double dZ, int... misc) {
-			final EntityRainFX fx = new EntityRainFX(world, x, y, z);
-			return fx;
-		}
-	};
+	@Override
+	protected EntityFX getJetParticle() {
+		return new EntityBubbleFX(this.worldObj, this.posX, this.posY, this.posZ, 0.0D, 0.5D + this.jetStrength / 10.0D,
+				0.0D);
+	}
 }
