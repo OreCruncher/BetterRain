@@ -73,14 +73,13 @@ public class CloudRenderer extends IRenderHandler {
 			world.provider.setCloudRenderer(INSTANCE);
 		}
 	}
-	
+
 	private Color getCloudColor(final World world, final float partialTicks) {
 		final Color color = new Color(world.getCloudColour(partialTicks));
 		final float stormIntensity = world.getRainStrength(1.0F);
-		if(stormIntensity > 0.0F) {
+		if (stormIntensity > 0.0F) {
 			// Need to darken the clouds based on intensity
-			final float scale = (1.0F - stormIntensity) * 0.75F + 0.25F;
-			color.scale(scale);
+			color.scale((1.0F - stormIntensity) * 0.5F + 0.5F);
 		}
 		return color;
 	}
@@ -163,15 +162,15 @@ public class CloudRenderer extends IRenderHandler {
 		float f1 = (float) (mc.renderViewEntity.lastTickPosY
 				+ (mc.renderViewEntity.posY - mc.renderViewEntity.lastTickPosY) * (double) partialTicks);
 		Tessellator tessellator = Tessellator.instance;
-		float f2 = 12.0F;
-		float f3 = 4.0F;
-		double d0 = (double) ((float) mc.renderGlobal.cloudTickCounter + partialTicks);
+		final float cloudScale = 12.0F;
+		final float f3 = 4.0F;
+		final double cloudScroll = (double) ((float) mc.renderGlobal.cloudTickCounter + partialTicks);
 		double d1 = (mc.renderViewEntity.prevPosX
 				+ (mc.renderViewEntity.posX - mc.renderViewEntity.prevPosX) * (double) partialTicks
-				+ d0 * 0.029999999329447746D) / (double) f2;
+				+ cloudScroll * 0.029999999329447746D) / (double) cloudScale;
 		double d2 = (mc.renderViewEntity.prevPosZ
-				+ (mc.renderViewEntity.posZ - mc.renderViewEntity.prevPosZ) * (double) partialTicks) / (double) f2
-				+ 0.33000001311302185D;
+				+ (mc.renderViewEntity.posZ - mc.renderViewEntity.prevPosZ) * (double) partialTicks)
+				/ (double) cloudScale + 0.33000001311302185D;
 		float f4 = DimensionRegistry.getCloudHeight(world) - f1 + 0.33F;
 		int i = MathHelper.floor_double(d1 / 2048.0D);
 		int j = MathHelper.floor_double(d2 / 2048.0D);
@@ -207,7 +206,7 @@ public class CloudRenderer extends IRenderHandler {
 		byte b0 = 8;
 		byte b1 = 4;
 		float f13 = 9.765625E-4F;
-		GL11.glScalef(f2, 1.0F, f2);
+		GL11.glScalef(cloudScale, 1.0F, cloudScale);
 
 		for (int k = 0; k < 2; ++k) {
 			if (k == 0) {
