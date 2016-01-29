@@ -138,6 +138,14 @@
 			"ambient/droplets/water2"
 		]
 		
+	},
+	"seagulls":{
+		"category":"ambient",
+		"sounds":[
+			"ambient/seagulls/seagulls1",
+			"ambient/seagulls/seagulls2"
+		]
+		
 	}
 	
 }
