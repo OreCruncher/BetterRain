@@ -49,6 +49,7 @@ public final class BiomeRegistry {
 
 	public static final BiomeGenBase UNDERGROUND = new FakeBiome(-1, "Underground");
 	public static final BiomeGenBase INSIDE = new FakeBiome(-2, "Inside");
+	public static final BiomeGenBase UNDERWATER = new FakeBiome(-3, "Underwater");
 
 	public static final BiomeSound WATER_DRIP = new BiomeSound(Module.MOD_ID + ":waterdrops", 0.5F, 1.0F);
 
@@ -203,6 +204,7 @@ public final class BiomeRegistry {
 		// Add our fake biomes
 		registry.put(UNDERGROUND.biomeID, new Entry(UNDERGROUND));
 		registry.put(INSIDE.biomeID, new Entry(INSIDE));
+		registry.put(UNDERWATER.biomeID, new Entry(UNDERWATER));
 		registry.put(WTF.biomeID, new Entry(WTF));
 
 		processConfig();

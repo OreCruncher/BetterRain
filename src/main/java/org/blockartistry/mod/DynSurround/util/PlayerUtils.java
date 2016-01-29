@@ -28,6 +28,7 @@ import javax.annotation.Nonnull;
 import org.blockartistry.mod.DynSurround.data.BiomeRegistry;
 import org.blockartistry.mod.DynSurround.data.DimensionRegistry;
 
+import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.MathHelper;
@@ -46,6 +47,8 @@ public final class PlayerUtils {
 	public static BiomeGenBase getPlayerBiome(final EntityPlayer player, final boolean getTrue) {
 
 		if (!getTrue) {
+			if (isUnderWater(player))
+				return BiomeRegistry.UNDERWATER;
 			if (isUnderGround(player, INSIDE_Y_ADJUST))
 				return BiomeRegistry.UNDERGROUND;
 			if (isInside(player, INSIDE_Y_ADJUST))
@@ -63,6 +66,13 @@ public final class PlayerUtils {
 		return player.worldObj.provider.getDimensionId();
 	}
 
+	public static boolean isUnderWater(final EntityPlayer player) {
+		final int x = MathHelper.floor_double(player.posX);
+		final int y = MathHelper.floor_double(player.posY + player.getEyeHeight());
+		final int z = MathHelper.floor_double(player.posZ);
+		return player.worldObj.getBlockState(new BlockPos(x, y, z)).getBlock().getMaterial() == Material.water;
+	}
+
 	public static boolean isUnderGround(final EntityPlayer player, final int offset) {
 		return MathHelper.floor_double(player.posY + offset) < DimensionRegistry.getSeaLevel(player.worldObj);
 	}
@@ -73,9 +83,9 @@ public final class PlayerUtils {
 	public static boolean isInside(final EntityPlayer entity, final int yOffset) {
 		// The Nether/End do not have the idea of inside
 		final int dimension = PlayerUtils.getPlayerDimension(entity);
-		if(dimension == 1 || dimension == -1)
+		if (dimension == 1 || dimension == -1)
 			return false;
-		
+
 		// If the player is underground
 		if (PlayerUtils.isUnderGround(entity, yOffset))
 			return true;
