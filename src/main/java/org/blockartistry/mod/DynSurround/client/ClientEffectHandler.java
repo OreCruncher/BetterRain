@@ -31,6 +31,7 @@ import org.blockartistry.mod.DynSurround.ModOptions;
 import org.blockartistry.mod.DynSurround.client.fx.BlockEffectHandler;
 import org.blockartistry.mod.DynSurround.client.storm.StormProperties;
 import org.blockartistry.mod.DynSurround.data.BiomeRegistry;
+import org.blockartistry.mod.DynSurround.data.DimensionRegistry;
 
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -51,6 +52,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.client.event.sound.PlaySoundEvent17;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.EntityEvent.EntityConstructing;
+import net.minecraftforge.event.world.WorldEvent;
 
 @SideOnly(Side.CLIENT)
 public class ClientEffectHandler {
@@ -142,6 +144,21 @@ public class ClientEffectHandler {
 				}
 			}
 		}
+	}
+	
+	@SubscribeEvent(priority = EventPriority.HIGHEST)
+	public void onWorldLoad(final WorldEvent.Load e)
+	{
+		if(!e.world.isRemote)
+			return;
+		
+		// Tickle the Dimension Registry so it has the
+		// latest info.
+		DimensionRegistry.getData(e.world);
+		
+		// Shim the provider so we can tap into the
+		// sky and cloud stuff.
+		e.world.provider = new WorldProviderShim(e.world, e.world.provider);
 	}
 
 }
