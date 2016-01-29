@@ -154,7 +154,7 @@ public class ClientEffectHandler {
 		
 		// Tickle the Dimension Registry so it has the
 		// latest info.
-		DimensionRegistry.getData(e.world);
+		DimensionRegistry.loading(e.world);
 		
 		// Shim the provider so we can tap into the
 		// sky and cloud stuff.
