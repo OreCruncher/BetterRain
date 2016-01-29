@@ -31,24 +31,40 @@ public final class DiurnalUtils {
 	}
 
 	public static boolean isDaytime(final World world) {
+		// Special case for The End
+		if(world.provider.dimensionId == 1)
+			return false;
+		
 		final float celestialAngle = getCelestialAngle(world, 0.0F);
 		// 0.785 0.260
 		return celestialAngle >= 0.785F || celestialAngle < 0.285F;
 	}
 
 	public static boolean isNighttime(final World world) {
+		// Special case for The End
+		if(world.provider.dimensionId == 1)
+			return true;
+
 		final float celestialAngle = getCelestialAngle(world, 0.0F);
 		// 0.260 0.705
 		return celestialAngle >= 0.285F && celestialAngle < 0.701F;
 	}
 
 	public static boolean isSunrise(final World world) {
+		// Special case for The End
+		if(world.provider.dimensionId == 1)
+			return false;
+		
 		final float celestialAngle = getCelestialAngle(world, 0.0F);
 		// 0.705
 		return celestialAngle >= 0.701F && celestialAngle < 0.785F;
 	}
 
 	public static boolean isSunset(final World world) {
+		// Special case for The End
+		if(world.provider.dimensionId == 1)
+			return false;
+		
 		final float celestialAngle = getCelestialAngle(world, 0.0F);
 		return celestialAngle > 0.215 && celestialAngle <= 0.306F;
 	}
