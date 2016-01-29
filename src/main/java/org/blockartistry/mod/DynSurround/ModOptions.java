@@ -142,6 +142,17 @@ public final class ModOptions {
 	protected static final String CATEGORY_PLAYER = "player";
 	protected static final String CONFIG_SUPPRESS_POTION_PARTICLES = "Suppress Potion Particles";
 	protected static boolean suppressPotionParticles = false;
+	protected static final String CATEGORY_POTION_HUD = "player.potion hud";
+	protected static final String CONFIG_POTION_HUD_ENABLE = "Enable";
+	protected static boolean potionHudEnabled = true;
+	protected static final String CONFIG_POTION_HUD_TRANSPARENCY = "Transparency";
+	protected static float potionHudTransparency = 0.5F;
+	protected static final String CONFIG_POTION_HUD_LEFT_OFFSET = "Left Offset";
+	protected static int potionHudLeftOffset = 5;
+	protected static final String CONFIG_POTION_HUD_TOP_OFFSET = "Top Offset";
+	protected static int potionHudTopOffset = 5;
+	protected static final String CONFIG_POTION_HUD_SCALE = "Display Scale";
+	protected static float potionHudScale = 0.5F;
 
 	public static void load(final Configuration config) {
 
@@ -297,6 +308,27 @@ public final class ModOptions {
 				Integer.MAX_VALUE, COMMENT_SOUND_CHANCE);
 		soulSandScaleFactor = config.getFloat(CONFIG_SOUND_SCALING_FACTOR, CATEGORY_SOUND_SOULSAND, soulSandScaleFactor,
 				0.0F, 5.0F, COMMENT_SOUND_SCALING_FACTOR);
+
+		// CATEGORY: player.potion hud
+		comment = "Enable display of potion icons in display";
+		potionHudEnabled = config.getBoolean(CONFIG_POTION_HUD_ENABLE, CATEGORY_POTION_HUD, potionHudEnabled, comment);
+
+		comment = "Transparency factor for icons (higher more solid)";
+		potionHudTransparency = config.getFloat(CONFIG_POTION_HUD_TRANSPARENCY, CATEGORY_POTION_HUD,
+				potionHudTransparency, 0.0F, 1.0F, comment);
+
+		comment = "Offset from left side of screen";
+		potionHudLeftOffset = config.getInt(CONFIG_POTION_HUD_LEFT_OFFSET, CATEGORY_POTION_HUD, potionHudLeftOffset, 0,
+				Integer.MAX_VALUE, comment);
+
+		comment = "Offset from top of screen";
+		potionHudTopOffset = config.getInt(CONFIG_POTION_HUD_TOP_OFFSET, CATEGORY_POTION_HUD, potionHudTopOffset, 0,
+				Integer.MAX_VALUE, comment);
+
+		comment = "Size scale of icons (lower is smaller)";
+		potionHudScale = config.getFloat(CONFIG_POTION_HUD_SCALE, CATEGORY_POTION_HUD, potionHudScale, 0.0F, 1.0F,
+				comment);
+
 	}
 
 	public static boolean getEnableDebugLogging() {
@@ -410,7 +442,7 @@ public final class ModOptions {
 	public static boolean getEnableBiomeFog() {
 		return enableBiomeFog;
 	}
-	
+
 	public static float getBiomeFogFactor() {
 		return biomeFogFactor;
 	}
@@ -478,5 +510,25 @@ public final class ModOptions {
 
 	public static boolean getSuppressPotionParticleEffect() {
 		return suppressPotionParticles;
+	}
+	
+	public static boolean getPotionHudEnabled() {
+		return potionHudEnabled;
+	}
+
+	public static float getPotionHudTransparency() {
+		return potionHudTransparency;
+	}
+
+	public static int getPotionHudLeftOffset() {
+		return potionHudLeftOffset;
+	}
+
+	public static int getPotionHudTopOffset() {
+		return potionHudTopOffset;
+	}
+
+	public static float getPotionHudScale() {
+		return potionHudScale;
 	}
 }

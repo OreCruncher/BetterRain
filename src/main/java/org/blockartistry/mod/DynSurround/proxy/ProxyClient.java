@@ -26,6 +26,7 @@ package org.blockartistry.mod.DynSurround.proxy;
 
 import org.blockartistry.mod.DynSurround.client.ClientEffectHandler;
 import org.blockartistry.mod.DynSurround.client.fx.BlockEffectHandler;
+import org.blockartistry.mod.DynSurround.client.hud.GuiHUDHandler;
 
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 
@@ -36,5 +37,6 @@ public class ProxyClient extends Proxy {
 		super.init(event);
 		BlockEffectHandler.initialize();
 		ClientEffectHandler.initialize();
+		GuiHUDHandler.initialize();
 	}
 }
