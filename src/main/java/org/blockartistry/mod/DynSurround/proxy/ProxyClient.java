@@ -25,6 +25,7 @@
 package org.blockartistry.mod.DynSurround.proxy;
 
 import org.blockartistry.mod.DynSurround.client.ClientEffectHandler;
+import org.blockartistry.mod.DynSurround.client.cloud.CloudRenderer;
 import org.blockartistry.mod.DynSurround.client.fx.BlockEffectHandler;
 import org.blockartistry.mod.DynSurround.client.hud.GuiHUDHandler;
 
@@ -38,5 +39,6 @@ public class ProxyClient extends Proxy {
 		BlockEffectHandler.initialize();
 		ClientEffectHandler.initialize();
 		GuiHUDHandler.initialize();
+		CloudRenderer.initialize();
 	}
 }
