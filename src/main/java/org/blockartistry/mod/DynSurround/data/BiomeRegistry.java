@@ -209,15 +209,19 @@ public final class BiomeRegistry {
 
 		processConfig();
 
+		ModLog.info("*** BIOME REGISTRY ***");
 		for (final Entry entry : registry.valueCollection())
 			ModLog.info(entry.toString());
 	}
 
 	private static Entry get(final BiomeGenBase biome) {
-		if (biome == null)
-			return registry.get(WTF.biomeID);
-		final Entry entry = registry.get(biome.biomeID);
-		return entry != null ? entry : registry.get(WTF.biomeID);
+		Entry entry = registry.get(biome == null ? WTF.biomeID : biome.biomeID);
+		if (entry == null) {
+			ModLog.warn("Biome [%s] was not detected during initial scan! Reloading config...", biome.biomeName);
+			initialize();
+			entry = registry.get(biome.biomeID);
+		}
+		return entry == null ? registry.get(WTF.biomeID) : entry;
 	}
 
 	public static boolean hasDust(final BiomeGenBase biome) {
