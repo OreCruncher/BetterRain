@@ -32,10 +32,14 @@ import org.blockartistry.mod.DynSurround.client.fx.BlockEffectHandler;
 import org.blockartistry.mod.DynSurround.client.storm.StormProperties;
 import org.blockartistry.mod.DynSurround.data.BiomeRegistry;
 
+import net.minecraft.block.Block;
 import net.minecraft.client.audio.ISound;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.particle.EntityDropParticleFX;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.sound.PlaySoundEvent;
 import net.minecraftforge.common.MinecraftForge;
@@ -103,23 +107,40 @@ public class ClientEffectHandler {
 		}
 	}
 
+	private static List<EntityDropParticleFX> drops = new ArrayList<EntityDropParticleFX>();
+
 	@SubscribeEvent
 	public void entityCreateEvent(final EntityConstructing event) {
 		if (event.entity instanceof EntityDropParticleFX) {
-			PlayerSoundEffectHandler.playSoundAtPlayer(null, BiomeRegistry.WATER_DRIP, 50);
+			drops.add((EntityDropParticleFX) event.entity);
 		}
 	}
 
 	@SubscribeEvent(priority = EventPriority.LOWEST)
 	public void clientTick(final TickEvent.ClientTickEvent event) {
-		if (event.phase != Phase.START)
-			return;
 		final World world = FMLClientHandler.instance().getClient().theWorld;
 		if (world == null)
 			return;
-		final EntityPlayer player = FMLClientHandler.instance().getClient().thePlayer;
-		for (final IClientEffectHandler handler : effectHandlers)
-			handler.process(world, player);
 
+		if (event.phase == Phase.START) {
+			drops.clear();
+			final EntityPlayer player = FMLClientHandler.instance().getClient().thePlayer;
+			for (final IClientEffectHandler handler : effectHandlers)
+				handler.process(world, player);
+		} else if (event.phase == Phase.END) {
+			final BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
+			for (final EntityDropParticleFX drop : drops) {
+				if (drop.isEntityAlive()) {
+					final int x = MathHelper.floor_double(drop.posX);
+					final int y = MathHelper.floor_double(drop.posY + 0.3D);
+					final int z = MathHelper.floor_double(drop.posZ);
+					pos.set(x, y, z);
+					final Block source = world.getBlockState(pos).getBlock();
+					if (source != Blocks.air && !source.isLeaves(world, pos)) {
+						PlayerSoundEffectHandler.playSoundAtPlayer(null, BiomeRegistry.WATER_DRIP, 50);
+					}
+				}
+			}
+		}
 	}
 }
