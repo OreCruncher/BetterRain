@@ -22,21 +22,47 @@
  * THE SOFTWARE.
  */
 
-package org.blockartistry.mod.DynSurround.proxy;
+package org.blockartistry.mod.DynSurround.client.hud;
 
-import org.blockartistry.mod.DynSurround.client.ClientEffectHandler;
-import org.blockartistry.mod.DynSurround.client.fx.BlockEffectHandler;
-import org.blockartistry.mod.DynSurround.client.hud.GuiHUDHandler;
+import java.util.ArrayList;
+import java.util.List;
 
-import cpw.mods.fml.common.event.FMLInitializationEvent;
+import org.blockartistry.mod.DynSurround.ModOptions;
 
-public class ProxyClient extends Proxy {
+import cpw.mods.fml.common.eventhandler.EventPriority;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.client.event.RenderGameOverlayEvent;
+import net.minecraftforge.common.MinecraftForge;
 
-	@Override
-	public void init(final FMLInitializationEvent event) {
-		super.init(event);
-		BlockEffectHandler.initialize();
-		ClientEffectHandler.initialize();
-		GuiHUDHandler.initialize();
+@SideOnly(Side.CLIENT)
+public final class GuiHUDHandler {
+
+	private GuiHUDHandler() {
 	}
+
+	public static interface IGuiOverlay {
+		void doRender(final RenderGameOverlayEvent event);
+	}
+
+	private static final List<IGuiOverlay> overlays = new ArrayList<IGuiOverlay>();
+
+	public static void register(final IGuiOverlay overlay) {
+		overlays.add(overlay);
+	}
+
+	public static void initialize() {
+		if(ModOptions.getPotionHudEnabled())
+			register(new PotionHUD());
+
+		MinecraftForge.EVENT_BUS.register(new GuiHUDHandler());
+	}
+
+	@SubscribeEvent(priority = EventPriority.NORMAL)
+	public void onRenderExperienceBar(final RenderGameOverlayEvent event) {
+		for (final IGuiOverlay overlay : overlays)
+			overlay.doRender(event);
+	}
+
 }
