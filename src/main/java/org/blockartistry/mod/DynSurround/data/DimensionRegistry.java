@@ -38,6 +38,7 @@ public final class DimensionRegistry {
 
 	protected final int dimensionId;
 	protected boolean initialized;
+	protected String name = "<NOT SET>";
 	protected Integer seaLevel;
 	protected Integer skyHeight;
 	protected Integer cloudHeight;
@@ -68,6 +69,10 @@ public final class DimensionRegistry {
 				ModLog.warn("Could not locate dimension config file [%s]", file);
 			}
 		}
+
+		ModLog.info("*** DIMENSION REGISTRY (delay init) ***");
+		for (final DimensionRegistry reg : dimensionData.valueCollection())
+			ModLog.info(reg.toString());
 	}
 
 	private static void process(final DimensionConfig config) {
@@ -101,6 +106,7 @@ public final class DimensionRegistry {
 
 	protected DimensionRegistry initialize(final WorldProvider provider) {
 		if (!this.initialized) {
+			this.name = provider.getDimensionName();
 			if (this.seaLevel == null)
 				this.seaLevel = provider.getAverageGroundLevel();
 			if (this.skyHeight == null)
@@ -114,12 +120,17 @@ public final class DimensionRegistry {
 			if (this.cloudHeight == null)
 				this.cloudHeight = this.hasHaze ? this.skyHeight / 2 : this.skyHeight;
 			this.initialized = true;
+			ModLog.info("Dimension initialized " + this.toString());
 		}
 		return this;
 	}
 
 	public int getDimensionId() {
 		return this.dimensionId;
+	}
+
+	public String getName() {
+		return this.name;
 	}
 
 	public int getSeaLevel() {
@@ -188,5 +199,18 @@ public final class DimensionRegistry {
 
 	public static boolean hasWeather(final World world) {
 		return getData(world).getHasWeather();
+	}
+
+	@Override
+	public String toString() {
+		final StringBuilder builder = new StringBuilder();
+		builder.append(this.dimensionId).append('/').append(this.name).append(':');
+		builder.append(" seaLevel:").append(this.seaLevel);
+		builder.append(" cloudH:").append(this.cloudHeight);
+		builder.append(" skyH:").append(this.skyHeight);
+		builder.append(" haze:").append(Boolean.toString(this.hasHaze));
+		builder.append(" aurora:").append(Boolean.toString(this.hasAuroras));
+		builder.append(" weather:").append(Boolean.toString(this.hasWeather));
+		return builder.toString();
 	}
 }
