@@ -150,7 +150,7 @@ public final class BiomeRegistry {
 		@Override
 		public String toString() {
 			final StringBuilder builder = new StringBuilder();
-			builder.append(String.format("Biome %d [%s]:", this.biome.biomeID, this.biome.biomeName));
+			builder.append(String.format("Biome %d [%s]:", this.biome.biomeID, resolveName(this.biome)));
 			if (this.hasPrecipitation)
 				builder.append(" PRECIPITATION");
 			if (this.hasDust)
@@ -190,6 +190,14 @@ public final class BiomeRegistry {
 		return reloadCount;
 	}
 
+	public static String resolveName(final BiomeGenBase biome) {
+		if (biome == null)
+			return "(Bad Biome)";
+		if (StringUtils.isEmpty(biome.biomeName))
+			return new StringBuilder().append('#').append(biome.biomeID).toString();
+		return biome.biomeName;
+	}
+
 	public static void initialize() {
 
 		reloadCount++;
@@ -217,11 +225,16 @@ public final class BiomeRegistry {
 	private static Entry get(final BiomeGenBase biome) {
 		Entry entry = registry.get(biome == null ? WTF.biomeID : biome.biomeID);
 		if (entry == null) {
-			ModLog.warn("Biome [%s] was not detected during initial scan! Reloading config...", biome.biomeName);
+			ModLog.warn("Biome [%s] was not detected during initial scan! Reloading config...", resolveName(biome));
 			initialize();
 			entry = registry.get(biome.biomeID);
+			if (entry == null) {
+				ModLog.warn("Still can't find biome [%s]! Explicitly adding at defaults", resolveName(biome));
+				entry = new Entry(biome);
+				registry.put(biome.biomeID, entry);
+			}
 		}
-		return entry == null ? registry.get(WTF.biomeID) : entry;
+		return entry;
 	}
 
 	public static boolean hasDust(final BiomeGenBase biome) {
@@ -312,7 +325,7 @@ public final class BiomeRegistry {
 		for (final BiomeConfig.Entry entry : config.entries) {
 			final Pattern pattern = Pattern.compile(entry.biomeName);
 			for (final Entry biomeEntry : registry.valueCollection()) {
-				final Matcher m = pattern.matcher(biomeEntry.biome.biomeName);
+				final Matcher m = pattern.matcher(resolveName(biomeEntry.biome));
 				if (m.matches()) {
 					if (entry.hasPrecipitation != null)
 						biomeEntry.hasPrecipitation = entry.hasPrecipitation.booleanValue();
