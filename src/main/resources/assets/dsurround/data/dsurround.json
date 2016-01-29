@@ -169,6 +169,7 @@
 		},
 		{
 			"biomeName":"(?i)(the end|sky)",
+			"aurora":true,
 			"sounds":[
 				{
 					"sound":"dsurround:theend",

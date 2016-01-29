@@ -6,6 +6,14 @@
 			"haze":false,
 			"aurora":false,
 			"seaLevel":0
+		},
+		{
+			"dimId":1,
+			"weather":false,
+			"haze":false,
+			"aurora":true,
+			"seaLevel":0,
+			"cloudHeight":128
 		}
 		
 	]
