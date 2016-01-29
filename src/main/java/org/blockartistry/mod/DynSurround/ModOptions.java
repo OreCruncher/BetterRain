@@ -70,6 +70,8 @@ public final class ModOptions {
 	protected static float defaultMaxRainStrength = 1.0F;
 	protected static final String CONFIG_FX_RANGE = "Special Effect Range";
 	protected static int specialEffectRange = 16;
+	protected static final String CONFIG_FANCY_CLOUD_HANDLING = "Fancy Cloud Handling";
+	protected static boolean enableFancyCloudHandling = true;
 
 	protected static final String CATEGORY_AURORA = "aurora";
 	protected static final String CONFIG_AURORA_ENABLED = "Enabled";
@@ -190,6 +192,10 @@ public final class ModOptions {
 
 		comment = "Block radius/range around player for special effect application";
 		specialEffectRange = config.getInt(CONFIG_FX_RANGE, CATEGORY_GENERAL, specialEffectRange, 8, 32, comment);
+
+		comment = "Adjust cloud graphics based on configured cloud height";
+		enableFancyCloudHandling = config.getBoolean(CONFIG_FANCY_CLOUD_HANDLING, CATEGORY_GENERAL,
+				enableFancyCloudHandling, comment);
 
 		// CATEGORY: Player
 		comment = "Suppress player's potion particles from rendering";
@@ -373,6 +379,10 @@ public final class ModOptions {
 
 	public static int getSpecialEffectRange() {
 		return specialEffectRange;
+	}
+	
+	public static boolean getEnableFancyCloudHandling() {
+		return enableFancyCloudHandling;
 	}
 
 	public static boolean getAuroraHeightPlayerRelative() {

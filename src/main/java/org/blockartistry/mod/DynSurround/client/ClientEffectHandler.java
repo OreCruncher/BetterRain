@@ -145,20 +145,20 @@ public class ClientEffectHandler {
 			}
 		}
 	}
-	
+
 	@SubscribeEvent(priority = EventPriority.HIGHEST)
-	public void onWorldLoad(final WorldEvent.Load e)
-	{
-		if(!e.world.isRemote)
+	public void onWorldLoad(final WorldEvent.Load e) {
+		if (!e.world.isRemote)
 			return;
-		
+
 		// Tickle the Dimension Registry so it has the
 		// latest info.
 		DimensionRegistry.loading(e.world);
-		
+
 		// Shim the provider so we can tap into the
 		// sky and cloud stuff.
-		e.world.provider = new WorldProviderShim(e.world, e.world.provider);
+		if (ModOptions.getEnableFancyCloudHandling())
+			e.world.provider = new WorldProviderShim(e.world, e.world.provider);
 	}
 
 }
