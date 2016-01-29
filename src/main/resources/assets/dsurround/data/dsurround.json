@@ -98,6 +98,12 @@
 			"sounds":[
 				{
 					"sound":"dsurround:beach"
+				},
+				{
+					"sound":"dsurround:seagulls",
+					"conditions":"(?i)(?!.*raining.*).*day.*",
+					"volume":0.7,
+					"spot":true
 				}
 				
 			]
