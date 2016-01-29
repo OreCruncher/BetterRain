@@ -76,8 +76,7 @@ public class CloudRenderer extends IRenderHandler {
 		final float stormIntensity = world.getRainStrength(1.0F);
 		if (stormIntensity > 0.0F) {
 			// Need to darken the clouds based on intensity
-			final float scale = (1.0F - stormIntensity) * 0.75F + 0.25F;
-			color.scale(scale);
+			color.scale((1.0F - stormIntensity) * 0.5F + 0.5F);
 		}
 		return color;
 	}
