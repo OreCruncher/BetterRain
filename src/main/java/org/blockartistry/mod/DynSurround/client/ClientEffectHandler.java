@@ -111,7 +111,8 @@ public class ClientEffectHandler {
 
 	private static List<EntityDropParticleFX> drops = new ArrayList<EntityDropParticleFX>();
 
-	@SubscribeEvent
+	// Don't do it for now - water dripping into other liquid blocks also make a sound :\
+	//@SubscribeEvent
 	public void entityCreateEvent(final EntityConstructing event) {
 		if (event.entity instanceof EntityDropParticleFX) {
 			drops.add((EntityDropParticleFX) event.entity);
