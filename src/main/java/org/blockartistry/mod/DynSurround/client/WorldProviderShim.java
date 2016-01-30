@@ -247,7 +247,7 @@ public class WorldProviderShim extends WorldProvider {
 	}
 
 	public boolean canBlockFreeze(int x, int y, int z, boolean byWater) {
-		return this.canBlockFreeze(x, y, z, byWater);
+		return this.provider.canBlockFreeze(x, y, z, byWater);
 	}
 
 	public boolean canSnowAt(int x, int y, int z, boolean checkLight) {

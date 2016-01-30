@@ -153,7 +153,7 @@ public class ClientEffectHandler {
 		}
 	}
 
-	@SubscribeEvent(priority = EventPriority.HIGHEST)
+	@SubscribeEvent(priority = EventPriority.LOWEST)
 	public void onWorldLoad(final WorldEvent.Load e) {
 		if (!e.world.isRemote)
 			return;
