@@ -56,7 +56,7 @@ public class FogEffectHandler implements IClientEffectHandler {
 	private static final boolean ENABLE_DESERT_FOG = ModOptions.getAllowDesertFog();
 	private static final boolean ENABLE_BIOME_FOG = ModOptions.getEnableBiomeFog();
 
-	private static final int FOG_Y_CUTOFF = 3;
+	private static final int HAZE_THRESHOLD = 15;
 	private static final float DESERT_DUST_FACTOR = ModOptions.getDesertFogFactor();
 	private static final float ELEVATION_HAZE_FACTOR = ModOptions.getElevationHazeFactor();
 	private static final float BIOME_FOG_FACTOR = ModOptions.getBiomeFogFactor();
@@ -96,26 +96,22 @@ public class FogEffectHandler implements IClientEffectHandler {
 		float dustFog = 0.0F;
 		float heightFog = 0.0F;
 
-		final int cutOff = DimensionRegistry.getSeaLevel(world) - FOG_Y_CUTOFF;
-		final int posY = MathHelper.floor_double(player.posY + player.getEyeHeight());
-
 		// If the player Y is higher than the cutoff Y then assess desert
 		// and elevation haze. Don't want to do needless calculations if they
 		// are under ground.
 		if (ENABLE_BIOME_FOG && BiomeRegistry.hasFog(biome))
 			biomeFog = BiomeRegistry.getFogDensity(biome) * BIOME_FOG_FACTOR;
 
-		if (posY >= cutOff) {
-			if (ENABLE_DESERT_FOG && BiomeRegistry.hasDust(biome)) {
-				dustFog = StormProperties.getFogDensity() * DESERT_DUST_FACTOR;
-			}
+		if (ENABLE_DESERT_FOG && BiomeRegistry.hasDust(biome)) {
+			dustFog = StormProperties.getFogDensity() * DESERT_DUST_FACTOR;
+		}
 
-			if (ENABLE_ELEVATION_HAZE && DimensionRegistry.hasHaze(world)) {
-				final float factor = 1.0F + world.getRainStrength(1.0F);
-				final float skyHeight = DimensionRegistry.getSkyHeight(world) / factor;
-				final float groundLevel = DimensionRegistry.getSeaLevel(world);
-				final float ratio = (posY - groundLevel) / (skyHeight - groundLevel);
-				heightFog = ratio * ratio * ratio * ratio * ELEVATION_HAZE_FACTOR;
+		if (ENABLE_ELEVATION_HAZE && DimensionRegistry.hasHaze(world)) {
+			final float distance = MathHelper
+					.abs(DimensionRegistry.getCloudHeight(world) - (float) (player.posY + player.getEyeHeight()));
+			final float hazeBandRange = HAZE_THRESHOLD * (1.0F + world.getRainStrength(1.0F) * 2);
+			if (distance < hazeBandRange) {
+				heightFog = (hazeBandRange - distance) / 50.0F / hazeBandRange * ELEVATION_HAZE_FACTOR;
 			}
 		}
 
