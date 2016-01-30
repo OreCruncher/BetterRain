@@ -44,6 +44,17 @@ public final class CommandRain extends CommandBase {
 
 	private static final List<String> ALIAS = ImmutableList.<String> builder().add("r", "br").build();
 	private static final DecimalFormat FORMATTER = new DecimalFormat("0.0");
+	
+	public static String statusOutput(final World world, final DimensionEffectData data) {
+		final StringBuilder builder = new StringBuilder();
+		final float minutes = (world.getWorldInfo().getRainTime() / 20.0F) / 60.0F;
+		builder.append(data.toString());
+		builder.append("; isRaining: ").append(Boolean.toString(world.isRaining()));
+		builder.append("; isSurface: ").append(Boolean.toString(world.provider.isSurfaceWorld()));
+		builder.append("; strength: ").append(FORMATTER.format(world.getRainStrength(1.0F) * 100));
+		builder.append("; timer: ").append(FORMATTER.format(minutes)).append(" minutes");
+		return builder.toString();
+	}
 
 	@Override
 	public int getRequiredPermissionLevel() {
@@ -76,14 +87,7 @@ public final class CommandRain extends CommandBase {
 			if (parms.length == 1) {
 				if ("status".compareToIgnoreCase(parms[0]) == 0) {
 					// Dump out some diagnostics for the currentAurora dimension
-					final float minutes = (world.getWorldInfo().getRainTime() / 20.0F) / 60.0F;
-					final StringBuilder builder = new StringBuilder();
-					builder.append(data.toString());
-					builder.append("; isRaining: ").append(Boolean.toString(world.isRaining()));
-					builder.append("; isSurface: ").append(Boolean.toString(world.provider.isSurfaceWorld()));
-					builder.append("; strength: ").append(FORMATTER.format(world.getRainStrength(1.0F) * 100));
-					builder.append("; timer: ").append(FORMATTER.format(minutes)).append(" minutes");
-					player.addChatMessage(new ChatComponentText(builder.toString()));
+					player.addChatMessage(new ChatComponentText(statusOutput(world, data)));
 				} else if ("reset".compareToIgnoreCase(parms[0]) == 0) {
 					world.provider.resetRainAndThunder();
 					player.addChatMessage(new ChatComponentText(StatCollector.translateToLocal("msg.RainReset")));
