@@ -51,7 +51,7 @@ public final class BiomeRegistry {
 	public static final BiomeGenBase INSIDE = new FakeBiome(-2, "Inside");
 	public static final BiomeGenBase UNDERWATER = new FakeBiome(-3, "Underwater");
 
-	public static final BiomeSound WATER_DRIP = new BiomeSound(Module.MOD_ID + ":waterdrops", 0.5F, 1.0F);
+	public static final BiomeSound WATER_DRIP = new BiomeSound(Module.MOD_ID + ":waterdrops", 0.1F, 1.0F);
 
 	// This is for cases when the biome coming in doesn't make sense
 	// and should default to something to avoid crap.

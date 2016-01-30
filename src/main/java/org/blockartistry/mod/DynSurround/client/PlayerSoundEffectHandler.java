@@ -43,6 +43,7 @@ import net.minecraft.client.audio.MovingSound;
 import net.minecraft.client.audio.PositionedSound;
 import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
@@ -64,7 +65,20 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 
 	private static class SpotSound extends PositionedSound {
 
-		protected SpotSound(final EntityPlayer player, final BiomeSound sound) {
+		public SpotSound(final BlockPos pos, final BiomeSound sound) {
+			super(new ResourceLocation(sound.sound));
+
+			this.volume = sound.volume;
+			this.pitch = sound.pitch;
+			this.repeat = false;
+			this.repeatDelay = 0;
+
+			this.xPosF = (float) pos.getX() + 0.5F;
+			this.yPosF = (float) pos.getY() + 0.5F;
+			this.zPosF = (float) pos.getZ() + 0.5F;
+		}
+		
+		public SpotSound(final EntityPlayer player, final BiomeSound sound) {
 			super(new ResourceLocation(sound.sound));
 
 			this.volume = sound.volume;
@@ -205,6 +219,16 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 
 		final SoundHandler handler = Minecraft.getMinecraft().getSoundHandler();
 		final ISound s = new SpotSound(player, sound);
+
+		if (tickDelay == 0)
+			handler.playSound(s);
+		else
+			handler.playDelayedSound(s, tickDelay);
+	}
+	
+	public static void playSoundAt(final BlockPos pos, final BiomeSound sound, final int tickDelay) {
+		final SoundHandler handler = Minecraft.getMinecraft().getSoundHandler();
+		final ISound s = new SpotSound(pos, sound);
 
 		if (tickDelay == 0)
 			handler.playSound(s);

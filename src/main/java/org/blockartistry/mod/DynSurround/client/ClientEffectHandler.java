@@ -111,8 +111,7 @@ public class ClientEffectHandler {
 
 	private static List<EntityDropParticleFX> drops = new ArrayList<EntityDropParticleFX>();
 
-	// Don't do it for now - water dripping into other liquid blocks also make a sound :\
-	//@SubscribeEvent
+	@SubscribeEvent
 	public void entityCreateEvent(final EntityConstructing event) {
 		if (event.entity instanceof EntityDropParticleFX) {
 			drops.add((EntityDropParticleFX) event.entity);
@@ -138,9 +137,17 @@ public class ClientEffectHandler {
 					final int y = MathHelper.floor_double(drop.posY + 0.3D);
 					final int z = MathHelper.floor_double(drop.posZ);
 					pos.set(x, y, z);
-					final Block source = world.getBlockState(pos).getBlock();
-					if (source != Blocks.air && !source.isLeaves(world, pos)) {
-						PlayerSoundEffectHandler.playSoundAtPlayer(null, BiomeRegistry.WATER_DRIP, 50);
+					Block block = world.getBlockState(pos).getBlock();
+					if (block != Blocks.air && !block.isLeaves(world, pos)) {
+						// Find out where it is going to hit
+						BlockPos soundPos = pos.down();
+						while((block = world.getBlockState(soundPos).getBlock()) == Blocks.air)
+							soundPos = soundPos.down();
+						
+						if(block.getMaterial().isSolid()) {
+							final int distance = y - soundPos.getY();
+							PlayerSoundEffectHandler.playSoundAt(soundPos, BiomeRegistry.WATER_DRIP, 40 + distance * 2);
+						}
 					}
 				}
 			}
