@@ -63,7 +63,20 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 
 	private static class SpotSound extends PositionedSound {
 
-		protected SpotSound(final EntityPlayer player, final BiomeSound sound) {
+		public SpotSound(final int x, final int y, final int z, final BiomeSound sound) {
+			super(new ResourceLocation(sound.sound));
+
+			this.volume = sound.volume;
+			this.field_147663_c = sound.pitch;
+			this.repeat = false;
+			this.field_147665_h = 0;
+
+			this.xPosF = (float) x + 0.5F;
+			this.yPosF = (float) y + 0.5F;
+			this.zPosF = (float) z + 0.5F;
+		}
+
+		public SpotSound(final EntityPlayer player, final BiomeSound sound) {
 			super(new ResourceLocation(sound.sound));
 
 			this.volume = sound.volume;
@@ -208,6 +221,18 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 		else
 			handler.playDelayedSound(s, tickDelay);
 	}
+	
+	public static void playSoundAt(final int x, final int y, final int z, final BiomeSound sound, final int tickDelay) {
+		final SoundHandler handler = Minecraft.getMinecraft().getSoundHandler();
+		final ISound s = new SpotSound(x, y, z, sound);
+
+		if (tickDelay == 0)
+			handler.playSound(s);
+		else
+			handler.playDelayedSound(s, tickDelay);
+	}
+
+
 	
 	@Override
 	public void process(final World world, final EntityPlayer player) {
