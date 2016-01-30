@@ -24,6 +24,7 @@
 
 package org.blockartistry.mod.DynSurround.client;
 
+import java.lang.ref.WeakReference;
 import java.util.Random;
 
 import org.blockartistry.mod.DynSurround.data.BiomeRegistry;
@@ -36,7 +37,9 @@ import org.blockartistry.mod.DynSurround.util.XorShiftRandom;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.audio.ISound;
 import net.minecraft.client.audio.MovingSound;
+import net.minecraft.client.audio.PositionedSound;
 import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
@@ -58,9 +61,26 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 
 	private static int reloadTracker = 0;
 
+	private static class SpotSound extends PositionedSound {
+
+		protected SpotSound(final EntityPlayer player, final BiomeSound sound) {
+			super(new ResourceLocation(sound.sound));
+
+			this.volume = sound.volume;
+			this.field_147663_c = sound.pitch;
+			this.repeat = false;
+			this.field_147665_h = 0;
+
+			this.xPosF = (float) player.posX;
+			this.yPosF = (float) player.posY + 1;
+			this.zPosF = (float) player.posZ;
+		}
+
+	}
+
 	private static class PlayerSound extends MovingSound {
 		private boolean fadeAway;
-		private final EntityPlayer player;
+		private final WeakReference<EntityPlayer> player;
 		private final BiomeSound sound;
 
 		public PlayerSound(final EntityPlayer player, final BiomeSound sound) {
@@ -73,7 +93,7 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 			this.sound = sound;
 			this.volume = repeat ? 0.01F : sound.volume;
 			this.field_147663_c = sound.pitch;
-			this.player = player;
+			this.player = new WeakReference<EntityPlayer>(player);
 			this.repeat = repeat;
 			this.fadeAway = false;
 
@@ -81,9 +101,9 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 			this.field_147665_h = 0;
 
 			// Initial position
-			this.xPosF = (float) (this.player.posX);
-			this.yPosF = (float) (this.player.posY + 1);
-			this.zPosF = (float) (this.player.posZ);
+			this.xPosF = (float) (player.posX);
+			this.yPosF = (float) (player.posY + 1);
+			this.zPosF = (float) (player.posZ);
 		}
 
 		public void fadeAway() {
@@ -113,17 +133,32 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 
 		@Override
 		public float getXPosF() {
-			return (float) this.player.posX;
+			final EntityPlayer player = this.player.get();
+			if (player == null) {
+				this.donePlaying = true;
+				return 0.0F;
+			}
+			return (float) player.posX;
 		}
 
 		@Override
 		public float getYPosF() {
-			return (float) this.player.posY + 1;
+			final EntityPlayer player = this.player.get();
+			if (player == null) {
+				this.donePlaying = true;
+				return 0.0F;
+			}
+			return (float) player.posY + 1;
 		}
 
 		@Override
 		public float getZPosF() {
-			return (float) this.player.posZ;
+			final EntityPlayer player = this.player.get();
+			if (player == null) {
+				this.donePlaying = true;
+				return 0.0F;
+			}
+			return (float) player.posZ;
 		}
 	}
 
@@ -166,9 +201,9 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 			player = Minecraft.getMinecraft().thePlayer;
 		
 		final SoundHandler handler = Minecraft.getMinecraft().getSoundHandler();
-		final PlayerSound s = new PlayerSound(player, sound, false);
-		
-		if(tickDelay == 0)
+		final ISound s = new SpotSound(player, sound);
+
+		if (tickDelay == 0)
 			handler.playSound(s);
 		else
 			handler.playDelayedSound(s, tickDelay);
