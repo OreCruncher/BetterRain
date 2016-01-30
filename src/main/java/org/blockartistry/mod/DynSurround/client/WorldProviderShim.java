@@ -115,7 +115,7 @@ public class WorldProviderShim extends WorldProvider {
 	 */
 	@SideOnly(Side.CLIENT)
 	public boolean doesXZShowFog(int x, int z) {
-		return false;
+		return this.provider.doesXZShowFog(x, z);
 	}
 
 	/**
