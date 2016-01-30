@@ -23,6 +23,8 @@
 
 package org.blockartistry.mod.DynSurround.util;
 
+import java.util.regex.Pattern;
+
 import org.blockartistry.mod.DynSurround.data.BiomeRegistry;
 import org.blockartistry.mod.DynSurround.data.DimensionRegistry;
 
@@ -38,22 +40,35 @@ public final class PlayerUtils {
 
 	private static final int INSIDE_Y_ADJUST = 3;
 
+	private static final Pattern REGEX_DEEP_OCEAN = Pattern.compile("(?i).*deep.*ocean.*|.*abyss.*");
+	private static final Pattern REGEX_OCEAN = Pattern.compile("(?i)(?!.*deep.*)(.*ocean.*|.*kelp.*|.*coral.*)");
+	private static final Pattern REGEX_RIVER = Pattern.compile("(?i).*river.*");
+
 	private PlayerUtils() {
 	}
 
 	public static BiomeGenBase getPlayerBiome(final EntityPlayer player, final boolean getTrue) {
-		if (!getTrue) {
-			if (isUnderWater(player))
-				return BiomeRegistry.UNDERWATER;
-			if (isUnderGround(player, INSIDE_Y_ADJUST))
-				return BiomeRegistry.UNDERGROUND;
-			if (isInside(player, INSIDE_Y_ADJUST))
-				return BiomeRegistry.INSIDE;
-		}
 
 		final int theX = MathHelper.floor_double(player.posX);
 		final int theZ = MathHelper.floor_double(player.posZ);
-		return player.worldObj.getBiomeGenForCoords(theX, theZ);
+		BiomeGenBase biome = player.worldObj.getBiomeGenForCoords(theX, theZ);
+
+		if (!getTrue) {
+			if (isUnderWater(player)) {
+				if (REGEX_DEEP_OCEAN.matcher(biome.biomeName).matches())
+					biome = BiomeRegistry.UNDERDEEPOCEAN;
+				else if (REGEX_OCEAN.matcher(biome.biomeName).matches())
+					biome = BiomeRegistry.UNDEROCEAN;
+				else if (REGEX_RIVER.matcher(biome.biomeName).matches())
+					biome = BiomeRegistry.UNDERRIVER;
+				else
+					biome = BiomeRegistry.UNDERWATER;
+			} else if (isUnderGround(player, INSIDE_Y_ADJUST))
+				biome = BiomeRegistry.UNDERGROUND;
+			else if (isInside(player, INSIDE_Y_ADJUST))
+				biome = BiomeRegistry.INSIDE;
+		}
+		return biome;
 	}
 
 	public static int getPlayerDimension(final EntityPlayer player) {

@@ -50,6 +50,9 @@ public final class BiomeRegistry {
 	public static final BiomeGenBase UNDERGROUND = new FakeBiome(-1, "Underground");
 	public static final BiomeGenBase INSIDE = new FakeBiome(-2, "Inside");
 	public static final BiomeGenBase UNDERWATER = new FakeBiome(-3, "Underwater");
+	public static final BiomeGenBase UNDEROCEAN = new FakeBiome(-4, "UnderOCN");
+	public static final BiomeGenBase UNDERDEEPOCEAN = new FakeBiome(-5, "UnderDOCN");
+	public static final BiomeGenBase UNDERRIVER = new FakeBiome(-6, "UnderRVR");
 
 	public static final BiomeSound WATER_DRIP = new BiomeSound(Module.MOD_ID + ":waterdrops", 0.1F, 1.0F);
 
@@ -213,6 +216,9 @@ public final class BiomeRegistry {
 		registry.put(UNDERGROUND.biomeID, new Entry(UNDERGROUND));
 		registry.put(INSIDE.biomeID, new Entry(INSIDE));
 		registry.put(UNDERWATER.biomeID, new Entry(UNDERWATER));
+		registry.put(UNDEROCEAN.biomeID, new Entry(UNDEROCEAN));
+		registry.put(UNDERDEEPOCEAN.biomeID, new Entry(UNDERDEEPOCEAN));
+		registry.put(UNDERRIVER.biomeID, new Entry(UNDERRIVER));
 		registry.put(WTF.biomeID, new Entry(WTF));
 
 		processConfig();
