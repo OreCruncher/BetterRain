@@ -29,11 +29,13 @@ import java.util.Random;
 
 import org.blockartistry.mod.DynSurround.data.BiomeRegistry;
 import org.blockartistry.mod.DynSurround.data.DimensionRegistry;
+import org.blockartistry.mod.DynSurround.event.DiagnosticEvent;
 import org.blockartistry.mod.DynSurround.data.BiomeRegistry.BiomeSound;
 import org.blockartistry.mod.DynSurround.util.DiurnalUtils;
 import org.blockartistry.mod.DynSurround.util.PlayerUtils;
 import org.blockartistry.mod.DynSurround.util.XorShiftRandom;
 
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
@@ -173,6 +175,11 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 			}
 			return (float) player.posZ;
 		}
+		
+		@Override
+		public String toString() {
+			return this.sound.toString();
+		}
 	}
 
 	private static String getConditions(final World world) {
@@ -203,11 +210,6 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 
 	// Current active background sound
 	private static PlayerSound currentSound = null;
-
-	@Override
-	public boolean hasEvents() {
-		return false;
-	}
 
 	public static void playSoundAtPlayer(EntityPlayer player, final BiomeSound sound, final int tickDelay) {
 		if(player == null)
@@ -264,6 +266,20 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 		sound = BiomeRegistry.getSpotSound(playerBiome, conditions, RANDOM);
 		if (sound != null) {
 			playSoundAtPlayer(player, sound, 0);
+		}
+	}
+	
+	@Override
+	public boolean hasEvents() {
+		return true;
+	}
+
+	@SubscribeEvent
+	public void diagnostics(final DiagnosticEvent.Gather event) {
+		if(currentSound != null) {
+			final StringBuilder builder = new StringBuilder();
+			builder.append("Active Sound: ").append(currentSound.toString());
+			event.output.add(builder.toString());
 		}
 	}
 }

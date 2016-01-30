@@ -28,6 +28,7 @@ import org.blockartistry.mod.DynSurround.ModOptions;
 import org.blockartistry.mod.DynSurround.client.storm.StormProperties;
 import org.blockartistry.mod.DynSurround.data.BiomeRegistry;
 import org.blockartistry.mod.DynSurround.data.DimensionRegistry;
+import org.blockartistry.mod.DynSurround.event.DiagnosticEvent;
 import org.blockartistry.mod.DynSurround.util.Color;
 import org.blockartistry.mod.DynSurround.util.DiurnalUtils;
 import org.blockartistry.mod.DynSurround.util.MathStuff;
@@ -208,6 +209,16 @@ public class FogEffectHandler implements IClientEffectHandler {
 		GL11.glFogf(GL11.GL_FOG_START, near);
 		GL11.glFogf(GL11.GL_FOG_END, horizon);
 		event.setResult(Result.ALLOW);
+	}
+
+	@SubscribeEvent
+	public void diagnostics(final DiagnosticEvent.Gather event) {
+		final StringBuilder builder = new StringBuilder();
+		builder.append("Fog:");
+		builder.append(" t:").append(targetFogLevel);
+		builder.append(" c:").append(currentFogLevel);
+		builder.append(" bf:").append(brightnessFactor);
+		event.output.add(builder.toString());
 	}
 
 }

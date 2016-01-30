@@ -24,9 +24,10 @@
 
 package org.blockartistry.mod.DynSurround.client.hud;
 
+import java.util.List;
+
+import org.blockartistry.mod.DynSurround.client.DiagnosticHandler;
 import org.blockartistry.mod.DynSurround.client.hud.GuiHUDHandler.IGuiOverlay;
-import org.blockartistry.mod.DynSurround.data.BiomeRegistry;
-import org.blockartistry.mod.DynSurround.util.PlayerUtils;
 import org.lwjgl.opengl.GL11;
 
 import cpw.mods.fml.relauncher.Side;
@@ -34,7 +35,6 @@ import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
 
@@ -43,25 +43,32 @@ public class DebugHUD extends Gui implements IGuiOverlay {
 
 	private static final float TRANSPARENCY = 1.0F;
 	private static final int TEXT_COLOR = (int) (255 * TRANSPARENCY) << 24 | 0xFFFFFF;
-	private static final float GUITOP = 200;
+	private static final float GUITOP = 160;
 	private static final float GUILEFT = 2;
 
-	public void doRender(RenderGameOverlayEvent event) {
+	public void doRender(final RenderGameOverlayEvent event) {
 
 		if (event.isCancelable() || event.type != ElementType.EXPERIENCE) {
 			return;
 		}
+		
+		final List<String> output = DiagnosticHandler.getDiagnostics();
+		if(output.isEmpty())
+			return;
 
 		final Minecraft mc = Minecraft.getMinecraft();
 		final FontRenderer font = mc.fontRenderer;
-		final EntityPlayer player = mc.thePlayer;
 
 		GL11.glPushMatrix();
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, TRANSPARENCY);
 		GL11.glDisable(GL11.GL_LIGHTING);
 		GL11.glTranslatef(GUILEFT, GUITOP, 0.0F);
-		String s = "DynSurround Biome: " + BiomeRegistry.resolveName(PlayerUtils.getPlayerBiome(player, false));
-		font.drawStringWithShadow(s, 0, 0, TEXT_COLOR);
+		int offset = 0;
+		for(final String s: output) {
+			font.drawStringWithShadow(s, 0, offset, TEXT_COLOR);
+			offset += 9;
+		}
+		
 		GL11.glPopMatrix();
 	}
 }
