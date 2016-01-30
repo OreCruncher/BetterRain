@@ -22,53 +22,51 @@
  * THE SOFTWARE.
  */
 
-package org.blockartistry.mod.DynSurround.client.hud;
+package org.blockartistry.mod.DynSurround.client;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import org.blockartistry.mod.DynSurround.client.DiagnosticHandler;
-import org.blockartistry.mod.DynSurround.client.hud.GuiHUDHandler.IGuiOverlay;
-import org.lwjgl.opengl.GL11;
+import org.blockartistry.mod.DynSurround.data.BiomeRegistry;
+import org.blockartistry.mod.DynSurround.event.DiagnosticEvent;
+import org.blockartistry.mod.DynSurround.util.PlayerUtils;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.Gui;
-import net.minecraftforge.client.event.RenderGameOverlayEvent;
-import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.World;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
-public class DebugHUD extends Gui implements IGuiOverlay {
+public class DiagnosticHandler implements IClientEffectHandler {
 
-	private static final float TRANSPARENCY = 1.0F;
-	private static final int TEXT_COLOR = (int) (255 * TRANSPARENCY) << 24 | 0xFFFFFF;
-	private static final float GUITOP = 160;
-	private static final float GUILEFT = 2;
+	private static List<String> output = new ArrayList<String>();
 
-	public void doRender(final RenderGameOverlayEvent event) {
-
-		if (event.isCancelable() || event.type != ElementType.EXPERIENCE) {
-			return;
-		}
-		
-		final List<String> output = DiagnosticHandler.getDiagnostics();
-		if(output.isEmpty())
-			return;
-
-		final Minecraft mc = Minecraft.getMinecraft();
-		final FontRenderer font = mc.fontRendererObj;
-
-		GL11.glPushMatrix();
-		GL11.glColor4f(1.0F, 1.0F, 1.0F, TRANSPARENCY);
-		GL11.glDisable(GL11.GL_LIGHTING);
-		GL11.glTranslatef(GUILEFT, GUITOP, 0.0F);
-		int offset = 0;
-		for(final String s: output) {
-			font.drawStringWithShadow(s, 0, offset, TEXT_COLOR);
-			offset += 9;
-		}
-		
-		GL11.glPopMatrix();
+	public static List<String> getDiagnostics() {
+		return output;
 	}
+
+	@Override
+	public void process(final World world, final EntityPlayer player) {
+		final DiagnosticEvent.Gather gather = new DiagnosticEvent.Gather();
+		MinecraftForge.EVENT_BUS.post(gather);
+		output = gather.output;
+	}
+
+	@Override
+	public boolean hasEvents() {
+		return true;
+	}
+
+	@SubscribeEvent(priority = EventPriority.HIGHEST)
+	public void diagnostics(final DiagnosticEvent.Gather event) {
+		final StringBuilder builder = new StringBuilder();
+		builder.append("Biome: ").append(
+				BiomeRegistry.resolveName(PlayerUtils.getPlayerBiome(Minecraft.getMinecraft().thePlayer, false)));
+		event.output.add(builder.toString());
+	}
+
 }

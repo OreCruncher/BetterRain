@@ -75,6 +75,9 @@ public class ClientEffectHandler {
 		final ClientEffectHandler handler = new ClientEffectHandler();
 		MinecraftForge.EVENT_BUS.register(handler);
 
+		if(ModOptions.getEnableDebugLogging())
+			register(new DiagnosticHandler());
+
 		register(new FogEffectHandler());
 		register(new BlockEffectHandler());
 
