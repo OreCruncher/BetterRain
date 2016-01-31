@@ -115,6 +115,10 @@ public final class ModOptions {
 	protected static final String CONFIG_DIMENSION_CONFIG_FILES = "Config Files";
 	protected static String[] dimensionConfigFiles = {};
 
+	protected static final String CATEGORY_BLOCK = "block";
+	protected static final String CONFIG_BLOCK_CONFIG_FILES = "Config Files";
+	protected static String[] blockConfigFiles = {};
+
 	protected static final String CATEGORY_SOUND = "sound";
 	protected static final String CONFIG_ENABLE_BIOME_SOUNDS = "Enable Biome Sounds";
 	protected static boolean enableBiomeSounds = true;
@@ -283,6 +287,10 @@ public final class ModOptions {
 		dimensionConfigFiles = config.getStringList(CONFIG_DIMENSION_CONFIG_FILES, CATEGORY_DIMENSIONS,
 				dimensionConfigFiles, comment);
 
+		// CATEGORY: Block
+		comment = "Configuration files for configuring Block sounds and behavior";
+		blockConfigFiles = config.getStringList(CONFIG_BLOCK_CONFIG_FILES, CATEGORY_BLOCK, blockConfigFiles, comment);
+
 		// CATEGORY: Sound
 		comment = "Enable biome sounds";
 		enableBiomeSounds = config.getBoolean(CONFIG_ENABLE_BIOME_SOUNDS, CATEGORY_SOUND, enableBiomeSounds, comment);
@@ -380,7 +388,7 @@ public final class ModOptions {
 	public static int getSpecialEffectRange() {
 		return specialEffectRange;
 	}
-	
+
 	public static boolean getEnableFancyCloudHandling() {
 		return enableFancyCloudHandling;
 	}
@@ -465,6 +473,10 @@ public final class ModOptions {
 		return dimensionConfigFiles;
 	}
 
+	public static String[] getBlockConfigFiles() {
+		return blockConfigFiles;
+	}
+	
 	public static boolean getEnableBiomeSounds() {
 		return enableBiomeSounds;
 	}
@@ -521,7 +533,7 @@ public final class ModOptions {
 	public static boolean getSuppressPotionParticleEffect() {
 		return suppressPotionParticles;
 	}
-	
+
 	public static boolean getPotionHudEnabled() {
 		return potionHudEnabled;
 	}

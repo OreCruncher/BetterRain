@@ -24,15 +24,13 @@
 
 package org.blockartistry.mod.DynSurround.client.fx;
 
-import java.util.ArrayList;
-import java.util.IdentityHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 
 import org.blockartistry.mod.DynSurround.ModOptions;
-import org.blockartistry.mod.DynSurround.Module;
 import org.blockartistry.mod.DynSurround.client.IClientEffectHandler;
+import org.blockartistry.mod.DynSurround.data.BlockRegistry;
+import org.blockartistry.mod.DynSurround.data.DimensionRegistry;
 import org.blockartistry.mod.DynSurround.util.XorShiftRandom;
 
 import cpw.mods.fml.relauncher.Side;
@@ -55,16 +53,6 @@ public class BlockEffectHandler implements IClientEffectHandler {
 	private static final double RATIO = 0.0335671847202175D;
 	private static final int CHECK_COUNT = (int) (Math.pow(RANGE * 2 - 1, 3) * RATIO);
 
-	private static final Map<Block, List<BlockEffect>> effects = new IdentityHashMap<Block, List<BlockEffect>>();
-
-	public static void register(final Block block, final BlockEffect effect) {
-		List<BlockEffect> chain = effects.get(block);
-		if (chain == null) {
-			effects.put(block, chain = new ArrayList<BlockEffect>());
-		}
-		chain.add(effect);
-	}
-
 	@Override
 	public void process(final World world, final EntityPlayer player) {
 		if (Minecraft.getMinecraft().isGamePaused())
@@ -74,18 +62,24 @@ public class BlockEffectHandler implements IClientEffectHandler {
 		final int playerY = MathHelper.floor_double(player.posY);
 		final int playerZ = MathHelper.floor_double(player.posZ);
 
+		final String conditions = DimensionRegistry.getConditions(world);
+
 		for (int i = 0; i < CHECK_COUNT; i++) {
 			final int x = playerX + random.nextInt(RANGE) - random.nextInt(RANGE);
 			final int y = playerY + random.nextInt(RANGE) - random.nextInt(RANGE);
 			final int z = playerZ + random.nextInt(RANGE) - random.nextInt(RANGE);
 			final Block block = world.getBlock(x, y, z);
 			if (block != Blocks.air) {
-				final List<BlockEffect> chain = effects.get(block);
+				final List<BlockEffect> chain = BlockRegistry.getEffects(block);
 				if (chain != null) {
 					for (final BlockEffect effect : chain)
 						if (effect.trigger(block, world, x, y, z, random))
 							effect.doEffect(block, world, x, y, z, random);
 				}
+
+				final SoundEffect sound = BlockRegistry.getSound(block, random, conditions);
+				if(sound != null)
+					sound.doEffect(block, world, x, y, z, random);
 			}
 		}
 	}
@@ -94,60 +88,4 @@ public class BlockEffectHandler implements IClientEffectHandler {
 	public boolean hasEvents() {
 		return false;
 	}
-
-	public static void initialize() {
-
-		// Particles
-		if (ModOptions.getEnableFireJets())
-			register(Blocks.lava, new JetEffect.Fire());
-		if (ModOptions.getEnableBubbleJets())
-			register(Blocks.water, new JetEffect.Bubble());
-		if (ModOptions.getEnableSteamJets())
-			register(Blocks.water, new JetEffect.Steam());
-
-		if(ModOptions.getEnableDustJets()) {
-			final JetEffect effect = new JetEffect.Dust();
-			register(Blocks.stone, effect);
-			register(Blocks.dirt, effect);
-			register(Blocks.gravel, effect);
-			register(Blocks.sand, effect);
-		}
-		
-		// Sounds
-		if (ModOptions.getEnableIceCrackSound()) {
-			final SoundEffect handler = new SoundEffect(Module.MOD_ID + ":ice");
-			handler.setChance(ModOptions.getIceCrackSoundChance());
-			handler.setScale(ModOptions.getIceCrackScaleFactor());
-			handler.setVolume(0.3F);
-			BlockEffectHandler.register(Blocks.ice, handler);
-			BlockEffectHandler.register(Blocks.packed_ice, handler);
-		}
-
-		if (ModOptions.getEnableFrogCroakSound()) {
-			final SoundEffect handler = new SoundEffect(Module.MOD_ID + ":frog");
-			handler.setChance(ModOptions.getFrogCroakSoundChance());
-			handler.setScale(ModOptions.getFrogCroakScaleFactor());
-			handler.setVolume(0.4F);
-			handler.setVariablePitch(true);
-			BlockEffectHandler.register(Blocks.waterlily, handler);
-		}
-
-		if (ModOptions.getEnableRedstoneOreSound()) {
-			final SoundEffect handler = new SoundEffect("minecraft:random.fizz");
-			handler.setChance(ModOptions.getRedstoneOreSoundChance());
-			handler.setScale(ModOptions.getRedstoneOreScaleFactor());
-			handler.setVolume(0.3F);
-			BlockEffectHandler.register(Blocks.redstone_ore, handler);
-		}
-
-		if (ModOptions.getEnableSoulSandSound()) {
-			final SoundEffect handler = new SoundEffect(Module.MOD_ID + ":soulsand");
-			handler.setChance(ModOptions.getSoulSandSoundChance());
-			handler.setScale(ModOptions.getSoulSandScaleFactor());
-			handler.setVolume(0.2F);
-			handler.setVariablePitch(true);
-			BlockEffectHandler.register(Blocks.soul_sand, handler);
-		}
-	}
-
 }

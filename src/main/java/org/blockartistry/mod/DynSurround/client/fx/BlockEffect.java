@@ -25,12 +25,9 @@ package org.blockartistry.mod.DynSurround.client.fx;
 
 import java.util.Random;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.world.World;
 
-@SideOnly(Side.CLIENT)
 public abstract class BlockEffect {
 
 	private int chance;

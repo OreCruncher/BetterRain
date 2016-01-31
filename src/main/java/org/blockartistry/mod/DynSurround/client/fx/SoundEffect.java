@@ -1,5 +1,4 @@
-/*
- * This file is part of Dynamic Surroundings, licensed under the MIT License (MIT).
+/* This file is part of Dynamic Surroundings, licensed under the MIT License (MIT).
  *
  * Copyright (c) OreCruncher
  *
@@ -25,55 +24,51 @@
 package org.blockartistry.mod.DynSurround.client.fx;
 
 import java.util.Random;
+import java.util.regex.Pattern;
 
-import cpw.mods.fml.relauncher.SideOnly;
-import cpw.mods.fml.relauncher.Side;
+import org.apache.commons.lang3.StringUtils;
+import org.blockartistry.mod.DynSurround.data.config.SoundConfig;
+
 import net.minecraft.block.Block;
 import net.minecraft.world.World;
 
-@SideOnly(Side.CLIENT)
-public class SoundEffect extends BlockEffect {
-
+public final class SoundEffect {
+	
 	private static final float[] pitchDelta = { -0.2F, 0.0F, 0.0F, 0.2F, 0.2F, 0.2F };
 
-	protected final String sound;
-	protected float scale;
-	protected float volume;
-	protected float pitch;
-	protected boolean variablePitch;
+	public final String sound;
+	public final String conditions;
+	private final Pattern pattern;
+	public final float volume;
+	public final float pitch;
+	public final int weight;
+	public final boolean isSpot;
+	public final boolean variable;
 
-	public SoundEffect(final String sound) {
-		this(100, sound);
-	}
-
-	public SoundEffect(final int chance, final String sound) {
-		this(chance, sound, 1.0F, 1.0F, 1.0F, false);
-	}
-
-	public SoundEffect(final int chance, final String sound, final float scale, final float volume, final float pitch,
-			final boolean variable) {
-		super(chance);
+	public SoundEffect(final String sound, final float volume, final float pitch) {
 		this.sound = sound;
-		this.scale = scale;
 		this.volume = volume;
 		this.pitch = pitch;
-		this.variablePitch = variable;
+		this.conditions = ".*";
+		this.pattern = null;
+		this.weight = 1;
+		this.isSpot = true;
+		this.variable = false;
 	}
 
-	public void setVolume(final float volume) {
-		this.volume = volume;
+	public SoundEffect(final SoundConfig record) {
+		this.sound = record.sound;
+		this.conditions = StringUtils.isEmpty(record.conditions) ? ".*" : record.conditions;
+		this.volume = record.volume == null ? 1.0F : record.volume.floatValue();
+		this.pitch = record.pitch == null ? 1.0F : record.pitch.floatValue();
+		this.pattern = Pattern.compile(this.conditions);
+		this.weight = record.weight == null ? 10 : record.weight.intValue();
+		this.isSpot = record.spotSound != null && record.spotSound.booleanValue();
+		this.variable = record.variable != null && record.variable.booleanValue();
 	}
 
-	public void setPitch(final float pitch) {
-		this.pitch = pitch;
-	}
-
-	public void setVariablePitch(final boolean flag) {
-		this.variablePitch = flag;
-	}
-
-	public void setScale(final float scale) {
-		this.scale = scale;
+	public boolean matches(final String conditions) {
+		return pattern.matcher(conditions).matches();
 	}
 
 	public float getVolume() {
@@ -81,17 +76,38 @@ public class SoundEffect extends BlockEffect {
 	}
 
 	public float getPitch(final Random rand) {
-		if (rand != null && this.variablePitch)
+		if (rand != null && this.variable)
 			return this.pitch + pitchDelta[rand.nextInt(pitchDelta.length)];
 		return this.pitch;
 	}
 
-	public float getScale() {
-		return this.scale;
-	}
-
 	public void doEffect(final Block block, final World world, final int x, final int y, final int z,
 			final Random random) {
-		world.playSound(x + 0.5D, y + 0.5D, z + 0.5D, this.sound, getVolume() * getScale(), getPitch(random), false);
+		world.playSound(x + 0.5D, y + 0.5D, z + 0.5D, this.sound, getVolume(), getPitch(random), false);
+	}
+
+	@Override
+	public boolean equals(final Object anObj) {
+		if (this == anObj)
+			return true;
+		if (!(anObj instanceof SoundEffect))
+			return false;
+		final SoundEffect s = (SoundEffect) anObj;
+		return this.volume == s.volume && this.pitch == s.pitch && this.sound.equals(s.sound)
+				&& this.conditions.equals(s.conditions);
+	}
+
+	public String toString() {
+		final StringBuilder builder = new StringBuilder();
+		builder.append('[').append(this.sound);
+		if (!StringUtils.isEmpty(this.conditions))
+			builder.append('(').append(this.conditions).append(')');
+		builder.append(", v:").append(this.volume);
+		builder.append(", p:").append(this.pitch);
+		if (this.isSpot)
+			builder.append(", w:").append(this.weight);
+		builder.append(']');
+		return builder.toString();
 	}
 }
+

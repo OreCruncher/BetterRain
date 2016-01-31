@@ -1,0 +1,79 @@
+{
+	"entries":[
+		{
+			"blocks":[
+				"minecraft:stone",
+				"minecraft:dirt",
+				"minecraft:gravel",
+				"minecraft:sand"
+			],
+			"dust":true
+		},
+		{
+			"blocks":[
+				"minecraft:ice",
+				"minecraft:packed_ice"
+			],
+			"chance":10000,
+			"sounds":[
+				{
+					"sound":"dsurround:ice",
+					"volume":0.3,
+					"pitch":1.0,
+					"variable":false
+				}
+				
+			]
+			
+		},
+		{
+			"blocks":[
+				"minecraft:waterlily"
+			],
+			"chance":25,
+			"sounds":[
+				{
+					"sound":"dsurround:frog",
+					"volume":0.4,
+					"pitch":1.0,
+					"variable":true
+				}
+				
+			]
+			
+		},
+		{
+			"blocks":[
+				"minecraft:redstone_ore"
+			],
+			"chance":100,
+			"sounds":[
+				{
+					"sound":"minecraft:random.fizz",
+					"volume":0.3,
+					"pitch":1.0,
+					"variable":false
+				}
+				
+			]
+			
+		},
+		{
+			"blocks":[
+				"minecraft:soul_sand"
+			],
+			"chance":8000,
+			"sounds":[
+				{
+					"sound":"dsurround:soulsand",
+					"volume":0.2,
+					"pitch":1.0,
+					"variable":true
+				}
+				
+			]
+			
+		}
+		
+	]
+}

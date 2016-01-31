@@ -27,11 +27,10 @@ package org.blockartistry.mod.DynSurround.client;
 import java.lang.ref.WeakReference;
 import java.util.Random;
 
+import org.blockartistry.mod.DynSurround.client.fx.SoundEffect;
 import org.blockartistry.mod.DynSurround.data.BiomeRegistry;
 import org.blockartistry.mod.DynSurround.data.DimensionRegistry;
 import org.blockartistry.mod.DynSurround.event.DiagnosticEvent;
-import org.blockartistry.mod.DynSurround.data.BiomeRegistry.BiomeSound;
-import org.blockartistry.mod.DynSurround.util.DiurnalUtils;
 import org.blockartistry.mod.DynSurround.util.PlayerUtils;
 import org.blockartistry.mod.DynSurround.util.XorShiftRandom;
 
@@ -54,18 +53,11 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 	private static final Random RANDOM = new XorShiftRandom();
 	private static final float VOLUME_INCREMENT = 0.02F;
 
-	private static final String CONDITION_TOKEN_RAINING = "raining";
-	private static final String CONDITION_TOKEN_DAY = "day";
-	private static final String CONDITION_TOKEN_NIGHT = "night";
-	private static final String CONDITION_TOKEN_NETHER = "nether";
-	private static final String CONDITION_TOKEN_END = "end";
-	private static final String CONDITION_TOKEN_SKY = "sky";
-
 	private static int reloadTracker = 0;
 
 	private static class SpotSound extends PositionedSound {
 
-		public SpotSound(final int x, final int y, final int z, final BiomeSound sound) {
+		public SpotSound(final int x, final int y, final int z, final SoundEffect sound) {
 			super(new ResourceLocation(sound.sound));
 
 			this.volume = sound.volume;
@@ -78,7 +70,7 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 			this.zPosF = (float) z + 0.5F;
 		}
 
-		public SpotSound(final EntityPlayer player, final BiomeSound sound) {
+		public SpotSound(final EntityPlayer player, final SoundEffect sound) {
 			super(new ResourceLocation(sound.sound));
 
 			this.volume = sound.volume;
@@ -96,13 +88,13 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 	private static class PlayerSound extends MovingSound {
 		private boolean fadeAway;
 		private final WeakReference<EntityPlayer> player;
-		private final BiomeSound sound;
+		private final SoundEffect sound;
 
-		public PlayerSound(final EntityPlayer player, final BiomeSound sound) {
+		public PlayerSound(final EntityPlayer player, final SoundEffect sound) {
 			this(player, sound, true);
 		}
 
-		public PlayerSound(final EntityPlayer player, final BiomeSound sound, final boolean repeat) {
+		public PlayerSound(final EntityPlayer player, final SoundEffect sound, final boolean repeat) {
 			super(new ResourceLocation(sound.sound));
 			// Don't set volume to 0; MC will optimize out
 			this.sound = sound;
@@ -125,7 +117,7 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 			this.fadeAway = true;
 		}
 
-		public boolean sameSound(final BiomeSound snd) {
+		public boolean sameSound(final SoundEffect snd) {
 			return this.sound.equals(snd);
 		}
 
@@ -182,23 +174,6 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 		}
 	}
 
-	private static String getConditions(final World world) {
-		final StringBuilder builder = new StringBuilder();
-		if (DiurnalUtils.isDaytime(world))
-			builder.append(CONDITION_TOKEN_DAY);
-		else
-			builder.append(CONDITION_TOKEN_NIGHT);
-		if (world.getRainStrength(1.0F) > 0.0F)
-			builder.append(CONDITION_TOKEN_RAINING);
-		if (world.provider.dimensionId == -1)
-			builder.append(CONDITION_TOKEN_NETHER);
-		if (world.provider.dimensionId == 1)
-			builder.append(CONDITION_TOKEN_END);
-		if (DimensionRegistry.hasHaze(world))
-			builder.append(CONDITION_TOKEN_SKY);
-		return builder.toString();
-	}
-
 	private static boolean didReloadOccur() {
 		final int count = BiomeRegistry.getReloadCount();
 		if (count != reloadTracker) {
@@ -211,7 +186,7 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 	// Current active background sound
 	private static PlayerSound currentSound = null;
 
-	public static void playSoundAtPlayer(EntityPlayer player, final BiomeSound sound, final int tickDelay) {
+	public static void playSoundAtPlayer(EntityPlayer player, final SoundEffect sound, final int tickDelay) {
 		if(player == null)
 			player = Minecraft.getMinecraft().thePlayer;
 		
@@ -224,7 +199,7 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 			handler.playDelayedSound(s, tickDelay);
 	}
 	
-	public static void playSoundAt(final int x, final int y, final int z, final BiomeSound sound, final int tickDelay) {
+	public static void playSoundAt(final int x, final int y, final int z, final SoundEffect sound, final int tickDelay) {
 		final SoundHandler handler = Minecraft.getMinecraft().getSoundHandler();
 		final ISound s = new SpotSound(x, y, z, sound);
 
@@ -247,9 +222,9 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 			return;
 		}
 
-		final String conditions = getConditions(world);
+		final String conditions = DimensionRegistry.getConditions(world);
 		final BiomeGenBase playerBiome = PlayerUtils.getPlayerBiome(player, false);
-		BiomeSound sound = BiomeRegistry.getSound(playerBiome, conditions);
+		SoundEffect sound = BiomeRegistry.getSound(playerBiome, conditions);
 
 		if (currentSound != null) {
 			if (didReloadOccur() || sound == null || !currentSound.sameSound(sound)) {

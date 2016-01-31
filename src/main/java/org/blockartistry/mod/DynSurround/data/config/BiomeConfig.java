@@ -1,4 +1,5 @@
-/* This file is part of Dynamic Surroundings, licensed under the MIT License (MIT).
+/*
+ * This file is part of Dynamic Surroundings, licensed under the MIT License (MIT).
  *
  * Copyright (c) OreCruncher
  *
@@ -21,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package org.blockartistry.mod.DynSurround.data;
+package org.blockartistry.mod.DynSurround.data.config;
 
 import java.io.File;
 import java.util.List;
@@ -31,33 +32,40 @@ import org.blockartistry.mod.DynSurround.util.JsonUtils;
 import com.google.common.collect.ImmutableList;
 import com.google.gson.annotations.SerializedName;
 
-public final class DimensionConfig {
+public final class BiomeConfig {
 
-	public final static class Entry {
-		@SerializedName("dimId")
-		public Integer dimensionId = null;
-		@SerializedName("seaLevel")
-		public Integer seaLevel = null;
-		@SerializedName("skyHeight")
-		public Integer skyHeight = null;
-		@SerializedName("cloudHeight")
-		public Integer cloudHeight = null;
-		@SerializedName("haze")
-		public Boolean hasHaze = null;
+	public static class Entry {
+		@SerializedName("biomeName")
+		public String biomeName = null;
+		@SerializedName("precipitation")
+		public Boolean hasPrecipitation = null;
+		@SerializedName("dust")
+		public Boolean hasDust = null;
 		@SerializedName("aurora")
 		public Boolean hasAurora = null;
-		@SerializedName("weather")
-		public Boolean hasWeather = null;
+		@SerializedName("fog")
+		public Boolean hasFog = null;
+		@SerializedName("dustColor")
+		public String dustColor = null;
+		@SerializedName("fogColor")
+		public String fogColor = null;
+		@SerializedName("fogDensity")
+		public Float fogDensity= null;
+		@SerializedName("soundReset")
+		public Boolean soundReset = null;
+		@SerializedName("spotSoundChance")
+		public Integer spotSoundChance = null;
+		@SerializedName("sounds")
+		public List<SoundConfig> sounds = ImmutableList.of();
 	}
 
-	@SerializedName("entries")
 	public List<Entry> entries = ImmutableList.of();
 
-	public static DimensionConfig load(final File file) throws Exception {
-		return JsonUtils.load(file, DimensionConfig.class);
+	public static BiomeConfig load(final File file) throws Exception {
+		return JsonUtils.load(file, BiomeConfig.class);
 	}
-	
-	public static DimensionConfig load(final String modId) throws Exception {
-		return JsonUtils.load(modId, DimensionConfig.class);
+
+	public static BiomeConfig load(final String modId) throws Exception {
+		return JsonUtils.load(modId, BiomeConfig.class);
 	}
 }

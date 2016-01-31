@@ -27,9 +27,6 @@ package org.blockartistry.mod.DynSurround.client.fx;
 import java.util.Random;
 
 import org.blockartistry.mod.DynSurround.ModOptions;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-
 import org.blockartistry.mod.DynSurround.client.fx.particle.EntityBubbleJetFX;
 import org.blockartistry.mod.DynSurround.client.fx.particle.EntityDustJetFX;
 import org.blockartistry.mod.DynSurround.client.fx.particle.EntityFireJetFX;
@@ -47,7 +44,6 @@ import net.minecraft.world.World;
  * routine in order to generate particle effects based on the
  * liquid block.
  */
-@SideOnly(Side.CLIENT)
 public abstract class JetEffect extends BlockEffect {
 
 	private static final int MAX_STRENGTH = 10;
