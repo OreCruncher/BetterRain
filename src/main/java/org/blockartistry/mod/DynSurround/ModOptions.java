@@ -89,24 +89,6 @@ public final class ModOptions {
 	protected static final String CONFIG_AURORA_SPAWN_OFFSET = "Spawn Offset";
 	protected static int auroraSpawnOffset = 150;
 
-	protected static final String CATEGORY_JETS = "jets";
-	protected static final String CONFIG_FIREJETS_ENABLED = "Firejets Enabled";
-	protected static boolean enableFireJets = true;
-	protected static final String CONFIG_FIREJET_CHANCE = "Firejet Spawn Chance";
-	protected static int fireJetsSpawnChance = 1800;
-	protected static final String CONFIG_BUBBLEJETS_ENABLED = "Bubblejets Enabled";
-	protected static boolean enableBubbleJets = true;
-	protected static final String CONFIG_BUBBLEJETS_CHANCE = "Bubblejet Spawn Chance";
-	protected static int bubbleJetSpawnChance = 1800;
-	protected static final String CONFIG_STEAMJETS_ENABLED = "Steamjets Enabled";
-	protected static boolean enableSteamJets = true;
-	protected static final String CONFIG_STEAMJETS_CHANCE = "Streamjets Chance";
-	protected static int steamJetSpawnChance = 10;
-	protected static final String CONFIG_DUSTJETS_ENABLED = "Dustjets Enabled";
-	protected static boolean enableDustJets = true;
-	protected static final String CONFIG_DUSTJETS_CHANCE = "Dustjets Chance";
-	protected static int dustJetSpawnChance = 500;
-
 	protected static final String CATEGORY_BIOMES = "biomes";
 	protected static final String CONFIG_BIOME_CONFIG_FILES = "Config Files";
 	protected static String[] biomeConfigFiles = {};
@@ -227,35 +209,6 @@ public final class ModOptions {
 		comment = "Number of blocks north of player location to spawn an aurora";
 		auroraSpawnOffset = config.getInt(CONFIG_AURORA_SPAWN_OFFSET, CATEGORY_AURORA, auroraSpawnOffset, 0, 200,
 				comment);
-
-		// CATEGORY: Jets
-		comment = "Enable firejet spawn on lava blocks";
-		enableFireJets = config.getBoolean(CONFIG_FIREJETS_ENABLED, CATEGORY_JETS, enableFireJets, comment);
-
-		comment = "1-in-N chance per random tick a firejet will spawn on lava blocks";
-		fireJetsSpawnChance = config.getInt(CONFIG_FIREJET_CHANCE, CATEGORY_JETS, fireJetsSpawnChance, 10,
-				Integer.MAX_VALUE, comment);
-
-		comment = "Enable bubblejet spawn in water";
-		enableBubbleJets = config.getBoolean(CONFIG_BUBBLEJETS_ENABLED, CATEGORY_JETS, enableBubbleJets, comment);
-
-		comment = "1-in-N chance per random tick a bubblejet will spawn in water";
-		bubbleJetSpawnChance = config.getInt(CONFIG_BUBBLEJETS_CHANCE, CATEGORY_JETS, bubbleJetSpawnChance, 10,
-				Integer.MAX_VALUE, comment);
-
-		comment = "Enable steamjets around water/lava";
-		enableSteamJets = config.getBoolean(CONFIG_STEAMJETS_ENABLED, CATEGORY_JETS, enableSteamJets, comment);
-
-		comment = "1-in-N chance per random tick a streamjet will spawn";
-		steamJetSpawnChance = config.getInt(CONFIG_STEAMJETS_CHANCE, CATEGORY_JETS, steamJetSpawnChance, 10,
-				Integer.MAX_VALUE, comment);
-
-		comment = "Enable dustjets at the bottom of blocks";
-		enableDustJets = config.getBoolean(CONFIG_DUSTJETS_ENABLED, CATEGORY_JETS, enableDustJets, comment);
-
-		comment = "1-in-N chance per random tick a dustjet will spawn";
-		dustJetSpawnChance = config.getInt(CONFIG_DUSTJETS_CHANCE, CATEGORY_JETS, dustJetSpawnChance, 10,
-				Integer.MAX_VALUE, comment);
 
 		// CATEGORY: Fog
 		comment = "Allow desert fog when raining";
@@ -423,38 +376,6 @@ public final class ModOptions {
 
 	public static float getElevationHazeFactor() {
 		return elevationHazeFactor;
-	}
-
-	public static boolean getEnableFireJets() {
-		return enableFireJets;
-	}
-
-	public static int getFireJetsSpawnChance() {
-		return fireJetsSpawnChance;
-	}
-
-	public static boolean getEnableBubbleJets() {
-		return enableBubbleJets;
-	}
-
-	public static int getBubbleJetSpawnChance() {
-		return bubbleJetSpawnChance;
-	}
-
-	public static boolean getEnableSteamJets() {
-		return enableSteamJets;
-	}
-
-	public static int getSteamJetSpawnChance() {
-		return steamJetSpawnChance;
-	}
-
-	public static boolean getEnableDustJets() {
-		return enableDustJets;
-	}
-
-	public static int getDustJetSpawnChance() {
-		return dustJetSpawnChance;
 	}
 
 	public static boolean getEnableBiomeFog() {
