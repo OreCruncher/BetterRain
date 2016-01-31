@@ -28,6 +28,9 @@ import java.io.File;
 import org.blockartistry.mod.DynSurround.ModLog;
 import org.blockartistry.mod.DynSurround.ModOptions;
 import org.blockartistry.mod.DynSurround.Module;
+import org.blockartistry.mod.DynSurround.data.config.DimensionConfig;
+import org.blockartistry.mod.DynSurround.util.DiurnalUtils;
+
 import gnu.trove.map.hash.TIntObjectHashMap;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldProvider;
@@ -210,6 +213,30 @@ public final class DimensionRegistry {
 
 	public static boolean hasWeather(final World world) {
 		return getData(world).getHasWeather();
+	}
+
+	private static final String CONDITION_TOKEN_RAINING = "raining";
+	private static final String CONDITION_TOKEN_DAY = "day";
+	private static final String CONDITION_TOKEN_NIGHT = "night";
+	private static final String CONDITION_TOKEN_NETHER = "nether";
+	private static final String CONDITION_TOKEN_END = "end";
+	private static final String CONDITION_TOKEN_SKY = "sky";
+
+	public static String getConditions(final World world) {
+		final StringBuilder builder = new StringBuilder();
+		if (DiurnalUtils.isDaytime(world))
+			builder.append(CONDITION_TOKEN_DAY);
+		else
+			builder.append(CONDITION_TOKEN_NIGHT);
+		if (world.getRainStrength(1.0F) > 0.0F)
+			builder.append(CONDITION_TOKEN_RAINING);
+		if (world.provider.getDimensionId() == -1)
+			builder.append(CONDITION_TOKEN_NETHER);
+		if (world.provider.getDimensionId() == 1)
+			builder.append(CONDITION_TOKEN_END);
+		if (DimensionRegistry.hasHaze(world))
+			builder.append(CONDITION_TOKEN_SKY);
+		return builder.toString();
 	}
 
 	@Override

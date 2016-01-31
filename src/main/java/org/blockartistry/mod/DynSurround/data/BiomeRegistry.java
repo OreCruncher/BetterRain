@@ -35,7 +35,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.blockartistry.mod.DynSurround.ModLog;
 import org.blockartistry.mod.DynSurround.ModOptions;
 import org.blockartistry.mod.DynSurround.Module;
-import org.blockartistry.mod.DynSurround.data.BiomeConfig.SoundRecord;
+import org.blockartistry.mod.DynSurround.client.fx.SoundEffect;
+import org.blockartistry.mod.DynSurround.data.config.BiomeConfig;
+import org.blockartistry.mod.DynSurround.data.config.SoundConfig;
 import org.blockartistry.mod.DynSurround.util.Color;
 import org.blockartistry.mod.DynSurround.util.MyUtils;
 
@@ -54,69 +56,11 @@ public final class BiomeRegistry {
 	public static final BiomeGenBase UNDERDEEPOCEAN = new FakeBiome(-5, "UnderDOCN");
 	public static final BiomeGenBase UNDERRIVER = new FakeBiome(-6, "UnderRVR");
 
-	public static final BiomeSound WATER_DRIP = new BiomeSound(Module.MOD_ID + ":waterdrops", 0.1F, 1.0F);
+	public static final SoundEffect WATER_DRIP = new SoundEffect(Module.MOD_ID + ":waterdrops", 0.1F, 1.0F);
 
 	// This is for cases when the biome coming in doesn't make sense
 	// and should default to something to avoid crap.
 	private static final BiomeGenBase WTF = new FakeBiome(-256, "(FooBar)");
-
-	public static final class BiomeSound {
-		public final String sound;
-		public final String conditions;
-		private final Pattern pattern;
-		public final float volume;
-		public final float pitch;
-		public final int weight;
-		public final boolean isSpot;
-
-		protected BiomeSound(final String sound, final float volume, final float pitch) {
-			this.sound = sound;
-			this.volume = volume;
-			this.pitch = pitch;
-			this.conditions = ".*";
-			this.pattern = null;
-			this.weight = 0;
-			this.isSpot = true;
-		}
-
-		protected BiomeSound(final SoundRecord record) {
-			this.sound = record.sound;
-			this.conditions = StringUtils.isEmpty(record.conditions) ? ".*" : record.conditions;
-			this.volume = record.volume == null ? 1.0F : record.volume.floatValue();
-			this.pitch = record.pitch == null ? 1.0F : record.pitch.floatValue();
-			this.pattern = Pattern.compile(this.conditions);
-			this.weight = record.weight == null ? 10 : record.weight.intValue();
-			this.isSpot = record.spotSound != null && record.spotSound.booleanValue();
-		}
-
-		public boolean matches(final String conditions) {
-			return pattern.matcher(conditions).matches();
-		}
-
-		@Override
-		public boolean equals(final Object anObj) {
-			if (this == anObj)
-				return true;
-			if (!(anObj instanceof BiomeSound))
-				return false;
-			final BiomeSound s = (BiomeSound) anObj;
-			return this.volume == s.volume && this.pitch == s.pitch && this.sound.equals(s.sound)
-					&& this.conditions.equals(s.conditions);
-		}
-
-		public String toString() {
-			final StringBuilder builder = new StringBuilder();
-			builder.append('[').append(this.sound);
-			if (!StringUtils.isEmpty(this.conditions))
-				builder.append('(').append(this.conditions).append(')');
-			builder.append(", v:").append(this.volume);
-			builder.append(", p:").append(this.pitch);
-			if (this.isSpot)
-				builder.append(", w:").append(this.weight);
-			builder.append(']');
-			return builder.toString();
-		}
-	}
 
 	private static class Entry {
 
@@ -130,21 +74,21 @@ public final class BiomeRegistry {
 		public Color fogColor;
 		public float fogDensity;
 
-		public List<BiomeSound> sounds;
+		public List<SoundEffect> sounds;
 
 		public int spotSoundChance;
-		public List<BiomeSound> spotSounds;
+		public List<SoundEffect> spotSounds;
 
 		public Entry(final BiomeGenBase biome) {
 			this.biome = biome;
 			this.hasPrecipitation = biome.canSpawnLightningBolt() || biome.getEnableSnow();
-			this.sounds = new ArrayList<BiomeSound>();
-			this.spotSounds = new ArrayList<BiomeSound>();
+			this.sounds = new ArrayList<SoundEffect>();
+			this.spotSounds = new ArrayList<SoundEffect>();
 			this.spotSoundChance = 600;
 		}
 
-		public BiomeSound findMatch(final String conditions) {
-			for (final BiomeSound sound : this.sounds)
+		public SoundEffect findMatch(final String conditions) {
+			for (final SoundEffect sound : this.sounds)
 				if (sound.matches(conditions))
 					return sound;
 			return null;
@@ -173,7 +117,7 @@ public final class BiomeRegistry {
 
 			if (!this.sounds.isEmpty()) {
 				builder.append("; sounds [");
-				for (final BiomeSound sound : this.sounds)
+				for (final SoundEffect sound : this.sounds)
 					builder.append(sound.toString()).append(',');
 				builder.append(']');
 			}
@@ -181,7 +125,7 @@ public final class BiomeRegistry {
 			if (!this.spotSounds.isEmpty()) {
 				builder.append("; spot sound chance:").append(this.spotSoundChance);
 				builder.append(" spot sounds [");
-				for (final BiomeSound sound : this.spotSounds)
+				for (final SoundEffect sound : this.spotSounds)
 					builder.append(sound.toString()).append(',');
 				builder.append(']');
 			}
@@ -271,18 +215,18 @@ public final class BiomeRegistry {
 		return get(biome).fogDensity;
 	}
 
-	public static BiomeSound getSound(final BiomeGenBase biome, final String conditions) {
+	public static SoundEffect getSound(final BiomeGenBase biome, final String conditions) {
 		return get(biome).findMatch(conditions);
 	}
 
-	public static BiomeSound getSpotSound(final BiomeGenBase biome, final String conditions, final Random random) {
+	public static SoundEffect getSpotSound(final BiomeGenBase biome, final String conditions, final Random random) {
 		final Entry e = get(biome);
 		if (e == null || e.spotSounds.isEmpty() || random.nextInt(e.spotSoundChance) != 0)
 			return null;
 
 		int totalWeight = 0;
-		final List<BiomeSound> candidates = new ArrayList<BiomeSound>();
-		for (final BiomeSound s : e.spotSounds)
+		final List<SoundEffect> candidates = new ArrayList<SoundEffect>();
+		for (final SoundEffect s : e.spotSounds)
 			if (s.matches(conditions)) {
 				candidates.add(s);
 				totalWeight += s.weight;
@@ -354,15 +298,15 @@ public final class BiomeRegistry {
 							biomeEntry.dustColor = new Color(rgb[0], rgb[1], rgb[2]);
 					}
 					if (entry.soundReset != null && entry.soundReset.booleanValue()) {
-						biomeEntry.sounds = new ArrayList<BiomeSound>();
-						biomeEntry.spotSounds = new ArrayList<BiomeSound>();
+						biomeEntry.sounds = new ArrayList<SoundEffect>();
+						biomeEntry.spotSounds = new ArrayList<SoundEffect>();
 					}
 
 					if (entry.spotSoundChance != null)
 						biomeEntry.spotSoundChance = entry.spotSoundChance.intValue();
 
-					for (final SoundRecord sr : entry.sounds) {
-						final BiomeSound s = new BiomeSound(sr);
+					for (final SoundConfig sr : entry.sounds) {
+						final SoundEffect s = new SoundEffect(sr);
 						if (sr.spotSound != null && sr.spotSound.booleanValue())
 							biomeEntry.spotSounds.add(s);
 						else

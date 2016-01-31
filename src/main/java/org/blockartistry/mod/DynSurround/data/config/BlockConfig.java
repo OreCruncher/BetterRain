@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package org.blockartistry.mod.DynSurround.data;
+package org.blockartistry.mod.DynSurround.data.config;
 
 import java.io.File;
 import java.util.List;
@@ -32,55 +32,28 @@ import org.blockartistry.mod.DynSurround.util.JsonUtils;
 import com.google.common.collect.ImmutableList;
 import com.google.gson.annotations.SerializedName;
 
-final class BiomeConfig {
-
-	public static class SoundRecord {
-		@SerializedName("sound")
-		public String sound = null;
-		@SerializedName("conditions")
-		public String conditions = ".*";
-		@SerializedName("volume")
-		public Float volume = null;
-		@SerializedName("pitch")
-		public Float pitch = null;
-		@SerializedName("spot")
-		public Boolean spotSound = null;
-		@SerializedName("weight")
-		public Integer weight = null;
-	}
+public final class BlockConfig {
 	
 	public static class Entry {
-		@SerializedName("biomeName")
-		public String biomeName = null;
-		@SerializedName("precipitation")
-		public Boolean hasPrecipitation = null;
+		@SerializedName("blocks")
+		public List<String> blocks = ImmutableList.of();
 		@SerializedName("dust")
-		public Boolean hasDust = null;
-		@SerializedName("aurora")
-		public Boolean hasAurora = null;
-		@SerializedName("fog")
-		public Boolean hasFog = null;
-		@SerializedName("dustColor")
-		public String dustColor = null;
-		@SerializedName("fogColor")
-		public String fogColor = null;
-		@SerializedName("fogDensity")
-		public Float fogDensity= null;
-		@SerializedName("soundReset")
-		public Boolean soundReset = null;
-		@SerializedName("spotSoundChance")
-		public Integer spotSoundChance = null;
+		public Boolean dust = null;
+		@SerializedName("reset")
+		public Boolean reset = null;
+		@SerializedName("chance")
+		public Integer chance = null;
 		@SerializedName("sounds")
-		public List<SoundRecord> sounds = ImmutableList.of();
+		public List<SoundConfig> sounds = ImmutableList.of();
 	}
 
 	public List<Entry> entries = ImmutableList.of();
 
-	public static BiomeConfig load(final File file) throws Exception {
-		return JsonUtils.load(file, BiomeConfig.class);
+	public static BlockConfig load(final File file) throws Exception {
+		return JsonUtils.load(file, BlockConfig.class);
 	}
 
-	public static BiomeConfig load(final String modId) throws Exception {
-		return JsonUtils.load(modId, BiomeConfig.class);
+	public static BlockConfig load(final String modId) throws Exception {
+		return JsonUtils.load(modId, BlockConfig.class);
 	}
 }

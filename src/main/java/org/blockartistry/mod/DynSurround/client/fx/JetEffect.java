@@ -40,10 +40,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.SideOnly;
-import net.minecraftforge.fml.relauncher.Side;
 
-@SideOnly(Side.CLIENT)
 public abstract class JetEffect extends BlockEffect {
 
 	private static final int MAX_STRENGTH = 10;

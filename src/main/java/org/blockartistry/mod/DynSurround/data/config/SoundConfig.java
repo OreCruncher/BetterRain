@@ -1,5 +1,4 @@
-/*
- * This file is part of Dynamic Surroundings, licensed under the MIT License (MIT).
+/* This file is part of Dynamic Surroundings, licensed under the MIT License (MIT).
  *
  * Copyright (c) OreCruncher
  *
@@ -22,21 +21,23 @@
  * THE SOFTWARE.
  */
 
-package org.blockartistry.mod.DynSurround.proxy;
+package org.blockartistry.mod.DynSurround.data.config;
 
-import org.blockartistry.mod.DynSurround.client.ClientEffectHandler;
-import org.blockartistry.mod.DynSurround.client.hud.GuiHUDHandler;
-import org.blockartistry.mod.DynSurround.data.BlockRegistry;
+import com.google.gson.annotations.SerializedName;
 
-import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-
-public class ProxyClient extends Proxy {
-
-	@Override
-	public void init(final FMLInitializationEvent event) {
-		super.init(event);
-		BlockRegistry.initialize();
-		ClientEffectHandler.initialize();
-		GuiHUDHandler.initialize();
-	}
+public class SoundConfig {
+	@SerializedName("sound")
+	public String sound = null;
+	@SerializedName("conditions")
+	public String conditions = ".*";
+	@SerializedName("volume")
+	public Float volume = null;
+	@SerializedName("pitch")
+	public Float pitch = null;
+	@SerializedName("spot")
+	public Boolean spotSound = null;
+	@SerializedName("weight")
+	public Integer weight = null;
+	@SerializedName("variable")
+	public Boolean variable = null;
 }
