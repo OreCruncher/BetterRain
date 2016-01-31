@@ -66,7 +66,7 @@ public class DebugHUD extends Gui implements IGuiOverlay {
 		int offset = 0;
 		for(final String s: output) {
 			font.drawStringWithShadow(s, 0, offset, TEXT_COLOR);
-			offset += 9;
+			offset += font.FONT_HEIGHT;
 		}
 		
 		GL11.glPopMatrix();
