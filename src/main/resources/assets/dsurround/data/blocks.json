@@ -7,7 +7,44 @@
 				"minecraft:gravel",
 				"minecraft:sand"
 			],
-			"dust":true
+			"effects":[
+				{
+					"effect":"dust",
+					"chance":500
+				}
+				
+			]
+			
+		},
+		{
+			"blocks":[
+				"minecraft:lava"
+			],
+			"effects":[
+				{
+					"effect":"fire",
+					"chance":1800
+				}
+				
+			]
+			
+		},
+		{
+			"blocks":[
+				"minecraft:water"
+			],
+			"effects":[
+				{
+					"effect":"steam",
+					"chance":10
+				},
+				{
+					"effect":"bubble",
+					"chance":1800
+				}
+				
+			]
+			
 		},
 		{
 			"blocks":[

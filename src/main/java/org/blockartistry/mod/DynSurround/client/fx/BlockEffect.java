@@ -55,4 +55,12 @@ public abstract class BlockEffect {
 
 	public abstract void doEffect(final Block block, final World world, final int x, final int y, final int z,
 			final Random random);
+	
+	@Override
+	public String toString() {
+		final StringBuilder builder = new StringBuilder();
+		builder.append("chance:").append(this.chance);
+		builder.append(' ').append(this.getClass().getSimpleName());
+		return builder.toString();
+	}
 }
