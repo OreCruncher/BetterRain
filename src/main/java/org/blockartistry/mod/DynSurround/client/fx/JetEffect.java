@@ -26,7 +26,6 @@ package org.blockartistry.mod.DynSurround.client.fx;
 
 import java.util.Random;
 
-import org.blockartistry.mod.DynSurround.ModOptions;
 import org.blockartistry.mod.DynSurround.client.fx.particle.EntityBubbleJetFX;
 import org.blockartistry.mod.DynSurround.client.fx.particle.EntityDustJetFX;
 import org.blockartistry.mod.DynSurround.client.fx.particle.EntityFireJetFX;
@@ -77,8 +76,8 @@ public abstract class JetEffect extends BlockEffect {
 	}
 
 	public static class Fire extends JetEffect {
-		public Fire() {
-			super(ModOptions.getFireJetsSpawnChance());
+		public Fire(final int chance) {
+			super(chance);
 		}
 
 		@Override
@@ -97,8 +96,8 @@ public abstract class JetEffect extends BlockEffect {
 	}
 
 	public static class Bubble extends JetEffect {
-		public Bubble() {
-			super(ModOptions.getBubbleJetSpawnChance());
+		public Bubble(final int chance) {
+			super(chance);
 		}
 
 		@Override
@@ -117,8 +116,8 @@ public abstract class JetEffect extends BlockEffect {
 
 	public static class Steam extends JetEffect {
 
-		public Steam() {
-			super(ModOptions.getSteamJetSpawnChance());
+		public Steam(final int chance) {
+			super(chance);
 		}
 
 		protected int lavaCount(final World world, final int x, final int y, final int z) {
@@ -151,8 +150,8 @@ public abstract class JetEffect extends BlockEffect {
 
 	public static class Dust extends JetEffect {
 
-		public Dust() {
-			super(ModOptions.getDustJetSpawnChance());
+		public Dust(final int chance) {
+			super(chance);
 		}
 
 		@Override

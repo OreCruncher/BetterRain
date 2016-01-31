@@ -33,18 +33,27 @@ import com.google.common.collect.ImmutableList;
 import com.google.gson.annotations.SerializedName;
 
 public final class BlockConfig {
-	
+
+	public static class Effect {
+		@SerializedName("effect")
+		public String effect = null;
+		@SerializedName("chance")
+		public Integer chance = null;
+	}
+
 	public static class Entry {
 		@SerializedName("blocks")
 		public List<String> blocks = ImmutableList.of();
-		@SerializedName("dust")
-		public Boolean dust = null;
-		@SerializedName("reset")
-		public Boolean reset = null;
+		@SerializedName("soundReset")
+		public Boolean soundReset = null;
+		@SerializedName("effectReset")
+		public Boolean effectReset = null;
 		@SerializedName("chance")
 		public Integer chance = null;
 		@SerializedName("sounds")
 		public List<SoundConfig> sounds = ImmutableList.of();
+		@SerializedName("effects")
+		public List<Effect> effects = ImmutableList.of();
 	}
 
 	public List<Entry> entries = ImmutableList.of();

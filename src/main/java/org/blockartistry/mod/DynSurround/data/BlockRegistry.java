@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import org.apache.commons.lang3.StringUtils;
 import org.blockartistry.mod.DynSurround.ModLog;
 import org.blockartistry.mod.DynSurround.ModOptions;
 import org.blockartistry.mod.DynSurround.Module;
@@ -38,6 +39,7 @@ import org.blockartistry.mod.DynSurround.client.fx.BlockEffect;
 import org.blockartistry.mod.DynSurround.client.fx.JetEffect;
 import org.blockartistry.mod.DynSurround.client.fx.SoundEffect;
 import org.blockartistry.mod.DynSurround.data.config.BlockConfig;
+import org.blockartistry.mod.DynSurround.data.config.BlockConfig.Effect;
 import org.blockartistry.mod.DynSurround.data.config.SoundConfig;
 
 import cpw.mods.fml.common.registry.GameData;
@@ -47,15 +49,6 @@ import net.minecraft.init.Blocks;
 public final class BlockRegistry {
 
 	private static final Map<Block, Entry> registry = new IdentityHashMap<Block, Entry>();
-
-	private static void register(final Block block, final BlockEffect effect) {
-		Entry entry = registry.get(block);
-		if (entry == null) {
-			entry = new Entry(block);
-			registry.put(block, entry);
-		}
-		entry.effects.add(effect);
-	}
 
 	private static final class Entry {
 		public final Block block;
@@ -80,22 +73,18 @@ public final class BlockRegistry {
 				builder.append(']');
 			}
 
-			if (!this.effects.isEmpty())
-				builder.append(" has effects");
+			if (!this.effects.isEmpty()) {
+				builder.append("; effects [");
+				for (final BlockEffect effect : this.effects)
+					builder.append(effect.toString()).append(',');
+				builder.append(']');
+			}
 
 			return builder.toString();
 		}
 	}
 
 	public static void initialize() {
-
-		// Particles
-		if (ModOptions.getEnableFireJets())
-			register(Blocks.lava, new JetEffect.Fire());
-		if (ModOptions.getEnableBubbleJets())
-			register(Blocks.water, new JetEffect.Bubble());
-		if (ModOptions.getEnableSteamJets())
-			register(Blocks.water, new JetEffect.Steam());
 
 		processConfig();
 
@@ -162,7 +151,6 @@ public final class BlockRegistry {
 	}
 
 	private static void process(final BlockConfig config) {
-		final BlockEffect effect = new JetEffect.Dust();
 		for (final BlockConfig.Entry entry : config.entries) {
 			if (entry.blocks.isEmpty())
 				continue;
@@ -174,18 +162,17 @@ public final class BlockRegistry {
 					continue;
 				}
 
-				// Reset of a block clears all registry
-				if (entry.reset != null && entry.reset.booleanValue())
-					registry.remove(block);
-
 				Entry blockData = registry.get(block);
 				if (blockData == null) {
 					blockData = new Entry(block);
 					registry.put(block, blockData);
 				}
 
-				if (entry.dust != null && entry.dust.booleanValue())
-					blockData.effects.add(effect);
+				// Reset of a block clears all registry
+				if (entry.soundReset != null && entry.soundReset.booleanValue())
+					blockData.sounds.clear();
+				if (entry.effectReset != null && entry.effectReset.booleanValue())
+					blockData.effects.clear();
 
 				if (entry.chance != null)
 					blockData.chance = entry.chance.intValue();
@@ -196,6 +183,27 @@ public final class BlockRegistry {
 						sr.spotSound = true;
 						blockData.sounds.add(new SoundEffect(sr));
 					}
+				}
+
+				for (final Effect e : entry.effects) {
+					if (StringUtils.isEmpty(e.effect))
+						continue;
+					BlockEffect blockEffect = null;
+					final int chance = e.chance != null ? e.chance.intValue() : 100;
+					if (StringUtils.equalsIgnoreCase("steam", e.effect))
+						blockEffect = new JetEffect.Steam(chance);
+					else if (StringUtils.equalsIgnoreCase("fire", e.effect))
+						blockEffect = new JetEffect.Fire(chance);
+					else if (StringUtils.equalsIgnoreCase("bubble", e.effect))
+						blockEffect = new JetEffect.Bubble(chance);
+					else if (StringUtils.equalsIgnoreCase("dust", e.effect))
+						blockEffect = new JetEffect.Dust(chance);
+					else {
+						ModLog.warn("Unknown effect type in config: '%s'", e.effect);
+						continue;
+					}
+
+					blockData.effects.add(blockEffect);
 				}
 			}
 		}
