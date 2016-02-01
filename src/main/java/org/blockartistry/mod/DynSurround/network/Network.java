@@ -25,6 +25,7 @@
 package org.blockartistry.mod.DynSurround.network;
 
 import org.blockartistry.mod.DynSurround.Module;
+import org.blockartistry.mod.DynSurround.client.DamageEffectHandler.HealthData;
 import org.blockartistry.mod.DynSurround.data.AuroraData;
 
 import cpw.mods.fml.common.network.NetworkRegistry;
@@ -44,6 +45,7 @@ public final class Network {
 		network = NetworkRegistry.INSTANCE.newSimpleChannel(Module.MOD_ID);
 		network.registerMessage(PacketRainIntensity.class, PacketRainIntensity.class, ++discriminator, Side.CLIENT);
 		network.registerMessage(PacketAurora.class, PacketAurora.class, ++discriminator, Side.CLIENT);
+		network.registerMessage(PacketHealthChange.class, PacketHealthChange.class, ++discriminator, Side.CLIENT);
 	}
 
 	public static void sendRainIntensity(final float intensity, final int dimension) {
@@ -52,5 +54,9 @@ public final class Network {
 
 	public static void sendAurora(final AuroraData data, final int dimension) {
 		network.sendToDimension(new PacketAurora(data), dimension);
+	}
+	
+	public static void sendHealthUpdate(final HealthData data, final int dimension) {
+		network.sendToDimension(new PacketHealthChange(data), dimension);
 	}
 }

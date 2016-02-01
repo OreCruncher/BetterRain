@@ -130,6 +130,9 @@ public final class ModOptions {
 	protected static final String CATEGORY_PLAYER = "player";
 	protected static final String CONFIG_SUPPRESS_POTION_PARTICLES = "Suppress Potion Particles";
 	protected static boolean suppressPotionParticles = false;
+	protected static final String CONFIG_ENABLE_POPOFFS = "Damage Popoffs";
+	protected static boolean enableDamagePopoffs = true;
+
 	protected static final String CATEGORY_POTION_HUD = "player.potion hud";
 	protected static final String CONFIG_POTION_HUD_ENABLE = "Enable";
 	protected static boolean potionHudEnabled = true;
@@ -187,6 +190,9 @@ public final class ModOptions {
 		comment = "Suppress player's potion particles from rendering";
 		suppressPotionParticles = config.getBoolean(CONFIG_SUPPRESS_POTION_PARTICLES, CATEGORY_PLAYER,
 				suppressPotionParticles, comment);
+
+		comment = "Controls display of damage popoffs when an entity is damaged";
+		enableDamagePopoffs = config.getBoolean(CONFIG_ENABLE_POPOFFS, CATEGORY_PLAYER, enableDamagePopoffs, comment);
 
 		// CATEGORY: Aurora
 		comment = "Whether to enable Aurora processing on server/client";
@@ -397,7 +403,7 @@ public final class ModOptions {
 	public static String[] getBlockConfigFiles() {
 		return blockConfigFiles;
 	}
-	
+
 	public static boolean getEnableBiomeSounds() {
 		return enableBiomeSounds;
 	}
@@ -453,6 +459,10 @@ public final class ModOptions {
 
 	public static boolean getSuppressPotionParticleEffect() {
 		return suppressPotionParticles;
+	}
+
+	public static boolean getEnableDamagePopoffs() {
+		return enableDamagePopoffs;
 	}
 
 	public static boolean getPotionHudEnabled() {

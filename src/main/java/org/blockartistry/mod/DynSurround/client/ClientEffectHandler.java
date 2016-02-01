@@ -170,5 +170,5 @@ public class ClientEffectHandler {
 		if (ModOptions.getEnableFancyCloudHandling())
 			e.world.provider = new WorldProviderShim(e.world, e.world.provider);
 	}
-
+	
 }
