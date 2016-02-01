@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.blockartistry.mod.DynSurround.data.BiomeRegistry;
+import org.blockartistry.mod.DynSurround.data.DimensionRegistry;
 import org.blockartistry.mod.DynSurround.event.DiagnosticEvent;
 import org.blockartistry.mod.DynSurround.util.PlayerUtils;
 
@@ -51,7 +52,7 @@ public class DiagnosticHandler implements IClientEffectHandler {
 
 	@Override
 	public void process(final World world, final EntityPlayer player) {
-		final DiagnosticEvent.Gather gather = new DiagnosticEvent.Gather();
+		final DiagnosticEvent.Gather gather = new DiagnosticEvent.Gather(world, player);
 		MinecraftForge.EVENT_BUS.post(gather);
 		output = gather.output;
 	}
@@ -63,10 +64,9 @@ public class DiagnosticHandler implements IClientEffectHandler {
 
 	@SubscribeEvent(priority = EventPriority.HIGHEST)
 	public void diagnostics(final DiagnosticEvent.Gather event) {
-		final StringBuilder builder = new StringBuilder();
-		builder.append("Biome: ").append(
-				BiomeRegistry.resolveName(PlayerUtils.getPlayerBiome(Minecraft.getMinecraft().thePlayer, false)));
-		event.output.add(builder.toString());
+		event.output.add("Biome: "
+				+ BiomeRegistry.resolveName(PlayerUtils.getPlayerBiome(Minecraft.getMinecraft().thePlayer, false)));
+		event.output.add("Conditions: " + DimensionRegistry.getConditions(event.world));
 	}
 
 }
