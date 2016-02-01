@@ -86,7 +86,13 @@
 				{
 					"sound":"dsurround:owl",
 					"conditions":"(?i)(?!.*raining.*).*night.*",
-					"volume":0.7,
+					"volume":0.4,
+					"spot":true
+				},
+				{
+					"sound":"dsurround:wolf",
+					"conditions":"(?i)(?!.*raining.*).*night.*",
+					"volume":0.4,
 					"spot":true
 				}
 				
@@ -207,6 +213,40 @@
 					"volume":0.3,
 					"spot":true,
 					"weight":10
+				}
+				
+			]
+			
+		},
+		{
+			"biomeName":"UnderOCN",
+			"sounds":[
+				{
+					"sound":"dsurround:underocean",
+					"volume":0.1
+				}
+				
+			]
+			
+		},
+		{
+			"biomeName":"UnderDOCN",
+			"sounds":[
+				{
+					"sound":"dsurround:underdeepocean",
+					"volume":0.1
+				}
+				
+			]
+			
+		},
+		{
+			"biomeName":"UnderRVR",
+			"sounds":[
+				{
+					"sound":"dsurround:underriver",
+					"volume":0.1,
+					"pitch":1.5
 				}
 				
 			]
