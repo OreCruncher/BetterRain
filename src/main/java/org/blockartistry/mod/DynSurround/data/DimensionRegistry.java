@@ -218,31 +218,26 @@ public final class DimensionRegistry {
 	private static final String CONDITION_TOKEN_RAINING = "raining";
 	private static final String CONDITION_TOKEN_DAY = "day";
 	private static final String CONDITION_TOKEN_NIGHT = "night";
-	private static final String CONDITION_TOKEN_NETHER = "nether";
-	private static final String CONDITION_TOKEN_END = "end";
-	private static final String CONDITION_TOKEN_SKY = "sky";
+	private static final char CONDITION_SEPARATOR = '#';
 
 	public static String getConditions(final World world) {
 		final StringBuilder builder = new StringBuilder();
+		builder.append(CONDITION_SEPARATOR);
 		if (DiurnalUtils.isDaytime(world))
 			builder.append(CONDITION_TOKEN_DAY);
 		else
 			builder.append(CONDITION_TOKEN_NIGHT);
+		builder.append(CONDITION_SEPARATOR).append(world.provider.getDimensionName());
 		if (world.getRainStrength(1.0F) > 0.0F)
-			builder.append(CONDITION_TOKEN_RAINING);
-		if (world.provider.getDimensionId() == -1)
-			builder.append(CONDITION_TOKEN_NETHER);
-		if (world.provider.getDimensionId() == 1)
-			builder.append(CONDITION_TOKEN_END);
-		if (DimensionRegistry.hasHaze(world))
-			builder.append(CONDITION_TOKEN_SKY);
+			builder.append(CONDITION_SEPARATOR).append(CONDITION_TOKEN_RAINING);
+		builder.append(CONDITION_SEPARATOR);
 		return builder.toString();
 	}
 
 	@Override
 	public String toString() {
 		final StringBuilder builder = new StringBuilder();
-		builder.append(this.dimensionId).append('/').append(this.name).append(':');
+		builder.append(this.dimensionId).append('/').append(this.name).append('~');
 		builder.append(" seaLevel:").append(this.seaLevel);
 		builder.append(" cloudH:").append(this.cloudHeight);
 		builder.append(" skyH:").append(this.skyHeight);
