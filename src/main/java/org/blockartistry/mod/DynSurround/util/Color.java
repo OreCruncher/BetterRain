@@ -150,6 +150,18 @@ public class Color {
 		return this;
 	}
 
+	public int rgb() {
+		final int iRed = (int)(this.red * 255);
+		final int iGreen = (int)(this.green * 255);
+		final int iBlue = (int)(this.blue * 255);
+		return iRed << 16 | iGreen << 8 | iBlue;
+	}
+	
+	public int rgbWithAlpha(final float alpha) {
+		final int iAlpha = (int)(alpha * 255);
+		return rgb() | (iAlpha << 24);
+	}
+
 	@Override
 	public boolean equals(final Object anObject) {
 		if (anObject == null || !(anObject instanceof Color))

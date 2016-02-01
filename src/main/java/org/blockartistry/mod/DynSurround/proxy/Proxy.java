@@ -25,6 +25,7 @@
 package org.blockartistry.mod.DynSurround.proxy;
 
 import org.blockartistry.mod.DynSurround.VersionCheck;
+import org.blockartistry.mod.DynSurround.client.DamageEffectHandler;
 import org.blockartistry.mod.DynSurround.commands.CommandRain;
 import org.blockartistry.mod.DynSurround.data.BiomeRegistry;
 import org.blockartistry.mod.DynSurround.data.DimensionRegistry;
@@ -50,6 +51,7 @@ public class Proxy {
 	public void init(final FMLInitializationEvent event) {
 		Network.initialize();
 		ServerEffectHandler.initialize();
+		DamageEffectHandler.initialize();
 	}
 
 	public void postInit(final FMLPostInitializationEvent event) {
