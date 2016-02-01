@@ -133,6 +133,9 @@ public final class DamageEffectHandler {
 	}
 
 	public static void handleEvent(final HealthData data) {
+		if(!ModOptions.getEnableDamagePopoffs())
+			return;
+		
 		final World world = Minecraft.getMinecraft().theWorld;
 		final EffectRenderer renderer = Minecraft.getMinecraft().effectRenderer;
 		EntityFX fx;
