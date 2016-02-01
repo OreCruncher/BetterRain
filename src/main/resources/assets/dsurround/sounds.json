@@ -146,6 +146,37 @@
 			"ambient/seagulls/seagulls2"
 		]
 		
+	},
+	"wolf":{
+		"category":"ambient",
+		"sounds":[
+			"ambient/wolf/wolf1",
+			"ambient/wolf/wolf2",
+			"ambient/wolf/wolf3",
+			"ambient/wolf/wolf4"
+		]
+		
+	},
+	"underdeepocean":{
+		"category":"ambient",
+		"sounds":[
+			"ambient/underwater/deepocean"
+		]
+		
+	},
+	"underocean":{
+		"category":"ambient",
+		"sounds":[
+			"ambient/underwater/ocean"
+		]
+		
+	},
+	"underriver":{
+		"category":"ambient",
+		"sounds":[
+			"ambient/underwater/river"
+		]
+		
 	}
 	
 }
