@@ -27,16 +27,22 @@ package org.blockartistry.mod.DynSurround.event;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.common.eventhandler.Event;
 
 public class DiagnosticEvent extends Event {
-
+	
 	public static class Gather extends DiagnosticEvent {
-
+		
+		public final World world;
+		public final EntityPlayer player;
 		public final List<String> output = new ArrayList<String>();
-
-		public Gather() {
+		
+		public Gather(final World world, final EntityPlayer player) {
 			super();
+			this.world = world;
+			this.player = player;
 		}
 	}
 }
