@@ -177,6 +177,17 @@
 			"ambient/underwater/river"
 		]
 		
+	},
+	"whale":{
+		"category":"ambient",
+		"sounds":[
+			"ambient/whale/whale1",
+			"ambient/whale/whale2",
+			"ambient/whale/whale3",
+			"ambient/whale/whale4",
+			"ambient/whale/whale5"
+		]
+		
 	}
 	
 }

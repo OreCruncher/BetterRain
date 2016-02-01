@@ -235,6 +235,11 @@
 				{
 					"sound":"dsurround:underdeepocean",
 					"volume":0.1
+				},
+				{
+					"sound":"dsurround:whale",
+					"volume":0.3,
+					"spot":true
 				}
 				
 			]
