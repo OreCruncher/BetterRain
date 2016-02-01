@@ -25,11 +25,10 @@
 package org.blockartistry.mod.DynSurround.client.fx.particle;
 
 import org.blockartistry.mod.DynSurround.util.Color;
-import org.blockartistry.mod.DynSurround.util.XorShiftRandom;
 import org.lwjgl.opengl.GL11;
 
-import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import cpw.mods.fml.relauncher.Side;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.particle.EntityFX;
@@ -39,51 +38,25 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 
 @SideOnly(Side.CLIENT)
-public class EntityPopOffFX extends EntityFX {
+public class EntityTextPopOffFX extends EntityFX {
 
-	private static final String[] POWER_WORDS = new String[] { "BAM", "BANG", "BONK", "CRRACK", "CRASH", "KRUNCH",
-			"OOOOFF", "POWIE", "SPLATT", "THUNK", "TWAPE", "WHAMMM", "ZAP" };
+	protected static final float GRAVITY = 0.8F;
+	protected static final float SIZE = 3.0F;
+	protected static final int LIFESPAN = 12;
+	protected static final double BOUNCE_STRENGTH = 1.5F;
 
-	private static String getPowerWord() {
-		return POWER_WORDS[XorShiftRandom.shared.nextInt(POWER_WORDS.length)];
-	}
+	protected Color renderColor = Color.WHITE;
+	protected String text;
+	protected boolean shouldOnTop = true;
+	protected boolean grow = true;
+	protected float scale = 1.0F;
 
-	private static final float GRAVITY = 0.8F;
-	private static final float SIZE = 3.0F;
-	private static final int LIFESPAN = 12;
-
-	private static final Color HEAL_COLOR = Color.GREEN;
-	private static final Color DAMAGE_COLOR = Color.RED;
-	private static final Color CRITICAL_COLOR = Color.ORANGE;
-
-	private Color renderColor;
-	private int damage;
-	private boolean criticalhit = false;
-	private boolean grow = true;
-	private String powerWord = null;
-	private boolean shouldOnTop = false;
-
-	public EntityPopOffFX(World world, double x, double y, double z, double dX, double dY, double dZ) {
-		this(world, x, y, z, dX, dY, dZ, 0);
-		this.criticalhit = true;
-		this.shouldOnTop = true;
-		this.particleGravity = -0.025F;
-		this.renderColor = CRITICAL_COLOR;
-		this.particleMaxAge += this.particleAge / 2;
-		this.powerWord = getPowerWord() + "!";
-	}
-
-	public EntityPopOffFX(World world, double x, double y, double z, double dX, double dY, double dZ, int damage) {
+	public EntityTextPopOffFX(final World world, final String text, final Color color, final float scale,
+			final double x, final double y, final double z, final double dX, final double dY, final double dZ) {
 		super(world, x, y, z, dX, dY, dZ);
 
-		if (damage < 0) {
-			this.renderColor = HEAL_COLOR;
-			this.damage = Math.abs(damage);
-		} else {
-			this.renderColor = DAMAGE_COLOR;
-			this.damage = damage;
-		}
-
+		this.text = text;
+		this.renderColor = color;
 		this.motionX = dX;
 		this.motionY = dY;
 		this.motionZ = dZ;
@@ -99,7 +72,9 @@ public class EntityPopOffFX extends EntityFX {
 		this.particleMaxAge = LIFESPAN;
 	}
 
-	public void renderParticle(Tessellator p_70539_1_, float x, float y, float z, float dX, float dY, float dZ) {
+	@Override
+	public void renderParticle(final Tessellator p_70539_1_, final float x, final float y, final float z,
+			final float dX, final float dY, final float dZ) {
 		this.rotationYaw = (-Minecraft.getMinecraft().thePlayer.rotationYaw);
 		this.rotationPitch = Minecraft.getMinecraft().thePlayer.rotationPitch;
 
@@ -119,11 +94,8 @@ public class EntityPopOffFX extends EntityFX {
 
 		GL11.glScalef(-1.0F, -1.0F, 1.0F);
 		GL11.glScaled(this.particleScale * 0.008D, this.particleScale * 0.008D, this.particleScale * 0.008D);
-		if (this.criticalhit) {
-			GL11.glScaled(0.5D, 0.5D, 0.5D);
-		}
-		
-		final FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
+		GL11.glScaled(this.scale, this.scale, this.scale);
+
 		OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240.0F, 0.003662109F);
 		GL11.glEnable(3553);
 		GL11.glDisable(3042);
@@ -137,17 +109,11 @@ public class EntityPopOffFX extends EntityFX {
 		GL11.glEnable(3008);
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 
-		if (this.criticalhit) {
-			fontRenderer.drawStringWithShadow(this.powerWord,
-					-MathHelper.floor_float(fontRenderer.getStringWidth(this.powerWord) / 2.0F) + 1,
-					-MathHelper.floor_float(fontRenderer.FONT_HEIGHT / 2.0F) + 1, this.renderColor.rgb());
-		} else {
-			final String text = String.valueOf(this.damage);
-			final Color scaledColor = Color.scale(this.renderColor, 0.5F);
-			fontRenderer.drawStringWithShadow(text,
-					-MathHelper.floor_float(fontRenderer.getStringWidth(text) / 2.0F) + 1,
-					-MathHelper.floor_float(fontRenderer.FONT_HEIGHT / 2.0F) + 1, scaledColor.rgb());
-		}
+		final FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
+		fontRenderer.drawStringWithShadow(this.text,
+				-MathHelper.floor_float(fontRenderer.getStringWidth(this.text) / 2.0F) + 1,
+				-MathHelper.floor_float(fontRenderer.FONT_HEIGHT / 2.0F) + 1, this.renderColor.rgb());
+
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 		GL11.glDepthFunc(515);
 

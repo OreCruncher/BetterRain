@@ -25,13 +25,16 @@
 package org.blockartistry.mod.DynSurround.client;
 
 import org.blockartistry.mod.DynSurround.ModOptions;
-import org.blockartistry.mod.DynSurround.client.fx.particle.EntityPopOffFX;
+import org.blockartistry.mod.DynSurround.client.fx.particle.EntityCriticalPopOffFX;
+import org.blockartistry.mod.DynSurround.client.fx.particle.EntityDamagePopOffFX;
+import org.blockartistry.mod.DynSurround.client.fx.particle.EntityHealPopOffFX;
 import org.blockartistry.mod.DynSurround.network.Network;
 
 import cpw.mods.fml.common.eventhandler.EventPriority;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.EffectRenderer;
+import net.minecraft.client.particle.EntityFX;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -39,13 +42,13 @@ import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.potion.Potion;
 import net.minecraft.util.EntityDamageSource;
 import net.minecraft.util.EntityDamageSourceIndirect;
+import net.minecraft.util.MathHelper;
+import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.living.LivingHealEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 
 public final class DamageEffectHandler {
-
-	private static final double BOUNCE_STRENGTH = 1.5F;
 
 	public static class HealthData {
 		public final float posX;
@@ -130,16 +133,19 @@ public final class DamageEffectHandler {
 	}
 
 	public static void handleEvent(final HealthData data) {
+		final World world = Minecraft.getMinecraft().theWorld;
 		final EffectRenderer renderer = Minecraft.getMinecraft().effectRenderer;
-		EntityPopOffFX fx;
+		EntityFX fx;
 
 		if (data.isCritical) {
-			fx = new EntityPopOffFX(Minecraft.getMinecraft().theWorld, data.posX, data.posY, data.posZ, 0.001D,
-					0.05F * BOUNCE_STRENGTH, 0.001D);
+			fx = new EntityCriticalPopOffFX(world, data.posX, data.posY, data.posZ);
 			renderer.addEffect(fx);
 		}
-		fx = new EntityPopOffFX(Minecraft.getMinecraft().theWorld, data.posX, data.posY, data.posZ, 0.001D,
-				0.05F * BOUNCE_STRENGTH, 0.001D, data.amount);
+		if (data.amount > 0) {
+			fx = new EntityDamagePopOffFX(world, data.posX, data.posY, data.posZ, data.amount);
+		} else {
+			fx = new EntityHealPopOffFX(world, data.posX, data.posY, data.posZ, MathHelper.abs_int(data.amount));
+		}
 		renderer.addEffect(fx);
 	}
 }
