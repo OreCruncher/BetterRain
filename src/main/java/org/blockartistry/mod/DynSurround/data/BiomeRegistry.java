@@ -84,7 +84,7 @@ public final class BiomeRegistry {
 			this.hasPrecipitation = biome.canSpawnLightningBolt() || biome.getEnableSnow();
 			this.sounds = new ArrayList<SoundEffect>();
 			this.spotSounds = new ArrayList<SoundEffect>();
-			this.spotSoundChance = 600;
+			this.spotSoundChance = 1200;
 		}
 
 		public SoundEffect findMatch(final String conditions) {
