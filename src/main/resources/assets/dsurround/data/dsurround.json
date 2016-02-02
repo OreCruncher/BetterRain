@@ -1,7 +1,7 @@
 {
 	"entries":[
 		{
-			"biomeName":"(?i)(?!.*forest.*|.*taiga.*|.*jungle.*|.*\\+.*|.*savanna.*)(.*hills.*|.*plateau.*|.*wasteland.*|.*canyon.*|tundra)",
+			"biomeName":"(?i)(?!.*forest.*|.*taiga.*|.*jungle.*|.*\\+.*|.*savanna.*)(.*hills.*|.*plateau.*|.*wasteland.*|.*canyon.*|tundra|highlands)",
 			"sounds":[
 				{
 					"sound":"dsurround:wind",
@@ -35,7 +35,7 @@
 			
 		},
 		{
-			"biomeName":"(?i)(?!.*ice.*)(.*plains.*|.*meadow.*|grassland|prairie|.*fields.*)",
+			"biomeName":"(?i)(?!.*ice.*)(.*plains.*|.*meadow.*|grassland|prairie|.*field.*)",
 			"sounds":[
 				{
 					"sound":"dsurround:crickets",
@@ -47,7 +47,7 @@
 			
 		},
 		{
-			"biomeName":"(?i)(?!.*dead.*|.*flower.*|.*fungi.*|.*frost.*|.*snow.*)(.*forest.*|.*cherry.*|.*orchard.*|.*wood.*|.*wetland.*|thicket)",
+			"biomeName":"(?i)(?!.*dead.*|.*flower.*|.*fungi.*|.*frost.*|.*snow.*|.*kelp.*)(.*forest.*|.*cherry.*|.*orchard.*|.*wood.*|.*wetland.*|thicket)",
 			"sounds":[
 				{
 					"sound":"dsurround:forest",
@@ -100,7 +100,7 @@
 			
 		},
 		{
-			"biomeName":"(?i)(?!.*frozen.*|.*cold.*)(.*beach.*|.*ocean.*)",
+			"biomeName":"(?i)(?!.*frozen.*|.*cold.*)(.*beach.*|.*ocean.*|.*kelp.*|.*reef.*)",
 			"sounds":[
 				{
 					"sound":"dsurround:beach"
@@ -141,7 +141,7 @@
 			"biomeName":"(?i)(.*swamp.*)",
 			"fog":true,
 			"fogColor":"64,128,64",
-			"fogDensity":0.04
+			"fogDensity":0.02
 		},
 		{
 			"biomeName":"(?i)(?!.*dead.*)(.*swamp.*)",
@@ -155,7 +155,7 @@
 			
 		},
 		{
-			"biomeName":"(?i)(.*fen.*|.*bog.*|.*marsh.*|.*moor.*|.*bayou.*|quagmire)",
+			"biomeName":"(?i)(.*fen.*|.*bog.*|.*marsh.*|.*moor.*|.*bayou.*|quagmire|silkglades)",
 			"sounds":[
 				{
 					"sound":"dsurround:crickets",
@@ -166,7 +166,7 @@
 			],
 			"fog":true,
 			"fogColor":"64,64,64",
-			"fogDensity":0.04
+			"fogDensity":0.02
 		},
 		{
 			"biomeName":"(?i)(.*desert.*|.*sand.*|.*mesa.*|.*wasteland.*|.*sahara.*)",

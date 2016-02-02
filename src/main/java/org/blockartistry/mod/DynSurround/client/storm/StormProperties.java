@@ -132,8 +132,12 @@ public enum StormProperties {
 
 		if (intensityLevel != level) {
 			intensityLevel = level;
-			level += 0.01;
-			fogDensity = level * level * 0.13F;
+			if (level > 0) {
+				level += 0.01;
+				fogDensity = level * level * 0.13F;
+			} else {
+				fogDensity = 0.0F;
+			}
 			if (intensityLevel <= NONE.level)
 				intensity = NONE;
 			else if (intensityLevel < CALM.level)
