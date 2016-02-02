@@ -175,6 +175,9 @@ public class FogEffectHandler implements IClientEffectHandler {
 		if (currentFogColor == null || event.getResult() != Result.DEFAULT)
 			return;
 
+		if (currentFogLevel == 0 && targetFogLevel == 0)
+			return;
+
 		final Block block = ActiveRenderInfo.getBlockAtEntityViewpoint(event.entity.worldObj, event.entity,
 				(float) event.renderPartialTicks);
 		if (block.getMaterial() == Material.lava || block.getMaterial() == Material.water)
@@ -197,6 +200,9 @@ public class FogEffectHandler implements IClientEffectHandler {
 		if (event.getResult() != Result.DEFAULT)
 			return;
 
+		if (currentFogLevel == 0 && targetFogLevel == 0)
+			return;
+
 		float level = currentFogLevel;
 		if (level > targetFogLevel)
 			level -= event.renderPartialTicks * FOG_DELTA;
@@ -206,9 +212,22 @@ public class FogEffectHandler implements IClientEffectHandler {
 		final float factor = 1.0F + level * 100.0F;
 		final float near = (event.farPlaneDistance * 0.75F) / (factor * factor);
 		final float horizon = event.farPlaneDistance / (factor);
-		GL11.glFogf(GL11.GL_FOG_START, near);
-		GL11.glFogf(GL11.GL_FOG_END, horizon);
-		event.setResult(Result.ALLOW);
+
+		final float start = GL11.glGetFloat(GL11.GL_FOG_START);
+		final float end = GL11.glGetFloat(GL11.GL_FOG_END);
+
+		boolean didFog = false;
+		if (near < start) {
+			GL11.glFogf(GL11.GL_FOG_START, near);
+			didFog = true;
+		}
+		if (horizon < end) {
+			GL11.glFogf(GL11.GL_FOG_END, horizon);
+			didFog = true;
+		}
+
+		if (didFog)
+			event.setResult(Result.ALLOW);
 	}
 
 	@SubscribeEvent
