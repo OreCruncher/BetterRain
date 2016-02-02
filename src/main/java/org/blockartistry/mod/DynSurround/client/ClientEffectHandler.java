@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.blockartistry.mod.DynSurround.ModOptions;
+import org.blockartistry.mod.DynSurround.client.cloud.CloudRenderer;
 import org.blockartistry.mod.DynSurround.client.fx.BlockEffectHandler;
 import org.blockartistry.mod.DynSurround.client.storm.StormProperties;
 import org.blockartistry.mod.DynSurround.data.BiomeRegistry;
@@ -42,6 +43,7 @@ import cpw.mods.fml.common.gameevent.TickEvent.Phase;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.ISound;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.particle.EntityDropParticleFX;
@@ -114,6 +116,11 @@ public class ClientEffectHandler {
 		}
 	}
 
+	private static int tickCount = 0;
+	public static int getTickCount() {
+		return tickCount;
+	}
+	
 	private static List<EntityDropParticleFX> drops = new ArrayList<EntityDropParticleFX>();
 
 	@SubscribeEvent
@@ -130,6 +137,8 @@ public class ClientEffectHandler {
 			return;
 
 		if (event.phase == Phase.START) {
+			if(!Minecraft.getMinecraft().isGamePaused())
+				tickCount++;
 			drops.clear();
 			final EntityPlayer player = FMLClientHandler.instance().getClient().thePlayer;
 			for (final IClientEffectHandler handler : effectHandlers)
@@ -167,8 +176,11 @@ public class ClientEffectHandler {
 
 		// Shim the provider so we can tap into the
 		// sky and cloud stuff.
-		if (ModOptions.getEnableFancyCloudHandling())
+		if (ModOptions.getEnableFancyCloudHandling()) {
+//			if(e.world.provider.isSurfaceWorld() && e.world.provider.getCloudRenderer() == null)
+//				e.world.provider.setCloudRenderer(new CloudRenderer());
 			e.world.provider = new WorldProviderShim(e.world, e.world.provider);
+		}
 	}
 	
 }
