@@ -32,6 +32,8 @@ import org.blockartistry.mod.DynSurround.network.Network;
 
 import cpw.mods.fml.common.eventhandler.EventPriority;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.EffectRenderer;
 import net.minecraft.client.particle.EntityFX;
@@ -57,7 +59,7 @@ public final class DamageEffectHandler {
 		public final boolean isCritical;
 		public final int amount;
 
-		public HealthData(final EntityLivingBase entity, final boolean isCritical, final int amount) {
+		public HealthData(final Entity entity, final boolean isCritical, final int amount) {
 			this.posX = (float) entity.posX;
 			this.posY = (float) entity.posY + entity.height;
 			this.posZ = (float) entity.posZ;
@@ -132,6 +134,7 @@ public final class DamageEffectHandler {
 		Network.sendHealthUpdate(data, event.entity.worldObj.provider.dimensionId);
 	}
 
+	@SideOnly(Side.CLIENT)
 	public static void handleEvent(final HealthData data) {
 		if(!ModOptions.getEnableDamagePopoffs())
 			return;
