@@ -120,6 +120,20 @@ public class Color {
 		return new Color(color).scale(scaleFactor);
 	}
 
+	public Color anaglyph() {
+		final float r = (this.red * 30.0F + this.green * 59.0F + this.blue * 11.0F) / 100.0F;
+		final float g = (this.red * 30.0F + this.green * 70.0F) / 100.0F;
+		final float b = (this.red * 30.0F + this.blue * 70.0F) / 100.0F;
+		this.red = r;
+		this.green = g;
+		this.blue = b;
+		return this;
+	}
+	
+	public static Color anaglyph(final Color color) {
+		return new Color(color).anaglyph();
+	}
+
 	public Color mix(final Color color) {
 		return mix(color.red, color.green, color.blue);
 	}
