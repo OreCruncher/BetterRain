@@ -48,6 +48,50 @@ public final class CloudRenderer extends IRenderHandler {
 
 	}
 
+	private static void drawCloudCube(final float posX, final float posY, final float posZ, final Color color,
+			final float alpha) {
+
+		GL11.glPushMatrix();
+		GL11.glTranslatef(posX, posY, posZ);
+
+		Tessellator tess = Tessellator.instance;
+		int c = color.rgbWithAlpha(alpha);
+		tess.startDrawing(3);
+
+		tess.setColorOpaque_I(c);
+		tess.addVertex(0, 0, 0);
+		tess.addVertex(1, 0, 0);
+		tess.addVertex(1, 0, 1);
+		tess.addVertex(0, 0, 1);
+		tess.addVertex(0, 0, 0);
+		tess.draw();
+
+		tess.startDrawing(3);
+		tess.setColorOpaque_I(c);
+
+		tess.addVertex(0, 1, 0);
+		tess.addVertex(1, 1, 0);
+		tess.addVertex(1, 1, 1);
+		tess.addVertex(0, 1, 1);
+		tess.addVertex(0, 1, 0);
+		tess.draw();
+		tess.startDrawing(1);
+
+		tess.setColorOpaque_I(c);
+
+		tess.addVertex(0, 0, 0);
+		tess.addVertex(0, 1, 0);
+		tess.addVertex(1, 0, 0);
+		tess.addVertex(1, 1, 0);
+		tess.addVertex(1, 0, 1);
+		tess.addVertex(1, 1, 1);
+		tess.addVertex(0, 0, 1);
+		tess.addVertex(0, 1, 1);
+		tess.draw();
+
+		GL11.glPopMatrix();
+	}
+
 	@Override
 	public void render(final float partialTicks, final WorldClient world, final Minecraft mc) {
 
@@ -88,6 +132,7 @@ public final class CloudRenderer extends IRenderHandler {
 		float f13 = 9.765625E-4F;
 		GL11.glScalef(f2, 1.0F, f2);
 
+		// k = passes?
 		for (int k = 0; k < 2; ++k) {
 			if (k == 0) {
 				GL11.glColorMask(false, false, false, false);
@@ -103,127 +148,13 @@ public final class CloudRenderer extends IRenderHandler {
 
 			for (int l = -b1 + 1; l <= b1; ++l) {
 				for (int i1 = -b1 + 1; i1 <= b1; ++i1) {
-					tess.startDrawingQuads();
 					float f14 = (float) (l * b0);
 					float f15 = (float) (i1 * b0);
 					float f16 = f14 - f11;
 					float f17 = f15 - f12;
 
-					if (f4 > -f3 - 1.0F) {
-						final Color c = Color.scale(cloudColor, 0.7F);
-						tess.setColorRGBA_F(c.red, c.green, c.blue, alpha);
-						tess.setNormal(0.0F, -1.0F, 0.0F);
-						tess.addVertexWithUV((double) (f16 + 0.0F), (double) (f4 + 0.0F), (double) (f17 + (float) b0),
-								(double) ((f14 + 0.0F) * f10 + f8), (double) ((f15 + (float) b0) * f10 + f9));
-						tess.addVertexWithUV((double) (f16 + (float) b0), (double) (f4 + 0.0F),
-								(double) (f17 + (float) b0), (double) ((f14 + (float) b0) * f10 + f8),
-								(double) ((f15 + (float) b0) * f10 + f9));
-						tess.addVertexWithUV((double) (f16 + (float) b0), (double) (f4 + 0.0F), (double) (f17 + 0.0F),
-								(double) ((f14 + (float) b0) * f10 + f8), (double) ((f15 + 0.0F) * f10 + f9));
-						tess.addVertexWithUV((double) (f16 + 0.0F), (double) (f4 + 0.0F), (double) (f17 + 0.0F),
-								(double) ((f14 + 0.0F) * f10 + f8), (double) ((f15 + 0.0F) * f10 + f9));
-					}
-
-					if (f4 <= f3 + 1.0F) {
-						tess.setColorRGBA_F(cloudColor.red, cloudColor.green, cloudColor.blue, alpha);
-						tess.setNormal(0.0F, 1.0F, 0.0F);
-						tess.addVertexWithUV((double) (f16 + 0.0F), (double) (f4 + f3 - f13),
-								(double) (f17 + (float) b0), (double) ((f14 + 0.0F) * f10 + f8),
-								(double) ((f15 + (float) b0) * f10 + f9));
-						tess.addVertexWithUV((double) (f16 + (float) b0), (double) (f4 + f3 - f13),
-								(double) (f17 + (float) b0), (double) ((f14 + (float) b0) * f10 + f8),
-								(double) ((f15 + (float) b0) * f10 + f9));
-						tess.addVertexWithUV((double) (f16 + (float) b0), (double) (f4 + f3 - f13),
-								(double) (f17 + 0.0F), (double) ((f14 + (float) b0) * f10 + f8),
-								(double) ((f15 + 0.0F) * f10 + f9));
-						tess.addVertexWithUV((double) (f16 + 0.0F), (double) (f4 + f3 - f13), (double) (f17 + 0.0F),
-								(double) ((f14 + 0.0F) * f10 + f8), (double) ((f15 + 0.0F) * f10 + f9));
-					}
-
-					Color c = Color.scale(cloudColor, 0.9F);
-					tess.setColorRGBA_F(c.red, c.green, c.blue, alpha);
-					int j1;
-
-					if (l > -1) {
-						tess.setNormal(-1.0F, 0.0F, 0.0F);
-
-						for (j1 = 0; j1 < b0; ++j1) {
-							tess.addVertexWithUV((double) (f16 + (float) j1 + 0.0F), (double) (f4 + 0.0F),
-									(double) (f17 + (float) b0), (double) ((f14 + (float) j1 + 0.5F) * f10 + f8),
-									(double) ((f15 + (float) b0) * f10 + f9));
-							tess.addVertexWithUV((double) (f16 + (float) j1 + 0.0F), (double) (f4 + f3),
-									(double) (f17 + (float) b0), (double) ((f14 + (float) j1 + 0.5F) * f10 + f8),
-									(double) ((f15 + (float) b0) * f10 + f9));
-							tess.addVertexWithUV((double) (f16 + (float) j1 + 0.0F), (double) (f4 + f3),
-									(double) (f17 + 0.0F), (double) ((f14 + (float) j1 + 0.5F) * f10 + f8),
-									(double) ((f15 + 0.0F) * f10 + f9));
-							tess.addVertexWithUV((double) (f16 + (float) j1 + 0.0F), (double) (f4 + 0.0F),
-									(double) (f17 + 0.0F), (double) ((f14 + (float) j1 + 0.5F) * f10 + f8),
-									(double) ((f15 + 0.0F) * f10 + f9));
-						}
-					}
-
-					if (l <= 1) {
-						tess.setNormal(1.0F, 0.0F, 0.0F);
-
-						for (j1 = 0; j1 < b0; ++j1) {
-							tess.addVertexWithUV((double) (f16 + (float) j1 + 1.0F - f13), (double) (f4 + 0.0F),
-									(double) (f17 + (float) b0), (double) ((f14 + (float) j1 + 0.5F) * f10 + f8),
-									(double) ((f15 + (float) b0) * f10 + f9));
-							tess.addVertexWithUV((double) (f16 + (float) j1 + 1.0F - f13), (double) (f4 + f3),
-									(double) (f17 + (float) b0), (double) ((f14 + (float) j1 + 0.5F) * f10 + f8),
-									(double) ((f15 + (float) b0) * f10 + f9));
-							tess.addVertexWithUV((double) (f16 + (float) j1 + 1.0F - f13), (double) (f4 + f3),
-									(double) (f17 + 0.0F), (double) ((f14 + (float) j1 + 0.5F) * f10 + f8),
-									(double) ((f15 + 0.0F) * f10 + f9));
-							tess.addVertexWithUV((double) (f16 + (float) j1 + 1.0F - f13), (double) (f4 + 0.0F),
-									(double) (f17 + 0.0F), (double) ((f14 + (float) j1 + 0.5F) * f10 + f8),
-									(double) ((f15 + 0.0F) * f10 + f9));
-						}
-					}
-
-					c = Color.scale(cloudColor, 0.8F);
-					tess.setColorRGBA_F(c.red, c.green, c.blue, alpha);
-
-					if (i1 > -1) {
-						tess.setNormal(0.0F, 0.0F, -1.0F);
-
-						for (j1 = 0; j1 < b0; ++j1) {
-							tess.addVertexWithUV((double) (f16 + 0.0F), (double) (f4 + f3),
-									(double) (f17 + (float) j1 + 0.0F), (double) ((f14 + 0.0F) * f10 + f8),
-									(double) ((f15 + (float) j1 + 0.5F) * f10 + f9));
-							tess.addVertexWithUV((double) (f16 + (float) b0), (double) (f4 + f3),
-									(double) (f17 + (float) j1 + 0.0F), (double) ((f14 + (float) b0) * f10 + f8),
-									(double) ((f15 + (float) j1 + 0.5F) * f10 + f9));
-							tess.addVertexWithUV((double) (f16 + (float) b0), (double) (f4 + 0.0F),
-									(double) (f17 + (float) j1 + 0.0F), (double) ((f14 + (float) b0) * f10 + f8),
-									(double) ((f15 + (float) j1 + 0.5F) * f10 + f9));
-							tess.addVertexWithUV((double) (f16 + 0.0F), (double) (f4 + 0.0F),
-									(double) (f17 + (float) j1 + 0.0F), (double) ((f14 + 0.0F) * f10 + f8),
-									(double) ((f15 + (float) j1 + 0.5F) * f10 + f9));
-						}
-					}
-
-					if (i1 <= 1) {
-						tess.setNormal(0.0F, 0.0F, 1.0F);
-
-						for (j1 = 0; j1 < b0; ++j1) {
-							tess.addVertexWithUV((double) (f16 + 0.0F), (double) (f4 + f3),
-									(double) (f17 + (float) j1 + 1.0F - f13), (double) ((f14 + 0.0F) * f10 + f8),
-									(double) ((f15 + (float) j1 + 0.5F) * f10 + f9));
-							tess.addVertexWithUV((double) (f16 + (float) b0), (double) (f4 + f3),
-									(double) (f17 + (float) j1 + 1.0F - f13), (double) ((f14 + (float) b0) * f10 + f8),
-									(double) ((f15 + (float) j1 + 0.5F) * f10 + f9));
-							tess.addVertexWithUV((double) (f16 + (float) b0), (double) (f4 + 0.0F),
-									(double) (f17 + (float) j1 + 1.0F - f13), (double) ((f14 + (float) b0) * f10 + f8),
-									(double) ((f15 + (float) j1 + 0.5F) * f10 + f9));
-							tess.addVertexWithUV((double) (f16 + 0.0F), (double) (f4 + 0.0F),
-									(double) (f17 + (float) j1 + 1.0F - f13), (double) ((f14 + 0.0F) * f10 + f8),
-									(double) ((f15 + (float) j1 + 0.5F) * f10 + f9));
-						}
-					}
-
-					tess.draw();
+					final float scale = MathHelper.abs(i1) / (b1 * 2);
+					drawCloudCube(f16, f4, f17, Color.scale(cloudColor, scale), alpha);
 				}
 			}
 		}

@@ -24,13 +24,19 @@
 
 package org.blockartistry.mod.DynSurround.proxy;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.blockartistry.mod.DynSurround.ModLog;
 import org.blockartistry.mod.DynSurround.client.ClientEffectHandler;
 import org.blockartistry.mod.DynSurround.client.hud.GuiHUDHandler;
 import org.blockartistry.mod.DynSurround.data.BlockRegistry;
-
 import cpw.mods.fml.common.event.FMLInitializationEvent;
+import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.audio.SoundHandler;
 
 @SideOnly(Side.CLIENT)
 public class ProxyClient extends Proxy {
@@ -42,4 +48,20 @@ public class ProxyClient extends Proxy {
 		ClientEffectHandler.initialize();
 		GuiHUDHandler.initialize();
 	}
+
+	@Override
+	public void postInit(final FMLPostInitializationEvent event) {
+		super.postInit(event);
+
+		final SoundHandler handler = Minecraft.getMinecraft().getSoundHandler();
+		final List<String> sounds = new ArrayList<String>();
+		for (final Object resource : handler.sndRegistry.getKeys())
+			sounds.add(resource.toString());
+		sounds.sort(null);
+
+		ModLog.info("*** SOUND REGISTRY ***");
+		for (final String sound : sounds)
+			ModLog.info(sound);
+	}
+
 }
