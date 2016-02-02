@@ -27,6 +27,7 @@ import java.util.Random;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
+import org.blockartistry.mod.DynSurround.ModOptions;
 import org.blockartistry.mod.DynSurround.data.config.SoundConfig;
 
 import net.minecraft.block.Block;
@@ -34,6 +35,7 @@ import net.minecraft.world.World;
 
 public final class SoundEffect {
 	
+	private static final float MASTER_SCALE_FACTOR = ModOptions.getMasterSoundScaleFactor();
 	private static final float[] pitchDelta = { -0.2F, 0.0F, 0.0F, 0.2F, 0.2F, 0.2F };
 
 	public final String sound;
@@ -83,7 +85,7 @@ public final class SoundEffect {
 
 	public void doEffect(final Block block, final World world, final int x, final int y, final int z,
 			final Random random) {
-		world.playSound(x + 0.5D, y + 0.5D, z + 0.5D, this.sound, getVolume(), getPitch(random), false);
+		world.playSound(x + 0.5D, y + 0.5D, z + 0.5D, this.sound, getVolume() * MASTER_SCALE_FACTOR, getPitch(random), false);
 	}
 
 	@Override

@@ -104,29 +104,9 @@ public final class ModOptions {
 	protected static final String CATEGORY_SOUND = "sound";
 	protected static final String CONFIG_ENABLE_BIOME_SOUNDS = "Enable Biome Sounds";
 	protected static boolean enableBiomeSounds = true;
-	protected static final String CONFIG_SOUND_ENABLED = "Enabled";
-	protected static final String COMMENT_SOUND_ENABLED = "Enable client side sound effect";
-	protected static final String CONFIG_SOUND_CHANCE = "Chance";
-	protected static final String COMMENT_SOUND_CHANCE = "1-in-N chance for sound spawn";
-	protected static final String CONFIG_SOUND_SCALING_FACTOR = "Scaling Factor";
-	protected static final String COMMENT_SOUND_SCALING_FACTOR = "Factor to apply to sound volume";
-	protected static final String CATEGORY_SOUND_ICE_CRACK = "sound.Ice Cracking";
-	protected static boolean enableIceCrackSound = true;
-	protected static int iceCrackSoundChance = 10000;
-	protected static float iceCrackScaleFactor = 1.0F;
-	protected static final String CATEGORY_SOUND_FROGS = "sound.Frog Croaks";
-	protected static boolean enableFrogCroakSound = true;
-	protected static int frogCroakSoundChance = 25;
-	protected static float frogCroakScaleFactor = 1.0F;
-	protected static final String CATEGORY_SOUND_REDSTONE_ORE = "sound.Redstone Ore";
-	protected static boolean enableRedstoneOreSound = true;
-	protected static int redstoneOreSoundChance = 100;
-	protected static float redstoneOreScaleFactor = 1.0F;
-	protected static final String CATEGORY_SOUND_SOULSAND = "sound.Soul Sand";
-	protected static boolean enableSoulSandSound = true;
-	protected static int soulSandSoundChance = 8000;
-	protected static float soulSandScaleFactor = 1.0F;
-
+	protected static final String CONFIG_MASTER_SOUND_FACTOR = "Master Sound Scale Factor";
+	protected static float masterSoundScaleFactor = 0.5F;
+	
 	protected static final String CATEGORY_PLAYER = "player";
 	protected static final String CONFIG_SUPPRESS_POTION_PARTICLES = "Suppress Potion Particles";
 	protected static boolean suppressPotionParticles = false;
@@ -253,34 +233,10 @@ public final class ModOptions {
 		// CATEGORY: Sound
 		comment = "Enable biome sounds";
 		enableBiomeSounds = config.getBoolean(CONFIG_ENABLE_BIOME_SOUNDS, CATEGORY_SOUND, enableBiomeSounds, comment);
-
-		enableIceCrackSound = config.getBoolean(CONFIG_SOUND_ENABLED, CATEGORY_SOUND_ICE_CRACK, enableIceCrackSound,
-				COMMENT_SOUND_ENABLED);
-		iceCrackSoundChance = config.getInt(CONFIG_SOUND_CHANCE, CATEGORY_SOUND_ICE_CRACK, iceCrackSoundChance, 1,
-				Integer.MAX_VALUE, COMMENT_SOUND_CHANCE);
-		iceCrackScaleFactor = config.getFloat(CONFIG_SOUND_SCALING_FACTOR, CATEGORY_SOUND_ICE_CRACK,
-				iceCrackScaleFactor, 0.0F, 5.0F, COMMENT_SOUND_SCALING_FACTOR);
-
-		enableFrogCroakSound = config.getBoolean(CONFIG_SOUND_ENABLED, CATEGORY_SOUND_FROGS, enableFrogCroakSound,
-				COMMENT_SOUND_ENABLED);
-		frogCroakSoundChance = config.getInt(CONFIG_SOUND_CHANCE, CATEGORY_SOUND_FROGS, frogCroakSoundChance, 1,
-				Integer.MAX_VALUE, COMMENT_SOUND_CHANCE);
-		frogCroakScaleFactor = config.getFloat(CONFIG_SOUND_SCALING_FACTOR, CATEGORY_SOUND_FROGS, frogCroakScaleFactor,
-				0.0F, 5.0F, COMMENT_SOUND_SCALING_FACTOR);
-
-		enableRedstoneOreSound = config.getBoolean(CONFIG_SOUND_ENABLED, CATEGORY_SOUND_REDSTONE_ORE,
-				enableRedstoneOreSound, COMMENT_SOUND_ENABLED);
-		redstoneOreSoundChance = config.getInt(CONFIG_SOUND_CHANCE, CATEGORY_SOUND_REDSTONE_ORE, redstoneOreSoundChance,
-				1, Integer.MAX_VALUE, COMMENT_SOUND_CHANCE);
-		redstoneOreScaleFactor = config.getFloat(CONFIG_SOUND_SCALING_FACTOR, CATEGORY_SOUND_REDSTONE_ORE,
-				redstoneOreScaleFactor, 0.0F, 5.0F, COMMENT_SOUND_SCALING_FACTOR);
-
-		enableSoulSandSound = config.getBoolean(CONFIG_SOUND_ENABLED, CATEGORY_SOUND_SOULSAND, enableSoulSandSound,
-				COMMENT_SOUND_ENABLED);
-		soulSandSoundChance = config.getInt(CONFIG_SOUND_CHANCE, CATEGORY_SOUND_SOULSAND, soulSandSoundChance, 1,
-				Integer.MAX_VALUE, COMMENT_SOUND_CHANCE);
-		soulSandScaleFactor = config.getFloat(CONFIG_SOUND_SCALING_FACTOR, CATEGORY_SOUND_SOULSAND, soulSandScaleFactor,
-				0.0F, 5.0F, COMMENT_SOUND_SCALING_FACTOR);
+		
+		comment = "Master sound scale factor for biome and block sounds";
+		masterSoundScaleFactor = config.getFloat(CONFIG_MASTER_SOUND_FACTOR, CATEGORY_SOUND,
+				masterSoundScaleFactor, 0.0F, 1.0F, comment);
 
 		// CATEGORY: player.potion hud
 		comment = "Enable display of potion icons in display";
@@ -408,55 +364,10 @@ public final class ModOptions {
 		return enableBiomeSounds;
 	}
 
-	// Block sounds
-	public static boolean getEnableIceCrackSound() {
-		return enableIceCrackSound;
+	public static float getMasterSoundScaleFactor() {
+		return masterSoundScaleFactor;
 	}
-
-	public static int getIceCrackSoundChance() {
-		return iceCrackSoundChance;
-	}
-
-	public static float getIceCrackScaleFactor() {
-		return iceCrackScaleFactor;
-	}
-
-	public static boolean getEnableFrogCroakSound() {
-		return enableFrogCroakSound;
-	}
-
-	public static int getFrogCroakSoundChance() {
-		return frogCroakSoundChance;
-	}
-
-	public static float getFrogCroakScaleFactor() {
-		return frogCroakScaleFactor;
-	}
-
-	public static boolean getEnableRedstoneOreSound() {
-		return enableRedstoneOreSound;
-	}
-
-	public static int getRedstoneOreSoundChance() {
-		return redstoneOreSoundChance;
-	}
-
-	public static float getRedstoneOreScaleFactor() {
-		return redstoneOreScaleFactor;
-	}
-
-	public static boolean getEnableSoulSandSound() {
-		return enableSoulSandSound;
-	}
-
-	public static int getSoulSandSoundChance() {
-		return soulSandSoundChance;
-	}
-
-	public static float getSoulSandScaleFactor() {
-		return soulSandScaleFactor;
-	}
-
+	
 	public static boolean getSuppressPotionParticleEffect() {
 		return suppressPotionParticles;
 	}
