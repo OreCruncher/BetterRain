@@ -25,6 +25,7 @@
 package org.blockartistry.mod.DynSurround.proxy;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.blockartistry.mod.DynSurround.ModLog;
@@ -57,7 +58,7 @@ public class ProxyClient extends Proxy {
 		final List<String> sounds = new ArrayList<String>();
 		for (final Object resource : handler.sndRegistry.getKeys())
 			sounds.add(resource.toString());
-		sounds.sort(null);
+		Collections.sort(sounds);
 
 		ModLog.info("*** SOUND REGISTRY ***");
 		for (final String sound : sounds)
