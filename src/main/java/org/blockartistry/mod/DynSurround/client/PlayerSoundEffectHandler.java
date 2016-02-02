@@ -27,6 +27,7 @@ package org.blockartistry.mod.DynSurround.client;
 import java.lang.ref.WeakReference;
 import java.util.Random;
 
+import org.blockartistry.mod.DynSurround.ModOptions;
 import org.blockartistry.mod.DynSurround.client.fx.SoundEffect;
 import org.blockartistry.mod.DynSurround.data.BiomeRegistry;
 import org.blockartistry.mod.DynSurround.data.DimensionRegistry;
@@ -52,6 +53,7 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 
 	private static final Random RANDOM = new XorShiftRandom();
 	private static final float VOLUME_INCREMENT = 0.02F;
+	private static final float MASTER_SCALE_FACTOR = ModOptions.getMasterSoundScaleFactor();
 
 	private static int reloadTracker = 0;
 
@@ -81,6 +83,11 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 			this.xPosF = (float) player.posX;
 			this.yPosF = (float) player.posY + 1;
 			this.zPosF = (float) player.posZ;
+		}
+		
+		@Override
+		public float getVolume() {
+			return super.getVolume() * MASTER_SCALE_FACTOR;
 		}
 
 	}
@@ -136,6 +143,11 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 
 			if (this.volume == 0.0F)
 				this.donePlaying = true;
+		}
+
+		@Override
+		public float getVolume() {
+			return super.getVolume() * MASTER_SCALE_FACTOR;
 		}
 
 		@Override
@@ -254,6 +266,7 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 		if(currentSound != null) {
 			final StringBuilder builder = new StringBuilder();
 			builder.append("Active Sound: ").append(currentSound.toString());
+			builder.append(" (effective volume:").append(currentSound.getVolume()).append(')');
 			event.output.add(builder.toString());
 		}
 	}

@@ -47,7 +47,7 @@
 			
 		},
 		{
-			"biomeName":"(?i)(?!.*dead.*|.*flower.*|.*fungi.*|.*frost.*|.*snow.*|.*kelp.*)(.*forest.*|.*cherry.*|.*orchard.*|.*wood.*|.*wetland.*|thicket)",
+			"biomeName":"(?i)(?!.*dead.*|.*flower.*|.*fungi.*|.*frost.*|.*snow.*|.*kelp.*)(.*forest.*|.*cherry.*|.*orchard.*|.*wood.*|.*wetland.*|thicket|grove)",
 			"sounds":[
 				{
 					"sound":"dsurround:forest",
@@ -61,7 +61,7 @@
 				{
 					"sound":"dsurround:owl",
 					"conditions":"(?i)(?!.*raining.*).*night.*",
-					"volume":0.7,
+					"volume":0.3,
 					"spot":true
 				}
 				
@@ -86,13 +86,13 @@
 				{
 					"sound":"dsurround:owl",
 					"conditions":"(?i)(?!.*raining.*).*night.*",
-					"volume":0.4,
+					"volume":0.3,
 					"spot":true
 				},
 				{
 					"sound":"dsurround:wolf",
 					"conditions":"(?i)(?!.*raining.*).*night.*",
-					"volume":0.4,
+					"volume":0.3,
 					"spot":true
 				}
 				
@@ -108,7 +108,7 @@
 				{
 					"sound":"dsurround:seagulls",
 					"conditions":"(?i)(?!.*raining.*).*day.*",
-					"volume":0.7,
+					"volume":0.3,
 					"spot":true
 				}
 				
