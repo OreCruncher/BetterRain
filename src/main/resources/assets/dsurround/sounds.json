@@ -189,6 +189,13 @@
 			"ambient/whale/whale5"
 		]
 		
+	},
+	"heartbeat":{
+		"category":"ambient",
+		"sounds":[
+			"ambient/steve/heartbeat"
+		]
+		
 	}
 	
 }

@@ -46,6 +46,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
+import net.minecraftforge.event.entity.living.LivingEvent.LivingJumpEvent;
 
 @SideOnly(Side.CLIENT)
 public class PlayerSoundEffectHandler implements IClientEffectHandler {
@@ -54,6 +55,10 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 	private static final float VOLUME_INCREMENT = 0.02F;
 	private static final float VOLUME_DECREMENT = 0.015F;
 	private static final float MASTER_SCALE_FACTOR = ModOptions.getMasterSoundScaleFactor();
+
+	// TODO: Need jump sound
+	private static SoundEffect JUMP_SOUND = null;
+	private static final SoundEffect HURT_SOUND = new SoundEffect("dsurround:heartbeat", 2.0F, 1.0F);
 
 	private static int reloadTracker = 0;
 
@@ -84,7 +89,7 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 			this.yPosF = (float) player.posY + 1;
 			this.zPosF = (float) player.posZ;
 		}
-		
+
 		@Override
 		public float getVolume() {
 			return super.getVolume() * MASTER_SCALE_FACTOR;
@@ -122,6 +127,10 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 
 		public void fadeAway() {
 			this.fadeAway = true;
+		}
+		
+		public void noFade() {
+			this.volume = sound.volume;
 		}
 
 		public boolean sameSound(final SoundEffect snd) {
@@ -179,7 +188,7 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 			}
 			return (float) player.posZ;
 		}
-		
+
 		@Override
 		public String toString() {
 			return this.sound.toString();
@@ -197,11 +206,14 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 
 	// Current active background sound
 	private static PlayerSound currentSound = null;
+	
+	// Current active hurt sound
+	private static PlayerSound hurtSound = null;
 
 	public static void playSoundAtPlayer(EntityPlayer player, final SoundEffect sound, final int tickDelay) {
-		if(player == null)
+		if (player == null)
 			player = EnvironState.getPlayer();
-		
+
 		final SoundHandler handler = Minecraft.getMinecraft().getSoundHandler();
 		final ISound s = new SpotSound(player, sound);
 
@@ -210,8 +222,9 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 		else
 			handler.playDelayedSound(s, tickDelay);
 	}
-	
-	public static void playSoundAt(final int x, final int y, final int z, final SoundEffect sound, final int tickDelay) {
+
+	public static void playSoundAt(final int x, final int y, final int z, final SoundEffect sound,
+			final int tickDelay) {
 		final SoundHandler handler = Minecraft.getMinecraft().getSoundHandler();
 		final ISound s = new SpotSound(x, y, z, sound);
 
@@ -221,8 +234,6 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 			handler.playDelayedSound(s, tickDelay);
 	}
 
-
-	
 	@Override
 	public void process(final World world, final EntityPlayer player) {
 		// Dead player or they are covered with blocks
@@ -254,8 +265,19 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 		if (sound != null) {
 			playSoundAtPlayer(player, sound, 0);
 		}
+		
+		if(EnvironState.isPlayerHurt()) {
+			if(hurtSound == null) {
+				hurtSound = new PlayerSound(player, HURT_SOUND);
+				hurtSound.noFade();
+				Minecraft.getMinecraft().getSoundHandler().playSound(hurtSound);
+			}
+		} else if(hurtSound != null) {
+			hurtSound.fadeAway();
+			hurtSound = null;
+		}
 	}
-	
+
 	@Override
 	public boolean hasEvents() {
 		return true;
@@ -263,11 +285,18 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 
 	@SubscribeEvent
 	public void diagnostics(final DiagnosticEvent.Gather event) {
-		if(currentSound != null) {
+		if (currentSound != null) {
 			final StringBuilder builder = new StringBuilder();
 			builder.append("Active Sound: ").append(currentSound.toString());
 			builder.append(" (effective volume:").append(currentSound.getVolume()).append(')');
 			event.output.add(builder.toString());
+		}
+	}
+
+	@SubscribeEvent
+	public void onJump(final LivingJumpEvent event) {
+		if (JUMP_SOUND != null && event.entity.worldObj.isRemote && EnvironState.isPlayer(event.entity)) {
+			playSoundAtPlayer(EnvironState.getPlayer(), JUMP_SOUND, 0);
 		}
 	}
 }
