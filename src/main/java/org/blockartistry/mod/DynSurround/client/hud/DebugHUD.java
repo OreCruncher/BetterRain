@@ -26,7 +26,7 @@ package org.blockartistry.mod.DynSurround.client.hud;
 
 import java.util.List;
 
-import org.blockartistry.mod.DynSurround.client.DiagnosticHandler;
+import org.blockartistry.mod.DynSurround.client.EnvironStateHandler;
 import org.blockartistry.mod.DynSurround.client.hud.GuiHUDHandler.IGuiOverlay;
 import org.lwjgl.opengl.GL11;
 
@@ -52,7 +52,7 @@ public class DebugHUD extends Gui implements IGuiOverlay {
 			return;
 		}
 		
-		final List<String> output = DiagnosticHandler.getDiagnostics();
+		final List<String> output = EnvironStateHandler.getDiagnostics();
 		if(output.isEmpty())
 			return;
 

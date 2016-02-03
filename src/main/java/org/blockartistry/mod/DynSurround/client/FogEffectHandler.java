@@ -25,6 +25,7 @@
 package org.blockartistry.mod.DynSurround.client;
 
 import org.blockartistry.mod.DynSurround.ModOptions;
+import org.blockartistry.mod.DynSurround.client.EnvironStateHandler.EnvironState;
 import org.blockartistry.mod.DynSurround.client.storm.StormProperties;
 import org.blockartistry.mod.DynSurround.data.BiomeRegistry;
 import org.blockartistry.mod.DynSurround.data.DimensionRegistry;
@@ -32,7 +33,6 @@ import org.blockartistry.mod.DynSurround.event.DiagnosticEvent;
 import org.blockartistry.mod.DynSurround.util.Color;
 import org.blockartistry.mod.DynSurround.util.DiurnalUtils;
 import org.blockartistry.mod.DynSurround.util.MathStuff;
-import org.blockartistry.mod.DynSurround.util.PlayerUtils;
 import org.lwjgl.opengl.GL11;
 
 import cpw.mods.fml.common.eventhandler.EventPriority;
@@ -85,7 +85,7 @@ public class FogEffectHandler implements IClientEffectHandler {
 
 	@Override
 	public void process(final World world, final EntityPlayer player) {
-		final BiomeGenBase biome = PlayerUtils.getPlayerBiome(player, false);
+		final BiomeGenBase biome = EnvironState.getPlayerBiome();
 
 		if (currentFogColor == null)
 			currentFogColor = new Color(world.getFogColor(1.0F));
@@ -204,10 +204,15 @@ public class FogEffectHandler implements IClientEffectHandler {
 			return;
 
 		float level = currentFogLevel;
-		if (level > targetFogLevel)
+		if (level > targetFogLevel) {
 			level -= event.renderPartialTicks * FOG_DELTA;
-		else if (level < targetFogLevel)
+			if(level < 0)
+				level = 0;
+		} else if (level < targetFogLevel) {
 			level += event.renderPartialTicks * FOG_DELTA;
+			if(level > targetFogLevel)
+				level = targetFogLevel;
+		}
 
 		final float factor = 1.0F + level * 100.0F;
 		final float near = (event.farPlaneDistance * 0.75F) / (factor * factor);

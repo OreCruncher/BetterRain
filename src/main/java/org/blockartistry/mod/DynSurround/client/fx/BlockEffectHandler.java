@@ -28,9 +28,9 @@ import java.util.List;
 import java.util.Random;
 
 import org.blockartistry.mod.DynSurround.ModOptions;
+import org.blockartistry.mod.DynSurround.client.EnvironStateHandler.EnvironState;
 import org.blockartistry.mod.DynSurround.client.IClientEffectHandler;
 import org.blockartistry.mod.DynSurround.data.BlockRegistry;
-import org.blockartistry.mod.DynSurround.data.DimensionRegistry;
 import org.blockartistry.mod.DynSurround.util.XorShiftRandom;
 
 import cpw.mods.fml.relauncher.Side;
@@ -62,7 +62,7 @@ public class BlockEffectHandler implements IClientEffectHandler {
 		final int playerY = MathHelper.floor_double(player.posY);
 		final int playerZ = MathHelper.floor_double(player.posZ);
 
-		final String conditions = DimensionRegistry.getConditions(world);
+		final String conditions = EnvironState.getConditions();
 
 		for (int i = 0; i < CHECK_COUNT; i++) {
 			final int x = playerX + random.nextInt(RANGE) - random.nextInt(RANGE);

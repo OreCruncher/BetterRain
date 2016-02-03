@@ -28,11 +28,10 @@ import java.lang.ref.WeakReference;
 import java.util.Random;
 
 import org.blockartistry.mod.DynSurround.ModOptions;
+import org.blockartistry.mod.DynSurround.client.EnvironStateHandler.EnvironState;
 import org.blockartistry.mod.DynSurround.client.fx.SoundEffect;
 import org.blockartistry.mod.DynSurround.data.BiomeRegistry;
-import org.blockartistry.mod.DynSurround.data.DimensionRegistry;
 import org.blockartistry.mod.DynSurround.event.DiagnosticEvent;
-import org.blockartistry.mod.DynSurround.util.PlayerUtils;
 import org.blockartistry.mod.DynSurround.util.XorShiftRandom;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
@@ -235,8 +234,8 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 			return;
 		}
 
-		final String conditions = DimensionRegistry.getConditions(world);
-		final BiomeGenBase playerBiome = PlayerUtils.getPlayerBiome(player, false);
+		final String conditions = EnvironState.getConditions();
+		final BiomeGenBase playerBiome = EnvironState.getPlayerBiome();
 		SoundEffect sound = BiomeRegistry.getSound(playerBiome, conditions);
 
 		if (currentSound != null) {

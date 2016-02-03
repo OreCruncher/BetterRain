@@ -28,7 +28,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.blockartistry.mod.DynSurround.ModOptions;
-import org.blockartistry.mod.DynSurround.client.cloud.CloudRenderer;
 import org.blockartistry.mod.DynSurround.client.fx.BlockEffectHandler;
 import org.blockartistry.mod.DynSurround.client.storm.StormProperties;
 import org.blockartistry.mod.DynSurround.data.BiomeRegistry;
@@ -79,8 +78,7 @@ public class ClientEffectHandler {
 		MinecraftForge.EVENT_BUS.register(handler);
 		FMLCommonHandler.instance().bus().register(handler);
 
-		if(ModOptions.getEnableDebugLogging())
-			register(new DiagnosticHandler());
+		register(new EnvironStateHandler());
 		
 		register(new FogEffectHandler());
 		register(new BlockEffectHandler());
@@ -177,8 +175,6 @@ public class ClientEffectHandler {
 		// Shim the provider so we can tap into the
 		// sky and cloud stuff.
 		if (ModOptions.getEnableFancyCloudHandling()) {
-//			if(e.world.provider.isSurfaceWorld() && e.world.provider.getCloudRenderer() == null)
-//				e.world.provider.setCloudRenderer(new CloudRenderer());
 			e.world.provider = new WorldProviderShim(e.world, e.world.provider);
 		}
 	}
