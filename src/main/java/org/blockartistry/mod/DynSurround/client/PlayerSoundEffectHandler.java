@@ -53,6 +53,7 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 
 	private static final Random RANDOM = new XorShiftRandom();
 	private static final float VOLUME_INCREMENT = 0.02F;
+	private static final float VOLUME_DECREMENT = 0.015F;
 	private static final float MASTER_SCALE_FACTOR = ModOptions.getMasterSoundScaleFactor();
 
 	private static int reloadTracker = 0;
@@ -131,7 +132,7 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 		@Override
 		public void update() {
 			if (this.fadeAway) {
-				this.volume -= VOLUME_INCREMENT;
+				this.volume -= VOLUME_DECREMENT;
 				if (this.volume < 0.0F) {
 					this.volume = 0.0F;
 				}
