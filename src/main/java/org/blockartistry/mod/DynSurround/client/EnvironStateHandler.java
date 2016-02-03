@@ -37,6 +37,7 @@ import org.blockartistry.mod.DynSurround.util.PlayerUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.potion.Potion;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.MinecraftForge;
@@ -109,7 +110,39 @@ public class EnvironStateHandler implements IClientEffectHandler {
 		}
 
 		public static boolean isPlayerHungry() {
-			return ((float)player.getFoodStats().getFoodLevel() / 20.0F) <= 0.40F;
+			return ((float) player.getFoodStats().getFoodLevel() / 20.0F) <= 0.40F;
+		}
+
+		public static boolean isPlayerBurning() {
+			return player.isBurning();
+		}
+
+		public static boolean isPlayerSuffocating() {
+			return player.getAir() <= 0;
+		}
+
+		public static boolean isPlayerFlying() {
+			return player.capabilities.isFlying;
+		}
+
+		public static boolean isPlayerSprinting() {
+			return player.isSprinting();
+		}
+
+		public static boolean isPlayerInLava() {
+			return player.isInLava();
+		}
+
+		public static boolean isPlayerInvisible() {
+			return player.isInvisible();
+		}
+
+		public static boolean isPlayerBlind() {
+			return player.isPotionActive(Potion.blindness);
+		}
+
+		public static boolean isPlayerInWater() {
+			return player.isInWater();
 		}
 
 		public static World getWorld() {
@@ -129,6 +162,14 @@ public class EnvironStateHandler implements IClientEffectHandler {
 
 	private static final String CONDITION_TOKEN_HURT = "hurt";
 	private static final String CONDITION_TOKEN_HUNGRY = "hungry";
+	private static final String CONDITION_TOKEN_BURNING = "burning";
+	private static final String CONDITION_TOKEN_NOAIR = "noair";
+	private static final String CONDITION_TOKEN_FLYING = "flying";
+	private static final String CONDITION_TOKEN_SPRINTING = "sprinting";
+	private static final String CONDITION_TOKEN_INLAVA = "inlava";
+	private static final String CONDITION_TOKEN_INWATER = "inwater";
+	private static final String CONDITION_TOKEN_INVISIBLE = "invisible";
+	private static final String CONDITION_TOKEN_BLIND = "blind";
 	private static final char CONDITION_SEPARATOR = '#';
 
 	private static String getPlayerConditions(final EntityPlayer player) {
@@ -137,6 +178,22 @@ public class EnvironStateHandler implements IClientEffectHandler {
 			builder.append(CONDITION_SEPARATOR).append(CONDITION_TOKEN_HURT);
 		if (EnvironState.isPlayerHungry())
 			builder.append(CONDITION_SEPARATOR).append(CONDITION_TOKEN_HUNGRY);
+		if (EnvironState.isPlayerBurning())
+			builder.append(CONDITION_SEPARATOR).append(CONDITION_TOKEN_BURNING);
+		if (EnvironState.isPlayerSuffocating())
+			builder.append(CONDITION_SEPARATOR).append(CONDITION_TOKEN_NOAIR);
+		if (EnvironState.isPlayerFlying())
+			builder.append(CONDITION_SEPARATOR).append(CONDITION_TOKEN_FLYING);
+		if (EnvironState.isPlayerSprinting())
+			builder.append(CONDITION_SEPARATOR).append(CONDITION_TOKEN_SPRINTING);
+		if (EnvironState.isPlayerInLava())
+			builder.append(CONDITION_SEPARATOR).append(CONDITION_TOKEN_INLAVA);
+		if (EnvironState.isPlayerInvisible())
+			builder.append(CONDITION_SEPARATOR).append(CONDITION_TOKEN_INVISIBLE);
+		if (EnvironState.isPlayerBlind())
+			builder.append(CONDITION_SEPARATOR).append(CONDITION_TOKEN_BLIND);
+		if (EnvironState.isPlayerInWater())
+			builder.append(CONDITION_SEPARATOR).append(CONDITION_TOKEN_INWATER);
 		builder.append(CONDITION_SEPARATOR);
 		return builder.toString();
 	}

@@ -48,6 +48,7 @@ public class PacketHealthChange implements IMessage, IMessageHandler<PacketHealt
 	}
 	
 	public PacketHealthChange(final HealthData data) {
+		this.entityId = data.entityId;
 		this.posX = data.posX;
 		this.posY = data.posY;
 		this.posZ = data.posZ;
