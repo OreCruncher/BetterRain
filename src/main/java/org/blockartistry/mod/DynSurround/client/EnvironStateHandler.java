@@ -34,6 +34,7 @@ import org.blockartistry.mod.DynSurround.event.DiagnosticEvent;
 import org.blockartistry.mod.DynSurround.util.PlayerUtils;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
@@ -88,6 +89,18 @@ public class EnvironStateHandler implements IClientEffectHandler {
 			return player;
 		}
 		
+		public static boolean isPlayer(final Entity entity) {
+			if(entity instanceof EntityPlayer) {
+				final EntityPlayer ep = (EntityPlayer) entity;
+				return ep.getUniqueID().equals(player.getUniqueID());
+			}
+			return false;
+		}
+		
+		public static boolean isPlayerHurt() {
+			return (player.getHealth() / player.getMaxHealth()) < 0.40F;
+		}
+		
 		public static World getWorld() {
 			return world;
 		}
@@ -97,10 +110,9 @@ public class EnvironStateHandler implements IClientEffectHandler {
 		}
 		
 		public static double distanceToPlayer(final double x, final double y, final double z) {
-			final double dX = player.posX - x;
-			final double dY = player.posY - y;
-			final double dZ = player.posZ - z;
-			return dX * dX + dY * dY + dZ * dZ;
+			if(player == null)
+				return Double.MAX_VALUE;
+			return player.getDistanceSq(x, y, z);
 		}
 	}
 

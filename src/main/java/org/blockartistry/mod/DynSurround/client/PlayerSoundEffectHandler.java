@@ -25,6 +25,7 @@
 package org.blockartistry.mod.DynSurround.client;
 
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.event.entity.living.LivingEvent.LivingJumpEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 
@@ -56,6 +57,10 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 	private static final float VOLUME_INCREMENT = 0.02F;
 	private static final float VOLUME_DECREMENT = 0.015F;
 	private static final float MASTER_SCALE_FACTOR = ModOptions.getMasterSoundScaleFactor();
+
+	// TODO: Need jump sound
+	private static SoundEffect JUMP_SOUND = null;
+	private static final SoundEffect HURT_SOUND = new SoundEffect("dsurround:heartbeat", 2.0F, 1.0F);
 
 	private static int reloadTracker = 0;
 
@@ -126,6 +131,10 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 
 		public void fadeAway() {
 			this.fadeAway = true;
+		}
+		
+		public void noFade() {
+			this.volume = sound.volume;
 		}
 
 		public boolean sameSound(final SoundEffect snd) {
@@ -202,6 +211,9 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 	// Current active background sound
 	private static PlayerSound currentSound = null;
 
+	// Current active hurt sound
+	private static PlayerSound hurtSound = null;
+
 	public static void playSoundAtPlayer(EntityPlayer player, final SoundEffect sound, final int tickDelay) {
 		if (player == null)
 			player = EnvironState.getPlayer();
@@ -256,7 +268,18 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 		if (sound != null) {
 			playSoundAtPlayer(player, sound, 0);
 		}
-	}
+		
+		if(EnvironState.isPlayerHurt()) {
+			if(hurtSound == null) {
+				hurtSound = new PlayerSound(player, HURT_SOUND);
+				hurtSound.noFade();
+				Minecraft.getMinecraft().getSoundHandler().playSound(hurtSound);
+			}
+		} else if(hurtSound != null) {
+			hurtSound.fadeAway();
+			hurtSound = null;
+		}
+}
 	
 	@Override
 	public boolean hasEvents() {
@@ -270,6 +293,13 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 			builder.append("Active Sound: ").append(currentSound.toString());
 			builder.append(" (effective volume:").append(currentSound.getVolume()).append(')');
 			event.output.add(builder.toString());
+		}
+	}
+
+	@SubscribeEvent
+	public void onJump(final LivingJumpEvent event) {
+		if (JUMP_SOUND != null && event.entity.worldObj.isRemote && EnvironState.isPlayer(event.entity)) {
+			playSoundAtPlayer(EnvironState.getPlayer(), JUMP_SOUND, 0);
 		}
 	}
 }
