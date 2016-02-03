@@ -46,8 +46,14 @@ public final class SoundEffect {
 	public final int weight;
 	public final boolean isSpot;
 	public final boolean variable;
+	public final int repeatDelay;
+	public final boolean skipFade;
 
-	public SoundEffect(final String sound, final float volume, final float pitch) {
+	public SoundEffect(final String sound) {
+		this(sound, 1.0F, 1.0F, 0);
+	}
+	
+	public SoundEffect(final String sound, final float volume, final float pitch, final int repeatDelay) {
 		this.sound = sound;
 		this.volume = volume;
 		this.pitch = pitch;
@@ -56,6 +62,8 @@ public final class SoundEffect {
 		this.weight = 1;
 		this.isSpot = true;
 		this.variable = false;
+		this.repeatDelay = repeatDelay;
+		this.skipFade = false;
 	}
 
 	public SoundEffect(final SoundConfig record) {
@@ -67,6 +75,8 @@ public final class SoundEffect {
 		this.weight = record.weight == null ? 10 : record.weight.intValue();
 		this.isSpot = record.spotSound != null && record.spotSound.booleanValue();
 		this.variable = record.variable != null && record.variable.booleanValue();
+		this.repeatDelay = record.repeatDelay == null ? 0 : record.repeatDelay.intValue();
+		this.skipFade = record.skipFade != null && record.skipFade.booleanValue();
 	}
 
 	public boolean matches(final String conditions) {

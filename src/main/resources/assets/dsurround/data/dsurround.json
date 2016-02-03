@@ -256,6 +256,22 @@
 				
 			]
 			
+		},
+		{
+			"biomeName":"Player",
+			"sounds":[
+				{
+					"sound":"dsurround:heartbeat",
+					"conditions":"(?i).*hurt.*"
+				},
+				{
+					"sound":"dsurround:tummy",
+					"conditions":"(?i).*hungry.*",
+					"repeatDelay":300
+				}
+				
+			]
+			
 		}
 		
 	]

@@ -49,13 +49,14 @@ public class EnvironStateHandler implements IClientEffectHandler {
 
 	// Diagnostic strings to display in the debug HUD
 	private static List<String> diagnostics = new ArrayList<String>();
+
 	public static List<String> getDiagnostics() {
 		return diagnostics;
 	}
-	
+
 	public static class EnvironState {
 		// State that is gathered from the various sources
-		// to avoid requery.  Used during the tick.
+		// to avoid requery. Used during the tick.
 		private static String conditions = "";
 		private static String biomeName = "";
 		private static BiomeGenBase playerBiome = null;
@@ -63,75 +64,93 @@ public class EnvironStateHandler implements IClientEffectHandler {
 		private static String dimensionName;
 		private static EntityPlayer player;
 		private static World world;
-		
+
 		private static int tickCounter;
-		
+
 		public static String getConditions() {
 			return conditions;
 		}
-		
+
 		public static BiomeGenBase getPlayerBiome() {
 			return playerBiome;
 		}
-		
+
 		public static String getBiomeName() {
 			return biomeName;
 		}
-		
+
 		public static int getDimensionId() {
 			return dimensionId;
 		}
-		
+
 		public static String getDimensionName() {
 			return dimensionName;
 		}
-		
+
 		public static EntityPlayer getPlayer() {
 			return player;
 		}
-		
+
 		public static boolean isPlayer(final Entity entity) {
-			if(entity instanceof EntityPlayer) {
+			if (entity instanceof EntityPlayer) {
 				final EntityPlayer ep = (EntityPlayer) entity;
 				return ep.getUniqueID().equals(player.getUniqueID());
 			}
 			return false;
 		}
-		
+
 		public static boolean isPlayerHurt() {
 			return (player.getHealth() / player.getMaxHealth()) < 0.40F;
 		}
-		
+
+		public static boolean isPlayerHungry() {
+			return (player.getFoodStats().getFoodLevel() / 20.0F) < 0.40F;
+		}
+
 		public static World getWorld() {
 			return world;
 		}
-		
+
 		public static int getTickCounter() {
 			return tickCounter;
 		}
-		
+
 		public static double distanceToPlayer(final double x, final double y, final double z) {
-			if(player == null)
+			if (player == null)
 				return Double.MAX_VALUE;
 			return player.getDistanceSq(x, y, z);
 		}
+	}
+
+	private static final String CONDITION_TOKEN_HURT = "hurt";
+	private static final String CONDITION_TOKEN_HUNGRY = "hungry";
+	private static final char CONDITION_SEPARATOR = '#';
+
+	private static String getPlayerConditions(final EntityPlayer player) {
+		final StringBuilder builder = new StringBuilder();
+		if (EnvironState.isPlayerHurt())
+			builder.append(CONDITION_SEPARATOR).append(CONDITION_TOKEN_HURT);
+		if (EnvironState.isPlayerHungry())
+			builder.append(CONDITION_SEPARATOR).append(CONDITION_TOKEN_HUNGRY);
+		builder.append(CONDITION_SEPARATOR);
+		return builder.toString();
 	}
 
 	@Override
 	public void process(final World world, final EntityPlayer player) {
 		EnvironState.player = player;
 		EnvironState.world = world;
-		EnvironState.conditions = DimensionRegistry.getConditions(world);
+		EnvironState.conditions = DimensionRegistry.getConditions(world) + getPlayerConditions(player);
 		EnvironState.playerBiome = PlayerUtils.getPlayerBiome(player, false);
 		EnvironState.biomeName = BiomeRegistry.resolveName(EnvironState.playerBiome);
 		EnvironState.dimensionId = world.provider.dimensionId;
 		EnvironState.dimensionName = world.provider.getDimensionName();
-		
-		if(!Minecraft.getMinecraft().isGamePaused())
+
+		if (!Minecraft.getMinecraft().isGamePaused())
 			EnvironState.tickCounter++;
-		
+
 		// Gather diagnostics if needed
-		if(ModOptions.getEnableDebugLogging()) {
+		if (ModOptions.getEnableDebugLogging()) {
 			final DiagnosticEvent.Gather gather = new DiagnosticEvent.Gather(world, player);
 			MinecraftForge.EVENT_BUS.post(gather);
 			diagnostics = gather.output;
