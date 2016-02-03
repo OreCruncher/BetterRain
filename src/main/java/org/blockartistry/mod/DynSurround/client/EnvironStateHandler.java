@@ -95,6 +95,13 @@ public class EnvironStateHandler implements IClientEffectHandler {
 		public static int getTickCounter() {
 			return tickCounter;
 		}
+		
+		public static double distanceToPlayer(final double x, final double y, final double z) {
+			final double dX = player.posX - x;
+			final double dY = player.posY - y;
+			final double dZ = player.posZ - z;
+			return dX * dX + dY * dY + dZ * dZ;
+		}
 	}
 
 	@Override
