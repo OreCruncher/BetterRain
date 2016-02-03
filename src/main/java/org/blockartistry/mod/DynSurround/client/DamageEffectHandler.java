@@ -53,6 +53,8 @@ import net.minecraftforge.event.entity.living.LivingHurtEvent;
 
 public final class DamageEffectHandler {
 
+	private static final double DISTANCE_THRESHOLD_SQ = 32 * 32;
+	
 	public static class HealthData {
 		public final float posX;
 		public final float posY;
@@ -138,6 +140,11 @@ public final class DamageEffectHandler {
 	@SideOnly(Side.CLIENT)
 	public static void handleEvent(final HealthData data) {
 		if(!ModOptions.getEnableDamagePopoffs())
+			return;
+		
+		// Don't want to display if too far away.
+		final double distance = EnvironState.distanceToPlayer(data.posX, data.posY, data.posZ);
+		if(distance >= DISTANCE_THRESHOLD_SQ)
 			return;
 		
 		final World world = EnvironState.getWorld();
