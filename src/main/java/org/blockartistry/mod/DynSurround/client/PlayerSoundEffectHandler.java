@@ -24,12 +24,10 @@
 
 package org.blockartistry.mod.DynSurround.client;
 
-import net.minecraftforge.fml.relauncher.SideOnly;
-import net.minecraftforge.event.entity.living.LivingEvent.LivingJumpEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.relauncher.Side;
-
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Random;
 
 import org.blockartistry.mod.DynSurround.ModOptions;
@@ -49,6 +47,10 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
+import net.minecraftforge.event.entity.living.LivingEvent.LivingJumpEvent;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.relauncher.Side;
 
 @SideOnly(Side.CLIENT)
 public class PlayerSoundEffectHandler implements IClientEffectHandler {
@@ -60,13 +62,12 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 
 	// TODO: Need jump sound
 	private static SoundEffect JUMP_SOUND = null;
-	private static final SoundEffect HURT_SOUND = new SoundEffect("dsurround:heartbeat", 2.0F, 1.0F);
 
 	private static int reloadTracker = 0;
 
 	private static class SpotSound extends PositionedSound {
 
-		public SpotSound(final BlockPos pos, final SoundEffect sound) {
+		public SpotSound(final int x, final int y, final int z, final SoundEffect sound) {
 			super(new ResourceLocation(sound.sound));
 
 			this.volume = sound.volume;
@@ -74,11 +75,11 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 			this.repeat = false;
 			this.repeatDelay = 0;
 
-			this.xPosF = (float) pos.getX() + 0.5F;
-			this.yPosF = (float) pos.getY() + 0.5F;
-			this.zPosF = (float) pos.getZ() + 0.5F;
+			this.xPosF = (float) x + 0.5F;
+			this.yPosF = (float) y + 0.5F;
+			this.zPosF = (float) z + 0.5F;
 		}
-		
+
 		public SpotSound(final EntityPlayer player, final SoundEffect sound) {
 			super(new ResourceLocation(sound.sound));
 
@@ -109,19 +110,17 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 		}
 
 		public PlayerSound(final EntityPlayer player, final SoundEffect sound, final boolean repeat) {
-
 			super(new ResourceLocation(sound.sound));
-
 			// Don't set volume to 0; MC will optimize out
 			this.sound = sound;
-			this.volume = repeat ? 0.01F : sound.volume;
+			this.volume = (repeat || sound.skipFade) ? 0.01F : sound.volume;
 			this.pitch = sound.pitch;
 			this.player = new WeakReference<EntityPlayer>(player);
 			this.repeat = repeat;
 			this.fadeAway = false;
 
 			// Repeat delay
-			this.repeatDelay = 0;
+			this.repeatDelay = sound.repeatDelay;
 
 			// Initial position
 			this.xPosF = (float) (player.posX);
@@ -131,10 +130,8 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 
 		public void fadeAway() {
 			this.fadeAway = true;
-		}
-		
-		public void noFade() {
-			this.volume = sound.volume;
+			if (this.sound.skipFade)
+				this.donePlaying = true;
 		}
 
 		public boolean sameSound(final SoundEffect snd) {
@@ -157,7 +154,7 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 			if (this.volume == 0.0F)
 				this.donePlaying = true;
 		}
-		
+
 		@Override
 		public float getVolume() {
 			return super.getVolume() * MASTER_SCALE_FACTOR;
@@ -192,7 +189,7 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 			}
 			return (float) player.posZ;
 		}
-		
+
 		@Override
 		public String toString() {
 			return this.sound.toString();
@@ -208,11 +205,27 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 		return false;
 	}
 
-	// Current active background sound
-	private static PlayerSound currentSound = null;
+	// Active loop sounds
+	private static final List<PlayerSound> activeSounds = new ArrayList<PlayerSound>();
 
-	// Current active hurt sound
-	private static PlayerSound hurtSound = null;
+	private static void clearSounds() {
+		for (final PlayerSound sound : activeSounds)
+			sound.fadeAway();
+		activeSounds.clear();
+	}
+
+	private static boolean isPlaying(final SoundEffect sound) {
+		for (final PlayerSound s : activeSounds)
+			if (s.sameSound(sound))
+				return true;
+		return false;
+	}
+
+	private static void playSound(final EntityPlayer player, final SoundEffect sound) {
+		final PlayerSound s = new PlayerSound(player, sound);
+		activeSounds.add(s);
+		Minecraft.getMinecraft().getSoundHandler().playSound(s);
+	}
 
 	public static void playSoundAtPlayer(EntityPlayer player, final SoundEffect sound, final int tickDelay) {
 		if (player == null)
@@ -226,10 +239,10 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 		else
 			handler.playDelayedSound(s, tickDelay);
 	}
-	
+
 	public static void playSoundAt(final BlockPos pos, final SoundEffect sound, final int tickDelay) {
 		final SoundHandler handler = Minecraft.getMinecraft().getSoundHandler();
-		final ISound s = new SpotSound(pos, sound);
+		final ISound s = new SpotSound(pos.getX(), pos.getY(), pos.getZ(), sound);
 
 		if (tickDelay == 0)
 			handler.playSound(s);
@@ -237,50 +250,51 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 			handler.playDelayedSound(s, tickDelay);
 	}
 
+	private static void processSounds(final EntityPlayer player, final List<SoundEffect> sounds) {
+		// Need to remove sounds that are active but not
+		// in the incoming list
+		final Iterator<PlayerSound> itr = activeSounds.iterator();
+		while (itr.hasNext()) {
+			final PlayerSound sound = itr.next();
+			if (!sounds.contains(sound.sound)) {
+				sound.fadeAway();
+				itr.remove();
+			}
+		}
+
+		// Add sounds from the incoming list that are not
+		// active.
+		for (final SoundEffect sound : sounds)
+			if (!isPlaying(sound))
+				playSound(player, sound);
+	}
+
 	@Override
 	public void process(final World world, final EntityPlayer player) {
-		// Dead player or they are covered with blocks
-		if (player.isDead) {
-			if (currentSound != null) {
-				currentSound.fadeAway();
-				currentSound = null;
-			}
+		if (didReloadOccur() || player.isDead)
+			clearSounds();
+
+		// Dead players hear no sounds
+		if (player.isDead)
 			return;
-		}
 
-		final String conditions = EnvironState.getConditions();
 		final BiomeGenBase playerBiome = EnvironState.getPlayerBiome();
-		SoundEffect sound = BiomeRegistry.getSound(playerBiome, conditions);
+		final String conditions = EnvironState.getConditions();
 
-		if (currentSound != null) {
-			if (didReloadOccur() || sound == null || !currentSound.sameSound(sound)) {
-				currentSound.fadeAway();
-				currentSound = null;
-			}
-		}
+		final List<SoundEffect> sounds = new ArrayList<SoundEffect>();
+		sounds.addAll(BiomeRegistry.getSounds(playerBiome, conditions));
+		sounds.addAll(BiomeRegistry.getSounds(BiomeRegistry.PLAYER, conditions));
+		processSounds(player, sounds);
 
-		if (currentSound == null && sound != null) {
-			currentSound = new PlayerSound(player, sound);
-			Minecraft.getMinecraft().getSoundHandler().playSound(currentSound);
-		}
-
-		sound = BiomeRegistry.getSpotSound(playerBiome, conditions, RANDOM);
-		if (sound != null) {
+		SoundEffect sound = BiomeRegistry.getSpotSound(playerBiome, conditions, RANDOM);
+		if (sound != null)
 			playSoundAtPlayer(player, sound, 0);
-		}
-		
-		if(EnvironState.isPlayerHurt()) {
-			if(hurtSound == null) {
-				hurtSound = new PlayerSound(player, HURT_SOUND);
-				hurtSound.noFade();
-				Minecraft.getMinecraft().getSoundHandler().playSound(hurtSound);
-			}
-		} else if(hurtSound != null) {
-			hurtSound.fadeAway();
-			hurtSound = null;
-		}
-}
-	
+
+		sound = BiomeRegistry.getSpotSound(BiomeRegistry.PLAYER, conditions, RANDOM);
+		if (sound != null)
+			playSoundAtPlayer(player, sound, 0);
+	}
+
 	@Override
 	public boolean hasEvents() {
 		return true;
@@ -288,10 +302,10 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 
 	@SubscribeEvent
 	public void diagnostics(final DiagnosticEvent.Gather event) {
-		if(currentSound != null) {
+		for (final PlayerSound sound : activeSounds) {
 			final StringBuilder builder = new StringBuilder();
-			builder.append("Active Sound: ").append(currentSound.toString());
-			builder.append(" (effective volume:").append(currentSound.getVolume()).append(')');
+			builder.append("Active Sound: ").append(sound.toString());
+			builder.append(" (effective volume:").append(sound.getVolume()).append(')');
 			event.output.add(builder.toString());
 		}
 	}
@@ -302,4 +316,5 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 			playSoundAtPlayer(EnvironState.getPlayer(), JUMP_SOUND, 0);
 		}
 	}
+
 }

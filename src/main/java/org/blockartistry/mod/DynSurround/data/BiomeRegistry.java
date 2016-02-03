@@ -55,8 +55,9 @@ public final class BiomeRegistry {
 	public static final BiomeGenBase UNDEROCEAN = new FakeBiome(-4, "UnderOCN");
 	public static final BiomeGenBase UNDERDEEPOCEAN = new FakeBiome(-5, "UnderDOCN");
 	public static final BiomeGenBase UNDERRIVER = new FakeBiome(-6, "UnderRVR");
+	public static final BiomeGenBase PLAYER = new FakeBiome(-7, "Player");
 
-	public static final SoundEffect WATER_DRIP = new SoundEffect(Module.MOD_ID + ":waterdrops", 1.0F, 1.0F);
+	public static final SoundEffect WATER_DRIP = new SoundEffect(Module.MOD_ID + ":waterdrops");
 
 	// This is for cases when the biome coming in doesn't make sense
 	// and should default to something to avoid crap.
@@ -87,11 +88,19 @@ public final class BiomeRegistry {
 			this.spotSoundChance = 1200;
 		}
 
-		public SoundEffect findMatch(final String conditions) {
+		public SoundEffect findSoundMatch(final String conditions) {
 			for (final SoundEffect sound : this.sounds)
 				if (sound.matches(conditions))
 					return sound;
 			return null;
+		}
+		
+		public List<SoundEffect> findSoundMatches(final String conditions) {
+			final List<SoundEffect> results = new ArrayList<SoundEffect>();
+			for (final SoundEffect sound : this.sounds)
+				if (sound.matches(conditions))
+					results.add(sound);
+			return results;
 		}
 
 		@Override
@@ -163,6 +172,7 @@ public final class BiomeRegistry {
 		registry.put(UNDEROCEAN.biomeID, new Entry(UNDEROCEAN));
 		registry.put(UNDERDEEPOCEAN.biomeID, new Entry(UNDERDEEPOCEAN));
 		registry.put(UNDERRIVER.biomeID, new Entry(UNDERRIVER));
+		registry.put(PLAYER.biomeID, new Entry(PLAYER));
 		registry.put(WTF.biomeID, new Entry(WTF));
 
 		processConfig();
@@ -216,7 +226,11 @@ public final class BiomeRegistry {
 	}
 
 	public static SoundEffect getSound(final BiomeGenBase biome, final String conditions) {
-		return get(biome).findMatch(conditions);
+		return get(biome).findSoundMatch(conditions);
+	}
+	
+	public static List<SoundEffect> getSounds(final BiomeGenBase biome, final String conditions) {
+		return get(biome).findSoundMatches(conditions);
 	}
 
 	public static SoundEffect getSpotSound(final BiomeGenBase biome, final String conditions, final Random random) {

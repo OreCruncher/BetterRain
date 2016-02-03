@@ -196,6 +196,15 @@
 			"ambient/steve/heartbeat"
 		]
 		
+	},
+	"tummy":{
+		"category":"ambient",
+		"sounds":[
+			"ambient/steve/tummy1",
+			"ambient/steve/tummy2",
+			"ambient/steve/tummy3"
+		]
+		
 	}
 	
 }

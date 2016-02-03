@@ -40,4 +40,8 @@ public class SoundConfig {
 	public Integer weight = null;
 	@SerializedName("variable")
 	public Boolean variable = null;
+	@SerializedName("repeatDelay")
+	public Integer repeatDelay = null;
+	@SerializedName("skipFade")
+	public Boolean skipFade = null;
 }
