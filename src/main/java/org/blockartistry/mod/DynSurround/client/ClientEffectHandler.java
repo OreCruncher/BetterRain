@@ -76,8 +76,7 @@ public class ClientEffectHandler {
 		final ClientEffectHandler handler = new ClientEffectHandler();
 		MinecraftForge.EVENT_BUS.register(handler);
 
-		if(ModOptions.getEnableDebugLogging())
-			register(new DiagnosticHandler());
+		register(new EnvironStateHandler());
 
 		register(new FogEffectHandler());
 		register(new BlockEffectHandler());
@@ -112,12 +111,13 @@ public class ClientEffectHandler {
 					sound.getZPosF());
 		}
 	}
-	
+
 	private static int tickCount = 0;
+
 	public static int getTickCount() {
 		return tickCount;
 	}
-	
+
 	private static List<EntityDropParticleFX> drops = new ArrayList<EntityDropParticleFX>();
 
 	@SubscribeEvent
@@ -127,14 +127,14 @@ public class ClientEffectHandler {
 		}
 	}
 
-	@SubscribeEvent(priority = EventPriority.LOWEST)
+	@SubscribeEvent
 	public void clientTick(final TickEvent.ClientTickEvent event) {
 		final World world = FMLClientHandler.instance().getClient().theWorld;
 		if (world == null)
 			return;
 
 		if (event.phase == Phase.START) {
-			if(!Minecraft.getMinecraft().isGamePaused())
+			if (!Minecraft.getMinecraft().isGamePaused())
 				tickCount++;
 			drops.clear();
 			final EntityPlayer player = FMLClientHandler.instance().getClient().thePlayer;
@@ -152,10 +152,10 @@ public class ClientEffectHandler {
 					if (block != Blocks.air && !block.isLeaves(world, pos)) {
 						// Find out where it is going to hit
 						BlockPos soundPos = pos.down();
-						while((block = world.getBlockState(soundPos).getBlock()) == Blocks.air)
+						while ((block = world.getBlockState(soundPos).getBlock()) == Blocks.air)
 							soundPos = soundPos.down();
-						
-						if(block.getMaterial().isSolid()) {
+
+						if (block.getMaterial().isSolid()) {
 							final int distance = y - soundPos.getY();
 							PlayerSoundEffectHandler.playSoundAt(soundPos, BiomeRegistry.WATER_DRIP, 40 + distance * 2);
 						}
@@ -177,8 +177,6 @@ public class ClientEffectHandler {
 		// Shim the provider so we can tap into the
 		// sky and cloud stuff.
 		if (ModOptions.getEnableFancyCloudHandling()) {
-//			if(e.world.provider.isSurfaceWorld() && e.world.provider.getCloudRenderer() == null)
-//				e.world.provider.setCloudRenderer(new CloudRenderer());
 			e.world.provider = new WorldProviderShim(e.world, e.world.provider);
 		}
 	}

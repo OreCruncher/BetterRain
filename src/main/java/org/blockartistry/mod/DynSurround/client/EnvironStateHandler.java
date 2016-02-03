@@ -27,14 +27,15 @@ package org.blockartistry.mod.DynSurround.client;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.blockartistry.mod.DynSurround.ModOptions;
 import org.blockartistry.mod.DynSurround.data.BiomeRegistry;
 import org.blockartistry.mod.DynSurround.data.DimensionRegistry;
 import org.blockartistry.mod.DynSurround.event.DiagnosticEvent;
 import org.blockartistry.mod.DynSurround.util.PlayerUtils;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
+import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -42,19 +43,58 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
-public class DiagnosticHandler implements IClientEffectHandler {
+public class EnvironStateHandler implements IClientEffectHandler {
 
-	private static List<String> output = new ArrayList<String>();
-
+	// Diagnostic strings to display in the debug HUD
+	private static List<String> diagnostics = new ArrayList<String>();
 	public static List<String> getDiagnostics() {
-		return output;
+		return diagnostics;
+	}
+	
+	public static class EnvironState {
+		// State that is gathered from the various sources
+		// to avoid requery.  Used during the tick.
+		private static String conditions = "";
+		private static String biomeName = "";
+		private static BiomeGenBase playerBiome = null;
+		private static int dimensionId;
+		private static String dimensionName;
+		
+		public static String getConditions() {
+			return conditions;
+		}
+		
+		public static BiomeGenBase getPlayerBiome() {
+			return playerBiome;
+		}
+		
+		public static String getBiomeName() {
+			return biomeName;
+		}
+		
+		public static int getDimensionId() {
+			return dimensionId;
+		}
+		
+		public static String getDimensionName() {
+			return dimensionName;
+		}
 	}
 
 	@Override
 	public void process(final World world, final EntityPlayer player) {
-		final DiagnosticEvent.Gather gather = new DiagnosticEvent.Gather(world, player);
-		MinecraftForge.EVENT_BUS.post(gather);
-		output = gather.output;
+		EnvironState.conditions = DimensionRegistry.getConditions(world);
+		EnvironState.playerBiome = PlayerUtils.getPlayerBiome(player, false);
+		EnvironState.biomeName = BiomeRegistry.resolveName(EnvironState.playerBiome);
+		EnvironState.dimensionId = world.provider.getDimensionId();
+		EnvironState.dimensionName = world.provider.getDimensionName();
+		
+		// Gather diagnostics if needed
+		if(ModOptions.getEnableDebugLogging()) {
+			final DiagnosticEvent.Gather gather = new DiagnosticEvent.Gather(world, player);
+			MinecraftForge.EVENT_BUS.post(gather);
+			diagnostics = gather.output;
+		}
 	}
 
 	@Override
@@ -64,9 +104,9 @@ public class DiagnosticHandler implements IClientEffectHandler {
 
 	@SubscribeEvent(priority = EventPriority.HIGHEST)
 	public void diagnostics(final DiagnosticEvent.Gather event) {
-		event.output.add("Biome: "
-				+ BiomeRegistry.resolveName(PlayerUtils.getPlayerBiome(Minecraft.getMinecraft().thePlayer, false)));
-		event.output.add("Conditions: " + DimensionRegistry.getConditions(event.world));
+		event.output.add("Dim: " + EnvironState.getDimensionId() + "/" + EnvironState.getDimensionName());
+		event.output.add("Biome: " + EnvironState.getBiomeName());
+		event.output.add("Conditions: " + EnvironState.getConditions());
 	}
 
 }
