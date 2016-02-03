@@ -24,6 +24,8 @@
 
 package org.blockartistry.mod.DynSurround.network;
 
+import java.util.UUID;
+
 import org.blockartistry.mod.DynSurround.client.DamageEffectHandler;
 import org.blockartistry.mod.DynSurround.client.DamageEffectHandler.HealthData;
 
@@ -34,6 +36,7 @@ import io.netty.buffer.ByteBuf;
 
 public class PacketHealthChange implements IMessage, IMessageHandler<PacketHealthChange, IMessage> {
 
+	private UUID entityId;
 	private float posX;
 	private float posY;
 	private float posZ;
@@ -41,10 +44,11 @@ public class PacketHealthChange implements IMessage, IMessageHandler<PacketHealt
 	private int amount;
 
 	public PacketHealthChange() {
-		
+
 	}
-	
+
 	public PacketHealthChange(final HealthData data) {
+		this.entityId = data.entityId;
 		this.posX = data.posX;
 		this.posY = data.posY;
 		this.posZ = data.posZ;
@@ -53,12 +57,14 @@ public class PacketHealthChange implements IMessage, IMessageHandler<PacketHealt
 	}
 
 	public IMessage onMessage(final PacketHealthChange message, final MessageContext ctx) {
-		DamageEffectHandler.handleEvent(new HealthData(message.posX, message.posY, message.posZ, message.isCritical, message.amount));
+		DamageEffectHandler.handleEvent(new HealthData(message.entityId, message.posX, message.posY, message.posZ,
+				message.isCritical, message.amount));
 		return null;
 	}
 
 	@Override
 	public void fromBytes(final ByteBuf buf) {
+		this.entityId = new UUID(buf.readLong(), buf.readLong());
 		this.posX = buf.readFloat();
 		this.posY = buf.readFloat();
 		this.posZ = buf.readFloat();
@@ -68,6 +74,8 @@ public class PacketHealthChange implements IMessage, IMessageHandler<PacketHealt
 
 	@Override
 	public void toBytes(final ByteBuf buf) {
+		buf.writeLong(this.entityId.getMostSignificantBits());
+		buf.writeLong(this.entityId.getLeastSignificantBits());
 		buf.writeFloat(this.posX);
 		buf.writeFloat(this.posY);
 		buf.writeFloat(this.posZ);

@@ -26,6 +26,7 @@ package org.blockartistry.mod.DynSurround.client;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import org.blockartistry.mod.DynSurround.ModOptions;
 import org.blockartistry.mod.DynSurround.data.BiomeRegistry;
@@ -97,6 +98,10 @@ public class EnvironStateHandler implements IClientEffectHandler {
 				return ep.getUniqueID().equals(player.getUniqueID());
 			}
 			return false;
+		}
+
+		public static boolean isPlayer(final UUID id) {
+			return player.getUniqueID().equals(id);
 		}
 
 		public static boolean isPlayerHurt() {

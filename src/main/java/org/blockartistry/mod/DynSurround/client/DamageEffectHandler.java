@@ -24,6 +24,8 @@
 
 package org.blockartistry.mod.DynSurround.client;
 
+import java.util.UUID;
+
 import org.blockartistry.mod.DynSurround.ModOptions;
 import org.blockartistry.mod.DynSurround.client.EnvironStateHandler.EnvironState;
 import org.blockartistry.mod.DynSurround.client.fx.particle.EntityCriticalPopOffFX;
@@ -54,8 +56,9 @@ import net.minecraftforge.event.entity.living.LivingHurtEvent;
 public final class DamageEffectHandler {
 
 	private static final double DISTANCE_THRESHOLD_SQ = 32 * 32;
-	
+
 	public static class HealthData {
+		public final UUID entityId;
 		public final float posX;
 		public final float posY;
 		public final float posZ;
@@ -63,6 +66,7 @@ public final class DamageEffectHandler {
 		public final int amount;
 
 		public HealthData(final Entity entity, final boolean isCritical, final int amount) {
+			this.entityId = entity.getUniqueID();
 			this.posX = (float) entity.posX;
 			this.posY = (float) entity.posY + entity.height;
 			this.posZ = (float) entity.posZ;
@@ -70,7 +74,9 @@ public final class DamageEffectHandler {
 			this.amount = amount;
 		}
 
-		public HealthData(final float x, final float y, final float z, final boolean isCritical, final int amount) {
+		public HealthData(final UUID id, final float x, final float y, final float z, final boolean isCritical,
+				final int amount) {
+			this.entityId = id;
 			this.posX = x;
 			this.posY = y;
 			this.posZ = z;
@@ -139,14 +145,18 @@ public final class DamageEffectHandler {
 
 	@SideOnly(Side.CLIENT)
 	public static void handleEvent(final HealthData data) {
-		if(!ModOptions.getEnableDamagePopoffs())
+		if (!ModOptions.getEnableDamagePopoffs())
 			return;
-		
+
+		// Don't show the players pop-offs
+		if (EnvironState.isPlayer(data.entityId))
+			return;
+
 		// Don't want to display if too far away.
 		final double distance = EnvironState.distanceToPlayer(data.posX, data.posY, data.posZ);
-		if(distance >= DISTANCE_THRESHOLD_SQ)
+		if (distance >= DISTANCE_THRESHOLD_SQ)
 			return;
-		
+
 		final World world = EnvironState.getWorld();
 		final EffectRenderer renderer = Minecraft.getMinecraft().effectRenderer;
 		EntityFX fx;
