@@ -41,6 +41,10 @@ import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.item.EntityBoat;
+import net.minecraft.entity.item.EntityMinecart;
+import net.minecraft.entity.passive.EntityHorse;
+import net.minecraft.entity.passive.EntityPig;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.potion.Potion;
 import net.minecraft.world.World;
@@ -148,6 +152,10 @@ public class EnvironStateHandler implements IClientEffectHandler {
 			return player.isInWater();
 		}
 
+		public static boolean isPlayerRiding() {
+			return player.isRiding();
+		}
+
 		public static World getWorld() {
 			return world;
 		}
@@ -173,6 +181,11 @@ public class EnvironStateHandler implements IClientEffectHandler {
 	private static final String CONDITION_TOKEN_INWATER = "inwater";
 	private static final String CONDITION_TOKEN_INVISIBLE = "invisible";
 	private static final String CONDITION_TOKEN_BLIND = "blind";
+	private static final String CONDITION_TOKEN_MINECART = "ridingminecart";
+	private static final String CONDITION_TOKEN_HORSE = "ridinghorse";
+	private static final String CONDITION_TOKEN_BOAT = "ridingboat";
+	private static final String CONDITION_TOKEN_PIG = "ridingpig";
+	private static final String CONDITION_TOKEN_RIDING = "riding";
 	private static final char CONDITION_SEPARATOR = '#';
 
 	private static String getPlayerConditions(final EntityPlayer player) {
@@ -197,6 +210,19 @@ public class EnvironStateHandler implements IClientEffectHandler {
 			builder.append(CONDITION_SEPARATOR).append(CONDITION_TOKEN_BLIND);
 		if (EnvironState.isPlayerInWater())
 			builder.append(CONDITION_SEPARATOR).append(CONDITION_TOKEN_INWATER);
+		if (EnvironState.isPlayerRiding()) {
+			builder.append(CONDITION_SEPARATOR);
+			if (player.ridingEntity instanceof EntityMinecart)
+				builder.append(CONDITION_TOKEN_MINECART);
+			else if (player.ridingEntity instanceof EntityHorse)
+				builder.append(CONDITION_TOKEN_HORSE);
+			else if (player.ridingEntity instanceof EntityBoat)
+				builder.append(CONDITION_TOKEN_BOAT);
+			else if (player.ridingEntity instanceof EntityPig)
+				builder.append(CONDITION_TOKEN_PIG);
+			else
+				builder.append(CONDITION_TOKEN_RIDING);
+		}
 		builder.append(CONDITION_SEPARATOR);
 		return builder.toString();
 	}
