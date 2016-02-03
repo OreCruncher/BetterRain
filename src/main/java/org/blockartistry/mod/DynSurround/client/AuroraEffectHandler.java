@@ -24,7 +24,6 @@
 
 package org.blockartistry.mod.DynSurround.client;
 
-import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import java.util.HashSet;
@@ -32,12 +31,10 @@ import java.util.Set;
 
 import org.blockartistry.mod.DynSurround.ModLog;
 import org.blockartistry.mod.DynSurround.ModOptions;
+import org.blockartistry.mod.DynSurround.client.EnvironStateHandler.EnvironState;
 import org.blockartistry.mod.DynSurround.client.aurora.Aurora;
 import org.blockartistry.mod.DynSurround.data.AuroraData;
 import org.blockartistry.mod.DynSurround.util.DiurnalUtils;
-import org.blockartistry.mod.DynSurround.util.PlayerUtils;
-
-import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 
@@ -53,7 +50,7 @@ public final class AuroraEffectHandler implements IClientEffectHandler {
 		if (!ModOptions.getAuroraEnable())
 			return;
 
-		if (auroraDimension != data.dimensionId || PlayerUtils.getClientPlayerDimension() != data.dimensionId) {
+		if (auroraDimension != data.dimensionId || EnvironState.getDimensionId() != data.dimensionId) {
 			auroras.clear();
 			currentAurora = null;
 			auroraDimension = data.dimensionId;
@@ -65,7 +62,7 @@ public final class AuroraEffectHandler implements IClientEffectHandler {
 	}
 
 	private Aurora getClosestAurora() {
-		if (auroraDimension != PlayerUtils.getClientPlayerDimension()) {
+		if (auroraDimension != EnvironState.getDimensionId()) {
 			auroras.clear();
 		}
 
@@ -74,7 +71,7 @@ public final class AuroraEffectHandler implements IClientEffectHandler {
 			return null;
 		}
 
-		final EntityClientPlayerMP player = FMLClientHandler.instance().getClient().thePlayer;
+		final EntityPlayer player = EnvironState.getPlayer();
 		final int playerX = (int) player.posX;
 		final int playerZ = (int) player.posZ;
 		boolean started = false;

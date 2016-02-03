@@ -200,7 +200,7 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 
 	public static void playSoundAtPlayer(EntityPlayer player, final SoundEffect sound, final int tickDelay) {
 		if(player == null)
-			player = Minecraft.getMinecraft().thePlayer;
+			player = EnvironState.getPlayer();
 		
 		final SoundHandler handler = Minecraft.getMinecraft().getSoundHandler();
 		final ISound s = new SpotSound(player, sound);

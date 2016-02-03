@@ -135,7 +135,8 @@
 		"category":"ambient",
 		"sounds":[
 			"ambient/droplets/water1",
-			"ambient/droplets/water2"
+			"ambient/droplets/water2",
+			"ambient/droplets/water3"
 		]
 		
 	},

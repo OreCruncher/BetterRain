@@ -56,7 +56,7 @@ public final class BiomeRegistry {
 	public static final BiomeGenBase UNDERDEEPOCEAN = new FakeBiome(-5, "UnderDOCN");
 	public static final BiomeGenBase UNDERRIVER = new FakeBiome(-6, "UnderRVR");
 
-	public static final SoundEffect WATER_DRIP = new SoundEffect(Module.MOD_ID + ":waterdrops", 0.1F, 1.0F);
+	public static final SoundEffect WATER_DRIP = new SoundEffect(Module.MOD_ID + ":waterdrops", 1.0F, 1.0F);
 
 	// This is for cases when the biome coming in doesn't make sense
 	// and should default to something to avoid crap.
