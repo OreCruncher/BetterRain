@@ -25,6 +25,7 @@
 package org.blockartistry.mod.DynSurround.client;
 
 import org.blockartistry.mod.DynSurround.ModOptions;
+import org.blockartistry.mod.DynSurround.client.EnvironStateHandler.EnvironState;
 import org.blockartistry.mod.DynSurround.client.fx.particle.EntityCriticalPopOffFX;
 import org.blockartistry.mod.DynSurround.client.fx.particle.EntityDamagePopOffFX;
 import org.blockartistry.mod.DynSurround.client.fx.particle.EntityHealPopOffFX;
@@ -139,7 +140,7 @@ public final class DamageEffectHandler {
 		if(!ModOptions.getEnableDamagePopoffs())
 			return;
 
-		final World world = Minecraft.getMinecraft().theWorld;
+		final World world = EnvironState.getWorld();
 		final EffectRenderer renderer = Minecraft.getMinecraft().effectRenderer;
 		EntityFX fx;
 

@@ -33,6 +33,7 @@ import org.blockartistry.mod.DynSurround.data.DimensionRegistry;
 import org.blockartistry.mod.DynSurround.event.DiagnosticEvent;
 import org.blockartistry.mod.DynSurround.util.PlayerUtils;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
@@ -59,7 +60,11 @@ public class EnvironStateHandler implements IClientEffectHandler {
 		private static BiomeGenBase playerBiome = null;
 		private static int dimensionId;
 		private static String dimensionName;
+		private static EntityPlayer player;
+		private static World world;
 		
+		private static int tickCounter;
+
 		public static String getConditions() {
 			return conditions;
 		}
@@ -79,15 +84,31 @@ public class EnvironStateHandler implements IClientEffectHandler {
 		public static String getDimensionName() {
 			return dimensionName;
 		}
+		public static EntityPlayer getPlayer() {
+			return player;
+		}
+		
+		public static World getWorld() {
+			return world;
+		}
+		
+		public static int getTickCounter() {
+			return tickCounter;
+		}
 	}
 
 	@Override
 	public void process(final World world, final EntityPlayer player) {
+		EnvironState.player = player;
+		EnvironState.world = world;
 		EnvironState.conditions = DimensionRegistry.getConditions(world);
 		EnvironState.playerBiome = PlayerUtils.getPlayerBiome(player, false);
 		EnvironState.biomeName = BiomeRegistry.resolveName(EnvironState.playerBiome);
 		EnvironState.dimensionId = world.provider.getDimensionId();
 		EnvironState.dimensionName = world.provider.getDimensionName();
+		
+		if(!Minecraft.getMinecraft().isGamePaused())
+			EnvironState.tickCounter++;
 		
 		// Gather diagnostics if needed
 		if(ModOptions.getEnableDebugLogging()) {

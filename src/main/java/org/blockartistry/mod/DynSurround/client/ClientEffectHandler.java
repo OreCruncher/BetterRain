@@ -34,7 +34,6 @@ import org.blockartistry.mod.DynSurround.data.BiomeRegistry;
 import org.blockartistry.mod.DynSurround.data.DimensionRegistry;
 
 import net.minecraft.block.Block;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.ISound;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.particle.EntityDropParticleFX;
@@ -134,8 +133,6 @@ public class ClientEffectHandler {
 			return;
 
 		if (event.phase == Phase.START) {
-			if (!Minecraft.getMinecraft().isGamePaused())
-				tickCount++;
 			drops.clear();
 			final EntityPlayer player = FMLClientHandler.instance().getClient().thePlayer;
 			for (final IClientEffectHandler handler : effectHandlers)
