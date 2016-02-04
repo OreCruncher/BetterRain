@@ -58,6 +58,7 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 	private static final float VOLUME_INCREMENT = 0.02F;
 	private static final float VOLUME_DECREMENT = 0.015F;
 	private static final float MASTER_SCALE_FACTOR = ModOptions.getMasterSoundScaleFactor();
+	private static final int SPOT_SOUND_RANGE = 6;
 
 	// TODO: Need jump sound
 	private static SoundEffect JUMP_SOUND = null;
@@ -87,9 +88,9 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 			this.repeat = false;
 			this.field_147665_h = 0;
 
-			this.xPosF = (float) player.posX;
-			this.yPosF = (float) player.posY + 1;
-			this.zPosF = (float) player.posZ;
+			this.xPosF = (float) player.posX + RANDOM.nextInt(SPOT_SOUND_RANGE) - RANDOM.nextInt(SPOT_SOUND_RANGE);
+			this.yPosF = (float) player.posY + 1 + RANDOM.nextInt(SPOT_SOUND_RANGE) - RANDOM.nextInt(SPOT_SOUND_RANGE);
+			this.zPosF = (float) player.posZ + RANDOM.nextInt(SPOT_SOUND_RANGE) - RANDOM.nextInt(SPOT_SOUND_RANGE);
 		}
 
 		@Override
@@ -129,8 +130,10 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 
 		public void fadeAway() {
 			this.fadeAway = true;
-			if (this.sound.skipFade)
+			if (this.sound.skipFade) {
+				this.volume = 0.0F;
 				this.donePlaying = true;
+			}
 		}
 
 		public boolean sameSound(final SoundEffect snd) {
@@ -289,7 +292,7 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 		SoundEffect sound = BiomeRegistry.getSpotSound(playerBiome, conditions, RANDOM);
 		if (sound != null)
 			playSoundAtPlayer(player, sound, 0);
-		
+
 		sound = BiomeRegistry.getSpotSound(BiomeRegistry.PLAYER, conditions, RANDOM);
 		if (sound != null)
 			playSoundAtPlayer(player, sound, 0);
