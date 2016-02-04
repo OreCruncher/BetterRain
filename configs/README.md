@@ -13,3 +13,7 @@ Turns off the dust drop particle effect for Vanilla blocks.
 **safeunderground.json**  
 [biome.Config Files]    
 Turns off the spot sounds for the Underground biome.  No more monster growls or rock fall sound effects.
+
+**noplayereffects.json**  
+[biome.Config Files]  
+Turns off the heartbeat and tummy grumble player effects.
