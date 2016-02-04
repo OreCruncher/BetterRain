@@ -1,0 +1,14 @@
+{
+	"entries":[
+		{
+			"blocks":[
+				"minecraft:stone",
+				"minecraft:dirt",
+				"minecraft:gravel",
+				"minecraft:sand"
+			],
+			"effectReset":true
+		}
+		
+	]
+}

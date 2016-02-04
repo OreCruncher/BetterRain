@@ -1,0 +1,18 @@
+{
+	"entries":[
+		{
+			"biomeName":"Underground",
+			"soundReset":true,
+			"sounds":[
+				{
+					"sound":"dsurround:underground",
+					"volume":0.3
+				}
+				
+			]
+			
+		}
+		
+	]
+	
+}
