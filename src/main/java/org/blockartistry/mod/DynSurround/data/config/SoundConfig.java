@@ -44,4 +44,6 @@ public class SoundConfig {
 	public Integer repeatDelay = null;
 	@SerializedName("skipFade")
 	public Boolean skipFade = null;
+	@SerializedName("step")
+	public Boolean step = null;
 }

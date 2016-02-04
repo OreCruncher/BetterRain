@@ -62,7 +62,7 @@ public class BlockEffectHandler implements IClientEffectHandler {
 		final int playerX = MathHelper.floor_double(player.posX);
 		final int playerY = MathHelper.floor_double(player.posY);
 		final int playerZ = MathHelper.floor_double(player.posZ);
-		
+
 		final String conditions = EnvironState.getConditions();
 
 		final BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
@@ -79,9 +79,16 @@ public class BlockEffectHandler implements IClientEffectHandler {
 							effect.doEffect(block, world, x, y, z, random);
 				}
 				final SoundEffect sound = BlockRegistry.getSound(block, random, conditions);
-				if(sound != null)
+				if (sound != null)
 					sound.doEffect(block, world, x, y, z, random);
 			}
+		}
+
+		if (EnvironState.isPlayerOnGround() && EnvironState.isPlayerMoving()) {
+			final Block block = world.getBlockState(new BlockPos(playerX, playerY - 1, playerZ)).getBlock();
+			final SoundEffect sound = BlockRegistry.getStepSound(block, random, conditions);
+			if (sound != null)
+				sound.doEffect(block, world, playerX, playerY - 1, playerZ, random);
 		}
 	}
 

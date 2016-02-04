@@ -48,8 +48,12 @@ public final class BlockConfig {
 		public Boolean soundReset = null;
 		@SerializedName("effectReset")
 		public Boolean effectReset = null;
+		@SerializedName("stepSoundReset")
+		public Boolean stepSoundReset = null;
 		@SerializedName("chance")
 		public Integer chance = null;
+		@SerializedName("stepChance")
+		public Integer stepChance = null;
 		@SerializedName("sounds")
 		public List<SoundConfig> sounds = ImmutableList.of();
 		@SerializedName("effects")

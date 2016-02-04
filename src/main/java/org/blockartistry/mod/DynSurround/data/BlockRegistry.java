@@ -54,7 +54,9 @@ public final class BlockRegistry {
 	private static final class Entry {
 		public final Block block;
 		public int chance = 100;
+		public int stepChance = 100;
 		public final List<SoundEffect> sounds = new ArrayList<SoundEffect>();
+		public final List<SoundEffect> stepSounds = new ArrayList<SoundEffect>();
 		public final List<BlockEffect> effects = new ArrayList<BlockEffect>();
 
 		public Entry(final Block block) {
@@ -70,6 +72,14 @@ public final class BlockRegistry {
 				builder.append(" chance:").append(this.chance);
 				builder.append("; sounds [");
 				for (final SoundEffect sound : this.sounds)
+					builder.append(sound.toString()).append(',');
+				builder.append(']');
+			}
+
+			if (!this.stepSounds.isEmpty()) {
+				builder.append(" chance:").append(this.stepChance);
+				builder.append("; step sounds [");
+				for (final SoundEffect sound : this.stepSounds)
 					builder.append(sound.toString()).append(',');
 				builder.append(']');
 			}
@@ -99,14 +109,11 @@ public final class BlockRegistry {
 		return entry != null ? entry.effects : null;
 	}
 
-	public static SoundEffect getSound(final Block block, final Random random, final String conditions) {
-		final Entry entry = registry.get(block);
-		if (entry == null || entry.sounds.isEmpty() || random.nextInt(entry.chance) != 0)
-			return null;
-
+	private static SoundEffect getRandomSound(final List<SoundEffect> list, final Random random,
+			final String conditions) {
 		int totalWeight = 0;
 		final List<SoundEffect> candidates = new ArrayList<SoundEffect>();
-		for (final SoundEffect s : entry.sounds)
+		for (final SoundEffect s : list)
 			if (s.matches(conditions)) {
 				candidates.add(s);
 				totalWeight += s.weight;
@@ -123,6 +130,20 @@ public final class BlockRegistry {
 			;
 
 		return candidates.get(i - 1);
+	}
+
+	public static SoundEffect getSound(final Block block, final Random random, final String conditions) {
+		final Entry entry = registry.get(block);
+		if (entry == null || entry.sounds.isEmpty() || random.nextInt(entry.chance) != 0)
+			return null;
+		return getRandomSound(entry.sounds, random, conditions);
+	}
+
+	public static SoundEffect getStepSound(final Block block, final Random random, final String conditions) {
+		final Entry entry = registry.get(block);
+		if (entry == null || entry.stepSounds.isEmpty() || random.nextInt(entry.stepChance) != 0)
+			return null;
+		return getRandomSound(entry.stepSounds, random, conditions);
 	}
 
 	private static void processConfig() {
@@ -172,17 +193,25 @@ public final class BlockRegistry {
 				// Reset of a block clears all registry
 				if (entry.soundReset != null && entry.soundReset.booleanValue())
 					blockData.sounds.clear();
+				if (entry.stepSoundReset != null && entry.stepSoundReset.booleanValue())
+					blockData.stepSounds.clear();
 				if (entry.effectReset != null && entry.effectReset.booleanValue())
 					blockData.effects.clear();
 
 				if (entry.chance != null)
 					blockData.chance = entry.chance.intValue();
+				if (entry.stepChance != null)
+					blockData.stepChance = entry.stepChance.intValue();
 
 				for (final SoundConfig sr : entry.sounds) {
 					if (sr.sound != null) {
 						// Block sounds are always spot sounds
 						sr.spotSound = true;
-						blockData.sounds.add(new SoundEffect(sr));
+						final SoundEffect eff = new SoundEffect(sr);
+						if (sr.step != null && sr.step.booleanValue())
+							blockData.stepSounds.add(eff);
+						else
+							blockData.sounds.add(eff);
 					}
 				}
 
