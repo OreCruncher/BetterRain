@@ -106,7 +106,7 @@ public class EnvironStateHandler implements IClientEffectHandler {
 		}
 
 		public static boolean isPlayer(final UUID id) {
-			return player.getUniqueID().equals(id);
+			return player == null ? false : player.getUniqueID().equals(id);
 		}
 
 		public static boolean isPlayerHurt() {

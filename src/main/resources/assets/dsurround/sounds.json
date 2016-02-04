@@ -205,6 +205,36 @@
 			"ambient/steve/tummy3"
 		]
 		
+	},
+	"floorsqueak":{
+		"category":"ambient",
+		"sounds":[
+			"ambient/miscblocks/floorsqueak1",
+			"ambient/miscblocks/floorsqueak2",
+			"ambient/miscblocks/floorsqueak3"
+		]
+		
+	},
+	"gravelwalk":{
+		"category":"ambient",
+		"sounds":[
+			"ambient/miscblocks/gravelwalk1",
+			"ambient/miscblocks/gravelwalk2",
+			"ambient/miscblocks/gravelwalk3",
+			"ambient/miscblocks/gravelwalk4",
+			"ambient/miscblocks/gravelwalk5",
+			"ambient/miscblocks/gravelwalk6"
+			
+		]
+		
+	},
+	"stonewalk":{
+		"category":"ambient",
+		"sounds":[
+			"ambient/miscblocks/gravelwalk6",
+			"ambient/miscblocks/rockkick1"
+		]
+		
 	}
 	
 }
