@@ -156,6 +156,14 @@ public class EnvironStateHandler implements IClientEffectHandler {
 			return player.isRiding();
 		}
 
+		public static boolean isPlayerOnGround() {
+			return player.onGround;
+		}
+
+		public static boolean isPlayerMoving() {
+			return player.distanceWalkedModified != player.prevDistanceWalkedModified;
+		}
+
 		public static World getWorld() {
 			return world;
 		}

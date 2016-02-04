@@ -78,9 +78,16 @@ public class BlockEffectHandler implements IClientEffectHandler {
 				}
 
 				final SoundEffect sound = BlockRegistry.getSound(block, random, conditions);
-				if(sound != null)
+				if (sound != null)
 					sound.doEffect(block, world, x, y, z, random);
 			}
+		}
+
+		if (EnvironState.isPlayerOnGround() && EnvironState.isPlayerMoving()) {
+			final Block block = world.getBlock(playerX, playerY - 2, playerZ);
+			final SoundEffect sound = BlockRegistry.getStepSound(block, random, conditions);
+			if (sound != null)
+				sound.doEffect(block, world, playerX, playerY - 2, playerZ, random);
 		}
 	}
 
