@@ -36,9 +36,10 @@ public class EntityDustJetFX extends EntityJetFX {
 
 	protected static final class EntityDustFX extends EntityBlockDustFX {
 
-		public EntityDustFX(final World world, final double x, final double y, final double z, final IBlockState block) {
+		public EntityDustFX(final World world, final double x, final double y, final double z,
+				final IBlockState block) {
 			super(world, x + RANDOM.nextGaussian() * 0.2D, y, z + RANDOM.nextGaussian() * 0.2D, 0, 0, 0, block);
-			this.multipleParticleScaleBy(0.2F);
+			this.multipleParticleScaleBy((float) (0.3F + RANDOM.nextGaussian() / 30.0F));
 			this.setPosition(this.posX, this.posY, this.posZ);
 		}
 
