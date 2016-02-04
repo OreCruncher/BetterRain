@@ -96,6 +96,7 @@ public final class BlockRegistry {
 
 	public static void initialize() {
 
+		registry.clear();
 		processConfig();
 
 		ModLog.info("*** BLOCK REGISTRY ***");

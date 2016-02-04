@@ -110,6 +110,60 @@
 				
 			]
 			
+		},
+		{
+			"blocks":[
+				"minecraft:planks",
+				"minecraft:oak_stairs",
+				"minecraft:spruce_stairs",
+				"minecraft:jungle_stairs",
+				"minecraft:birch_stairs",
+				"minecraft:acacia_stairs",
+				"minecraft:dark_oak_stairs"
+			],
+			"stepChance":150,
+			"sounds":[
+				{
+					"sound":"dsurround:floorsqueak",
+					"volume":0.2,
+					"variable":true,
+					"step":true
+				}
+				
+			]
+			
+		},
+		{
+			"blocks":[
+				"minecraft:gravel"
+			],
+			"stepChance":50,
+			"sounds":[
+				{
+					"sound":"dsurround:gravelwalk",
+					"volume":1.0,
+					"variable":true,
+					"step":true
+				}
+				
+			]
+			
+		},
+		{
+			"blocks":[
+				"minecraft:stone"
+			],
+			"stepChance":150,
+			"sounds":[
+				{
+					"sound":"dsurround:stonewalk",
+					"volume":1.0,
+					"variable":true,
+					"step":true
+				}
+				
+			]
+			
 		}
 		
 	]
