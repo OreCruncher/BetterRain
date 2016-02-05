@@ -42,6 +42,8 @@ import org.blockartistry.mod.DynSurround.data.config.BlockConfig;
 import org.blockartistry.mod.DynSurround.data.config.BlockConfig.Effect;
 import org.blockartistry.mod.DynSurround.data.config.SoundConfig;
 
+import cpw.mods.fml.common.Loader;
+import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.registry.GameData;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
@@ -147,10 +149,22 @@ public final class BlockRegistry {
 	}
 
 	private static void processConfig() {
+		
+		// Load block config for Dynamic Surroundings
 		try {
 			process(BlockConfig.load("blocks"));
 		} catch (final Exception e) {
 			e.printStackTrace();
+		}
+		
+		// Check for each of the loaded mods to see if there is
+		// a config file embedded.
+		for(final ModContainer mod: Loader.instance().getActiveModList()) {
+			try {
+				process(BlockConfig.load(mod.getModId() + "_blocks"));
+			} catch (final Exception e) {
+				e.printStackTrace();
+			}
 		}
 
 		final String[] configFiles = ModOptions.getBlockConfigFiles();
