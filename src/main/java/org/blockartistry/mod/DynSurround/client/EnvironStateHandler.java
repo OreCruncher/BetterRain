@@ -72,6 +72,9 @@ public class EnvironStateHandler implements IClientEffectHandler {
 		private static EntityPlayer player;
 		private static boolean freezing;
 		private static boolean fog;
+		private static boolean humid;
+		private static boolean dry;
+		private static String temperatureCategory = "";
 
 		private static int tickCounter;
 
@@ -92,6 +95,8 @@ public class EnvironStateHandler implements IClientEffectHandler {
 		private static final String CONDITION_TOKEN_RIDING = "riding";
 		private static final String CONDITION_TOKEN_FREEZING = "freezing";
 		private static final String CONDITION_TOKEN_FOG = "fog";
+		private static final String CONDITION_TOKEN_HUMID = "humid";
+		private static final String CONDITION_TOKEN_DRY = "dry";
 		private static final char CONDITION_SEPARATOR = '#';
 
 		private static String getPlayerConditions(final EntityPlayer player) {
@@ -120,6 +125,10 @@ public class EnvironStateHandler implements IClientEffectHandler {
 				builder.append(CONDITION_SEPARATOR).append(CONDITION_TOKEN_FREEZING);
 			if (isFoggy())
 				builder.append(CONDITION_SEPARATOR).append(CONDITION_TOKEN_FOG);
+			if (isHumid())
+				builder.append(CONDITION_SEPARATOR).append(CONDITION_TOKEN_HUMID);
+			if (isDry())
+				builder.append(CONDITION_SEPARATOR).append(CONDITION_TOKEN_DRY);
 			if (isPlayerRiding()) {
 				builder.append(CONDITION_SEPARATOR);
 				if (player.ridingEntity instanceof EntityMinecart)
@@ -133,6 +142,7 @@ public class EnvironStateHandler implements IClientEffectHandler {
 				else
 					builder.append(CONDITION_TOKEN_RIDING);
 			}
+			builder.append(CONDITION_SEPARATOR).append(temperatureCategory);
 			builder.append(CONDITION_SEPARATOR);
 			return builder.toString();
 		}
@@ -147,7 +157,11 @@ public class EnvironStateHandler implements IClientEffectHandler {
 			EnvironState.fog = FogEffectHandler.currentFogLevel() >= 0.01F;
 
 			final BlockPos playerPos = new BlockPos(player.posX, player.posY, player.posZ);
-			EnvironState.freezing = PlayerUtils.getPlayerBiome(player, true).getFloatTemperature(playerPos) < 0.15F;
+			final BiomeGenBase trueBiome = PlayerUtils.getPlayerBiome(player, true);
+			EnvironState.freezing = trueBiome.getFloatTemperature(playerPos) < 0.15F;
+			EnvironState.temperatureCategory = "tc" + trueBiome.getTempCategory().name().toLowerCase();
+			EnvironState.humid = trueBiome.isHighHumidity();
+			EnvironState.dry = trueBiome.getFloatRainfall() == 0;
 
 			if (!Minecraft.getMinecraft().isGamePaused())
 				EnvironState.tickCounter++;
@@ -246,9 +260,17 @@ public class EnvironStateHandler implements IClientEffectHandler {
 		public static boolean isFreezing() {
 			return freezing;
 		}
-		
+
 		public static boolean isFoggy() {
 			return fog;
+		}
+
+		public static boolean isHumid() {
+			return humid;
+		}
+
+		public static boolean isDry() {
+			return dry;
 		}
 
 		public static World getWorld() {
