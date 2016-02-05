@@ -26,7 +26,10 @@ package org.blockartistry.mod.DynSurround.client;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
+@SideOnly(Side.CLIENT)
 public class PotionParticleScrubHandler implements IClientEffectHandler {
 
 	@Override

@@ -141,6 +141,8 @@ public class ClientEffectHandler {
 			final BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
 			for (final EntityDropParticleFX drop : drops) {
 				if (drop.isEntityAlive()) {
+					if (drop.posY < 1)
+						continue;
 					final int x = MathHelper.floor_double(drop.posX);
 					final int y = MathHelper.floor_double(drop.posY + 0.3D);
 					final int z = MathHelper.floor_double(drop.posZ);
@@ -149,10 +151,10 @@ public class ClientEffectHandler {
 					if (block != Blocks.air && !block.isLeaves(world, pos)) {
 						// Find out where it is going to hit
 						BlockPos soundPos = pos.down();
-						while ((block = world.getBlockState(soundPos).getBlock()) == Blocks.air)
+						while (soundPos.getY() > 0 && (block = world.getBlockState(soundPos).getBlock()) == Blocks.air)
 							soundPos = soundPos.down();
 
-						if (block.getMaterial().isSolid()) {
+						if (soundPos.getY() > 0 && block.getMaterial().isSolid()) {
 							final int distance = y - soundPos.getY();
 							PlayerSoundEffectHandler.playSoundAt(soundPos, BiomeRegistry.WATER_DRIP, 40 + distance * 2);
 						}

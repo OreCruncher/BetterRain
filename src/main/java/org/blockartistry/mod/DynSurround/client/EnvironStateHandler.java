@@ -42,6 +42,7 @@ import net.minecraft.entity.passive.EntityHorse;
 import net.minecraft.entity.passive.EntityPig;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.potion.Potion;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.MinecraftForge;
@@ -69,8 +70,88 @@ public class EnvironStateHandler implements IClientEffectHandler {
 		private static int dimensionId;
 		private static String dimensionName;
 		private static EntityPlayer player;
+		private static boolean freezing;
+		private static boolean fog;
 
 		private static int tickCounter;
+
+		private static final String CONDITION_TOKEN_HURT = "hurt";
+		private static final String CONDITION_TOKEN_HUNGRY = "hungry";
+		private static final String CONDITION_TOKEN_BURNING = "burning";
+		private static final String CONDITION_TOKEN_NOAIR = "noair";
+		private static final String CONDITION_TOKEN_FLYING = "flying";
+		private static final String CONDITION_TOKEN_SPRINTING = "sprinting";
+		private static final String CONDITION_TOKEN_INLAVA = "inlava";
+		private static final String CONDITION_TOKEN_INWATER = "inwater";
+		private static final String CONDITION_TOKEN_INVISIBLE = "invisible";
+		private static final String CONDITION_TOKEN_BLIND = "blind";
+		private static final String CONDITION_TOKEN_MINECART = "ridingminecart";
+		private static final String CONDITION_TOKEN_HORSE = "ridinghorse";
+		private static final String CONDITION_TOKEN_BOAT = "ridingboat";
+		private static final String CONDITION_TOKEN_PIG = "ridingpig";
+		private static final String CONDITION_TOKEN_RIDING = "riding";
+		private static final String CONDITION_TOKEN_FREEZING = "freezing";
+		private static final String CONDITION_TOKEN_FOG = "fog";
+		private static final char CONDITION_SEPARATOR = '#';
+
+		private static String getPlayerConditions(final EntityPlayer player) {
+			final StringBuilder builder = new StringBuilder();
+			if (isPlayerHurt())
+				builder.append(CONDITION_SEPARATOR).append(CONDITION_TOKEN_HURT);
+			if (isPlayerHungry())
+				builder.append(CONDITION_SEPARATOR).append(CONDITION_TOKEN_HUNGRY);
+			if (isPlayerBurning())
+				builder.append(CONDITION_SEPARATOR).append(CONDITION_TOKEN_BURNING);
+			if (isPlayerSuffocating())
+				builder.append(CONDITION_SEPARATOR).append(CONDITION_TOKEN_NOAIR);
+			if (isPlayerFlying())
+				builder.append(CONDITION_SEPARATOR).append(CONDITION_TOKEN_FLYING);
+			if (isPlayerSprinting())
+				builder.append(CONDITION_SEPARATOR).append(CONDITION_TOKEN_SPRINTING);
+			if (isPlayerInLava())
+				builder.append(CONDITION_SEPARATOR).append(CONDITION_TOKEN_INLAVA);
+			if (isPlayerInvisible())
+				builder.append(CONDITION_SEPARATOR).append(CONDITION_TOKEN_INVISIBLE);
+			if (isPlayerBlind())
+				builder.append(CONDITION_SEPARATOR).append(CONDITION_TOKEN_BLIND);
+			if (isPlayerInWater())
+				builder.append(CONDITION_SEPARATOR).append(CONDITION_TOKEN_INWATER);
+			if (isFreezing())
+				builder.append(CONDITION_SEPARATOR).append(CONDITION_TOKEN_FREEZING);
+			if (isFoggy())
+				builder.append(CONDITION_SEPARATOR).append(CONDITION_TOKEN_FOG);
+			if (isPlayerRiding()) {
+				builder.append(CONDITION_SEPARATOR);
+				if (player.ridingEntity instanceof EntityMinecart)
+					builder.append(CONDITION_TOKEN_MINECART);
+				else if (player.ridingEntity instanceof EntityHorse)
+					builder.append(CONDITION_TOKEN_HORSE);
+				else if (player.ridingEntity instanceof EntityBoat)
+					builder.append(CONDITION_TOKEN_BOAT);
+				else if (player.ridingEntity instanceof EntityPig)
+					builder.append(CONDITION_TOKEN_PIG);
+				else
+					builder.append(CONDITION_TOKEN_RIDING);
+			}
+			builder.append(CONDITION_SEPARATOR);
+			return builder.toString();
+		}
+
+		private static void tick(final World world, final EntityPlayer player) {
+			EnvironState.player = player;
+			EnvironState.conditions = DimensionRegistry.getConditions(world) + getPlayerConditions(player);
+			EnvironState.playerBiome = PlayerUtils.getPlayerBiome(player, false);
+			EnvironState.biomeName = BiomeRegistry.resolveName(EnvironState.playerBiome);
+			EnvironState.dimensionId = world.provider.getDimensionId();
+			EnvironState.dimensionName = world.provider.getDimensionName();
+			EnvironState.fog = FogEffectHandler.currentFogLevel() >= 0.01F;
+
+			final BlockPos playerPos = new BlockPos(player.posX, player.posY, player.posZ);
+			EnvironState.freezing = PlayerUtils.getPlayerBiome(player, true).getFloatTemperature(playerPos) < 0.15F;
+
+			if (!Minecraft.getMinecraft().isGamePaused())
+				EnvironState.tickCounter++;
+		}
 
 		public static String getConditions() {
 			return conditions;
@@ -93,7 +174,7 @@ public class EnvironStateHandler implements IClientEffectHandler {
 		}
 
 		public static EntityPlayer getPlayer() {
-			if(player == null)
+			if (player == null)
 				player = Minecraft.getMinecraft().thePlayer;
 			return player;
 		}
@@ -111,11 +192,11 @@ public class EnvironStateHandler implements IClientEffectHandler {
 		}
 
 		public static boolean isPlayerHurt() {
-			return (getPlayer().getHealth() / getPlayer().getMaxHealth()) <= 0.40F;
+			return (getPlayer().getHealth() / getPlayer().getMaxHealth()) < 0.40F;
 		}
 
 		public static boolean isPlayerHungry() {
-			return ((float) getPlayer().getFoodStats().getFoodLevel() / 20.0F) <= 0.40F;
+			return (getPlayer().getFoodStats().getFoodLevel() / 20.0F) < 0.40F;
 		}
 
 		public static boolean isPlayerBurning() {
@@ -159,7 +240,15 @@ public class EnvironStateHandler implements IClientEffectHandler {
 		}
 
 		public static boolean isPlayerMoving() {
-			return getPlayer().distanceWalkedModified != getPlayer().prevDistanceWalkedModified;
+			return getPlayer().distanceWalkedModified != player.prevDistanceWalkedModified;
+		}
+
+		public static boolean isFreezing() {
+			return freezing;
+		}
+		
+		public static boolean isFoggy() {
+			return fog;
 		}
 
 		public static World getWorld() {
@@ -177,73 +266,9 @@ public class EnvironStateHandler implements IClientEffectHandler {
 		}
 	}
 
-	private static final String CONDITION_TOKEN_HURT = "hurt";
-	private static final String CONDITION_TOKEN_HUNGRY = "hungry";
-	private static final String CONDITION_TOKEN_BURNING = "burning";
-	private static final String CONDITION_TOKEN_NOAIR = "noair";
-	private static final String CONDITION_TOKEN_FLYING = "flying";
-	private static final String CONDITION_TOKEN_SPRINTING = "sprinting";
-	private static final String CONDITION_TOKEN_INLAVA = "inlava";
-	private static final String CONDITION_TOKEN_INWATER = "inwater";
-	private static final String CONDITION_TOKEN_INVISIBLE = "invisible";
-	private static final String CONDITION_TOKEN_BLIND = "blind";
-	private static final String CONDITION_TOKEN_MINECART = "ridingminecart";
-	private static final String CONDITION_TOKEN_HORSE = "ridinghorse";
-	private static final String CONDITION_TOKEN_BOAT = "ridingboat";
-	private static final String CONDITION_TOKEN_PIG = "ridingpig";
-	private static final String CONDITION_TOKEN_RIDING = "riding";
-	private static final char CONDITION_SEPARATOR = '#';
-
-	private static String getPlayerConditions(final EntityPlayer player) {
-		final StringBuilder builder = new StringBuilder();
-		if (EnvironState.isPlayerHurt())
-			builder.append(CONDITION_SEPARATOR).append(CONDITION_TOKEN_HURT);
-		if (EnvironState.isPlayerHungry())
-			builder.append(CONDITION_SEPARATOR).append(CONDITION_TOKEN_HUNGRY);
-		if (EnvironState.isPlayerBurning())
-			builder.append(CONDITION_SEPARATOR).append(CONDITION_TOKEN_BURNING);
-		if (EnvironState.isPlayerSuffocating())
-			builder.append(CONDITION_SEPARATOR).append(CONDITION_TOKEN_NOAIR);
-		if (EnvironState.isPlayerFlying())
-			builder.append(CONDITION_SEPARATOR).append(CONDITION_TOKEN_FLYING);
-		if (EnvironState.isPlayerSprinting())
-			builder.append(CONDITION_SEPARATOR).append(CONDITION_TOKEN_SPRINTING);
-		if (EnvironState.isPlayerInLava())
-			builder.append(CONDITION_SEPARATOR).append(CONDITION_TOKEN_INLAVA);
-		if (EnvironState.isPlayerInvisible())
-			builder.append(CONDITION_SEPARATOR).append(CONDITION_TOKEN_INVISIBLE);
-		if (EnvironState.isPlayerBlind())
-			builder.append(CONDITION_SEPARATOR).append(CONDITION_TOKEN_BLIND);
-		if (EnvironState.isPlayerInWater())
-			builder.append(CONDITION_SEPARATOR).append(CONDITION_TOKEN_INWATER);
-		if (EnvironState.isPlayerRiding()) {
-			builder.append(CONDITION_SEPARATOR);
-			if (player.ridingEntity instanceof EntityMinecart)
-				builder.append(CONDITION_TOKEN_MINECART);
-			else if (player.ridingEntity instanceof EntityHorse)
-				builder.append(CONDITION_TOKEN_HORSE);
-			else if (player.ridingEntity instanceof EntityBoat)
-				builder.append(CONDITION_TOKEN_BOAT);
-			else if (player.ridingEntity instanceof EntityPig)
-				builder.append(CONDITION_TOKEN_PIG);
-			else
-				builder.append(CONDITION_TOKEN_RIDING);
-		}
-		builder.append(CONDITION_SEPARATOR);
-		return builder.toString();
-	}
-
 	@Override
 	public void process(final World world, final EntityPlayer player) {
-		EnvironState.player = player;
-		EnvironState.conditions = DimensionRegistry.getConditions(world) + getPlayerConditions(player);
-		EnvironState.playerBiome = PlayerUtils.getPlayerBiome(player, false);
-		EnvironState.biomeName = BiomeRegistry.resolveName(EnvironState.playerBiome);
-		EnvironState.dimensionId = world.provider.getDimensionId();
-		EnvironState.dimensionName = world.provider.getDimensionName();
-
-		if (!Minecraft.getMinecraft().isGamePaused())
-			EnvironState.tickCounter++;
+		EnvironState.tick(world, player);
 
 		// Gather diagnostics if needed
 		if (ModOptions.getEnableDebugLogging()) {

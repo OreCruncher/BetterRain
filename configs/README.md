@@ -4,7 +4,9 @@ This folder contains Json configuration files that modify sound and visual effec
 1. Download the configuration file and place it into your `./minecraft/config/dsurround` directory.
 2. Edit the `dsurround.cfg` file to let Dynamic Surroundings know to process the configuration file during startup.
 
-The following configuration files are available for use.  The name in brackets after the file name tells what section in the dsurround.cfg file needs to be modified to add the file to the configuration. 
+The following configuration files are available for use.  The name in brackets after the file name tells what section in the dsurround.cfg file needs to be modified to add the file to the configuration.
+
+Keep in mind that configuration files are processed in the order they are listed in `dsurround.cfg`.  If you are adding a configuration that removes effects (like those in safeunderground.json) they should be listed last.
 
 **nodust.json**  
 [blocks.Config Files]    
