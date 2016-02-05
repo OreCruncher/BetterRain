@@ -28,6 +28,8 @@ import org.blockartistry.mod.DynSurround.Module;
 import org.blockartistry.mod.DynSurround.client.IAtmosRenderer;
 import org.blockartistry.mod.DynSurround.client.WeatherUtils;
 import org.blockartistry.mod.DynSurround.data.BiomeRegistry;
+import org.blockartistry.mod.DynSurround.data.DimensionRegistry;
+import org.blockartistry.mod.DynSurround.util.Color;
 import org.blockartistry.mod.DynSurround.util.XorShiftRandom;
 import org.lwjgl.opengl.GL11;
 
@@ -40,6 +42,7 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.client.IRenderHandler;
 
@@ -68,6 +71,12 @@ public class StormRenderer implements IAtmosRenderer {
 		}
 	}
 
+	private static int getPrecipitationHeight(final World world, final int x, final int z) {
+		if (world.provider.dimensionId == -1)
+			return 0;
+		return world.getPrecipitationHeight(x, z);
+	}
+
 	@Override
 	public void render(final EntityRenderer renderer, final float partialTicks) {
 		// Set our rain/snow/dust textures
@@ -80,6 +89,9 @@ public class StormRenderer implements IAtmosRenderer {
 			return;
 		}
 
+		if(!DimensionRegistry.hasWeather(world))
+			return;
+		
 		final float rainStrength = world.getRainStrength(partialTicks);
 		if (rainStrength <= 0.0F)
 			return;
@@ -114,7 +126,7 @@ public class StormRenderer implements IAtmosRenderer {
 		float f5 = (float) renderer.rendererUpdateCount + partialTicks;
 
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-
+		
 		final Tessellator tessellator = Tessellator.instance;
 		for (int locZ = playerZ - b0; locZ <= playerZ + b0; ++locZ) {
 			for (int locX = playerX - b0; locX <= playerX + b0; ++locX) {
@@ -125,7 +137,7 @@ public class StormRenderer implements IAtmosRenderer {
 				final boolean hasDust = WeatherUtils.biomeHasDust(biome);
 
 				if (hasDust || BiomeRegistry.hasPrecipitation(biome)) {
-					int k1 = world.getPrecipitationHeight(locX, locZ);
+					int k1 = getPrecipitationHeight(world, locX, locZ);
 					int l1 = playerY - b0;
 					int i2 = playerY + b0;
 
@@ -170,6 +182,7 @@ public class StormRenderer implements IAtmosRenderer {
 							final double deltaZ = (double) ((float) locZ + 0.5F) - entity.posZ;
 							final float dist = MathHelper.sqrt_double(deltaX * deltaX + deltaZ * deltaZ) / (float) b0;
 							tessellator.setBrightness(world.getLightBrightnessForSkyBlocks(locX, j2, locZ, 0));
+							
 							tessellator.setColorRGBA_F(1.0F, 1.0F, 1.0F,
 									((1.0F - dist * dist) * 0.5F + 0.5F) * alphaRatio);
 							tessellator.setTranslation(-spawnX * 1.0D, -spawnY * 1.0D, -spawnZ * 1.0D);
@@ -216,7 +229,14 @@ public class StormRenderer implements IAtmosRenderer {
 							final float dist = MathHelper.sqrt_double(deltaX * deltaX + deltaZ * deltaZ) / (float) b0;
 							tessellator.setBrightness(
 									(world.getLightBrightnessForSkyBlocks(locX, j2, locZ, 0) * 3 + 15728880) / 4);
-							tessellator.setColorRGBA_F(1.0F, 1.0F, 1.0F,
+
+							Color color = new Color(1.0F, 1.0F, 1.0F);
+							if(world.provider.dimensionId == -1) {
+								final Color c = BiomeRegistry.getDustColor(biome);
+								if(color != null)
+									color.mix(c);
+							}
+							tessellator.setColorRGBA_F(color.red, color.green, color.blue,
 									((1.0F - dist * dist) * 0.3F + 0.5F) * alphaRatio);
 							tessellator.setTranslation(-spawnX * 1.0D, -spawnY * 1.0D, -spawnZ * 1.0D);
 							tessellator.addVertexWithUV((double) ((float) locX - f6) + 0.5D, (double) l1,
