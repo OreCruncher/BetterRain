@@ -31,12 +31,18 @@ import org.blockartistry.mod.DynSurround.Module;
 import org.blockartistry.mod.DynSurround.data.config.DimensionConfig;
 import org.blockartistry.mod.DynSurround.util.DiurnalUtils;
 
+import cpw.mods.fml.common.Loader;
+import foxie.calendar.api.CalendarAPI;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldProvider;
 import net.minecraft.world.WorldType;
+import net.minecraftforge.common.DimensionManager;
 
 public final class DimensionRegistry {
+
+	private static final boolean CALENDAR_API = Loader.isModLoaded("CalendarAPI");
+	private static final String SEASON_NOT_AVAILABLE = "noseason";
 
 	private static final TIntObjectHashMap<DimensionRegistry> dimensionData = new TIntObjectHashMap<DimensionRegistry>();
 	private static boolean isFlatWorld = false;
@@ -169,6 +175,17 @@ public final class DimensionRegistry {
 		return this.hasWeather.booleanValue();
 	}
 
+	public String getSeason() {
+		if (!CALENDAR_API)
+			return SEASON_NOT_AVAILABLE;
+		
+		final World world = DimensionManager.getWorld(this.dimensionId);
+		if(world == null)
+			return SEASON_NOT_AVAILABLE;
+
+		return CalendarAPI.getSeasonProvider(this.dimensionId).getSeason(CalendarAPI.getCalendarInstance(world)).getName();
+	}
+
 	protected static DimensionRegistry getData(final int dimensionId) {
 		DimensionRegistry data = dimensionData.get(dimensionId);
 		if (data == null) {
@@ -215,6 +232,10 @@ public final class DimensionRegistry {
 		return getData(world).getHasWeather();
 	}
 
+	public static String getSeason(final World world) {
+		return getData(world).getSeason();
+	}
+
 	private static final String CONDITION_TOKEN_RAINING = "raining";
 	private static final String CONDITION_TOKEN_DAY = "day";
 	private static final String CONDITION_TOKEN_NIGHT = "night";
@@ -230,6 +251,7 @@ public final class DimensionRegistry {
 		builder.append(CONDITION_SEPARATOR).append(world.provider.getDimensionName());
 		if (world.getRainStrength(1.0F) > 0.0F)
 			builder.append(CONDITION_SEPARATOR).append(CONDITION_TOKEN_RAINING);
+		builder.append(CONDITION_SEPARATOR).append(getSeason(world));
 		builder.append(CONDITION_SEPARATOR);
 		return builder.toString();
 	}
