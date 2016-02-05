@@ -29,6 +29,7 @@ import java.util.Random;
 import org.blockartistry.mod.DynSurround.client.fx.particle.EntityBubbleJetFX;
 import org.blockartistry.mod.DynSurround.client.fx.particle.EntityDustJetFX;
 import org.blockartistry.mod.DynSurround.client.fx.particle.EntityFireJetFX;
+import org.blockartistry.mod.DynSurround.client.fx.particle.EntityFountainJetFX;
 import org.blockartistry.mod.DynSurround.client.fx.particle.EntityJetFX;
 import org.blockartistry.mod.DynSurround.client.fx.particle.EntitySteamJetFX;
 
@@ -165,5 +166,24 @@ public abstract class JetEffect extends BlockEffect {
 			final EntityJetFX effect = new EntityDustJetFX(2, world, x + 0.5D, y - 0.2D, z + 0.5D, block);
 			addEffect(effect);
 		}
+	}
+	
+	public static class Fountain extends JetEffect {
+		public Fountain(final int chance) {
+			super(chance);
+		}
+
+		@Override
+		public boolean trigger(final Block block, final World world, final int x, final int y, final int z,
+				final Random random) {
+			return super.trigger(block, world, x, y, z, random) && world.isAirBlock(x, y + 1, z);
+		}
+
+		public void doEffect(final Block block, final World world, final int x, final int y, final int z,
+				final Random random) {
+			final EntityJetFX effect = new EntityFountainJetFX(5, world, x + 0.5D, y + 1.1D, z + 0.5D, block);
+			addEffect(effect);
+		}
+		
 	}
 }

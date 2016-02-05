@@ -228,6 +228,8 @@ public final class BlockRegistry {
 						blockEffect = new JetEffect.Bubble(chance);
 					else if (StringUtils.equalsIgnoreCase("dust", e.effect))
 						blockEffect = new JetEffect.Dust(chance);
+					else if (StringUtils.equalsIgnoreCase("fountain", e.effect))
+						blockEffect = new JetEffect.Fountain(chance);
 					else {
 						ModLog.warn("Unknown effect type in config: '%s'", e.effect);
 						continue;
