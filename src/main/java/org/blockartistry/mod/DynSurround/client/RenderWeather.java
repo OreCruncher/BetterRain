@@ -28,11 +28,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.blockartistry.mod.DynSurround.client.EnvironStateHandler.EnvironState;
 import org.blockartistry.mod.DynSurround.client.aurora.AuroraRenderer;
 import org.blockartistry.mod.DynSurround.client.fx.particle.ParticleFactory;
 import org.blockartistry.mod.DynSurround.client.storm.StormRenderer;
 import org.blockartistry.mod.DynSurround.client.storm.StormProperties;
 import org.blockartistry.mod.DynSurround.data.BiomeRegistry;
+import org.blockartistry.mod.DynSurround.data.DimensionRegistry;
 import org.blockartistry.mod.DynSurround.util.DiurnalUtils;
 import org.blockartistry.mod.DynSurround.util.XorShiftRandom;
 
@@ -78,13 +80,16 @@ public final class RenderWeather {
 
 	private static EntityFX getBlockParticleFX(final Block block, final boolean dust, final World world, final double x,
 			final double y, final double z) {
-		if (dust)
-			return null;
 
 		IParticleFactory factory = null;
 
-		if (block == Blocks.soul_sand) {
-			return null;
+		if (dust) {
+			if (world.provider.getDimensionId() == -1)
+				factory = ParticleFactory.smoke;
+			else
+				return null;
+		} else if (block == Blocks.soul_sand) {
+			factory = null;
 		} else if (block == Blocks.netherrack && random.nextInt(20) == 0) {
 			factory = ParticleFactory.lavaSpark;
 		} else if (block.getMaterial() == Material.lava) {
@@ -97,9 +102,29 @@ public final class RenderWeather {
 	}
 
 	private static String getBlockSoundFX(final Block block, final boolean hasDust, final World world) {
+		if (hasDust)
+			return StormProperties.getIntensity().getDustSound();
 		if (block == Blocks.netherrack)
 			return "minecraft:liquid.lavapop";
-		return hasDust ? StormProperties.getIntensity().getDustSound() : StormProperties.getIntensity().getStormSound();
+		return StormProperties.getIntensity().getStormSound();
+	}
+
+	private static BlockPos getPrecipitationHeight(final World world, final int range, final BlockPos pos) {
+		if (world.provider.getDimensionId() != -1)
+			return world.getPrecipitationHeight(pos);
+
+		final int y = MathHelper.floor_double(EnvironState.getPlayer().posY);
+		boolean airBlockFound = false;
+		for (int i = range; i >= -range; i--) {
+			final BlockPos p = new BlockPos(pos.getX(), y + i, pos.getZ());
+			final Block block = world.getBlockState(p).getBlock();
+			if (airBlockFound && block != Blocks.air && block.getMaterial().isSolid())
+				return p.up();
+			if (block == Blocks.air)
+				airBlockFound = true;
+		}
+
+		return new BlockPos(pos.getX(), 128, pos.getZ());
 	}
 
 	/*
@@ -109,6 +134,9 @@ public final class RenderWeather {
 	 */
 	public static void addRainParticles(final EntityRenderer theThis) {
 		if (theThis.mc.gameSettings.particleSetting == 2)
+			return;
+
+		if (!DimensionRegistry.hasWeather(EnvironState.getWorld()))
 			return;
 
 		float rainStrengthFactor = theThis.mc.theWorld.getRainStrength(1.0F);
@@ -138,7 +166,7 @@ public final class RenderWeather {
 			final int locX = playerX + random.nextInt(RANGE_FACTOR) - random.nextInt(RANGE_FACTOR);
 			final int locZ = playerZ + random.nextInt(RANGE_FACTOR) - random.nextInt(RANGE_FACTOR);
 			final BlockPos posXZ = new BlockPos(locX, 0, locZ);
-			final BlockPos precipHeight = worldclient.getPrecipitationHeight(posXZ);
+			final BlockPos precipHeight = getPrecipitationHeight(worldclient, RANGE_FACTOR / 2, posXZ);
 			final BiomeGenBase biome = worldclient.getBiomeGenForCoords(posXZ);
 			final boolean hasDust = WeatherUtils.biomeHasDust(biome);
 

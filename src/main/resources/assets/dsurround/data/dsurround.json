@@ -191,7 +191,7 @@
 			"aurora":true
 		},
 		{
-			"biomeName":"Hell",
+			"biomeName":"(?i)(hell|.*visceral.*|.*inferno.*|undergarden|boneyard)",
 			"dust":true,
 			"dustColor":"255,0,0"
 		},

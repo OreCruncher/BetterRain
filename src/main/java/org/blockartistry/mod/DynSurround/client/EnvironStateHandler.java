@@ -69,7 +69,6 @@ public class EnvironStateHandler implements IClientEffectHandler {
 		private static int dimensionId;
 		private static String dimensionName;
 		private static EntityPlayer player;
-		private static World world;
 
 		private static int tickCounter;
 
@@ -94,75 +93,77 @@ public class EnvironStateHandler implements IClientEffectHandler {
 		}
 
 		public static EntityPlayer getPlayer() {
+			if(player == null)
+				player = Minecraft.getMinecraft().thePlayer;
 			return player;
 		}
 
 		public static boolean isPlayer(final Entity entity) {
 			if (entity instanceof EntityPlayer) {
 				final EntityPlayer ep = (EntityPlayer) entity;
-				return ep.getUniqueID().equals(player.getUniqueID());
+				return ep.getUniqueID().equals(getPlayer().getUniqueID());
 			}
 			return false;
 		}
 
 		public static boolean isPlayer(final UUID id) {
-			return player == null ? false : player.getUniqueID().equals(id);
+			return getPlayer().getUniqueID().equals(id);
 		}
 
 		public static boolean isPlayerHurt() {
-			return (player.getHealth() / player.getMaxHealth()) <= 0.40F;
+			return (getPlayer().getHealth() / getPlayer().getMaxHealth()) <= 0.40F;
 		}
 
 		public static boolean isPlayerHungry() {
-			return ((float) player.getFoodStats().getFoodLevel() / 20.0F) <= 0.40F;
+			return ((float) getPlayer().getFoodStats().getFoodLevel() / 20.0F) <= 0.40F;
 		}
 
 		public static boolean isPlayerBurning() {
-			return player.isBurning();
+			return getPlayer().isBurning();
 		}
 
 		public static boolean isPlayerSuffocating() {
-			return player.getAir() <= 0;
+			return getPlayer().getAir() <= 0;
 		}
 
 		public static boolean isPlayerFlying() {
-			return player.capabilities.isFlying;
+			return getPlayer().capabilities.isFlying;
 		}
 
 		public static boolean isPlayerSprinting() {
-			return player.isSprinting();
+			return getPlayer().isSprinting();
 		}
 
 		public static boolean isPlayerInLava() {
-			return player.isInLava();
+			return getPlayer().isInLava();
 		}
 
 		public static boolean isPlayerInvisible() {
-			return player.isInvisible();
+			return getPlayer().isInvisible();
 		}
 
 		public static boolean isPlayerBlind() {
-			return player.isPotionActive(Potion.blindness);
+			return getPlayer().isPotionActive(Potion.blindness);
 		}
 
 		public static boolean isPlayerInWater() {
-			return player.isInWater();
+			return getPlayer().isInWater();
 		}
 
 		public static boolean isPlayerRiding() {
-			return player.isRiding();
+			return getPlayer().isRiding();
 		}
 
 		public static boolean isPlayerOnGround() {
-			return player.onGround;
+			return getPlayer().onGround;
 		}
 
 		public static boolean isPlayerMoving() {
-			return player.distanceWalkedModified != player.prevDistanceWalkedModified;
+			return getPlayer().distanceWalkedModified != getPlayer().prevDistanceWalkedModified;
 		}
 
 		public static World getWorld() {
-			return world;
+			return getPlayer().worldObj;
 		}
 
 		public static int getTickCounter() {
@@ -235,7 +236,6 @@ public class EnvironStateHandler implements IClientEffectHandler {
 	@Override
 	public void process(final World world, final EntityPlayer player) {
 		EnvironState.player = player;
-		EnvironState.world = world;
 		EnvironState.conditions = DimensionRegistry.getConditions(world) + getPlayerConditions(player);
 		EnvironState.playerBiome = PlayerUtils.getPlayerBiome(player, false);
 		EnvironState.biomeName = BiomeRegistry.resolveName(EnvironState.playerBiome);

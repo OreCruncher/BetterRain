@@ -28,6 +28,8 @@ import org.blockartistry.mod.DynSurround.Module;
 import org.blockartistry.mod.DynSurround.client.IAtmosRenderer;
 import org.blockartistry.mod.DynSurround.client.WeatherUtils;
 import org.blockartistry.mod.DynSurround.data.BiomeRegistry;
+import org.blockartistry.mod.DynSurround.data.DimensionRegistry;
+import org.blockartistry.mod.DynSurround.util.Color;
 import org.blockartistry.mod.DynSurround.util.XorShiftRandom;
 import org.lwjgl.opengl.GL11;
 
@@ -72,6 +74,12 @@ public class StormRenderer implements IAtmosRenderer {
 		}
 	}
 
+	private static BlockPos getPrecipitationHeight(final World world, final BlockPos pos) {
+		if (world.provider.getDimensionId() == -1)
+			return new BlockPos(pos.getX(), 0, pos.getZ());
+		return world.getPrecipitationHeight(pos);
+	}
+
 	/**
 	 * Render rain and snow
 	 */
@@ -86,12 +94,15 @@ public class StormRenderer implements IAtmosRenderer {
 			return;
 		}
 
+		if (!DimensionRegistry.hasWeather(world))
+			return;
+
 		final float rainStrength = world.getRainStrength(partialTicks);
 		if (rainStrength <= 0.0F)
 			return;
-		
+
 		final float alphaRatio;
-		if(StormProperties.getIntensityLevel() > 0.0F)
+		if (StormProperties.getIntensityLevel() > 0.0F)
 			alphaRatio = world.rainingStrength / StormProperties.getIntensityLevel();
 		else
 			alphaRatio = rainStrength;
@@ -134,7 +145,7 @@ public class StormRenderer implements IAtmosRenderer {
 				final boolean hasDust = WeatherUtils.biomeHasDust(biome);
 
 				if (hasDust || BiomeRegistry.hasPrecipitation(biome)) {
-					final int precipHeight = world.getPrecipitationHeight(mutable).getY();
+					final int precipHeight = getPrecipitationHeight(world, mutable).getY();
 					int k2 = playerY - range;
 					int l2 = playerY + range;
 
@@ -157,7 +168,8 @@ public class StormRenderer implements IAtmosRenderer {
 								^ gridZ * gridZ * 418711 + gridZ * 13761));
 						mutable.set(gridX, k2, gridZ);
 						final float biomeTemp = biome.getFloatTemperature(mutable);
-						final float heightTemp = world.getWorldChunkManager().getTemperatureAtHeight(biomeTemp, precipHeight);
+						final float heightTemp = world.getWorldChunkManager().getTemperatureAtHeight(biomeTemp,
+								precipHeight);
 
 						if (!hasDust && heightTemp >= 0.15F) {
 							if (j1 != 0) {
@@ -213,6 +225,13 @@ public class StormRenderer implements IAtmosRenderer {
 										DefaultVertexFormats.PARTICLE_POSITION_TEX_COLOR_LMAP);
 							}
 
+							Color color = new Color(1.0F, 1.0F, 1.0F);
+							if (world.provider.getDimensionId() == -1) {
+								final Color c = BiomeRegistry.getDustColor(biome);
+								if (color != null)
+									color.mix(c);
+							}
+
 							double d8 = (double) (((float) (renderer.rendererUpdateCount & 511) + partialTicks)
 									/ 512.0F);
 							// The 0.2F factor was originally 0.01F. It
@@ -232,17 +251,17 @@ public class StormRenderer implements IAtmosRenderer {
 							int j4 = i4 >> 16 & 65535;
 							int k4 = i4 & 65535;
 							worldrenderer.pos((double) gridX - rainX + 0.5D, (double) k2, (double) gridZ - rainY + 0.5D)
-									.tex(0.0D + d9, (double) k2 * 0.25D + d8 + d10).color(1.0F, 1.0F, 1.0F, f5)
-									.lightmap(j4, k4).endVertex();
+									.tex(0.0D + d9, (double) k2 * 0.25D + d8 + d10)
+									.color(color.red, color.green, color.blue, f5).lightmap(j4, k4).endVertex();
 							worldrenderer.pos((double) gridX + rainX + 0.5D, (double) k2, (double) gridZ + rainY + 0.5D)
-									.tex(1.0D + d9, (double) k2 * 0.25D + d8 + d10).color(1.0F, 1.0F, 1.0F, f5)
-									.lightmap(j4, k4).endVertex();
+									.tex(1.0D + d9, (double) k2 * 0.25D + d8 + d10)
+									.color(color.red, color.green, color.blue, f5).lightmap(j4, k4).endVertex();
 							worldrenderer.pos((double) gridX + rainX + 0.5D, (double) l2, (double) gridZ + rainY + 0.5D)
-									.tex(1.0D + d9, (double) l2 * 0.25D + d8 + d10).color(1.0F, 1.0F, 1.0F, f5)
-									.lightmap(j4, k4).endVertex();
+									.tex(1.0D + d9, (double) l2 * 0.25D + d8 + d10)
+									.color(color.red, color.green, color.blue, f5).lightmap(j4, k4).endVertex();
 							worldrenderer.pos((double) gridX - rainX + 0.5D, (double) l2, (double) gridZ - rainY + 0.5D)
-									.tex(0.0D + d9, (double) l2 * 0.25D + d8 + d10).color(1.0F, 1.0F, 1.0F, f5)
-									.lightmap(j4, k4).endVertex();
+									.tex(0.0D + d9, (double) l2 * 0.25D + d8 + d10)
+									.color(color.red, color.green, color.blue, f5).lightmap(j4, k4).endVertex();
 						}
 					}
 				}
