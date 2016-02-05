@@ -32,6 +32,8 @@ import org.blockartistry.mod.DynSurround.data.config.DimensionConfig;
 import org.blockartistry.mod.DynSurround.util.DiurnalUtils;
 
 import foxie.calendar.api.CalendarAPI;
+import foxie.calendar.api.ICalendarProvider;
+import foxie.calendar.api.ISeasonProvider;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldProvider;
@@ -178,12 +180,20 @@ public final class DimensionRegistry {
 	public String getSeason() {
 		if (!CALENDAR_API)
 			return SEASON_NOT_AVAILABLE;
-		
-		final World world = DimensionManager.getWorld(this.dimensionId);
-		if(world == null)
+
+		final ISeasonProvider provider = CalendarAPI.getSeasonProvider(this.dimensionId);
+		if (provider == null)
 			return SEASON_NOT_AVAILABLE;
 
-		return CalendarAPI.getSeasonProvider(this.dimensionId).getSeason(CalendarAPI.getCalendarInstance(world)).getName();
+		final World world = DimensionManager.getWorld(this.dimensionId);
+		if (world == null)
+			return SEASON_NOT_AVAILABLE;
+
+		final ICalendarProvider calendar = CalendarAPI.getCalendarInstance(world);
+		if (calendar == null)
+			return SEASON_NOT_AVAILABLE;
+
+		return provider.getSeason(calendar).getName();
 	}
 
 	protected static DimensionRegistry getData(final int dimensionId) {

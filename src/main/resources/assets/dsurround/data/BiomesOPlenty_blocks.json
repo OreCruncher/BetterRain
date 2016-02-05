@@ -1,0 +1,18 @@
+{
+	"entries":[
+		{
+			"blocks":[
+				"BiomesOPlenty:hell_blood"
+			],
+			"effects":[
+				{
+					"effect":"fountain",
+					"chance":500
+				}
+				
+			]
+			
+		}
+		
+	]
+}
