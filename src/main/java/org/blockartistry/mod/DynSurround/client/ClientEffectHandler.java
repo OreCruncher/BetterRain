@@ -136,13 +136,15 @@ public class ClientEffectHandler {
 		} else if (event.phase == Phase.END) {
 			for (final EntityDropParticleFX drop : drops) {
 				if (drop.isEntityAlive()) {
+					if(drop.posY < 1)
+						continue;
 					final int x = MathHelper.floor_double(drop.posX);
 					final int y = MathHelper.floor_double(drop.posY + 0.3D);
 					final int z = MathHelper.floor_double(drop.posZ);
 					Block block = world.getBlock(x, y, z);
 					if (block != Blocks.air && !block.isLeaves(world, x, y, z)) {
 						int soundY = y - 1;
-						for (; (block = world.getBlock(x, soundY, z)) == Blocks.air && soundY > 0; soundY--)
+						for (; soundY > 0 && (block = world.getBlock(x, soundY, z)) == Blocks.air; soundY--)
 							;
 						if (soundY > 0 && block.getMaterial().isSolid()) {
 							final int distance = y - soundY;

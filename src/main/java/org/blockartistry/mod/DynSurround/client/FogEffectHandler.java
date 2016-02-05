@@ -75,6 +75,10 @@ public class FogEffectHandler implements IClientEffectHandler {
 	private static Vec3 fogColorTransitionAdjustments = null;
 	private static float brightnessFactor = 1.0F;
 
+	public static float currentFogLevel() {
+		return currentFogLevel;
+	}
+
 	public FogEffectHandler() {
 	}
 
