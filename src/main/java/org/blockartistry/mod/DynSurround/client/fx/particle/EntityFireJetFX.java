@@ -24,15 +24,21 @@
 
 package org.blockartistry.mod.DynSurround.client.fx.particle;
 
+import org.blockartistry.mod.DynSurround.client.PlayerSoundEffectHandler;
+import org.blockartistry.mod.DynSurround.client.fx.SoundEffect;
+
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.particle.EntityFX;
 import net.minecraft.client.particle.EntityFlameFX;
 import net.minecraft.client.particle.EntityLavaFX;
+import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 
 @SideOnly(Side.CLIENT)
 public class EntityFireJetFX extends EntityJetFX {
+
+	private static final SoundEffect FIRE = new SoundEffect("minecraft:fire.fire");
 
 	protected final boolean isLava;
 
@@ -43,8 +49,10 @@ public class EntityFireJetFX extends EntityJetFX {
 
 	@Override
 	public void playSound() {
-		this.worldObj.playSound(this.posX, this.posY, this.posZ, "minecraft:fire.fire", 1.0F + this.jetStrength / 10.0F,
-				1.0F, false);
+		final int x = MathHelper.floor_double(this.posX);
+		final int y = MathHelper.floor_double(this.posY);
+		final int z = MathHelper.floor_double(this.posZ);
+		PlayerSoundEffectHandler.playSoundAt(x, y, z, FIRE, 0);
 	}
 
 	@Override

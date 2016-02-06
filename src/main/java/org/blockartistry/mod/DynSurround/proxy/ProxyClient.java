@@ -29,18 +29,31 @@ import java.util.Collections;
 import java.util.List;
 
 import org.blockartistry.mod.DynSurround.ModLog;
+import org.blockartistry.mod.DynSurround.ModOptions;
 import org.blockartistry.mod.DynSurround.client.ClientEffectHandler;
 import org.blockartistry.mod.DynSurround.client.hud.GuiHUDHandler;
 import org.blockartistry.mod.DynSurround.data.BlockRegistry;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
+import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.SoundHandler;
+import paulscode.sound.SoundSystemConfig;
 
 @SideOnly(Side.CLIENT)
 public class ProxyClient extends Proxy {
+
+	@Override
+	public void preInit(final FMLPreInitializationEvent event) {
+		super.preInit(event);
+
+		ModLog.info("Sound channels: %d normal, %d streaming", ModOptions.getNumberNormalSoundChannels(),
+				ModOptions.getNumberStreamingSoundChannels());
+		SoundSystemConfig.setNumberNormalChannels(ModOptions.getNumberNormalSoundChannels());
+		SoundSystemConfig.setNumberStreamingChannels(ModOptions.getNumberStreamingSoundChannels());
+	}
 
 	@Override
 	public void init(final FMLInitializationEvent event) {
