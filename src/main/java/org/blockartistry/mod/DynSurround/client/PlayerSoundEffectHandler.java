@@ -49,7 +49,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
-import net.minecraftforge.event.entity.living.LivingEvent.LivingJumpEvent;
 import paulscode.sound.SoundSystemConfig;
 
 @SideOnly(Side.CLIENT)
@@ -60,10 +59,7 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 	private static final float VOLUME_DECREMENT = 0.015F;
 	private static final float MASTER_SCALE_FACTOR = ModOptions.getMasterSoundScaleFactor();
 	private static final int SPOT_SOUND_RANGE = 6;
-	private static final int SOUND_QUEUE_SLACK = 6;
-
-	// TODO: Need jump sound
-	private static SoundEffect JUMP_SOUND = null;
+	private static final int SOUND_QUEUE_SLACK = 10;
 
 	private static int reloadTracker = 0;
 
@@ -73,7 +69,7 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 			super(new ResourceLocation(sound.sound));
 
 			this.volume = sound.volume;
-			this.field_147663_c = sound.pitch;
+			this.field_147663_c = sound.getPitch(RANDOM);
 			this.repeat = false;
 			this.field_147665_h = 0;
 
@@ -86,7 +82,7 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 			super(new ResourceLocation(sound.sound));
 
 			this.volume = sound.volume;
-			this.field_147663_c = sound.pitch;
+			this.field_147663_c = sound.getPitch(RANDOM);
 			this.repeat = false;
 			this.field_147665_h = 0;
 
@@ -268,6 +264,8 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 	}
 
 	private static void processSounds(final EntityPlayer player, final List<SoundEffect> sounds) {
+		final SoundHandler handler = Minecraft.getMinecraft().getSoundHandler();
+
 		// Need to remove sounds that are active but not
 		// in the incoming list
 		final Iterator<PlayerSound> itr = activeSounds.iterator();
@@ -276,6 +274,8 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 			if (!sounds.contains(sound.sound)) {
 				sound.fadeAway();
 				itr.remove();
+			} else if(!handler.isSoundPlaying(sound)) {
+				handler.playSound(sound);
 			}
 		}
 
@@ -335,10 +335,4 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 		}
 	}
 
-	@SubscribeEvent
-	public void onJump(final LivingJumpEvent event) {
-		if (JUMP_SOUND != null && event.entity.worldObj.isRemote && EnvironState.isPlayer(event.entity)) {
-			playSoundAtPlayer(EnvironState.getPlayer(), JUMP_SOUND, 0);
-		}
-	}
 }

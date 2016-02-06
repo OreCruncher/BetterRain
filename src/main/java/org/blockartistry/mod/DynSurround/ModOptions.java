@@ -110,6 +110,8 @@ public final class ModOptions {
 	protected static int normalSoundChannelCount = 28;
 	protected static final String CONFIG_STREAMING_CHANNEL_COUNT = "Number Streaming Channels";
 	protected static int streamingSoundChannelCount = 4;
+	protected static final String CONFIG_ENABLE_JUMP_SOUND = "Jump Sound";
+	protected static boolean enableJumpSound = true;
 
 	protected static final String CATEGORY_PLAYER = "player";
 	protected static final String CONFIG_SUPPRESS_POTION_PARTICLES = "Suppress Potion Particles";
@@ -250,6 +252,9 @@ public final class ModOptions {
 		streamingSoundChannelCount = config.getInt(CONFIG_STREAMING_CHANNEL_COUNT, CATEGORY_SOUND,
 				streamingSoundChannelCount, 4, Integer.MAX_VALUE, comment);
 
+		comment = "Enable sound effect when jumping";
+		enableJumpSound = config.getBoolean(CONFIG_ENABLE_JUMP_SOUND, CATEGORY_SOUND, enableJumpSound, comment);
+
 		// CATEGORY: player.potion hud
 		comment = "Enable display of potion icons in display";
 		potionHudEnabled = config.getBoolean(CONFIG_POTION_HUD_ENABLE, CATEGORY_POTION_HUD, potionHudEnabled, comment);
@@ -386,6 +391,10 @@ public final class ModOptions {
 
 	public static int getNumberStreamingSoundChannels() {
 		return streamingSoundChannelCount;
+	}
+	
+	public static boolean getEnableJumpSound() {
+		return enableJumpSound;
 	}
 
 	public static boolean getSuppressPotionParticleEffect() {

@@ -27,7 +27,7 @@ import java.util.Random;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
-import org.blockartistry.mod.DynSurround.ModOptions;
+import org.blockartistry.mod.DynSurround.client.PlayerSoundEffectHandler;
 import org.blockartistry.mod.DynSurround.data.config.SoundConfig;
 
 import net.minecraft.block.Block;
@@ -35,7 +35,6 @@ import net.minecraft.world.World;
 
 public final class SoundEffect {
 
-	private static final float MASTER_SCALE_FACTOR = ModOptions.getMasterSoundScaleFactor();
 	private static final float[] pitchDelta = { -0.2F, 0.0F, 0.0F, 0.2F, 0.2F, 0.2F };
 
 	public final String sound;
@@ -50,10 +49,19 @@ public final class SoundEffect {
 	public final boolean skipFade;
 
 	public SoundEffect(final String sound) {
-		this(sound, 1.0F, 1.0F, 0);
+		this(sound, 1.0F, 1.0F, 0, false);
 	}
-	
-	public SoundEffect(final String sound, final float volume, final float pitch, final int repeatDelay) {
+
+	public SoundEffect(final String sound, final float volume, final float pitch) {
+		this(sound, volume, pitch, 0, false);
+	}
+
+	public SoundEffect(final String sound, final float volume, final float pitch, final boolean variable) {
+		this(sound, volume, pitch, 0, variable);
+	}
+
+	public SoundEffect(final String sound, final float volume, final float pitch, final int repeatDelay,
+			final boolean variable) {
 		this.sound = sound;
 		this.volume = volume;
 		this.pitch = pitch;
@@ -61,7 +69,7 @@ public final class SoundEffect {
 		this.pattern = null;
 		this.weight = 1;
 		this.isSpot = true;
-		this.variable = false;
+		this.variable = variable;
 		this.repeatDelay = repeatDelay;
 		this.skipFade = false;
 	}
@@ -95,8 +103,7 @@ public final class SoundEffect {
 
 	public void doEffect(final Block block, final World world, final int x, final int y, final int z,
 			final Random random) {
-		world.playSound(x + 0.5D, y + 0.5D, z + 0.5D, this.sound, getVolume() * MASTER_SCALE_FACTOR, getPitch(random),
-				false);
+		PlayerSoundEffectHandler.playSoundAt(x, y, z, this, 0);
 	}
 
 	@Override

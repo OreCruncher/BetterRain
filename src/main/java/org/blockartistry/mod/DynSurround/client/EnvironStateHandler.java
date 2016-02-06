@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.blockartistry.mod.DynSurround.ModOptions;
+import org.blockartistry.mod.DynSurround.client.fx.SoundEffect;
 import org.blockartistry.mod.DynSurround.data.BiomeRegistry;
 import org.blockartistry.mod.DynSurround.data.DimensionRegistry;
 import org.blockartistry.mod.DynSurround.event.DiagnosticEvent;
@@ -51,9 +52,13 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.entity.living.LivingEvent.LivingJumpEvent;
 
 @SideOnly(Side.CLIENT)
 public class EnvironStateHandler implements IClientEffectHandler {
+
+	private static final SoundEffect JUMP = ModOptions.getEnableJumpSound()
+			? new SoundEffect("dsurround:jump", 0.2F, 1.0F, true) : null;
 
 	// Diagnostic strings to display in the debug HUD
 	private static List<String> diagnostics = new ArrayList<String>();
@@ -145,6 +150,7 @@ public class EnvironStateHandler implements IClientEffectHandler {
 			}
 			builder.append(CONDITION_SEPARATOR).append(temperatureCategory);
 			builder.append(CONDITION_SEPARATOR);
+
 			return builder.toString();
 		}
 
@@ -168,6 +174,7 @@ public class EnvironStateHandler implements IClientEffectHandler {
 
 			if (!Minecraft.getMinecraft().isGamePaused())
 				EnvironState.tickCounter++;
+
 		}
 
 		public static String getConditions() {
@@ -308,6 +315,12 @@ public class EnvironStateHandler implements IClientEffectHandler {
 	@Override
 	public boolean hasEvents() {
 		return true;
+	}
+
+	@SubscribeEvent
+	public void onJump(final LivingJumpEvent event) {
+		if (JUMP != null && event.entity.worldObj.isRemote && EnvironState.isPlayer(event.entity))
+			PlayerSoundEffectHandler.playSoundAtPlayer(EnvironState.getPlayer(), JUMP, 0);
 	}
 
 	@SubscribeEvent(priority = EventPriority.HIGHEST)

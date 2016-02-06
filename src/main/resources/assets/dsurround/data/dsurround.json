@@ -263,11 +263,13 @@
 			"sounds":[
 				{
 					"sound":"dsurround:heartbeat",
-					"conditions":"(?i).*hurt.*"
+					"conditions":"(?i).*hurt.*",
+					"skipFade":true
 				},
 				{
 					"sound":"dsurround:tummy",
 					"conditions":"(?i).*hungry.*",
+					"skipFade":true,
 					"repeatDelay":300
 				}
 				

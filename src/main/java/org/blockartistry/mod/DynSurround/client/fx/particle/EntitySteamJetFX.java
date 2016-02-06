@@ -74,6 +74,9 @@ public class EntitySteamJetFX extends EntityJetFX {
 
 	@Override
 	public void playSound() {
+		if(RANDOM.nextInt(10) != 0)
+			return;
+
 		final int x = MathHelper.floor_double(this.posX);
 		final int y = MathHelper.floor_double(this.posY);
 		final int z = MathHelper.floor_double(this.posZ);
