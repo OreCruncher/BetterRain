@@ -106,7 +106,11 @@ public final class ModOptions {
 	protected static boolean enableBiomeSounds = true;
 	protected static final String CONFIG_MASTER_SOUND_FACTOR = "Master Sound Scale Factor";
 	protected static float masterSoundScaleFactor = 0.5F;
-	
+	protected static final String CONFIG_NORMAL_CHANNEL_COUNT = "Number Normal Channels";
+	protected static int normalSoundChannelCount = 28;
+	protected static final String CONFIG_STREAMING_CHANNEL_COUNT = "Number Streaming Channels";
+	protected static int streamingSoundChannelCount = 4;
+
 	protected static final String CATEGORY_PLAYER = "player";
 	protected static final String CONFIG_SUPPRESS_POTION_PARTICLES = "Suppress Potion Particles";
 	protected static boolean suppressPotionParticles = false;
@@ -233,10 +237,18 @@ public final class ModOptions {
 		// CATEGORY: Sound
 		comment = "Enable biome sounds";
 		enableBiomeSounds = config.getBoolean(CONFIG_ENABLE_BIOME_SOUNDS, CATEGORY_SOUND, enableBiomeSounds, comment);
-		
+
 		comment = "Master sound scale factor for biome and block sounds";
-		masterSoundScaleFactor = config.getFloat(CONFIG_MASTER_SOUND_FACTOR, CATEGORY_SOUND,
-				masterSoundScaleFactor, 0.0F, 1.0F, comment);
+		masterSoundScaleFactor = config.getFloat(CONFIG_MASTER_SOUND_FACTOR, CATEGORY_SOUND, masterSoundScaleFactor,
+				0.0F, 1.0F, comment);
+
+		comment = "Number of normal sound channels to configure in the sound system";
+		normalSoundChannelCount = config.getInt(CONFIG_NORMAL_CHANNEL_COUNT, CATEGORY_SOUND, normalSoundChannelCount,
+				28, Integer.MAX_VALUE, comment);
+
+		comment = "Number of streaming sound channels to configure in the sound system";
+		streamingSoundChannelCount = config.getInt(CONFIG_STREAMING_CHANNEL_COUNT, CATEGORY_SOUND,
+				streamingSoundChannelCount, 4, Integer.MAX_VALUE, comment);
 
 		// CATEGORY: player.potion hud
 		comment = "Enable display of potion icons in display";
@@ -367,7 +379,15 @@ public final class ModOptions {
 	public static float getMasterSoundScaleFactor() {
 		return masterSoundScaleFactor;
 	}
-	
+
+	public static int getNumberNormalSoundChannels() {
+		return normalSoundChannelCount;
+	}
+
+	public static int getNumberStreamingSoundChannels() {
+		return streamingSoundChannelCount;
+	}
+
 	public static boolean getSuppressPotionParticleEffect() {
 		return suppressPotionParticles;
 	}

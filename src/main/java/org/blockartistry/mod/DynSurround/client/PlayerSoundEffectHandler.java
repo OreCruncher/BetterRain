@@ -49,6 +49,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingJumpEvent;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import paulscode.sound.SoundSystemConfig;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 
@@ -60,6 +61,7 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 	private static final float VOLUME_DECREMENT = 0.015F;
 	private static final float MASTER_SCALE_FACTOR = ModOptions.getMasterSoundScaleFactor();
 	private static final int SPOT_SOUND_RANGE = 6;
+	private static final int SOUND_QUEUE_SLACK = 6;
 
 	// TODO: Need jump sound
 	private static SoundEffect JUMP_SOUND = null;
@@ -207,6 +209,18 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 		}
 		return false;
 	}
+	
+	private int currentSoundCount() {
+		return Minecraft.getMinecraft().getSoundHandler().sndManager.playingSounds.size();
+	}
+	
+	private int maxSoundCount() {
+		return SoundSystemConfig.getNumberNormalChannels() + SoundSystemConfig.getNumberStreamingChannels();
+	}
+	
+	private boolean canFitSound() {
+		return currentSoundCount() < (maxSoundCount() - SOUND_QUEUE_SLACK);
+	}
 
 	// Active loop sounds
 	private static final List<PlayerSound> activeSounds = new ArrayList<PlayerSound>();
@@ -289,13 +303,18 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 		sounds.addAll(BiomeRegistry.getSounds(BiomeRegistry.PLAYER, conditions));
 		processSounds(player, sounds);
 
-		SoundEffect sound = BiomeRegistry.getSpotSound(playerBiome, conditions, RANDOM);
-		if (sound != null)
-			playSoundAtPlayer(player, sound, 0);
+		SoundEffect sound = null;
+		if(canFitSound()) {
+			sound = BiomeRegistry.getSpotSound(playerBiome, conditions, RANDOM);
+			if (sound != null)
+				playSoundAtPlayer(player, sound, 0);
+		}
 
-		sound = BiomeRegistry.getSpotSound(BiomeRegistry.PLAYER, conditions, RANDOM);
-		if (sound != null)
-			playSoundAtPlayer(player, sound, 0);
+		if(canFitSound()) {
+			sound = BiomeRegistry.getSpotSound(BiomeRegistry.PLAYER, conditions, RANDOM);
+			if (sound != null)
+				playSoundAtPlayer(player, sound, 0);
+		}
 	}
 
 	@Override
@@ -305,8 +324,11 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 
 	@SubscribeEvent
 	public void diagnostics(final DiagnosticEvent.Gather event) {
+		final StringBuilder builder = new StringBuilder();
+		builder.append("SoundSystem: ").append(currentSoundCount()).append('/').append(maxSoundCount());
+		event.output.add(builder.toString());
 		for (final PlayerSound sound : activeSounds) {
-			final StringBuilder builder = new StringBuilder();
+			builder.setLength(0);
 			builder.append("Active Sound: ").append(sound.toString());
 			builder.append(" (effective volume:").append(sound.getVolume()).append(')');
 			event.output.add(builder.toString());
