@@ -1,0 +1,24 @@
+{
+	"entries":[
+		{
+			"blocks":[
+				"Forestry:planks",
+				"Forestry:stairs",
+				"Forestry:planksFireproof",
+				"Forestry:stairsFireproof"
+			],
+			"stepChance":150,
+			"sounds":[
+				{
+					"sound":"dsurround:floorsqueak",
+					"volume":0.2,
+					"variable":true,
+					"step":true
+				}
+				
+			]
+			
+		}
+		
+	]
+}

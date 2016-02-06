@@ -12,6 +12,35 @@
 				
 			]
 			
+		},
+		{
+			"blocks":[
+				"BiomesOPlenty:planks",
+				"BiomesOPlenty:sacredoakStairs",
+				"BiomesOPlenty:cherryStairs",
+				"BiomesOPlenty:darkStairs",
+				"BiomesOPlenty:firStairs",
+				"BiomesOPlenty:magicStairs",
+				"BiomesOPlenty:mangroveStairs",
+				"BiomesOPlenty:palmStairs",
+				"BiomesOPlenty:redwoodStairs",
+				"BiomesOPlenty:willowStairs",
+				"BiomesOPlenty:pineStairs",
+				"BiomesOPlenty:hellBarkStairs",
+				"BiomesOPlenty:jacarandaStairs",
+				"BiomesOPlenty:mahoganyStairs"
+			],
+			"stepChance":150,
+			"sounds":[
+				{
+					"sound":"dsurround:floorsqueak",
+					"volume":0.2,
+					"variable":true,
+					"step":true
+				}
+				
+			]
+			
 		}
 		
 	]
