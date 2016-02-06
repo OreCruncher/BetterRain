@@ -224,7 +224,6 @@
 			"ambient/miscblocks/gravelwalk4",
 			"ambient/miscblocks/gravelwalk5",
 			"ambient/miscblocks/gravelwalk6"
-			
 		]
 		
 	},
@@ -233,6 +232,13 @@
 		"sounds":[
 			"ambient/miscblocks/gravelwalk6",
 			"ambient/miscblocks/rockkick1"
+		]
+		
+	},
+	"jump":{
+		"category":"ambient",
+		"sounds":[
+			"ambient/steve/jump"
 		]
 		
 	}
