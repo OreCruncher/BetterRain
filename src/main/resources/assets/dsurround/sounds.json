@@ -241,6 +241,17 @@
 			"ambient/steve/jump"
 		]
 		
+	},
+	"bees":{
+		"category":"ambient",
+		"sounds":[
+			"ambient/bees/bees1",
+			"ambient/bees/bees2",
+			"ambient/bees/bees3",
+			"ambient/bees/bees4",
+			"ambient/bees/bees5"
+		]
+		
 	}
 	
 }
