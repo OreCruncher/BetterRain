@@ -214,13 +214,17 @@ public class EnvironStateHandler implements IClientEffectHandler {
 		public static boolean isPlayer(final UUID id) {
 			return getPlayer().getUniqueID().equals(id);
 		}
+		
+		public static boolean isCreative() {
+			return getPlayer().capabilities.isCreativeMode;
+		}
 
 		public static boolean isPlayerHurt() {
-			return (getPlayer().getHealth() / getPlayer().getMaxHealth()) < 0.40F;
+			return !isCreative() && (getPlayer().getHealth() / getPlayer().getMaxHealth()) <= 0.40F;
 		}
 
 		public static boolean isPlayerHungry() {
-			return (getPlayer().getFoodStats().getFoodLevel() / 20.0F) < 0.40F;
+			return !isCreative() && (getPlayer().getFoodStats().getFoodLevel() / 20.0F) <= 0.40F;
 		}
 
 		public static boolean isPlayerBurning() {

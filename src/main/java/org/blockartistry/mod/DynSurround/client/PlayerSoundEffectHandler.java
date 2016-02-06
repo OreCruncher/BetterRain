@@ -59,7 +59,7 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 	private static final float VOLUME_DECREMENT = 0.015F;
 	private static final float MASTER_SCALE_FACTOR = ModOptions.getMasterSoundScaleFactor();
 	private static final int SPOT_SOUND_RANGE = 6;
-	private static final int SOUND_QUEUE_SLACK = 10;
+	private static final int SOUND_QUEUE_SLACK = 12;
 
 	private static int reloadTracker = 0;
 
@@ -111,7 +111,7 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 			super(new ResourceLocation(sound.sound));
 			// Don't set volume to 0; MC will optimize out
 			this.sound = sound;
-			this.volume = (repeat || sound.skipFade) ? 0.01F : sound.volume;
+			this.volume = (repeat && !sound.skipFade) ? 0.01F : sound.volume;
 			this.field_147663_c = sound.pitch;
 			this.player = new WeakReference<EntityPlayer>(player);
 			this.repeat = repeat;
@@ -234,9 +234,13 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 	}
 
 	private static void playSound(final EntityPlayer player, final SoundEffect sound) {
-		final PlayerSound s = new PlayerSound(player, sound);
-		activeSounds.add(s);
-		Minecraft.getMinecraft().getSoundHandler().playSound(s);
+		try {
+			final PlayerSound s = new PlayerSound(player, sound);
+			Minecraft.getMinecraft().getSoundHandler().playSound(s);
+			activeSounds.add(s);
+		} catch(final Throwable t) {
+			;
+		}
 	}
 
 	public static void playSoundAtPlayer(EntityPlayer player, final SoundEffect sound, final int tickDelay) {
@@ -264,8 +268,6 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 	}
 
 	private static void processSounds(final EntityPlayer player, final List<SoundEffect> sounds) {
-		final SoundHandler handler = Minecraft.getMinecraft().getSoundHandler();
-
 		// Need to remove sounds that are active but not
 		// in the incoming list
 		final Iterator<PlayerSound> itr = activeSounds.iterator();
@@ -274,11 +276,9 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 			if (!sounds.contains(sound.sound)) {
 				sound.fadeAway();
 				itr.remove();
-			} else if(!handler.isSoundPlaying(sound)) {
-				handler.playSound(sound);
 			}
 		}
-
+		
 		// Add sounds from the incoming list that are not
 		// active.
 		for (final SoundEffect sound : sounds)
