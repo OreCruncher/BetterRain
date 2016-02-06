@@ -56,7 +56,7 @@ public class PotionHUD extends Gui implements IGuiOverlay {
 	private static final float GUILEFT = ModOptions.getPotionHudLeftOffset();
 	private static final float SCALE = ModOptions.getPotionHudScale();
 
-	public void doRender(RenderGameOverlayEvent event) {
+	public void doRender(final RenderGameOverlayEvent event) {
 
 		if (event.isCancelable() || event.type != ElementType.EXPERIENCE) {
 			return;
