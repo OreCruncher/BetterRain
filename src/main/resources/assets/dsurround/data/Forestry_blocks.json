@@ -34,6 +34,21 @@
 				
 			]
 			
+		},
+		{
+			"blocks":[
+				"Forestry:leaves"
+			],
+			"stepChance":5,
+			"sounds":[
+				{
+					"sound":"dsurround:leafwalk",
+					"volume":0.2,
+					"step":true
+				}
+				
+			]
+			
 		}
 		
 	]

@@ -41,6 +41,25 @@
 				
 			]
 			
+		},
+		{
+			"blocks":[
+				"BiomesOPlenty:leaves1",
+				"BiomesOPlenty:leaves2",
+				"BiomesOPlenty:leaves3",
+				"BiomesOPlenty:leaves4",
+				"BiomesOPlenty:foliage"
+			],
+			"stepChance":5,
+			"sounds":[
+				{
+					"sound":"dsurround:leafwalk",
+					"volume":0.2,
+					"step":true
+				}
+				
+			]
+			
 		}
 		
 	]
