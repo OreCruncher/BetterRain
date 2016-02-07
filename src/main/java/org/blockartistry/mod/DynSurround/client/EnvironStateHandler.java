@@ -47,18 +47,39 @@ import net.minecraft.entity.item.EntityMinecart;
 import net.minecraft.entity.passive.EntityHorse;
 import net.minecraft.entity.passive.EntityPig;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemAxe;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.ItemSword;
 import net.minecraft.potion.Potion;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingJumpEvent;
+import net.minecraftforge.event.entity.player.AttackEntityEvent;
 
 @SideOnly(Side.CLIENT)
 public class EnvironStateHandler implements IClientEffectHandler {
 
-	private static final SoundEffect JUMP = ModOptions.getEnableJumpSound()
-			? new SoundEffect("dsurround:jump", 0.2F, 1.0F, true) : null;
+	private static final SoundEffect JUMP;
+	private static final SoundEffect SWORD;
+	private static final SoundEffect AXE;
+
+	static {
+		if (ModOptions.getEnableJumpSound())
+			JUMP = new SoundEffect("dsurround:jump", 0.2F, 1.0F, true);
+		else
+			JUMP = null;
+
+		if (ModOptions.getEnableSwingSound()) {
+			SWORD = new SoundEffect("dsurround:swoosh", 1.0F, 1.0F);
+			AXE = new SoundEffect("dsurround:swoosh", 1.0F, 0.5F);
+		} else {
+			SWORD = null;
+			AXE = null;
+		}
+	}
 
 	// Diagnostic strings to display in the debug HUD
 	private static List<String> diagnostics = new ArrayList<String>();
@@ -214,7 +235,7 @@ public class EnvironStateHandler implements IClientEffectHandler {
 		public static boolean isPlayer(final UUID id) {
 			return getPlayer().getUniqueID().equals(id);
 		}
-		
+
 		public static boolean isCreative() {
 			return getPlayer().capabilities.isCreativeMode;
 		}
@@ -325,6 +346,24 @@ public class EnvironStateHandler implements IClientEffectHandler {
 	public void onJump(final LivingJumpEvent event) {
 		if (JUMP != null && event.entity.worldObj.isRemote && EnvironState.isPlayer(event.entity))
 			PlayerSoundEffectHandler.playSoundAtPlayer(EnvironState.getPlayer(), JUMP, 0);
+	}
+
+	@SubscribeEvent
+	public void onItemUse(final AttackEntityEvent event) {
+		if (SWORD != null && event.entityPlayer.worldObj.isRemote && EnvironState.isPlayer(event.entityPlayer)) {
+			final ItemStack currentItem = event.entityPlayer.getCurrentEquippedItem();
+			if (currentItem != null) {
+				SoundEffect sound = null;
+				final Item item = currentItem.getItem();
+				if (item instanceof ItemSword)
+					sound = SWORD;
+				else if (item instanceof ItemAxe)
+					sound = AXE;
+
+				if (sound != null)
+					PlayerSoundEffectHandler.playSoundAtPlayer(EnvironState.getPlayer(), sound, 0);
+			}
+		}
 	}
 
 	@SubscribeEvent(priority = EventPriority.HIGHEST)
