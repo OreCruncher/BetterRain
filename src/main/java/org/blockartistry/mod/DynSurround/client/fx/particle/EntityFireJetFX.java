@@ -28,7 +28,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.fml.relauncher.Side;
 
 import org.blockartistry.mod.DynSurround.client.PlayerSoundEffectHandler;
-import org.blockartistry.mod.DynSurround.client.fx.SoundEffect;
+import org.blockartistry.mod.DynSurround.client.sound.SoundEffect;
 
 import net.minecraft.client.particle.EntityFX;
 import net.minecraft.client.particle.EntityFlameFX;
