@@ -27,6 +27,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.SoundHandler;
+import paulscode.sound.SoundSystemConfig;
 
 @SideOnly(Side.CLIENT)
 class Emitter {
@@ -56,6 +57,11 @@ class Emitter {
 				return;
 		}
 
+		// If the volume is turned off don't send
+		// down a sound.
+		if(SoundSystemConfig.getMasterGain() <= 0)
+			return;
+		
 		this.activeSound = new PlayerSound(effect);
 		try {
 			handler.playSound(this.activeSound);

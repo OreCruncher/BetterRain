@@ -117,7 +117,7 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 	}
 
 	private boolean canFitSound() {
-		return currentSoundCount() < (maxSoundCount() - SOUND_QUEUE_SLACK);
+		return currentSoundCount() < (SoundSystemConfig.getNumberNormalChannels() - SOUND_QUEUE_SLACK);
 	}
 
 	public static void playSoundAtPlayer(EntityPlayer player, final SoundEffect sound, final int tickDelay) {

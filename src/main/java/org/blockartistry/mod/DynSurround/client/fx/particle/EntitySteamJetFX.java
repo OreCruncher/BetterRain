@@ -24,20 +24,14 @@
 
 package org.blockartistry.mod.DynSurround.client.fx.particle;
 
-import org.blockartistry.mod.DynSurround.client.PlayerSoundEffectHandler;
-import org.blockartistry.mod.DynSurround.client.sound.SoundEffect;
-
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.particle.EntityCloudFX;
 import net.minecraft.client.particle.EntityFX;
-import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 
 @SideOnly(Side.CLIENT)
 public class EntitySteamJetFX extends EntityJetFX {
-
-	private static final SoundEffect STEAM_FIZZ = new SoundEffect("minecraft:random.fizz");
 
 	protected static final class EntitySteamCloudFX extends EntityCloudFX {
 		public EntitySteamCloudFX(final World world, final double x, final double y, final double z, final double dX,
@@ -70,17 +64,6 @@ public class EntitySteamJetFX extends EntityJetFX {
 
 	public EntitySteamJetFX(final int strength, final World world, final double x, final double y, final double z) {
 		super(strength, world, x, y, z);
-	}
-
-	@Override
-	public void playSound() {
-		if(RANDOM.nextInt(10) != 0)
-			return;
-
-		final int x = MathHelper.floor_double(this.posX);
-		final int y = MathHelper.floor_double(this.posY);
-		final int z = MathHelper.floor_double(this.posZ);
-		PlayerSoundEffectHandler.playSoundAt(x, y, z, STEAM_FIZZ, 0);
 	}
 
 	@Override

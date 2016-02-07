@@ -83,7 +83,7 @@
 			"blocks":[
 				"minecraft:redstone_ore"
 			],
-			"chance":100,
+			"chance":200,
 			"sounds":[
 				{
 					"sound":"minecraft:random.fizz",
