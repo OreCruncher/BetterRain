@@ -24,9 +24,7 @@
 
 package org.blockartistry.mod.DynSurround.client;
 
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
@@ -39,25 +37,23 @@ import org.blockartistry.mod.DynSurround.util.XorShiftRandom;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.ISound;
-import net.minecraft.client.audio.MovingSound;
 import net.minecraft.client.audio.PositionedSound;
 import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import paulscode.sound.SoundSystemConfig;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
+import paulscode.sound.SoundSystemConfig;
 
 @SideOnly(Side.CLIENT)
 public class PlayerSoundEffectHandler implements IClientEffectHandler {
 
 	private static final Random RANDOM = new XorShiftRandom();
-	private static final float VOLUME_INCREMENT = 0.02F;
-	private static final float VOLUME_DECREMENT = 0.015F;
 	private static final float MASTER_SCALE_FACTOR = ModOptions.getMasterSoundScaleFactor();
 	private static final int SPOT_SOUND_RANGE = 6;
 	private static final int SOUND_QUEUE_SLACK = 12;
@@ -87,124 +83,17 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 			this.repeat = false;
 			this.repeatDelay = 0;
 
-			this.xPosF = (float) player.posX + RANDOM.nextInt(SPOT_SOUND_RANGE) - RANDOM.nextInt(SPOT_SOUND_RANGE);
-			this.yPosF = (float) player.posY + 1 + RANDOM.nextInt(SPOT_SOUND_RANGE) - RANDOM.nextInt(SPOT_SOUND_RANGE);
-			this.zPosF = (float) player.posZ + RANDOM.nextInt(SPOT_SOUND_RANGE) - RANDOM.nextInt(SPOT_SOUND_RANGE);
+			this.xPosF = MathHelper
+					.floor_double(player.posX + RANDOM.nextInt(SPOT_SOUND_RANGE) - RANDOM.nextInt(SPOT_SOUND_RANGE));
+			this.yPosF = MathHelper.floor_double(
+					player.posY + 1 + RANDOM.nextInt(SPOT_SOUND_RANGE) - RANDOM.nextInt(SPOT_SOUND_RANGE));
+			this.zPosF = MathHelper
+					.floor_double(player.posZ + RANDOM.nextInt(SPOT_SOUND_RANGE) - RANDOM.nextInt(SPOT_SOUND_RANGE));
 		}
 
 		@Override
 		public float getVolume() {
 			return super.getVolume() * MASTER_SCALE_FACTOR;
-		}
-
-	}
-
-	private static class PlayerSound extends MovingSound {
-		private boolean fadeAway;
-		private final WeakReference<EntityPlayer> player;
-		private final SoundEffect sound;
-
-		public PlayerSound(final EntityPlayer player, final SoundEffect sound) {
-			this(player, sound, true);
-		}
-
-		public PlayerSound(final EntityPlayer player, final SoundEffect sound, final boolean repeat) {
-			super(new ResourceLocation(sound.sound));
-			// Don't set volume to 0; MC will optimize out
-			this.sound = sound;
-			this.volume = (repeat && !sound.skipFade) ? 0.01F : sound.volume;
-			this.pitch = sound.pitch;
-			this.player = new WeakReference<EntityPlayer>(player);
-			this.repeat = repeat;
-			this.fadeAway = false;
-
-			// Repeat delay
-			this.repeatDelay = sound.repeatDelay;
-
-			// Initial position
-			this.xPosF = (float) (player.posX);
-			this.yPosF = (float) (player.posY + 1);
-			this.zPosF = (float) (player.posZ);
-		}
-
-		public void fadeAway() {
-			this.fadeAway = true;
-			if (this.sound.skipFade) {
-				this.volume = 0.0F;
-				this.donePlaying = true;
-			}
-		}
-
-		public boolean sameSound(final SoundEffect snd) {
-			return this.sound.equals(snd);
-		}
-
-		@Override
-		public void update() {
-			if (this.fadeAway) {
-				this.volume -= VOLUME_DECREMENT;
-				if (this.volume < 0.0F) {
-					this.volume = 0.0F;
-				}
-			} else if (this.volume < this.sound.volume) {
-				this.volume += VOLUME_INCREMENT;
-				if (this.volume > this.sound.volume)
-					this.volume = this.sound.volume;
-			}
-
-			if (this.volume == 0.0F)
-				this.donePlaying = true;
-		}
-
-		@Override
-		public float getVolume() {
-			return super.getVolume() * MASTER_SCALE_FACTOR;
-		}
-
-		@Override
-		public float getXPosF() {
-			final EntityPlayer player = this.player.get();
-			if (player == null) {
-				this.donePlaying = true;
-				return 0.0F;
-			}
-			return (float) player.posX;
-		}
-
-		@Override
-		public float getYPosF() {
-			final EntityPlayer player = this.player.get();
-			if (player == null) {
-				this.donePlaying = true;
-				return 0.0F;
-			}
-			return (float) player.posY + 1;
-		}
-
-		@Override
-		public float getZPosF() {
-			final EntityPlayer player = this.player.get();
-			if (player == null) {
-				this.donePlaying = true;
-				return 0.0F;
-			}
-			return (float) player.posZ;
-		}
-
-		@Override
-		public String toString() {
-			return this.sound.toString();
-		}
-
-		@Override
-		public boolean equals(final Object anObj) {
-			if (this == anObj)
-				return true;
-			if (anObj instanceof PlayerSound)
-				return this.sameSound(((PlayerSound) anObj).sound);
-			if (anObj instanceof SoundEffect)
-				return this.sameSound((SoundEffect) anObj);
-			return false;
 		}
 
 	}
@@ -230,37 +119,6 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 		return currentSoundCount() < (maxSoundCount() - SOUND_QUEUE_SLACK);
 	}
 
-	// Active loop sounds
-	private static final List<PlayerSound> activeSounds = new ArrayList<PlayerSound>();
-
-	private static void clearSounds() {
-		for (final PlayerSound sound : activeSounds)
-			sound.fadeAway();
-		activeSounds.clear();
-	}
-
-	private static boolean isActive(final SoundEffect sound) {
-		for (final PlayerSound s : activeSounds)
-			if (s.equals(sound))
-				return true;
-		return false;
-	}
-
-	private static boolean isSoundQueued(final PlayerSound sound) {
-		final SoundHandler handler = Minecraft.getMinecraft().getSoundHandler();
-		return handler.isSoundPlaying(sound) || handler.sndManager.delayedSounds.containsKey(sound);
-	}
-
-	private static void playSound(final EntityPlayer player, final SoundEffect sound) {
-		try {
-			final PlayerSound s = new PlayerSound(player, sound);
-			Minecraft.getMinecraft().getSoundHandler().playSound(s);
-			activeSounds.add(s);
-		} catch (final Throwable t) {
-			;
-		}
-	}
-
 	public static void playSoundAtPlayer(EntityPlayer player, final SoundEffect sound, final int tickDelay) {
 		if (player == null)
 			player = EnvironState.getPlayer();
@@ -284,31 +142,10 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 			handler.playDelayedSound(s, tickDelay);
 	}
 
-	private static void processSounds(final EntityPlayer player, final List<SoundEffect> sounds) {
-		// Need to remove sounds that are active but not
-		// in the incoming list
-		final Iterator<PlayerSound> itr = activeSounds.iterator();
-		while (itr.hasNext()) {
-			final PlayerSound sound = itr.next();
-			if (!sounds.contains(sound.sound)) {
-				sound.fadeAway();
-				itr.remove();
-			} else if (!isSoundQueued(sound)) {
-				itr.remove();
-			}
-		}
-
-		// Add sounds from the incoming list that are not
-		// active.
-		for (final SoundEffect sound : sounds)
-			if (!isActive(sound))
-				playSound(player, sound);
-	}
-
 	@Override
 	public void process(final World world, final EntityPlayer player) {
 		if (didReloadOccur() || player.isDead)
-			clearSounds();
+			SoundManager.clearSounds();
 
 		// Dead players hear no sounds
 		if (player.isDead)
@@ -320,7 +157,9 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 		final List<SoundEffect> sounds = new ArrayList<SoundEffect>();
 		sounds.addAll(BiomeRegistry.getSounds(playerBiome, conditions));
 		sounds.addAll(BiomeRegistry.getSounds(BiomeRegistry.PLAYER, conditions));
-		processSounds(player, sounds);
+
+		SoundManager.update();
+		SoundManager.queueSounds(sounds);
 
 		SoundEffect sound = null;
 		if (canFitSound()) {
@@ -346,10 +185,10 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 		final StringBuilder builder = new StringBuilder();
 		builder.append("SoundSystem: ").append(currentSoundCount()).append('/').append(maxSoundCount());
 		event.output.add(builder.toString());
-		for (final PlayerSound sound : activeSounds) {
+		for (final SoundEffect sound : SoundManager.activeSounds()) {
 			builder.setLength(0);
 			builder.append("Active Sound: ").append(sound.toString());
-			builder.append(" (effective volume:").append(sound.getVolume()).append(')');
+			builder.append(" (effective volume:").append(sound.getVolume() * MASTER_SCALE_FACTOR).append(')');
 			event.output.add(builder.toString());
 		}
 	}
