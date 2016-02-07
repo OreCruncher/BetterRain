@@ -61,7 +61,7 @@ public final class GuiHUDHandler {
 		MinecraftForge.EVENT_BUS.register(new GuiHUDHandler());
 	}
 
-	@SubscribeEvent(priority = EventPriority.NORMAL)
+	@SubscribeEvent(priority = EventPriority.HIGH)
 	public void onRenderExperienceBar(final RenderGameOverlayEvent event) {
 		for (final IGuiOverlay overlay : overlays)
 			overlay.doRender(event);

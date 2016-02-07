@@ -69,7 +69,7 @@ public class PotionHUD extends Gui implements IGuiOverlay {
 		int guiLeft = 2;
 		int guiTop = 2;
 
-		Collection<PotionEffect> collection = player.getActivePotionEffects();
+		final Collection<PotionEffect> collection = player.getActivePotionEffects();
 
 		if (!collection.isEmpty()) {
 
@@ -85,8 +85,8 @@ public class PotionHUD extends Gui implements IGuiOverlay {
 			}
 
 			for (Iterator<PotionEffect> iterator = collection.iterator(); iterator.hasNext(); guiTop += k) {
-				PotionEffect potioneffect = iterator.next();
-				Potion potion = Potion.potionTypes[potioneffect.getPotionID()];
+				final PotionEffect potioneffect = iterator.next();
+				final Potion potion = Potion.potionTypes[potioneffect.getPotionID()];
 				GL11.glColor4f(1.0F, 1.0F, 1.0F, TRANSPARENCY);
 				mc.getTextureManager().bindTexture(TEXTURE);
 				this.drawTexturedModalRect(guiLeft, guiTop, 0, 166, 140, 32);
