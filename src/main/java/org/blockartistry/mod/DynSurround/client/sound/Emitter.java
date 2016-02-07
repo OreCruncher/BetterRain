@@ -26,6 +26,7 @@ package org.blockartistry.mod.DynSurround.client.sound;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.SoundHandler;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import paulscode.sound.SoundSystemConfig;
 import net.minecraftforge.fml.relauncher.Side;
 
 @SideOnly(Side.CLIENT)
@@ -56,6 +57,11 @@ class Emitter {
 				return;
 		}
 
+		// If the volume is turned off don't send
+		// down a sound.
+		if(SoundSystemConfig.getMasterGain() <= 0)
+			return;
+		
 		this.activeSound = new PlayerSound(effect);
 		try {
 			handler.playSound(this.activeSound);
