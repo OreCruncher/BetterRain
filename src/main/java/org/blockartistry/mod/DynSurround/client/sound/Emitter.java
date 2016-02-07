@@ -1,5 +1,4 @@
-/*
- * This file is part of Dynamic Surroundings, licensed under the MIT License (MIT).
+/* This file is part of Dynamic Surroundings, licensed under the MIT License (MIT).
  *
  * Copyright (c) OreCruncher
  *
@@ -24,51 +23,50 @@
 
 package org.blockartistry.mod.DynSurround.client.sound;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.audio.SoundHandler;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.fml.relauncher.Side;
 
 @SideOnly(Side.CLIENT)
-public class SoundManager {
+class Emitter {
 
-	private static final Map<SoundEffect, Emitter> emitters = new HashMap<SoundEffect, Emitter>();
+	protected final SoundEffect effect;
+	protected PlayerSound activeSound;
 
-	public static void clearSounds() {
-		for (final Emitter emit : emitters.values())
-			emit.fade();
-		emitters.clear();
+	protected int repeatDelay = 0;
+
+	public Emitter(final SoundEffect sound) {
+		this.effect = sound;
 	}
 
-	public static void queueSounds(final List<SoundEffect> sounds) {
-		// Need to remove sounds that are active but not
-		// in the incoming list
-		final List<SoundEffect> active = new ArrayList<SoundEffect>(emitters.keySet());
-		for (final SoundEffect effect : active) {
-			if (!sounds.remove(effect))
-				emitters.remove(effect).fade();
+	public void update() {
+		final SoundHandler handler = Minecraft.getMinecraft().getSoundHandler();
+		if (activeSound != null) {
+			if (handler.isSoundPlaying(activeSound))
+				return;
+			activeSound.fadeAway();
+			activeSound = null;
+			if (this.effect.repeatDelay > 0) {
+				this.repeatDelay = this.effect.repeatDelay;
+				return;
+			}
+		} else if (this.repeatDelay > 0) {
+			if (--this.repeatDelay > 0)
+				return;
 		}
 
-		// Add sounds from the incoming list that are not
-		// active.
-		for (final SoundEffect sound : sounds)
-			emitters.put(sound, new Emitter(sound));
-	}
-
-	public static void update() {
-		final Iterator<Entry<SoundEffect, Emitter>> itr = emitters.entrySet().iterator();
-		while (itr.hasNext()) {
-			final Entry<SoundEffect, Emitter> e = itr.next();
-			e.getValue().update();
+		this.activeSound = new PlayerSound(effect);
+		try {
+			handler.playSound(this.activeSound);
+		} catch (final Throwable t) {
+			;
 		}
 	}
 
-	public static List<SoundEffect> activeSounds() {
-		return new ArrayList<SoundEffect>(emitters.keySet());
+	public void fade() {
+		if (this.activeSound != null)
+			this.activeSound.fadeAway();
 	}
-
 }
+

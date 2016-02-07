@@ -18,6 +18,22 @@
 				
 			]
 			
+		},
+		{
+			"blocks":[
+				"Forestry:beehives"
+			],
+			"chance":5,
+			"sounds":[
+				{
+					"sound":"dsurround:bees",
+					"conditions":"(?i)(?!.*raining.*)(.*day.*)",
+					"volume":0.2,
+					"variable":true
+				}
+				
+			]
+			
 		}
 		
 	]
