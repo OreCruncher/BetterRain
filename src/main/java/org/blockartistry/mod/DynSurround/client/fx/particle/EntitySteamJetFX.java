@@ -25,7 +25,7 @@
 package org.blockartistry.mod.DynSurround.client.fx.particle;
 
 import org.blockartistry.mod.DynSurround.client.PlayerSoundEffectHandler;
-import org.blockartistry.mod.DynSurround.client.fx.SoundEffect;
+import org.blockartistry.mod.DynSurround.client.sound.SoundEffect;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
