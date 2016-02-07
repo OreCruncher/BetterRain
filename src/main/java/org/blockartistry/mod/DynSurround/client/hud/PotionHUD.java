@@ -70,7 +70,7 @@ public class PotionHUD extends Gui implements IGuiOverlay {
 		int guiTop = 2;
 
 		@SuppressWarnings("unchecked")
-		Collection<PotionEffect> collection = player.getActivePotionEffects();
+		final Collection<PotionEffect> collection = player.getActivePotionEffects();
 
 		if (!collection.isEmpty()) {
 
@@ -85,15 +85,16 @@ public class PotionHUD extends Gui implements IGuiOverlay {
 				k = 198 / (collection.size() - 1);
 			}
 
-			for (Iterator<PotionEffect> iterator = collection.iterator(); iterator.hasNext(); guiTop += k) {
-				PotionEffect potioneffect = iterator.next();
-				Potion potion = Potion.potionTypes[potioneffect.getPotionID()];
+			for (final Iterator<PotionEffect> iterator = collection.iterator(); iterator.hasNext(); guiTop += k) {
+				final PotionEffect potioneffect = iterator.next();
+				final Potion potion = Potion.potionTypes[potioneffect.getPotionID()];
+				
 				GL11.glColor4f(1.0F, 1.0F, 1.0F, TRANSPARENCY);
 				mc.getTextureManager().bindTexture(TEXTURE);
 				this.drawTexturedModalRect(guiLeft, guiTop, 0, 166, 140, 32);
 
 				if (potion.hasStatusIcon()) {
-					int l = potion.getStatusIconIndex();
+					final int l = potion.getStatusIconIndex();
 					this.drawTexturedModalRect(guiLeft + 6, guiTop + 7, 0 + l % 8 * 18, 198 + l / 8 * 18, 18, 18);
 				}
 
@@ -111,7 +112,7 @@ public class PotionHUD extends Gui implements IGuiOverlay {
 				}
 
 				font.drawStringWithShadow(s1, guiLeft + 10 + 18, guiTop + 6, TEXT_POTION_NAME);
-				String s = Potion.getDurationString(potioneffect);
+				final String s = Potion.getDurationString(potioneffect);
 				font.drawStringWithShadow(s, guiLeft + 10 + 18, guiTop + 6 + 10,
 						potioneffect.getDuration() <= 200 ? TEXT_DURATION_LOW : TEXT_DURATION);
 			}
