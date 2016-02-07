@@ -23,6 +23,7 @@
 		},
 		{
 			"biomeName":"(?i)(.*jungle.*)",
+			"spotSoundChance":600,
 			"soundReset":true,
 			"sounds":[
 				{
@@ -30,6 +31,13 @@
 					"conditions":"(?i)(?!.*raining.*)(.*)",
 					"volume":0.3,
 					"pitch":0.8
+				},
+				{
+					"sound":"dsurround:insectbuzz",
+					"conditions":"(?i)(?!.*raining.*)(.*)",
+					"volume":0.5,
+					"variable":true,
+					"spot":true
 				}
 				
 			]
@@ -42,6 +50,13 @@
 					"sound":"dsurround:crickets",
 					"conditions":"(?i)(?!.*raining.*).*night.*",
 					"volume":0.1
+				},
+				{
+					"sound":"dsurround:insectbuzz",
+					"conditions":"(?i)(?!.*raining.*)(.*)",
+					"volume":0.5,
+					"variable":true,
+					"spot":true
 				}
 				
 			]
@@ -121,6 +136,13 @@
 			"sounds":[
 				{
 					"sound":"dsurround:river"
+				},
+				{
+					"sound":"dsurround:insectbuzz",
+					"conditions":"(?i)(?!.*raining.*)(.*)",
+					"volume":0.5,
+					"variable":true,
+					"spot":true
 				}
 				
 			]
@@ -146,10 +168,18 @@
 		},
 		{
 			"biomeName":"(?i)(?!.*dead.*)(.*swamp.*)",
+			"spotSoundChance":600,
 			"sounds":[
 				{
 					"sound":"dsurround:crickets",
 					"volume":0.1
+				},
+				{
+					"sound":"dsurround:insectbuzz",
+					"conditions":"(?i)(?!.*raining.*)(.*)",
+					"volume":0.5,
+					"variable":true,
+					"spot":true
 				}
 				
 			]
@@ -157,11 +187,19 @@
 		},
 		{
 			"biomeName":"(?i)(.*fen.*|.*bog.*|.*marsh.*|.*moor.*|.*bayou.*|quagmire|silkglades)",
+			"spotSoundChance":600,
 			"sounds":[
 				{
 					"sound":"dsurround:crickets",
 					"conditions":"(?i).*night.*",
 					"volume":0.1
+				},
+				{
+					"sound":"dsurround:insectbuzz",
+					"conditions":"(?i)(?!.*raining.*)(.*)",
+					"volume":0.5,
+					"variable":true,
+					"spot":true
 				}
 				
 			],
