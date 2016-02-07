@@ -164,6 +164,26 @@
 				
 			]
 			
+		},
+		{
+			"blocks":[
+				"minecraft:wheat",
+				"minecraft:carrots",
+				"minecraft:potatoes",
+				"minecraft:pumpkin_stem",
+				"minecraft:melon_stem"
+			],
+			"chance":1200,
+			"sounds":[
+				{
+					"sound":"dsurround:insectbuzz",
+					"conditions":"(?i)(?!.*raining.*|.*cold.*|.*freezing.*)(.*day.*)",
+					"volume":0.15,
+					"variable":true
+				}
+				
+			]
+			
 		}
 		
 	]

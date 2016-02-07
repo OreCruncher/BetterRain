@@ -245,7 +245,7 @@
 	"bees":{
 		"category":"ambient",
 		"sounds":[
-			"ambient/miscblocks/bee1"
+			"ambient/insects/bee1"
 		]
 		
 	},
@@ -258,6 +258,28 @@
 			"ambient/steve/swoosh4",
 			"ambient/steve/swoosh5",
 			"ambient/steve/swoosh6"
+		]
+		
+	},
+	"insectbuzz":{
+		"category":"ambient",
+		"sounds":[
+			"ambient/insects/gnatt1",
+			"ambient/insects/grasshopper1"
+		]
+		
+	},
+	"gnatt":{
+		"category":"ambient",
+		"sounds":[
+			"ambient/insects/gnatt1"
+		]
+		
+	},
+	"grasshopper":{
+		"category":"ambient",
+		"sounds":[
+			"ambient/insects/grasshopper1"
 		]
 		
 	}
