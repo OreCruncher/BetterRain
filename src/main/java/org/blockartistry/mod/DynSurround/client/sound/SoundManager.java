@@ -149,16 +149,15 @@ public class SoundManager {
 
 		protected final SoundEffect effect;
 		protected PlayerSound activeSound;
-		protected final SoundHandler handler;
 
 		protected int repeatDelay = 0;
 
 		public Emitter(final SoundEffect sound) {
 			this.effect = sound;
-			this.handler = Minecraft.getMinecraft().getSoundHandler();
 		}
 
 		public void update() {
+			final SoundHandler handler = Minecraft.getMinecraft().getSoundHandler();
 			if (activeSound != null) {
 				if (handler.isSoundPlaying(activeSound))
 					return;

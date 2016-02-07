@@ -58,6 +58,7 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 	private static final int SPOT_SOUND_RANGE = 6;
 	private static final int SOUND_QUEUE_SLACK = 12;
 
+	private static int playerDimension = 0;
 	private static int reloadTracker = 0;
 
 	private static class SpotSound extends PositionedSound {
@@ -145,13 +146,15 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 
 	@Override
 	public void process(final World world, final EntityPlayer player) {
-		if (didReloadOccur() || player.isDead)
+		if (didReloadOccur() || player.isDead || playerDimension != EnvironState.getDimensionId())
 			SoundManager.clearSounds();
-
+		
 		// Dead players hear no sounds
 		if (player.isDead)
 			return;
 
+		playerDimension = EnvironState.getDimensionId();
+		
 		final BiomeGenBase playerBiome = EnvironState.getPlayerBiome();
 		final String conditions = EnvironState.getConditions();
 
