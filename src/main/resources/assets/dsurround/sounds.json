@@ -252,6 +252,18 @@
 			"ambient/bees/bees5"
 		]
 		
+	},
+	"swoosh":{
+		"category":"ambient",
+		"sounds":[
+			"ambient/steve/swoosh1",
+			"ambient/steve/swoosh2",
+			"ambient/steve/swoosh3",
+			"ambient/steve/swoosh4",
+			"ambient/steve/swoosh5",
+			"ambient/steve/swoosh6"
+		]
+		
 	}
 	
 }

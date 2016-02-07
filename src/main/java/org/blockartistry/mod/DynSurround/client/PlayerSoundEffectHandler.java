@@ -195,6 +195,18 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 		public String toString() {
 			return this.sound.toString();
 		}
+
+		@Override
+		public boolean equals(final Object anObj) {
+			if (this == anObj)
+				return true;
+			if (anObj instanceof PlayerSound)
+				return this.sameSound(((PlayerSound) anObj).sound);
+			if (anObj instanceof SoundEffect)
+				return this.sameSound((SoundEffect) anObj);
+			return false;
+		}
+
 	}
 
 	private static boolean didReloadOccur() {
@@ -205,15 +217,15 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 		}
 		return false;
 	}
-	
+
 	private int currentSoundCount() {
 		return Minecraft.getMinecraft().getSoundHandler().sndManager.playingSounds.size();
 	}
-	
+
 	private int maxSoundCount() {
 		return SoundSystemConfig.getNumberNormalChannels() + SoundSystemConfig.getNumberStreamingChannels();
 	}
-	
+
 	private boolean canFitSound() {
 		return currentSoundCount() < (maxSoundCount() - SOUND_QUEUE_SLACK);
 	}
@@ -227,17 +239,26 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 		activeSounds.clear();
 	}
 
-	private static boolean isPlaying(final SoundEffect sound) {
+	private static boolean isActive(final SoundEffect sound) {
 		for (final PlayerSound s : activeSounds)
-			if (s.sameSound(sound))
+			if (s.equals(sound))
 				return true;
 		return false;
 	}
 
+	private static boolean isSoundQueued(final PlayerSound sound) {
+		final SoundHandler handler = Minecraft.getMinecraft().getSoundHandler();
+		return handler.isSoundPlaying(sound) || handler.sndManager.delayedSounds.containsKey(sound);
+	}
+
 	private static void playSound(final EntityPlayer player, final SoundEffect sound) {
-		final PlayerSound s = new PlayerSound(player, sound);
-		activeSounds.add(s);
-		Minecraft.getMinecraft().getSoundHandler().playSound(s);
+		try {
+			final PlayerSound s = new PlayerSound(player, sound);
+			Minecraft.getMinecraft().getSoundHandler().playSound(s);
+			activeSounds.add(s);
+		} catch (final Throwable t) {
+			;
+		}
 	}
 
 	public static void playSoundAtPlayer(EntityPlayer player, final SoundEffect sound, final int tickDelay) {
@@ -272,13 +293,15 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 			if (!sounds.contains(sound.sound)) {
 				sound.fadeAway();
 				itr.remove();
+			} else if (!isSoundQueued(sound)) {
+				itr.remove();
 			}
 		}
-		
+
 		// Add sounds from the incoming list that are not
 		// active.
 		for (final SoundEffect sound : sounds)
-			if (!isPlaying(sound))
+			if (!isActive(sound))
 				playSound(player, sound);
 	}
 
@@ -300,13 +323,13 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 		processSounds(player, sounds);
 
 		SoundEffect sound = null;
-		if(canFitSound()) {
+		if (canFitSound()) {
 			sound = BiomeRegistry.getSpotSound(playerBiome, conditions, RANDOM);
 			if (sound != null)
 				playSoundAtPlayer(player, sound, 0);
 		}
 
-		if(canFitSound()) {
+		if (canFitSound()) {
 			sound = BiomeRegistry.getSpotSound(BiomeRegistry.PLAYER, conditions, RANDOM);
 			if (sound != null)
 				playSoundAtPlayer(player, sound, 0);

@@ -112,6 +112,8 @@ public final class ModOptions {
 	protected static int streamingSoundChannelCount = 4;
 	protected static final String CONFIG_ENABLE_JUMP_SOUND = "Jump Sound";
 	protected static boolean enableJumpSound = true;
+	protected static final String CONFIG_ENABLE_SWING_SOUND = "Swing Sound";
+	protected static boolean enableSwingSound = true;
 
 	protected static final String CATEGORY_PLAYER = "player";
 	protected static final String CONFIG_SUPPRESS_POTION_PARTICLES = "Suppress Potion Particles";
@@ -255,6 +257,9 @@ public final class ModOptions {
 		comment = "Enable sound effect when jumping";
 		enableJumpSound = config.getBoolean(CONFIG_ENABLE_JUMP_SOUND, CATEGORY_SOUND, enableJumpSound, comment);
 
+		comment = "Enable weapons swing sound effect when attacking";
+		enableSwingSound = config.getBoolean(CONFIG_ENABLE_SWING_SOUND, CATEGORY_SOUND, enableSwingSound, comment);
+		
 		// CATEGORY: player.potion hud
 		comment = "Enable display of potion icons in display";
 		potionHudEnabled = config.getBoolean(CONFIG_POTION_HUD_ENABLE, CATEGORY_POTION_HUD, potionHudEnabled, comment);
@@ -395,6 +400,10 @@ public final class ModOptions {
 	
 	public static boolean getEnableJumpSound() {
 		return enableJumpSound;
+	}
+	
+	public static boolean getEnableSwingSound() {
+		return enableSwingSound;
 	}
 
 	public static boolean getSuppressPotionParticleEffect() {
