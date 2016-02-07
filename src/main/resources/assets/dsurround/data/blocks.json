@@ -184,6 +184,21 @@
 				
 			]
 			
+		},
+		{
+			"blocks":[
+				"minecraft:leaves",
+				"minecraft:leaves2",
+				"minecraft:tallgrass"
+			],
+			"stepChance":5,
+			"sounds":[
+				{
+					"sound":"dsurround:leafwalk",
+					"volume":0.2,
+					"step":true
+				}
+			]
 		}
 		
 	]

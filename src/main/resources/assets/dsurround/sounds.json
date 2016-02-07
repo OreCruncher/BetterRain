@@ -282,6 +282,18 @@
 			"ambient/insects/grasshopper1"
 		]
 		
+	},
+	"leafwalk":{
+		"category":"ambient",
+		"sounds":[
+			"ambient/steve/leafwalk1",
+			"ambient/steve/leafwalk2",
+			"ambient/steve/leafwalk3",
+			"ambient/steve/leafwalk4",
+			"ambient/steve/leafwalk5",
+			"ambient/steve/leafwalk6"
+		]
+		
 	}
 	
 }
