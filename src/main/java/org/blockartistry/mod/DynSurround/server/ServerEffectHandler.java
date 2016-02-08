@@ -135,7 +135,7 @@ public final class ServerEffectHandler {
 						// final int preset = AuroraPreset.testId();
 						final AuroraData aurora = new AuroraData(player, Z_OFFSET, colorSet, preset);
 						if (data.add(aurora)) {
-							ModLog.info("Spawned new aurora: " + aurora.toString());
+							ModLog.debug("Spawned new aurora: " + aurora.toString());
 						}
 					}
 				}

@@ -91,7 +91,7 @@ public final class AuroraEffectHandler implements IClientEffectHandler {
 		if (ad == null) {
 			currentAurora = null;
 		} else if (currentAurora == null || (currentAurora.posX != ad.posX && currentAurora.posZ != ad.posZ)) {
-			ModLog.info("New aurora: " + ad.toString());
+			ModLog.debug("New aurora: " + ad.toString());
 			currentAurora = new Aurora(ad);
 		}
 
@@ -118,7 +118,7 @@ public final class AuroraEffectHandler implements IClientEffectHandler {
 				if(aurora != null) {
 					aurora.update();
 					if (aurora.isAlive() && DiurnalUtils.isSunrise(world)) {
-						ModLog.info("Aurora fade...");
+						ModLog.debug("Aurora fade...");
 						aurora.die();
 					}
 				}

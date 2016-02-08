@@ -85,7 +85,7 @@ public class WorldHandler {
 
 		if (info.isRaining() && data.getRainIntensity() == 0.0F) {
 			data.randomizeRain();
-			ModLog.info(String.format("dim %d rain strength set to %f", dimensionId, data.getRainIntensity()));
+			ModLog.debug(String.format("dim %d rain strength set to %f", dimensionId, data.getRainIntensity()));
 		}
 
 		world.prevRainingStrength = world.rainingStrength;
@@ -105,7 +105,7 @@ public class WorldHandler {
 				world.rainingStrength = 0.0F;
 		} else if (data.getRainIntensity() > 0.0F) {
 			data.setRainIntensity(0.0F);
-			ModLog.info(String.format("dim %d rain has stopped", dimensionId));
+			ModLog.debug(String.format("dim %d rain has stopped", dimensionId));
 		}
 	}
 }
