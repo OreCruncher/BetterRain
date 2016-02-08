@@ -330,6 +330,53 @@
 			"ambient/elephant/elephant3"
 		]
 		
+	},
+	"hiss":{
+		"category":"ambient",
+		"sounds":[
+			"ambient/miscblocks/hiss1"
+		]
+		
+	},
+	"newsprint":{
+		"category":"ambient",
+		"sounds":[
+			"ambient/book/newsprint1",
+			"ambient/book/newsprint2"
+		]
+		
+	},
+	"pageflip":{
+		"category":"ambient",
+		"sounds":[
+			"ambient/book/pageflip1",
+			"ambient/book/pageflip2",
+			"ambient/book/pageflip3"
+		]
+		
+	},
+	"pageflipheavy":{
+		"category":"ambient",
+		"sounds":[
+			"ambient/book/pageflipheavy1",
+			"ambient/book/pageflipheavy2",
+			"ambient/book/pageflipheavy3"
+		]
+		
+	},
+	"bookshelf":{
+		"category":"ambient",
+		"sounds":[
+			"ambient/book/newsprint1",
+			"ambient/book/newsprint2",
+			"ambient/book/pageflip1",
+			"ambient/book/pageflip2",
+			"ambient/book/pageflip3",
+			"ambient/book/pageflipheavy1",
+			"ambient/book/pageflipheavy2",
+			"ambient/book/pageflipheavy3"
+		]
+		
 	}
 	
 }

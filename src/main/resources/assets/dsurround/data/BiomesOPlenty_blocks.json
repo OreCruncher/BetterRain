@@ -65,6 +65,22 @@
 				
 			]
 			
+		},
+		{
+			"blocks":[
+				"BiomesOPlenty:foliage"
+			],
+			"chance":10000,
+			"sounds":[
+				{
+					"sound":"dsurround:hiss",
+					"conditions":"(?i)(?!.*raining.*|.*cold.*|.*freezing.*)(.*#day#.*)",
+					"volume":0.3,
+					"variable":true
+				}
+				
+			]
+			
 		}
 		
 	]
