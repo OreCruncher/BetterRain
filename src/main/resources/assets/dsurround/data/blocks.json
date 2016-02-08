@@ -177,7 +177,7 @@
 			"sounds":[
 				{
 					"sound":"dsurround:insectbuzz",
-					"conditions":"(?i)(?!.*raining.*|.*cold.*|.*freezing.*)(.*day.*)",
+					"conditions":"(?i)(?!.*raining.*|.*cold.*|.*freezing.*)(.*#day#.*)",
 					"volume":0.15,
 					"variable":true
 				}
@@ -195,10 +195,46 @@
 			"sounds":[
 				{
 					"sound":"dsurround:leafwalk",
-					"volume":0.2,
+					"volume":0.4,
+					"variable":true,
 					"step":true
 				}
+				
 			]
+			
+		},
+		{
+			"blocks":[
+				"minecraft:nether_brick",
+				"minecraft:nether_brick_fence",
+				"minecraft:nether_brick_stairs"
+			],
+			"chance":4000,
+			"sounds":[
+				{
+					"sound":"dsurround:breathing",
+					"conditions":"(?i)(.*#nether#.*)",
+					"volume":0.5,
+					"variable":true
+				}
+				
+			]
+			
+		},
+		{
+			"blocks":[
+				"minecraft:nether_wart"
+			],
+			"chance":100,
+			"sounds":[
+				{
+					"sound":"minecraft:random.pop",
+					"volume":0.3,
+					"variable":true
+				}
+				
+			]
+			
 		}
 		
 	]

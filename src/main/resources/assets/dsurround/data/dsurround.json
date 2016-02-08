@@ -28,13 +28,13 @@
 			"sounds":[
 				{
 					"sound":"dsurround:jungle",
-					"conditions":"(?i)(?!.*raining.*)(.*)",
+					"conditions":"(?i)(?!.*#raining#.*)(.*)",
 					"volume":0.3,
 					"pitch":0.8
 				},
 				{
 					"sound":"dsurround:insectbuzz",
-					"conditions":"(?i)(?!.*raining.*)(.*)",
+					"conditions":"(?i)(?!.*#raining#.*)(.*)",
 					"volume":0.5,
 					"variable":true,
 					"spot":true
@@ -48,12 +48,12 @@
 			"sounds":[
 				{
 					"sound":"dsurround:crickets",
-					"conditions":"(?i)(?!.*raining.*).*night.*",
+					"conditions":"(?i)(?!.*#raining#.*).*#night#.*",
 					"volume":0.1
 				},
 				{
 					"sound":"dsurround:insectbuzz",
-					"conditions":"(?i)(?!.*raining.*)(.*)",
+					"conditions":"(?i)(?!.*#raining#.*)(.*)",
 					"volume":0.5,
 					"variable":true,
 					"spot":true
@@ -67,16 +67,16 @@
 			"sounds":[
 				{
 					"sound":"dsurround:forest",
-					"conditions":"(?i)(?!.*raining.*).*day.*"
+					"conditions":"(?i)(?!.*#raining#.*).*#day#.*"
 				},
 				{
 					"sound":"dsurround:crickets",
-					"conditions":"(?i)(?!.*raining.*).*night.*",
+					"conditions":"(?i)(?!.*#raining#.*).*#night#.*",
 					"volume":0.1
 				},
 				{
 					"sound":"dsurround:owl",
-					"conditions":"(?i)(?!.*raining.*).*night.*",
+					"conditions":"(?i)(?!.*#raining#.*).*#night#.*",
 					"volume":0.3,
 					"spot":true
 				}
@@ -89,7 +89,7 @@
 			"sounds":[
 				{
 					"sound":"dsurround:taiga",
-					"conditions":"(?i)(?!.*raining.*).*day.*",
+					"conditions":"(?i)(?!.*#raining#.*).*#day#.*",
 					"volume":0.7
 				}
 				
@@ -101,13 +101,13 @@
 			"sounds":[
 				{
 					"sound":"dsurround:owl",
-					"conditions":"(?i)(?!.*raining.*).*night.*",
+					"conditions":"(?i)(?!.*#raining#.*).*#night#.*",
 					"volume":0.3,
 					"spot":true
 				},
 				{
 					"sound":"dsurround:wolf",
-					"conditions":"(?i)(?!.*raining.*).*night.*",
+					"conditions":"(?i)(?!.*#raining#.*).*#night#.*",
 					"volume":0.3,
 					"spot":true
 				}
@@ -123,7 +123,7 @@
 				},
 				{
 					"sound":"dsurround:seagulls",
-					"conditions":"(?i)(?!.*raining.*).*day.*",
+					"conditions":"(?i)(?!.*#raining#.*).*#day#.*",
 					"volume":0.3,
 					"spot":true
 				}
@@ -132,14 +132,14 @@
 			
 		},
 		{
-			"biomeName":"(?i)(?!.*frozen.*)(.*river.*)",
+			"biomeName":"(?i)(?!.*frozen.*|.*dry.*)(.*river.*)",
 			"sounds":[
 				{
 					"sound":"dsurround:river"
 				},
 				{
 					"sound":"dsurround:insectbuzz",
-					"conditions":"(?i)(?!.*raining.*)(.*)",
+					"conditions":"(?i)(?!.*#raining#.*)(.*)",
 					"volume":0.5,
 					"variable":true,
 					"spot":true
@@ -176,7 +176,7 @@
 				},
 				{
 					"sound":"dsurround:insectbuzz",
-					"conditions":"(?i)(?!.*raining.*)(.*)",
+					"conditions":"(?i)(?!.*#raining#.*)(.*)",
 					"volume":0.5,
 					"variable":true,
 					"spot":true
@@ -191,12 +191,12 @@
 			"sounds":[
 				{
 					"sound":"dsurround:crickets",
-					"conditions":"(?i).*night.*",
+					"conditions":"(?i).*#night#.*",
 					"volume":0.1
 				},
 				{
 					"sound":"dsurround:insectbuzz",
-					"conditions":"(?i)(?!.*raining.*)(.*)",
+					"conditions":"(?i)(?!.*#raining#.*)(.*)",
 					"volume":0.5,
 					"variable":true,
 					"spot":true
@@ -208,9 +208,57 @@
 			"fogDensity":0.02
 		},
 		{
+			"biomeName":"(?i)(?!.*dead.*)(.*swamp.*|.*marsh.*|.*bayou.*)",
+			"sounds":[
+				{
+					"sound":"dsurround:crocodile",
+					"volume":0.7,
+					"spot":true
+				}
+				
+			]
+			
+		},
+		{
 			"biomeName":"(?i)(.*desert.*|.*sand.*|.*mesa.*|.*wasteland.*|.*sahara.*)",
 			"dust":true,
 			"dustColor":"204,185,102"
+		},
+		{
+			"biomeName":"(?i)(?!.*cold.*|.*frozen.*)(.*desert.*|.*sand.*|.*mesa.*)",
+			"sounds":[
+				{
+					"sound":"dsurround:rattlesnake",
+					"conditions":"(?i)(?!.*#raining#.*).*#day#.*",
+					"volume":1.0,
+					"spot":true
+				}
+				
+			]
+			
+		},
+		{
+			"biomeName":"(?i)(.*savanna.*)",
+			"spotSoundChance":400,
+			"sounds":[
+				{
+					"sound":"dsurround:elephant",
+					"conditions":"(?i).*#day#.*",
+					"volume":0.7,
+					"spot":true
+				},
+				{
+					"sound":"dsurround:insectbuzz",
+					"conditions":"(?i)(.*)",
+					"volume":0.5,
+					"weight":20,
+					"variable":true,
+					"spot":true
+				}
+				
+				
+			]
+			
 		},
 		{
 			"biomeName":"(?i)(the end|sky)",
@@ -248,7 +296,7 @@
 				},
 				{
 					"sound":"dsurround:monstergrowl",
-					"conditions":"(?i).*night.*",
+					"conditions":"(?i).*#night#.*",
 					"volume":0.3,
 					"spot":true,
 					"weight":10
@@ -301,12 +349,12 @@
 			"sounds":[
 				{
 					"sound":"dsurround:heartbeat",
-					"conditions":"(?i).*hurt.*",
+					"conditions":"(?i).*#hurt#.*",
 					"skipFade":true
 				},
 				{
 					"sound":"dsurround:tummy",
-					"conditions":"(?i).*hungry.*",
+					"conditions":"(?i).*#hungry#.*",
 					"skipFade":true,
 					"repeatDelay":300
 				}
