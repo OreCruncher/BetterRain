@@ -49,6 +49,9 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldProvider;
+import net.minecraft.world.WorldProviderEnd;
+import net.minecraft.world.WorldProviderHell;
 import net.minecraftforge.client.event.sound.PlaySoundEvent17;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.EntityEvent.EntityConstructing;
@@ -78,7 +81,7 @@ public class ClientEffectHandler {
 		FMLCommonHandler.instance().bus().register(handler);
 
 		register(new EnvironStateHandler());
-		
+
 		register(new FogEffectHandler());
 		register(new BlockEffectHandler());
 
@@ -136,7 +139,7 @@ public class ClientEffectHandler {
 		} else if (event.phase == Phase.END) {
 			for (final EntityDropParticleFX drop : drops) {
 				if (drop.isEntityAlive()) {
-					if(drop.posY < 1)
+					if (drop.posY < 1)
 						continue;
 					final int x = MathHelper.floor_double(drop.posX);
 					final int y = MathHelper.floor_double(drop.posY + 0.3D);
@@ -157,6 +160,10 @@ public class ClientEffectHandler {
 		}
 	}
 
+	private static boolean okToHook(final WorldProvider provider) {
+		return !(provider instanceof WorldProviderHell || provider instanceof WorldProviderEnd);
+	}
+
 	@SubscribeEvent(priority = EventPriority.LOWEST)
 	public void onWorldLoad(final WorldEvent.Load e) {
 		if (!e.world.isRemote)
@@ -168,9 +175,9 @@ public class ClientEffectHandler {
 
 		// Shim the provider so we can tap into the
 		// sky and cloud stuff.
-		if (ModOptions.getEnableFancyCloudHandling()) {
+		if (ModOptions.getEnableFancyCloudHandling() && okToHook(e.world.provider)) {
 			e.world.provider = new WorldProviderShim(e.world, e.world.provider);
 		}
 	}
-	
+
 }
