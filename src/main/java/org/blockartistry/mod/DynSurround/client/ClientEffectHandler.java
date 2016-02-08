@@ -42,6 +42,9 @@ import net.minecraft.init.Blocks;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldProvider;
+import net.minecraft.world.WorldProviderEnd;
+import net.minecraft.world.WorldProviderHell;
 import net.minecraftforge.client.event.sound.PlaySoundEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.EntityEvent.EntityConstructing;
@@ -164,6 +167,10 @@ public class ClientEffectHandler {
 		}
 	}
 
+	private static boolean okToHook(final WorldProvider provider) {
+		return !(provider instanceof WorldProviderHell || provider instanceof WorldProviderEnd);
+	}
+
 	@SubscribeEvent(priority = EventPriority.LOWEST)
 	public void onWorldLoad(final WorldEvent.Load e) {
 		if (!e.world.isRemote)
@@ -175,7 +182,7 @@ public class ClientEffectHandler {
 
 		// Shim the provider so we can tap into the
 		// sky and cloud stuff.
-		if (ModOptions.getEnableFancyCloudHandling()) {
+		if (ModOptions.getEnableFancyCloudHandling() && okToHook(e.world.provider)) {
 			e.world.provider = new WorldProviderShim(e.world, e.world.provider);
 		}
 	}
