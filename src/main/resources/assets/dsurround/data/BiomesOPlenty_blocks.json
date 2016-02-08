@@ -8,6 +8,10 @@
 				{
 					"effect":"fountain",
 					"chance":500
+				},
+				{
+					"effect":"bubble",
+					"chance":1800
 				}
 				
 			]
