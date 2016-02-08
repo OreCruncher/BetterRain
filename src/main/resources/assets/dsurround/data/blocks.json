@@ -55,7 +55,7 @@
 			"sounds":[
 				{
 					"sound":"dsurround:ice",
-					"volume":0.3,
+					"volume":0.5,
 					"pitch":1.0,
 					"variable":false
 				}
@@ -231,6 +231,51 @@
 					"sound":"minecraft:random.pop",
 					"volume":0.3,
 					"variable":true
+				}
+				
+			]
+			
+		},
+		{
+			"blocks":[
+				"minecraft:tallgrass"
+			],
+			"chance":10000,
+			"sounds":[
+				{
+					"sound":"dsurround:hiss",
+					"conditions":"(?i)(?!.*raining.*|.*cold.*|.*freezing.*)(.*#day#.*)",
+					"volume":0.3,
+					"variable":true
+				}
+				
+			]
+			
+		},
+		{
+			"blocks":[
+				"minecraft:monster_egg"
+			],
+			"chance":200,
+			"sounds":[
+				{
+					"sound":"dsurround:hiss",
+					"volume":0.3,
+					"variable":true
+				}
+				
+			]
+			
+		},
+		{
+			"blocks":[
+				"minecraft:bookshelf"
+			],
+			"chance":200,
+			"sounds":[
+				{
+					"sound":"dsurround:bookshelf",
+					"volume":0.7
 				}
 				
 			]
