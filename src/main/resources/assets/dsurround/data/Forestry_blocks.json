@@ -27,7 +27,7 @@
 			"sounds":[
 				{
 					"sound":"dsurround:bees",
-					"conditions":"(?i)(?!.*raining.*)(.*day.*)",
+					"conditions":"(?i)(?!.*#raining#.*)(.*#day#.*)",
 					"volume":0.2,
 					"variable":true
 				}
@@ -43,7 +43,8 @@
 			"sounds":[
 				{
 					"sound":"dsurround:leafwalk",
-					"volume":0.2,
+					"volume":0.4,
+					"variable":true,
 					"step":true
 				}
 				

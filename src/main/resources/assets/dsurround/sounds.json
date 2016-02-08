@@ -235,6 +235,14 @@
 		]
 		
 	},
+	"breathing":{
+		"category":"ambient",
+		"sounds":[
+			"ambient/miscblocks/breathing1",
+			"ambient/miscblocks/breathing2"
+		]
+		
+	},
 	"jump":{
 		"category":"ambient",
 		"sounds":[
@@ -292,6 +300,34 @@
 			"ambient/steve/leafwalk4",
 			"ambient/steve/leafwalk5",
 			"ambient/steve/leafwalk6"
+		]
+		
+	},
+	"crocodile":{
+		"category":"ambient",
+		"sounds":[
+			"ambient/crock/crocodile1",
+			"ambient/crock/crocodile2",
+			"ambient/crock/crocodile3",
+			"ambient/crock/crocodile4"
+		]
+		
+	},
+	"rattlesnake":{
+		"category":"ambient",
+		"sounds":[
+			"ambient/snake/rattlesnake1",
+			"ambient/snake/rattlesnake2",
+			"ambient/snake/rattlesnake3"
+		]
+		
+	},
+	"elephant":{
+		"category":"ambient",
+		"sounds":[
+			"ambient/elephant/elephant1",
+			"ambient/elephant/elephant2",
+			"ambient/elephant/elephant3"
 		]
 		
 	}
