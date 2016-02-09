@@ -27,7 +27,6 @@ package org.blockartistry.mod.DynSurround.client.footsteps.engine.implem;
 import java.util.Random;
 
 import org.apache.commons.lang3.StringUtils;
-import org.blockartistry.mod.DynSurround.Module;
 import org.blockartistry.mod.DynSurround.client.footsteps.engine.interfaces.IAcoustic;
 import org.blockartistry.mod.DynSurround.client.footsteps.engine.interfaces.EventType;
 import org.blockartistry.mod.DynSurround.client.footsteps.engine.interfaces.IOptions;
@@ -61,8 +60,7 @@ public class BasicAcoustic implements IAcoustic {
 			}
 		}
 
-		// TODO: Fix this up
-		player.playSound(location, Module.MOD_ID + ":" + this.soundName, volume, pitch, this.outputOptions);
+		player.playSound(location, this.soundName, volume, pitch, this.outputOptions);
 	}
 
 	private float generateVolume(final Random rng) {
