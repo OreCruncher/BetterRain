@@ -27,8 +27,9 @@ package org.blockartistry.mod.DynSurround;
 import org.apache.logging.log4j.Logger;
 
 public final class ModLog {
-	
-	private ModLog() {}
+
+	private ModLog() {
+	}
 
 	private static Logger logger;
 
