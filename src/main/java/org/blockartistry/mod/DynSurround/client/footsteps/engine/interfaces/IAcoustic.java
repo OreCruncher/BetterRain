@@ -24,11 +24,15 @@
 
 package org.blockartistry.mod.DynSurround.client.footsteps.engine.interfaces;
 
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
 /**
  * Something that has the ability to play sounds.
  * 
  * @author Hurry
  */
+@SideOnly(Side.CLIENT)
 public interface IAcoustic {
 	/**
 	 * Plays a sound.

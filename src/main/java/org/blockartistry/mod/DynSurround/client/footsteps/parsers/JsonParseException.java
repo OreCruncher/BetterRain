@@ -24,6 +24,10 @@
 
 package org.blockartistry.mod.DynSurround.client.footsteps.parsers;
 
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
+@SideOnly(Side.CLIENT)
 public class JsonParseException extends Exception {
 	private static final long serialVersionUID = 4586255498544473275L;
 

@@ -39,9 +39,13 @@ import org.blockartistry.mod.DynSurround.client.footsteps.util.property.contract
 import org.blockartistry.mod.DynSurround.client.footsteps.util.property.contract.IPropertyHolder;
 import org.blockartistry.mod.DynSurround.client.footsteps.util.property.contract.IVersionable;
 
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
 import java.util.Properties;
 import java.util.TreeSet;
 
+@SideOnly(Side.CLIENT)
 public class ConfigProperty implements IPropertyHolder, IVersionable, ConfigSource {
 	private VersionableProperty mixed;
 

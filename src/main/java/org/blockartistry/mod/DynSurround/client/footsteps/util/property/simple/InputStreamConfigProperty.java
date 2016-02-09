@@ -35,8 +35,12 @@ import org.blockartistry.mod.DynSurround.client.footsteps.util.property.contract
 import org.blockartistry.mod.DynSurround.client.footsteps.util.property.contract.IPropertyHolder;
 import org.blockartistry.mod.DynSurround.client.footsteps.util.property.contract.IVersionable;
 
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
 import java.util.Properties;
 
+@SideOnly(Side.CLIENT)
 public class InputStreamConfigProperty implements IPropertyHolder, IVersionable, IConfigInputStream {
 	private VersionableProperty mixed;
 

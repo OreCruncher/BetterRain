@@ -24,12 +24,15 @@
 
 package org.blockartistry.mod.DynSurround.client.footsteps.util.property.simple;
 
-public class PropertyTypeException extends RuntimeException
-{
-	
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
+@SideOnly(Side.CLIENT)
+public class PropertyTypeException extends RuntimeException {
+
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -294806176942571859L;
-	
+
 }

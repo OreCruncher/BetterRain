@@ -29,6 +29,10 @@ import java.util.Map;
 import org.blockartistry.mod.DynSurround.client.footsteps.util.property.contract.IPropertyHolder;
 import org.blockartistry.mod.DynSurround.client.footsteps.util.property.contract.IVersionable;
 
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
+@SideOnly(Side.CLIENT)
 public class VersionableProperty implements IPropertyHolder, IVersionable {
 	private IPropertyHolder soft;
 	private IPropertyHolder hard;

@@ -24,6 +24,10 @@
 
 package org.blockartistry.mod.DynSurround.client.footsteps.engine.interfaces;
 
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
+@SideOnly(Side.CLIENT)
 public interface INamedAcoustic extends IAcoustic {
 	/**
 	 * Gets the name of this IAcoustic.

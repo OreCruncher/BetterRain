@@ -27,12 +27,15 @@ package org.blockartistry.mod.DynSurround.client.footsteps.mcpackage.interfaces;
 import org.blockartistry.mod.DynSurround.client.footsteps.game.system.Association;
 
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 /**
  * Can generate footsteps using the default Minecraft function.
  * 
  * @author Hurry
  */
+@SideOnly(Side.CLIENT)
 public interface IDefaultStepPlayer {
 	/**
 	 * Play a step sound from a block.

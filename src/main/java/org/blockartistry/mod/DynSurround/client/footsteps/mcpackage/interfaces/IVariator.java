@@ -26,6 +26,10 @@ package org.blockartistry.mod.DynSurround.client.footsteps.mcpackage.interfaces;
 
 import org.blockartistry.mod.DynSurround.client.footsteps.util.property.contract.IPropertyHolder;
 
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
+@SideOnly(Side.CLIENT)
 public interface IVariator {
 	public void loadConfig(final IPropertyHolder config);
 }

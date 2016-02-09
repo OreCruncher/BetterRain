@@ -41,6 +41,8 @@ import net.minecraft.init.Blocks;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 /**
  * Solves in-world locations and players into associations. Associations are an
@@ -57,6 +59,7 @@ import net.minecraft.world.World;
  * 
  * @author Hurry
  */
+@SideOnly(Side.CLIENT)
 public class PFSolver implements ISolver {
 	private final IIsolator isolator;
 

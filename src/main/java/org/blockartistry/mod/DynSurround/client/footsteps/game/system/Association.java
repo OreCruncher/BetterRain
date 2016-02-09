@@ -25,7 +25,10 @@
 package org.blockartistry.mod.DynSurround.client.footsteps.game.system;
 
 import net.minecraft.block.Block;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
+@SideOnly(Side.CLIENT)
 public class Association {
 	
 	private Block block;

@@ -26,6 +26,10 @@ package org.blockartistry.mod.DynSurround.client.footsteps.engine.implem;
 
 import org.blockartistry.mod.DynSurround.client.footsteps.engine.interfaces.IOptions;
 
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
+@SideOnly(Side.CLIENT)
 public class DelayedAcoustic extends BasicAcoustic implements IOptions {
 	protected long delayMin = 0;
 	protected long delayMax = 0;

@@ -28,6 +28,10 @@ import java.util.Set;
 
 import org.blockartistry.mod.DynSurround.client.footsteps.game.system.Association;
 
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
+@SideOnly(Side.CLIENT)
 public interface ILibrary {
 	/**
 	 * Adds an acoustic to the library.

@@ -24,6 +24,10 @@
 
 package org.blockartistry.mod.DynSurround.client.footsteps.engine.interfaces;
 
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
+@SideOnly(Side.CLIENT)
 public interface IOptions {
 	public boolean hasOption(final String option);
 

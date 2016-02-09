@@ -26,6 +26,10 @@ package org.blockartistry.mod.DynSurround.client.footsteps.engine.interfaces;
 
 import java.util.Random;
 
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
+@SideOnly(Side.CLIENT)
 public interface ISoundPlayer {
 	/**
 	 * Plays a sound.

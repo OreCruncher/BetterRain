@@ -26,22 +26,25 @@ package org.blockartistry.mod.DynSurround.client.footsteps.util.property.contrac
 
 import java.util.Map;
 
-public interface IPropertyHolder
-{
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
+@SideOnly(Side.CLIENT)
+public interface IPropertyHolder {
 	public String getString(final String name);
-	
+
 	public boolean getBoolean(final String name);
-	
+
 	public int getInteger(final String name);
-	
+
 	public float getFloat(final String name);
-	
+
 	public long getLong(final String name);
-	
+
 	public double getDouble(final String name);
-	
+
 	public void setProperty(final String name, final Object o);
-	
+
 	public Map<String, String> getAllProperties();
-	
+
 }

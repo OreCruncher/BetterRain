@@ -31,7 +31,10 @@ import org.blockartistry.mod.DynSurround.client.footsteps.game.system.PFHelper;
 import org.blockartistry.mod.DynSurround.client.footsteps.mcpackage.interfaces.IBlockMap;
 
 import net.minecraft.block.Block;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
+@SideOnly(Side.CLIENT)
 public class BasicBlockMap implements IBlockMap {
 	private Map<String, String> blockMap;
 

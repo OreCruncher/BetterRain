@@ -45,12 +45,15 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.BlockPos;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 /**
  * A ILibrary that can also play sounds and default footsteps.
  * 
  * @author Hurry
  */
+@SideOnly(Side.CLIENT)
 public class AcousticsManager extends AcousticsLibrary implements ISoundPlayer, IDefaultStepPlayer {
 	private IIsolator isolator;
 

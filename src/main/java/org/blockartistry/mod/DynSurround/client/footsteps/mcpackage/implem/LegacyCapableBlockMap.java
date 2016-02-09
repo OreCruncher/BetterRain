@@ -28,7 +28,10 @@ import org.blockartistry.mod.DynSurround.ModLog;
 import org.blockartistry.mod.DynSurround.client.footsteps.game.system.PFHelper;
 
 import net.minecraft.block.Block;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
+@SideOnly(Side.CLIENT)
 public class LegacyCapableBlockMap extends BasicBlockMap {
 	@Override
 	public void register(final String key, final String value) {

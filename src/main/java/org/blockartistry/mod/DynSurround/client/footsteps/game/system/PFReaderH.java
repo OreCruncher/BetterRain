@@ -33,7 +33,10 @@ import org.blockartistry.mod.DynSurround.client.footsteps.mcpackage.interfaces.I
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.MathHelper;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
+@SideOnly(Side.CLIENT)
 public class PFReaderH implements IGenerator, IVariatorSettable {
 	// Construct
 	final protected IIsolator mod;

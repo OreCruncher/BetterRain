@@ -38,7 +38,10 @@ import org.blockartistry.mod.DynSurround.client.footsteps.mcpackage.interfaces.I
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
+@SideOnly(Side.CLIENT)
 public class PFIsolator implements IIsolator, IVariatorSettable, IGeneratorSettable {
 	private ILibrary acoustics;
 	private ISolver solver;

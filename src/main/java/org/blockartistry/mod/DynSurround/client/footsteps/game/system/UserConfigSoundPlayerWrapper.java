@@ -30,6 +30,10 @@ import org.blockartistry.mod.DynSurround.ModOptions;
 import org.blockartistry.mod.DynSurround.client.footsteps.engine.interfaces.IOptions;
 import org.blockartistry.mod.DynSurround.client.footsteps.engine.interfaces.ISoundPlayer;
 
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
+@SideOnly(Side.CLIENT)
 public class UserConfigSoundPlayerWrapper implements ISoundPlayer {
 
 	private static final float MASTER_VOLUME_SCALE = ModOptions.getMasterSoundScaleFactor();

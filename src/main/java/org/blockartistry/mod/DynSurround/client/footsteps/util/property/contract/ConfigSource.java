@@ -24,9 +24,13 @@
 
 package org.blockartistry.mod.DynSurround.client.footsteps.util.property.contract;
 
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
+@SideOnly(Side.CLIENT)
 public interface ConfigSource
 {
-	public void setSource(String path);
+	public void setSource(final String path);
 	
 	public boolean load();
 	

@@ -25,6 +25,8 @@
 package org.blockartistry.mod.DynSurround.client.footsteps.mcpackage.interfaces;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 /**
  * Has the ability to generate footsteps based on a Player.
@@ -32,6 +34,7 @@ import net.minecraft.entity.player.EntityPlayer;
  * @author Hurry
  * 
  */
+@SideOnly(Side.CLIENT)
 public interface IGenerator
 {
 	/**

@@ -26,6 +26,10 @@ package org.blockartistry.mod.DynSurround.client.footsteps.util.property.contrac
 
 import java.io.InputStream;
 
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
+@SideOnly(Side.CLIENT)
 public interface IConfigInputStream {
-	public boolean loadStream(InputStream stream);
+	public boolean loadStream(final InputStream stream);
 }
