@@ -29,8 +29,11 @@ import java.util.Random;
 import org.blockartistry.mod.DynSurround.client.footsteps.engine.interfaces.EventType;
 import org.blockartistry.mod.DynSurround.client.footsteps.mcpackage.interfaces.IIsolator;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.entity.player.EntityPlayer;
 
+@SideOnly(Side.CLIENT)
 public class PFReaderQP extends PFReaderH {
 	private int hoof = 0;
 	private int USE_FUNCTION = 2;

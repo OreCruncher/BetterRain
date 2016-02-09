@@ -27,6 +27,8 @@ package org.blockartistry.mod.DynSurround.client.footsteps.game.user;
 import org.blockartistry.mod.DynSurround.client.footsteps.game.system.PFHelper;
 import org.blockartistry.mod.DynSurround.client.footsteps.util.property.simple.ConfigProperty;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockBreakable;
 import net.minecraft.block.BlockBush;
@@ -43,6 +45,7 @@ import net.minecraft.block.BlockSlab;
 import net.minecraft.block.BlockStairs;
 import net.minecraft.block.BlockTorch;
 
+@SideOnly(Side.CLIENT)
 public class GenerateBlockReport
 {
 	private ConfigProperty results;

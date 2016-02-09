@@ -24,12 +24,12 @@
 
 package org.blockartistry.mod.DynSurround.client.footsteps.util.property.simple;
 
-public class MissingDefaultConfigException extends RuntimeException
-{
-	
-	/**
-	 * 
-	 */
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
+@SideOnly(Side.CLIENT)
+public class MissingDefaultConfigException extends RuntimeException {
+
 	private static final long serialVersionUID = -5912047935272087268L;
-	
+
 }

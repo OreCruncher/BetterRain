@@ -29,6 +29,10 @@ import java.util.Map;
 
 import org.blockartistry.mod.DynSurround.client.footsteps.mcpackage.interfaces.IPrimitiveMap;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
+@SideOnly(Side.CLIENT)
 public class BasicPrimitiveMap implements IPrimitiveMap {
 
 	private Map<String, String> primitiveMap;

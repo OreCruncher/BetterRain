@@ -37,6 +37,10 @@ import org.blockartistry.mod.DynSurround.client.footsteps.engine.interfaces.IOpt
 import org.blockartistry.mod.DynSurround.client.footsteps.engine.interfaces.ISoundPlayer;
 import org.blockartistry.mod.DynSurround.client.footsteps.game.system.Association;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
+@SideOnly(Side.CLIENT)
 public abstract class AcousticsLibrary implements ILibrary {
 	private Map<String, IAcoustic> acoustics;
 	

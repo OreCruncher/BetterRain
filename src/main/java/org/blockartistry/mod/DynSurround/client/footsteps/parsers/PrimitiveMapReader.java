@@ -31,6 +31,10 @@ import org.blockartistry.mod.DynSurround.ModLog;
 import org.blockartistry.mod.DynSurround.client.footsteps.mcpackage.interfaces.IPrimitiveMap;
 import org.blockartistry.mod.DynSurround.client.footsteps.util.property.contract.IPropertyHolder;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
+@SideOnly(Side.CLIENT)
 public class PrimitiveMapReader {
 
 	public void setup(final IPropertyHolder primitiveSound, final IPrimitiveMap primitiveMap) {

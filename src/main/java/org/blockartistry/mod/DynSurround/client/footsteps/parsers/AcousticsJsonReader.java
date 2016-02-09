@@ -44,6 +44,9 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
 /**
  * JASON? JAAAASOOON?<br>
  * <a href="http://youtu.be/i7IE9gLwLUU?t=1m28s">http://youtu.
@@ -53,6 +56,7 @@ import com.google.gson.JsonParser;
  * 
  * @author Hurry
  */
+@SideOnly(Side.CLIENT)
 public class AcousticsJsonReader {
 	private final int ENGINEVERSION = 0;
 	

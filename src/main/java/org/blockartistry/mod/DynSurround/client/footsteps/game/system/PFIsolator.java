@@ -36,9 +36,12 @@ import org.blockartistry.mod.DynSurround.client.footsteps.mcpackage.interfaces.I
 import org.blockartistry.mod.DynSurround.client.footsteps.mcpackage.interfaces.IVariator;
 import org.blockartistry.mod.DynSurround.client.footsteps.mcpackage.interfaces.IVariatorSettable;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 
+@SideOnly(Side.CLIENT)
 public class PFIsolator implements IIsolator, IVariatorSettable, IGeneratorSettable {
 	private ILibrary acoustics;
 	private ISolver solver;

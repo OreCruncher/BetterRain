@@ -33,6 +33,10 @@ import org.blockartistry.mod.DynSurround.client.footsteps.engine.interfaces.INam
 import org.blockartistry.mod.DynSurround.client.footsteps.engine.interfaces.IOptions;
 import org.blockartistry.mod.DynSurround.client.footsteps.engine.interfaces.ISoundPlayer;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
+@SideOnly(Side.CLIENT)
 public class EventSelectorAcoustics implements INamedAcoustic {
 	private final String name;
 	

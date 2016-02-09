@@ -29,6 +29,10 @@ import java.util.Map;
 
 import org.blockartistry.mod.DynSurround.client.footsteps.engine.interfaces.IOptions;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
+@SideOnly(Side.CLIENT)
 public class ConfigOptions implements IOptions {
 	private Map<String, Object> map;
 

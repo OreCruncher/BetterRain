@@ -47,6 +47,8 @@ import org.blockartistry.mod.DynSurround.client.footsteps.parsers.BlockMapReader
 import org.blockartistry.mod.DynSurround.client.footsteps.parsers.PrimitiveMapReader;
 import org.blockartistry.mod.DynSurround.client.footsteps.util.property.simple.InputStreamConfigProperty;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.IReloadableResourceManager;
 import net.minecraft.client.resources.IResourceManager;
@@ -55,6 +57,7 @@ import net.minecraft.client.resources.ResourcePackRepository;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 
+@SideOnly(Side.CLIENT)
 public class Footsteps implements IResourceManagerReloadListener, IClientEffectHandler {
 
 	// System

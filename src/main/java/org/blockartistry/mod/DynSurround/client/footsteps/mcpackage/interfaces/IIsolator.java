@@ -27,35 +27,38 @@ package org.blockartistry.mod.DynSurround.client.footsteps.mcpackage.interfaces;
 import org.blockartistry.mod.DynSurround.client.footsteps.engine.interfaces.ILibrary;
 import org.blockartistry.mod.DynSurround.client.footsteps.engine.interfaces.ISoundPlayer;
 
-public interface IIsolator
-{
-	
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
+@SideOnly(Side.CLIENT)
+public interface IIsolator {
+
 	public abstract void onFrame();
-	
+
 	public abstract ILibrary getAcoustics();
-	
+
 	public abstract ISolver getSolver();
-	
+
 	public abstract IBlockMap getBlockMap();
-	
+
 	public abstract IPrimitiveMap getPrimitiveMap();
-	
+
 	public abstract ISoundPlayer getSoundPlayer();
-	
+
 	public abstract IDefaultStepPlayer getDefaultStepPlayer();
-	
+
 	//
-	
+
 	public abstract void setAcoustics(final ILibrary acoustics);
-	
+
 	public abstract void setSolver(final ISolver solver);
-	
+
 	public abstract void setBlockMap(final IBlockMap blockMap);
-	
+
 	public abstract void setPrimitiveMap(final IPrimitiveMap primitiveMap);
-	
+
 	public abstract void setSoundPlayer(final ISoundPlayer soundPlayer);
-	
+
 	public abstract void setDefaultStepPlayer(final IDefaultStepPlayer defaultStepPlayer);
-	
+
 }

@@ -33,6 +33,10 @@ import org.blockartistry.mod.DynSurround.client.footsteps.engine.interfaces.Even
 import org.blockartistry.mod.DynSurround.client.footsteps.engine.interfaces.IOptions;
 import org.blockartistry.mod.DynSurround.client.footsteps.engine.interfaces.ISoundPlayer;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
+@SideOnly(Side.CLIENT)
 public class ProbabilityWeightsAcoustic implements IAcoustic {
 	protected List<IAcoustic> acoustics;
 	protected float probabilityThresholds[];

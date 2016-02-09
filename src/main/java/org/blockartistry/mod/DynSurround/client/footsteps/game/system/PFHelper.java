@@ -24,10 +24,13 @@
 
 package org.blockartistry.mod.DynSurround.client.footsteps.game.system;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.World;
 
+@SideOnly(Side.CLIENT)
 public class PFHelper {
 	/**
 	 * Gets the block at a certain location in the current world. This method is

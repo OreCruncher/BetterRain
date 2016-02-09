@@ -32,6 +32,8 @@ import org.blockartistry.mod.DynSurround.client.footsteps.engine.interfaces.Even
 import org.blockartistry.mod.DynSurround.client.footsteps.mcpackage.interfaces.IIsolator;
 import org.blockartistry.mod.DynSurround.client.footsteps.mcpackage.interfaces.ISolver;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
@@ -55,6 +57,7 @@ import net.minecraft.world.World;
  * 
  * @author Hurry
  */
+@SideOnly(Side.CLIENT)
 public class PFSolver implements ISolver {
 	private final IIsolator isolator;
 	

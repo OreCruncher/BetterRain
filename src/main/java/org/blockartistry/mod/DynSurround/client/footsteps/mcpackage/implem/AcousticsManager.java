@@ -39,6 +39,8 @@ import org.blockartistry.mod.DynSurround.client.footsteps.game.system.Associatio
 import org.blockartistry.mod.DynSurround.client.footsteps.mcpackage.interfaces.IDefaultStepPlayer;
 import org.blockartistry.mod.DynSurround.client.footsteps.mcpackage.interfaces.IIsolator;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
@@ -50,6 +52,7 @@ import net.minecraft.init.Blocks;
  * 
  * @author Hurry
  */
+@SideOnly(Side.CLIENT)
 public class AcousticsManager extends AcousticsLibrary implements ISoundPlayer, IDefaultStepPlayer {
 	private IIsolator isolator;
 

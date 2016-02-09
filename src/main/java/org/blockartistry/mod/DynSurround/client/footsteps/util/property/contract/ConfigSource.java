@@ -24,11 +24,14 @@
 
 package org.blockartistry.mod.DynSurround.client.footsteps.util.property.contract;
 
-public interface ConfigSource
-{
-	public void setSource(String path);
-	
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
+@SideOnly(Side.CLIENT)
+public interface ConfigSource {
+	public void setSource(final String path);
+
 	public boolean load();
-	
+
 	public boolean save();
 }

@@ -31,11 +31,14 @@ import java.util.List;
 
 import org.blockartistry.mod.DynSurround.Module;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.IResourcePack;
 import net.minecraft.client.resources.ResourcePackRepository;
 import net.minecraft.util.ResourceLocation;
 
+@SideOnly(Side.CLIENT)
 public class PFResourcePackDealer {
 	
 	// Used for existing packs that have been configured for Presence Footsteps

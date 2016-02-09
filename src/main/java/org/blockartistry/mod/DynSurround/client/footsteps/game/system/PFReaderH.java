@@ -31,9 +31,12 @@ import org.blockartistry.mod.DynSurround.client.footsteps.mcpackage.interfaces.I
 import org.blockartistry.mod.DynSurround.client.footsteps.mcpackage.interfaces.IVariator;
 import org.blockartistry.mod.DynSurround.client.footsteps.mcpackage.interfaces.IVariatorSettable;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.MathHelper;
 
+@SideOnly(Side.CLIENT)
 public class PFReaderH implements IGenerator, IVariatorSettable {
 	// Construct
 	final protected IIsolator mod;

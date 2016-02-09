@@ -27,8 +27,11 @@ package org.blockartistry.mod.DynSurround.client.footsteps.mcpackage.interfaces;
 import org.blockartistry.mod.DynSurround.client.footsteps.engine.interfaces.EventType;
 import org.blockartistry.mod.DynSurround.client.footsteps.game.system.Association;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.entity.player.EntityPlayer;
 
+@SideOnly(Side.CLIENT)
 public interface ISolver {
 	/**
 	 * Play an association.

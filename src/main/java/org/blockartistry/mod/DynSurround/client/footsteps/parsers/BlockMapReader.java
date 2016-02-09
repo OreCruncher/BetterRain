@@ -31,6 +31,10 @@ import org.blockartistry.mod.DynSurround.ModLog;
 import org.blockartistry.mod.DynSurround.client.footsteps.mcpackage.interfaces.IBlockMap;
 import org.blockartistry.mod.DynSurround.client.footsteps.util.property.contract.IPropertyHolder;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
+@SideOnly(Side.CLIENT)
 public class BlockMapReader {
 	
 	public void setup(final IPropertyHolder blockSound, final IBlockMap blockMap) {

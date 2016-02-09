@@ -29,113 +29,92 @@ import java.util.Map;
 
 import org.blockartistry.mod.DynSurround.client.footsteps.util.property.contract.IPropertyHolder;
 
-public class PropertyCell implements IPropertyHolder
-{
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
+@SideOnly(Side.CLIENT)
+public class PropertyCell implements IPropertyHolder {
 	private Map<String, String> properties;
-	
-	public PropertyCell()
-	{
+
+	public PropertyCell() {
 		this.properties = new HashMap<String, String>();
 	}
-	
+
 	@Override
-	public String getString(final String name)
-	{
+	public String getString(final String name) {
 		if (!this.properties.containsKey(name))
 			throw new PropertyMissingException();
-		
+
 		return this.properties.get(name);
 	}
-	
+
 	@Override
-	public boolean getBoolean(final String name)
-	{
+	public boolean getBoolean(final String name) {
 		if (!this.properties.containsKey(name))
 			throw new PropertyMissingException();
-		
-		try
-		{
+
+		try {
 			return Boolean.parseBoolean(this.properties.get(name));
-		}
-		catch (NumberFormatException e)
-		{
+		} catch (NumberFormatException e) {
 			throw new PropertyTypeException();
 		}
 	}
-	
+
 	@Override
-	public int getInteger(final String name)
-	{
+	public int getInteger(final String name) {
 		if (!this.properties.containsKey(name))
 			throw new PropertyMissingException();
-		
-		try
-		{
+
+		try {
 			return Integer.parseInt(this.properties.get(name));
-		}
-		catch (NumberFormatException e)
-		{
+		} catch (NumberFormatException e) {
 			throw new PropertyTypeException();
 		}
 	}
-	
+
 	@Override
-	public float getFloat(final String name)
-	{
+	public float getFloat(final String name) {
 		if (!this.properties.containsKey(name))
 			throw new PropertyMissingException();
-		
-		try
-		{
+
+		try {
 			return Float.parseFloat(this.properties.get(name));
-		}
-		catch (NumberFormatException e)
-		{
+		} catch (NumberFormatException e) {
 			throw new PropertyTypeException();
 		}
 	}
-	
+
 	@Override
-	public long getLong(final String name)
-	{
+	public long getLong(final String name) {
 		if (!this.properties.containsKey(name))
 			throw new PropertyMissingException();
-		
-		try
-		{
+
+		try {
 			return Long.parseLong(this.properties.get(name));
-		}
-		catch (NumberFormatException e)
-		{
+		} catch (NumberFormatException e) {
 			throw new PropertyTypeException();
 		}
 	}
-	
+
 	@Override
-	public double getDouble(final String name)
-	{
+	public double getDouble(final String name) {
 		if (!this.properties.containsKey(name))
 			throw new PropertyMissingException();
-		
-		try
-		{
+
+		try {
 			return Double.parseDouble(this.properties.get(name));
-		}
-		catch (NumberFormatException e)
-		{
+		} catch (NumberFormatException e) {
 			throw new PropertyTypeException();
 		}
 	}
-	
+
 	@Override
-	public void setProperty(final String name, Object o)
-	{
+	public void setProperty(final String name, Object o) {
 		this.properties.put(name, o.toString());
 	}
-	
+
 	@Override
-	public Map<String, String> getAllProperties()
-	{
+	public Map<String, String> getAllProperties() {
 		return this.properties;
 	}
 }

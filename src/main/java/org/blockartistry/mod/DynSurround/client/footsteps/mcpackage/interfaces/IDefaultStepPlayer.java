@@ -26,6 +26,8 @@ package org.blockartistry.mod.DynSurround.client.footsteps.mcpackage.interfaces;
 
 import org.blockartistry.mod.DynSurround.client.footsteps.game.system.Association;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.entity.EntityLivingBase;
 
 /**
@@ -33,6 +35,7 @@ import net.minecraft.entity.EntityLivingBase;
  * 
  * @author Hurry
  */
+@SideOnly(Side.CLIENT)
 public interface IDefaultStepPlayer {
 	/**
 	 * Play a step sound from a block.

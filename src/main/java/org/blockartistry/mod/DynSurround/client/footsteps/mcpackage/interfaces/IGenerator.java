@@ -24,6 +24,8 @@
 
 package org.blockartistry.mod.DynSurround.client.footsteps.mcpackage.interfaces;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.entity.player.EntityPlayer;
 
 /**
@@ -32,12 +34,10 @@ import net.minecraft.entity.player.EntityPlayer;
  * @author Hurry
  * 
  */
-public interface IGenerator
-{
+@SideOnly(Side.CLIENT)
+public interface IGenerator {
 	/**
 	 * Generate footsteps sounds of the Entity.
-	 * 
-	 * @param ply
 	 */
 	public void generateFootsteps(final EntityPlayer ply);
 }

@@ -24,9 +24,12 @@
 
 package org.blockartistry.mod.DynSurround.client.footsteps.util.property.contract;
 
-public interface IVersionable
-{
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
+@SideOnly(Side.CLIENT)
+public interface IVersionable {
 	public boolean commit();
-	
+
 	public void revert();
 }
