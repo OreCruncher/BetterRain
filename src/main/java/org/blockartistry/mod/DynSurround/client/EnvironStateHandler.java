@@ -56,6 +56,7 @@ import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.PlayerEvent.ItemCraftedEvent;
 import net.minecraftforge.fml.relauncher.Side;
 
 @SideOnly(Side.CLIENT)
@@ -64,6 +65,7 @@ public class EnvironStateHandler implements IClientEffectHandler {
 	private static final SoundEffect JUMP;
 	private static final SoundEffect SWORD;
 	private static final SoundEffect AXE;
+	private static final SoundEffect CRAFTING;
 
 	static {
 		if (ModOptions.getEnableJumpSound())
@@ -78,6 +80,11 @@ public class EnvironStateHandler implements IClientEffectHandler {
 			SWORD = null;
 			AXE = null;
 		}
+		
+		if(ModOptions.getEnableCraftingSound())
+			CRAFTING = new SoundEffect("dsurround:crafting");
+		else 
+			CRAFTING = null;
 	}
 
 	// Diagnostic strings to display in the debug HUD
@@ -360,6 +367,18 @@ public class EnvironStateHandler implements IClientEffectHandler {
 		}
 	}
 
+	private int craftSoundThrottle = 0;
+
+	@SubscribeEvent
+	public void onCrafting(final ItemCraftedEvent event) {
+		if (CRAFTING != null && event.player.worldObj.isRemote && EnvironState.isPlayer(event.player)) {
+			if (craftSoundThrottle < (EnvironState.getTickCounter() - 30)) {
+				craftSoundThrottle = EnvironState.getTickCounter();
+				PlayerSoundEffectHandler.playSoundAtPlayer(EnvironState.getPlayer(), CRAFTING, 0);
+			}
+		}
+
+	}
 	@SubscribeEvent(priority = EventPriority.HIGHEST)
 	public void diagnostics(final DiagnosticEvent.Gather event) {
 		event.output.add("Dim: " + EnvironState.getDimensionId() + "/" + EnvironState.getDimensionName());
