@@ -377,6 +377,18 @@
 			"ambient/book/pageflipheavy3"
 		]
 		
+	},
+	"crafting":{
+		"category":"ambient",
+		"sounds":[
+			"ambient/steve/crafthammer1",
+			"ambient/steve/crafthammer2",
+			"ambient/steve/craftsaw1",
+			"ambient/steve/craftsaw2",
+			"ambient/steve/craftsand1",
+			"ambient/steve/craftsand2"
+		]
+		
 	}
 	
 }

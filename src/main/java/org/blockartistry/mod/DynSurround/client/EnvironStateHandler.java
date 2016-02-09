@@ -38,6 +38,7 @@ import org.blockartistry.mod.DynSurround.util.PlayerUtils;
 import cpw.mods.fml.relauncher.SideOnly;
 import cpw.mods.fml.common.eventhandler.EventPriority;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.common.gameevent.PlayerEvent.ItemCraftedEvent;
 import cpw.mods.fml.relauncher.Side;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
@@ -65,6 +66,7 @@ public class EnvironStateHandler implements IClientEffectHandler {
 	private static final SoundEffect JUMP;
 	private static final SoundEffect SWORD;
 	private static final SoundEffect AXE;
+	private static final SoundEffect CRAFTING;
 
 	static {
 		if (ModOptions.getEnableJumpSound())
@@ -79,6 +81,11 @@ public class EnvironStateHandler implements IClientEffectHandler {
 			SWORD = null;
 			AXE = null;
 		}
+
+		if(ModOptions.getEnableCraftingSound())
+			CRAFTING = new SoundEffect("dsurround:crafting");
+		else 
+			CRAFTING = null;
 	}
 
 	// Diagnostic strings to display in the debug HUD
@@ -364,6 +371,19 @@ public class EnvironStateHandler implements IClientEffectHandler {
 					PlayerSoundEffectHandler.playSoundAtPlayer(EnvironState.getPlayer(), sound, 0);
 			}
 		}
+	}
+
+	private int craftSoundThrottle = 0;
+
+	@SubscribeEvent
+	public void onCrafting(final ItemCraftedEvent event) {
+		if (CRAFTING != null && event.player.worldObj.isRemote && EnvironState.isPlayer(event.player)) {
+			if (craftSoundThrottle < (EnvironState.getTickCounter() - 30)) {
+				craftSoundThrottle = EnvironState.getTickCounter();
+				PlayerSoundEffectHandler.playSoundAtPlayer(EnvironState.getPlayer(), CRAFTING, 0);
+			}
+		}
+
 	}
 
 	@SubscribeEvent(priority = EventPriority.HIGHEST)
