@@ -47,6 +47,8 @@ import org.blockartistry.mod.DynSurround.client.footsteps.parsers.BlockMapReader
 import org.blockartistry.mod.DynSurround.client.footsteps.parsers.PrimitiveMapReader;
 import org.blockartistry.mod.DynSurround.client.footsteps.util.property.simple.InputStreamConfigProperty;
 
+import com.google.common.collect.ImmutableList;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.IReloadableResourceManager;
 import net.minecraft.client.resources.IResourceManager;
@@ -78,14 +80,16 @@ public class Footsteps implements IResourceManagerReloadListener, IClientEffectH
 	public void reloadEverything() {
 		this.isolator = new PFIsolator();
 
-		final List<ResourcePackRepository.Entry> repo = this.dealer.findResourcePacks();
-		if (repo.size() == 0) {
-			ModLog.info("Footsteps didn't find any compatible resource pack.");
-		}
+		final List<ResourcePackRepository.Entry> repo = ImmutableList.of();
 
-		for (final ResourcePackRepository.Entry pack : repo) {
-			ModLog.debug("Will load: " + pack.getResourcePackName());
-		}
+		/*
+		 * final List<ResourcePackRepository.Entry> repo =
+		 * this.dealer.findResourcePacks(); if (repo.size() == 0) { ModLog.info(
+		 * "Footsteps didn't find any compatible resource pack."); }
+		 * 
+		 * for (final ResourcePackRepository.Entry pack : repo) { ModLog.debug(
+		 * "Will load: " + pack.getResourcePackName()); }
+		 */
 
 		reloadBlockMap(repo);
 		reloadPrimitiveMap(repo);
@@ -142,7 +146,6 @@ public class Footsteps implements IResourceManagerReloadListener, IClientEffectH
 			;
 		}
 
-		int working = 0;
 		for (ResourcePackRepository.Entry pack : repo) {
 			try {
 				// TODO: Loading config from json?
@@ -150,13 +153,9 @@ public class Footsteps implements IResourceManagerReloadListener, IClientEffectH
 				blockSound.loadStream(this.dealer.openBlockMap(pack.getResourcePack()));
 
 				new BlockMapReader().setup(blockSound, blockMap);
-				working = working + 1;
 			} catch (IOException e) {
 				ModLog.debug("No blockmap found in " + pack.getResourcePackName() + ": " + e.getMessage());
 			}
-		}
-		if (working == 0) {
-			ModLog.info("No blockmaps found in " + repo.size() + " packs!");
 		}
 
 		this.isolator.setBlockMap(blockMap);
@@ -173,7 +172,6 @@ public class Footsteps implements IResourceManagerReloadListener, IClientEffectH
 			;
 		}
 
-		int working = 0;
 		for (final ResourcePackRepository.Entry pack : repo) {
 			try {
 				// TODO: Loading config from json?
@@ -181,13 +179,9 @@ public class Footsteps implements IResourceManagerReloadListener, IClientEffectH
 				primitiveSound.loadStream(this.dealer.openPrimitiveMap(pack.getResourcePack()));
 
 				new PrimitiveMapReader().setup(primitiveSound, primitiveMap);
-				working = working + 1;
 			} catch (IOException e) {
 				ModLog.debug("No primitivemap found in " + pack.getResourcePackName() + ": " + e.getMessage());
 			}
-		}
-		if (working == 0) {
-			ModLog.info("No blockmaps found in " + repo.size() + " packs!");
 		}
 
 		this.isolator.setPrimitiveMap(primitiveMap);
@@ -209,7 +203,6 @@ public class Footsteps implements IResourceManagerReloadListener, IClientEffectH
 				scanner.close();
 		}
 
-		int working = 0;
 		for (final ResourcePackRepository.Entry pack : repo) {
 
 			try {
@@ -217,16 +210,12 @@ public class Footsteps implements IResourceManagerReloadListener, IClientEffectH
 				final String jasonString = scanner.useDelimiter("\\Z").next();
 
 				new AcousticsJsonReader("").parseJSON(jasonString, acoustics);
-				working = working + 1;
 			} catch (IOException e) {
 				ModLog.debug("No acoustics found in " + pack.getResourcePackName() + ": " + e.getMessage());
 			} finally {
 				if (scanner != null)
 					scanner.close();
 			}
-		}
-		if (working == 0) {
-			ModLog.info("No blockmaps found in " + repo.size() + " packs!");
 		}
 
 		this.isolator.setAcoustics(acoustics);
