@@ -116,6 +116,8 @@ public final class ModOptions {
 	protected static boolean enableSwingSound = true;
 	protected static final String CONFIG_ENABLE_CRAFTING_SOUND = "Crafting Sound";
 	protected static boolean enableCraftingSound = true;
+	protected static final String CONFIG_ENABLE_FOOTSTEPS_SOUND = "Footsteps";
+	protected static boolean enableFootstepSounds = true;
 
 	protected static final String CATEGORY_PLAYER = "player";
 	protected static final String CONFIG_SUPPRESS_POTION_PARTICLES = "Suppress Potion Particles";
@@ -263,7 +265,12 @@ public final class ModOptions {
 		enableSwingSound = config.getBoolean(CONFIG_ENABLE_SWING_SOUND, CATEGORY_SOUND, enableSwingSound, comment);
 
 		comment = "Enable sound when item crafted";
-		enableCraftingSound = config.getBoolean(CONFIG_ENABLE_CRAFTING_SOUND, CATEGORY_SOUND, enableCraftingSound, comment);
+		enableCraftingSound = config.getBoolean(CONFIG_ENABLE_CRAFTING_SOUND, CATEGORY_SOUND, enableCraftingSound,
+				comment);
+
+		comment = "Enable footstep sounds";
+		enableFootstepSounds = config.getBoolean(CONFIG_ENABLE_FOOTSTEPS_SOUND, CATEGORY_SOUND, enableFootstepSounds,
+				comment);
 
 		// CATEGORY: player.potion hud
 		comment = "Enable display of potion icons in display";
@@ -402,17 +409,21 @@ public final class ModOptions {
 	public static int getNumberStreamingSoundChannels() {
 		return streamingSoundChannelCount;
 	}
-	
+
 	public static boolean getEnableJumpSound() {
 		return enableJumpSound;
 	}
-	
+
 	public static boolean getEnableSwingSound() {
 		return enableSwingSound;
 	}
 
 	public static boolean getEnableCraftingSound() {
 		return enableCraftingSound;
+	}
+	
+	public static boolean getEnableFootstepSounds() {
+		return enableFootstepSounds;
 	}
 
 	public static boolean getSuppressPotionParticleEffect() {

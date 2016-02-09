@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.blockartistry.mod.DynSurround.ModOptions;
+import org.blockartistry.mod.DynSurround.client.footsteps.Footsteps;
 import org.blockartistry.mod.DynSurround.client.fx.BlockEffectHandler;
 import org.blockartistry.mod.DynSurround.client.storm.StormProperties;
 import org.blockartistry.mod.DynSurround.data.BiomeRegistry;
@@ -81,9 +82,11 @@ public class ClientEffectHandler {
 		FMLCommonHandler.instance().bus().register(handler);
 
 		register(new EnvironStateHandler());
-
 		register(new FogEffectHandler());
 		register(new BlockEffectHandler());
+
+		if (ModOptions.getEnableFootstepSounds())
+			register(new Footsteps());
 
 		if (ModOptions.getAuroraEnable())
 			register(new AuroraEffectHandler());
