@@ -29,6 +29,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 
+import org.blockartistry.mod.DynSurround.Module;
 import org.blockartistry.mod.DynSurround.client.footsteps.engine.implem.BasicAcoustic;
 import org.blockartistry.mod.DynSurround.client.footsteps.engine.implem.DelayedAcoustic;
 import org.blockartistry.mod.DynSurround.client.footsteps.engine.implem.EventSelectorAcoustics;
@@ -219,7 +220,7 @@ public class AcousticsJsonReader {
 	
 	private void setupSoundName(final BasicAcoustic a, final String soundName) {
 		if (soundName.charAt(0) != '@') {
-			a.setSoundName(this.soundRoot + soundName);
+			a.setSoundName(Module.MOD_ID + ":" + this.soundRoot + soundName);
 		} else {
 			a.setSoundName(soundName.replace("@", ""));
 		}

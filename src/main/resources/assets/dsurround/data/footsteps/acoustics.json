@@ -7,7 +7,7 @@
 		"pitch_min" : 95,
 		"pitch_max" : 105
 	},
-	"soundroot" : "pf_presence.",
+	"soundroot" : "fs.",
 	"contents" : {
 		"none" : {
 		},
