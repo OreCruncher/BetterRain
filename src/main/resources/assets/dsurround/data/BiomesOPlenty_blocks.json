@@ -48,26 +48,6 @@
 		},
 		{
 			"blocks":[
-				"BiomesOPlenty:leaves1",
-				"BiomesOPlenty:leaves2",
-				"BiomesOPlenty:leaves3",
-				"BiomesOPlenty:leaves4",
-				"BiomesOPlenty:foliage"
-			],
-			"stepChance":5,
-			"sounds":[
-				{
-					"sound":"dsurround:leafwalk",
-					"volume":0.4,
-					"variable":true,
-					"step":true
-				}
-				
-			]
-			
-		},
-		{
-			"blocks":[
 				"BiomesOPlenty:foliage"
 			],
 			"chance":10000,

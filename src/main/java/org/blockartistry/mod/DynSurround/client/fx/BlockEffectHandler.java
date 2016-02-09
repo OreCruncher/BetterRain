@@ -85,13 +85,12 @@ public class BlockEffectHandler implements IClientEffectHandler {
 		}
 
 		if (EnvironState.isPlayerOnGround() && EnvironState.isPlayerMoving()) {
-			int y = playerY - 1;
-			Block block = world.getBlock(playerX, y, playerZ);
-			if (block == Blocks.air || block.getMaterial().isLiquid())
-				block = world.getBlock(playerX, --y, playerZ);
-			final SoundEffect sound = BlockRegistry.getStepSound(block, random, conditions);
-			if (sound != null)
-				sound.doEffect(block, world, playerX, y, playerZ, random);
+			final Block block = world.getBlock(playerX, playerY - 2, playerZ);
+			if(block != Blocks.air && !block.getMaterial().isLiquid()) {
+				final SoundEffect sound = BlockRegistry.getStepSound(block, random, conditions);
+				if (sound != null)
+					sound.doEffect(block, world, playerX, playerY - 2, playerZ, random);
+			}
 		}
 	}
 

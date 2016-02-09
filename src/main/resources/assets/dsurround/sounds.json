@@ -14,6 +14,7 @@
 			"footsteps/bluntwood/bluntwood_walk8",
 			"footsteps/bluntwood/bluntwood_walk9"
 		]
+		
 	},
 	"pf_presence.bluntwood.bluntwood_wander":{
 		"category":"master",
@@ -24,6 +25,7 @@
 			"footsteps/bluntwood/bluntwood_wander4",
 			"footsteps/bluntwood/bluntwood_wander5"
 		]
+		
 	},
 	"pf_presence.brush.brush_through":{
 		"category":"master",
@@ -40,6 +42,7 @@
 			"footsteps/brush/brush_through8",
 			"footsteps/brush/brush_through9"
 		]
+		
 	},
 	"pf_presence.concrete.concrete_run":{
 		"category":"master",
@@ -56,6 +59,7 @@
 			"footsteps/concrete/concrete_run8",
 			"footsteps/concrete/concrete_run9"
 		]
+		
 	},
 	"pf_presence.concrete.concrete_walk":{
 		"category":"master",
@@ -72,6 +76,7 @@
 			"footsteps/concrete/concrete_walk8",
 			"footsteps/concrete/concrete_walk9"
 		]
+		
 	},
 	"pf_presence.concrete.concrete_wander":{
 		"category":"master",
@@ -82,6 +87,7 @@
 			"footsteps/concrete/concrete_wander4",
 			"footsteps/concrete/concrete_wander5"
 		]
+		
 	},
 	"pf_presence.deckwood.deckwood_run":{
 		"category":"master",
@@ -98,6 +104,7 @@
 			"footsteps/deckwood/deckwood_run8",
 			"footsteps/deckwood/deckwood_run9"
 		]
+		
 	},
 	"pf_presence.dirt.dirt_land":{
 		"category":"master",
@@ -107,6 +114,7 @@
 			"footsteps/dirt/dirt_land3",
 			"footsteps/dirt/dirt_land4"
 		]
+		
 	},
 	"pf_presence.dirt.dirt_run":{
 		"category":"master",
@@ -123,6 +131,7 @@
 			"footsteps/dirt/dirt_run8",
 			"footsteps/dirt/dirt_run9"
 		]
+		
 	},
 	"pf_presence.dirt.dirt_walk":{
 		"category":"master",
@@ -139,6 +148,7 @@
 			"footsteps/dirt/dirt_walk8",
 			"footsteps/dirt/dirt_walk9"
 		]
+		
 	},
 	"pf_presence.dirt.dirt_wander":{
 		"category":"master",
@@ -149,12 +159,14 @@
 			"footsteps/dirt/dirt_wander4",
 			"footsteps/dirt/dirt_wander5"
 		]
+		
 	},
 	"pf_presence.glass.glass_hard":{
 		"category":"master",
 		"sounds":[
 			"footsteps/glass/glass_hard1"
 		]
+		
 	},
 	"pf_presence.glass.glass_hit":{
 		"category":"master",
@@ -162,6 +174,7 @@
 			"footsteps/glass/glass_hit1",
 			"footsteps/glass/glass_hit2"
 		]
+		
 	},
 	"pf_presence.grass.grass_run":{
 		"category":"master",
@@ -171,6 +184,7 @@
 			"footsteps/grass/grass_run3",
 			"footsteps/grass/grass_run4"
 		]
+		
 	},
 	"pf_presence.grass.grass_walk":{
 		"category":"master",
@@ -186,6 +200,7 @@
 			"footsteps/grass/grass_walk8",
 			"footsteps/grass/grass_walk9"
 		]
+		
 	},
 	"pf_presence.grass.grass_wander":{
 		"category":"master",
@@ -197,6 +212,7 @@
 			"footsteps/grass/grass_wander5",
 			"footsteps/grass/grass_wander6"
 		]
+		
 	},
 	"pf_presence.gravel.gravel_land":{
 		"category":"master",
@@ -204,6 +220,7 @@
 			"footsteps/gravel/gravel_land1",
 			"footsteps/gravel/gravel_land2"
 		]
+		
 	},
 	"pf_presence.gravel.gravel_run":{
 		"category":"master",
@@ -220,6 +237,7 @@
 			"footsteps/gravel/gravel_run8",
 			"footsteps/gravel/gravel_run9"
 		]
+		
 	},
 	"pf_presence.gravel.gravel_walk":{
 		"category":"master",
@@ -236,6 +254,7 @@
 			"footsteps/gravel/gravel_walk8",
 			"footsteps/gravel/gravel_walk9"
 		]
+		
 	},
 	"pf_presence.gravel.gravel_wander":{
 		"category":"master",
@@ -244,6 +263,7 @@
 			"footsteps/gravel/gravel_wander2",
 			"footsteps/gravel/gravel_wander3"
 		]
+		
 	},
 	"pf_presence.leaves.leaves_through":{
 		"category":"master",
@@ -256,6 +276,7 @@
 			"footsteps/leaves/leaves_through6",
 			"footsteps/leaves/leaves_through7"
 		]
+		
 	},
 	"pf_presence.lino.lino_run":{
 		"category":"master",
@@ -267,6 +288,7 @@
 			"footsteps/lino/lino_run5",
 			"footsteps/lino/lino_run6"
 		]
+		
 	},
 	"pf_presence.lino.lino_walk":{
 		"category":"master",
@@ -280,6 +302,7 @@
 			"footsteps/lino/lino_walk7",
 			"footsteps/lino/lino_walk8"
 		]
+		
 	},
 	"pf_presence.marble.marble_run":{
 		"category":"master",
@@ -296,6 +319,7 @@
 			"footsteps/marble/marble_run8",
 			"footsteps/marble/marble_run9"
 		]
+		
 	},
 	"pf_presence.marble.marble_walk":{
 		"category":"master",
@@ -312,6 +336,7 @@
 			"footsteps/marble/marble_walk8",
 			"footsteps/marble/marble_walk9"
 		]
+		
 	},
 	"pf_presence.marble.marble_wander":{
 		"category":"master",
@@ -324,12 +349,14 @@
 			"footsteps/marble/marble_wander6",
 			"footsteps/marble/marble_wander7"
 		]
+		
 	},
 	"pf_presence.metalbar.metalbar_land":{
 		"category":"master",
 		"sounds":[
 			"footsteps/metalbar/metalbar_land1"
 		]
+		
 	},
 	"pf_presence.metalbar.metalbar_run":{
 		"category":"master",
@@ -346,6 +373,7 @@
 			"footsteps/metalbar/metalbar_run8",
 			"footsteps/metalbar/metalbar_run9"
 		]
+		
 	},
 	"pf_presence.metalbar.metalbar_walk":{
 		"category":"master",
@@ -362,6 +390,7 @@
 			"footsteps/metalbar/metalbar_walk8",
 			"footsteps/metalbar/metalbar_walk9"
 		]
+		
 	},
 	"pf_presence.metalbar.metalbar_wander":{
 		"category":"master",
@@ -373,6 +402,7 @@
 			"footsteps/metalbar/metalbar_wander5",
 			"footsteps/metalbar/metalbar_wander6"
 		]
+		
 	},
 	"pf_presence.metalbox.metalbox_run":{
 		"category":"master",
@@ -388,6 +418,7 @@
 			"footsteps/metalbox/metalbox_run8",
 			"footsteps/metalbox/metalbox_run9"
 		]
+		
 	},
 	"pf_presence.metalbox.metalbox_walk":{
 		"category":"master",
@@ -402,6 +433,7 @@
 			"footsteps/metalbox/metalbox_walk8",
 			"footsteps/metalbox/metalbox_walk9"
 		]
+		
 	},
 	"pf_presence.metalbox.metalbox_wander":{
 		"category":"master",
@@ -411,6 +443,7 @@
 			"footsteps/metalbox/metalbox_wander3",
 			"footsteps/metalbox/metalbox_wander4"
 		]
+		
 	},
 	"pf_presence.mud.mud_walk":{
 		"category":"master",
@@ -422,6 +455,7 @@
 			"footsteps/mud/mud_walk5",
 			"footsteps/mud/mud_walk6"
 		]
+		
 	},
 	"pf_presence.mud.mud_wander":{
 		"category":"master",
@@ -431,6 +465,7 @@
 			"footsteps/mud/mud_wander3",
 			"footsteps/mud/mud_wander4"
 		]
+		
 	},
 	"pf_presence.muffledice.muffledice_walk":{
 		"category":"master",
@@ -446,6 +481,7 @@
 			"footsteps/muffledice/muffledice_walk8",
 			"footsteps/muffledice/muffledice_walk9"
 		]
+		
 	},
 	"pf_presence.quicksand.quicksand_walk":{
 		"category":"master",
@@ -462,6 +498,7 @@
 			"footsteps/quicksand/quicksand_walk8",
 			"footsteps/quicksand/quicksand_walk9"
 		]
+		
 	},
 	"pf_presence.rug.rug_walk":{
 		"category":"master",
@@ -478,6 +515,7 @@
 			"footsteps/rug/rug_walk8",
 			"footsteps/rug/rug_walk9"
 		]
+		
 	},
 	"pf_presence.sand.sand_run":{
 		"category":"master",
@@ -494,6 +532,7 @@
 			"footsteps/sand/sand_run8",
 			"footsteps/sand/sand_run9"
 		]
+		
 	},
 	"pf_presence.sand.sand_walk":{
 		"category":"master",
@@ -510,6 +549,7 @@
 			"footsteps/sand/sand_walk8",
 			"footsteps/sand/sand_walk9"
 		]
+		
 	},
 	"pf_presence.snow.snow_run":{
 		"category":"master",
@@ -526,6 +566,7 @@
 			"footsteps/snow/snow_run8",
 			"footsteps/snow/snow_run9"
 		]
+		
 	},
 	"pf_presence.snow.snow_walk":{
 		"category":"master",
@@ -542,6 +583,7 @@
 			"footsteps/snow/snow_walk8",
 			"footsteps/snow/snow_walk9"
 		]
+		
 	},
 	"pf_presence.snow.snow_wander":{
 		"category":"master",
@@ -552,6 +594,7 @@
 			"footsteps/snow/snow_wander4",
 			"footsteps/snow/snow_wander5"
 		]
+		
 	},
 	"pf_presence.squeakywood.squeakywood_walk":{
 		"category":"master",
@@ -568,6 +611,7 @@
 			"footsteps/squeakywood/squeakywood_walk8",
 			"footsteps/squeakywood/squeakywood_walk9"
 		]
+		
 	},
 	"pf_presence.squeakywood.squeakywood_wander":{
 		"category":"master",
@@ -580,6 +624,7 @@
 			"footsteps/squeakywood/squeakywood_wander6",
 			"footsteps/squeakywood/squeakywood_wander7"
 		]
+		
 	},
 	"pf_presence.stone.stone_run":{
 		"category":"master",
@@ -596,6 +641,7 @@
 			"footsteps/stone/stone_run8",
 			"footsteps/stone/stone_run9"
 		]
+		
 	},
 	"pf_presence.stone.stone_walk":{
 		"category":"master",
@@ -612,6 +658,7 @@
 			"footsteps/stone/stone_walk8",
 			"footsteps/stone/stone_walk9"
 		]
+		
 	},
 	"pf_presence.stone.stone_wander":{
 		"category":"master",
@@ -622,6 +669,7 @@
 			"footsteps/stone/stone_wander4",
 			"footsteps/stone/stone_wander5"
 		]
+		
 	},
 	"pf_presence.water.water_through":{
 		"category":"master",
@@ -638,6 +686,7 @@
 			"footsteps/water/water_through8",
 			"footsteps/water/water_through9"
 		]
+		
 	},
 	"pf_presence.water.water_wander":{
 		"category":"master",
@@ -648,6 +697,7 @@
 			"footsteps/water/water_wander4",
 			"footsteps/water/water_wander5"
 		]
+		
 	},
 	"pf_presence.water_stereofix.water_through":{
 		"category":"master",
@@ -664,6 +714,7 @@
 			"footsteps/water_stereofix/water_through8",
 			"footsteps/water_stereofix/water_through9"
 		]
+		
 	},
 	"pf_presence.water_stereofix.water_wander":{
 		"category":"master",
@@ -674,6 +725,7 @@
 			"footsteps/water_stereofix/water_wander4",
 			"footsteps/water_stereofix/water_wander5"
 		]
+		
 	},
 	"pf_presence.weakice.weakice_walk":{
 		"category":"master",
@@ -689,6 +741,7 @@
 			"footsteps/weakice/weakice_walk8",
 			"footsteps/weakice/weakice_walk9"
 		]
+		
 	},
 	"pf_presence.wood.wood_walk":{
 		"category":"master",
@@ -705,6 +758,7 @@
 			"footsteps/wood/wood_walk8",
 			"footsteps/wood/wood_walk9"
 		]
+		
 	},
 	"rain":{
 		"category":"weather",
@@ -922,26 +976,6 @@
 		]
 		
 	},
-	"gravelwalk":{
-		"category":"ambient",
-		"sounds":[
-			"ambient/miscblocks/gravelwalk1",
-			"ambient/miscblocks/gravelwalk2",
-			"ambient/miscblocks/gravelwalk3",
-			"ambient/miscblocks/gravelwalk4",
-			"ambient/miscblocks/gravelwalk5",
-			"ambient/miscblocks/gravelwalk6"
-		]
-		
-	},
-	"stonewalk":{
-		"category":"ambient",
-		"sounds":[
-			"ambient/miscblocks/gravelwalk6",
-			"ambient/miscblocks/rockkick1"
-		]
-		
-	},
 	"breathing":{
 		"category":"ambient",
 		"sounds":[
@@ -995,18 +1029,6 @@
 		"category":"ambient",
 		"sounds":[
 			"ambient/insects/grasshopper1"
-		]
-		
-	},
-	"leafwalk":{
-		"category":"ambient",
-		"sounds":[
-			"ambient/steve/leafwalk1",
-			"ambient/steve/leafwalk2",
-			"ambient/steve/leafwalk3",
-			"ambient/steve/leafwalk4",
-			"ambient/steve/leafwalk5",
-			"ambient/steve/leafwalk6"
 		]
 		
 	},
