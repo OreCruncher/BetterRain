@@ -35,10 +35,9 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 @SideOnly(Side.CLIENT)
 public class BasicPrimitiveMap implements IPrimitiveMap {
 
-	private Map<String, String> primitiveMap;
+	private Map<String, String> primitiveMap = new LinkedHashMap<String, String>();
 
 	public BasicPrimitiveMap() {
-		this.primitiveMap = new LinkedHashMap<String, String>();
 	}
 
 	@Override

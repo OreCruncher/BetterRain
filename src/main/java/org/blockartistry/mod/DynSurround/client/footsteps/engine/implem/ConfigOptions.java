@@ -24,19 +24,20 @@
 
 package org.blockartistry.mod.DynSurround.client.footsteps.engine.implem;
 
-import java.util.IdentityHashMap;
 import java.util.Map;
 
 import org.blockartistry.mod.DynSurround.client.footsteps.engine.interfaces.IOptions;
+
+import gnu.trove.map.hash.TCustomHashMap;
+import gnu.trove.strategy.IdentityHashingStrategy;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
 public class ConfigOptions implements IOptions {
-	private Map<Option, Object> map;
+	private final Map<Option, Object> map = new TCustomHashMap<Option, Object>(IdentityHashingStrategy.INSTANCE);
 
 	public ConfigOptions() {
-		this.map = new IdentityHashMap<Option, Object>();
 	}
 
 	public Map<Option, Object> getMap() {

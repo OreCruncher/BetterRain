@@ -36,10 +36,9 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
 public class BasicBlockMap implements IBlockMap {
-	private Map<String, String> blockMap;
+	private Map<String, String> blockMap = new LinkedHashMap<String, String>();
 
 	public BasicBlockMap() {
-		this.blockMap = new LinkedHashMap<String, String>();
 	}
 
 	@Override
