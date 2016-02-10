@@ -24,6 +24,7 @@
 
 package org.blockartistry.mod.DynSurround.client.footsteps.game.system;
 
+import org.blockartistry.mod.DynSurround.client.EnvironStateHandler.EnvironState;
 import org.blockartistry.mod.DynSurround.client.footsteps.engine.interfaces.ILibrary;
 import org.blockartistry.mod.DynSurround.client.footsteps.engine.interfaces.ISoundPlayer;
 import org.blockartistry.mod.DynSurround.client.footsteps.mcpackage.interfaces.IBlockMap;
@@ -38,8 +39,6 @@ import org.blockartistry.mod.DynSurround.client.footsteps.mcpackage.interfaces.I
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.EntityPlayer;
 
 @SideOnly(Side.CLIENT)
 public class PFIsolator implements IIsolator, IVariatorSettable, IGeneratorSettable {
@@ -62,14 +61,7 @@ public class PFIsolator implements IIsolator, IVariatorSettable, IGeneratorSetta
 		if (this.generator == null)
 			return;
 
-		EntityPlayer ply = Minecraft.getMinecraft().thePlayer;
-
-		if (ply == null)
-			return;
-
-		this.generator.generateFootsteps(ply);
-
-		// Delayed sounds
+		this.generator.generateFootsteps(EnvironState.getPlayer());
 		this.acoustics.think();
 	}
 
