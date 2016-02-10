@@ -1128,6 +1128,17 @@
 			"ambient/bison/bison4"
 		]
 		
+	},
+	"primates":{
+		"category":"ambient",
+		"sounds":[
+			"ambient/primate/primate1",
+			"ambient/primate/primate2",
+			"ambient/primate/primate3",
+			"ambient/primate/primate4",
+			"ambient/primate/primate5"
+		]
+		
 	}
 	
 }

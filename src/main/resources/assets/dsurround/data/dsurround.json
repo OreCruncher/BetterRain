@@ -38,6 +38,12 @@
 					"volume":0.5,
 					"variable":true,
 					"spot":true
+				},
+				{
+					"sound":"dsurround:primates",
+					"conditions":"(?i)(?!.*#raining#.*)(.*#day#.*)",
+					"volume":0.3,
+					"spot":true
 				}
 				
 			]

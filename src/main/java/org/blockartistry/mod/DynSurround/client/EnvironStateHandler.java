@@ -82,9 +82,9 @@ public class EnvironStateHandler implements IClientEffectHandler {
 			AXE = null;
 		}
 
-		if(ModOptions.getEnableCraftingSound())
+		if (ModOptions.getEnableCraftingSound())
 			CRAFTING = new SoundEffect("dsurround:crafting");
-		else 
+		else
 			CRAFTING = null;
 	}
 
@@ -109,6 +109,7 @@ public class EnvironStateHandler implements IClientEffectHandler {
 		private static boolean humid;
 		private static boolean dry;
 		private static String temperatureCategory = "";
+		private static boolean inside;
 
 		private static int tickCounter;
 
@@ -131,6 +132,7 @@ public class EnvironStateHandler implements IClientEffectHandler {
 		private static final String CONDITION_TOKEN_FOG = "fog";
 		private static final String CONDITION_TOKEN_HUMID = "humid";
 		private static final String CONDITION_TOKEN_DRY = "dry";
+		private static final String CONDITION_TOKEN_INSIDE = "inside";
 		private static final char CONDITION_SEPARATOR = '#';
 
 		private static String getPlayerConditions(final EntityPlayer player) {
@@ -163,6 +165,8 @@ public class EnvironStateHandler implements IClientEffectHandler {
 				builder.append(CONDITION_SEPARATOR).append(CONDITION_TOKEN_HUMID);
 			if (isDry())
 				builder.append(CONDITION_SEPARATOR).append(CONDITION_TOKEN_DRY);
+			if (isPlayerInside())
+				builder.append(CONDITION_SEPARATOR).append(CONDITION_TOKEN_INSIDE);
 			if (isPlayerRiding()) {
 				builder.append(CONDITION_SEPARATOR);
 				if (player.ridingEntity instanceof EntityMinecart)
@@ -190,6 +194,7 @@ public class EnvironStateHandler implements IClientEffectHandler {
 			EnvironState.dimensionId = world.provider.dimensionId;
 			EnvironState.dimensionName = world.provider.getDimensionName();
 			EnvironState.fog = FogEffectHandler.currentFogLevel() >= 0.01F;
+			EnvironState.inside = PlayerUtils.isReallyInside(EnvironState.player);
 
 			final int posX = MathHelper.floor_double(player.posX);
 			final int posY = MathHelper.floor_double(player.posY);
@@ -299,6 +304,10 @@ public class EnvironStateHandler implements IClientEffectHandler {
 
 		public static boolean isPlayerMoving() {
 			return getPlayer().distanceWalkedModified != player.prevDistanceWalkedModified;
+		}
+
+		public static boolean isPlayerInside() {
+			return inside;
 		}
 
 		public static boolean isFreezing() {

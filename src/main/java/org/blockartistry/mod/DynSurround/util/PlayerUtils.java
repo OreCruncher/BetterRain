@@ -90,6 +90,22 @@ public final class PlayerUtils {
 
 	private static final int RANGE = 3;
 	private static final int AREA = (RANGE * 2 + 1) * (RANGE * 2 + 1) / 2;
+	
+	public static boolean isReallyInside(final EntityPlayer entity) {
+		final int targetY = (int) entity.posY;
+		int seeSky = 0;
+		for (int x = -RANGE; x <= RANGE; x++)
+			for (int z = -RANGE; z <= RANGE; z++) {
+				final int theX = MathHelper.floor_double(x + entity.posX);
+				final int theZ = MathHelper.floor_double(z + entity.posZ);
+				final int y = entity.worldObj.getTopSolidOrLiquidBlock(theX, theZ);
+				if ((y - targetY) < 2) {
+					if (++seeSky >= AREA)
+						return false;
+				}
+			}
+		return true;
+	}
 
 	public static boolean isInside(final EntityPlayer entity, final int yOffset) {
 		// The Nether/End do not have the idea of inside
@@ -100,20 +116,8 @@ public final class PlayerUtils {
 		// If the player is underground
 		if (PlayerUtils.isUnderGround(entity, yOffset))
 			return true;
-
-		final int targetY = (int) entity.posY;
-		int seeSky = 0;
-		for (int x = -RANGE; x <= RANGE; x++)
-			for (int z = -RANGE; z <= RANGE; z++) {
-				final int theX = MathHelper.floor_double(x + entity.posX);
-				final int theZ = MathHelper.floor_double(z + entity.posZ);
-				final int y = entity.worldObj.getTopSolidOrLiquidBlock(theX, theZ);
-				if ((y - targetY) < 3) {
-					if (++seeSky >= AREA)
-						return false;
-				}
-			}
-		return true;
+		
+		return isReallyInside(entity);
 	}
 
 	@SideOnly(Side.CLIENT)
