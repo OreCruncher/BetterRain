@@ -27,6 +27,8 @@ package org.blockartistry.mod.DynSurround;
 import org.apache.logging.log4j.Logger;
 
 public final class ModLog {
+	
+	public static boolean DEBUGGING = false;
 
 	private ModLog() {
 	}
@@ -52,7 +54,7 @@ public final class ModLog {
 	}
 
 	public static void debug(String msg, Object... parms) {
-		if (logger != null && ModOptions.getEnableDebugLogging()) {
+		if (logger != null && DEBUGGING) {
 			logger.info(String.format(msg, parms));
 		}
 	}
