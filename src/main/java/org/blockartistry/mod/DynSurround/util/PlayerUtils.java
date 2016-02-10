@@ -94,16 +94,7 @@ public final class PlayerUtils {
 	private static final int RANGE = 3;
 	private static final int AREA = (RANGE * 2 + 1) * (RANGE * 2 + 1) / 2;
 
-	public static boolean isInside(final EntityPlayer entity, final int yOffset) {
-		// The Nether/End do not have the idea of inside
-		final int dimension = PlayerUtils.getPlayerDimension(entity);
-		if (dimension == 1 || dimension == -1)
-			return false;
-
-		// If the player is underground
-		if (PlayerUtils.isUnderGround(entity, yOffset))
-			return true;
-
+	public static boolean isReallyInside(final EntityPlayer entity) {
 		final BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
 		final int targetY = (int) entity.posY;
 		int seeSky = 0;
@@ -119,6 +110,19 @@ public final class PlayerUtils {
 				}
 			}
 		return true;
+	}
+	
+	public static boolean isInside(final EntityPlayer entity, final int yOffset) {
+		// The Nether/End do not have the idea of inside
+		final int dimension = PlayerUtils.getPlayerDimension(entity);
+		if (dimension == 1 || dimension == -1)
+			return false;
+
+		// If the player is underground
+		if (PlayerUtils.isUnderGround(entity, yOffset))
+			return true;
+
+		return isReallyInside(entity);
 	}
 
 	@SideOnly(Side.CLIENT)

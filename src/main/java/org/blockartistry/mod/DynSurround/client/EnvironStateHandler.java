@@ -80,10 +80,10 @@ public class EnvironStateHandler implements IClientEffectHandler {
 			SWORD = null;
 			AXE = null;
 		}
-		
-		if(ModOptions.getEnableCraftingSound())
+
+		if (ModOptions.getEnableCraftingSound())
 			CRAFTING = new SoundEffect("dsurround:crafting");
-		else 
+		else
 			CRAFTING = null;
 	}
 
@@ -108,6 +108,7 @@ public class EnvironStateHandler implements IClientEffectHandler {
 		private static boolean humid;
 		private static boolean dry;
 		private static String temperatureCategory = "";
+		private static boolean inside;
 
 		private static int tickCounter;
 
@@ -130,6 +131,7 @@ public class EnvironStateHandler implements IClientEffectHandler {
 		private static final String CONDITION_TOKEN_FOG = "fog";
 		private static final String CONDITION_TOKEN_HUMID = "humid";
 		private static final String CONDITION_TOKEN_DRY = "dry";
+		private static final String CONDITION_TOKEN_INSIDE = "inside";
 		private static final char CONDITION_SEPARATOR = '#';
 
 		private static String getPlayerConditions(final EntityPlayer player) {
@@ -162,6 +164,8 @@ public class EnvironStateHandler implements IClientEffectHandler {
 				builder.append(CONDITION_SEPARATOR).append(CONDITION_TOKEN_HUMID);
 			if (isDry())
 				builder.append(CONDITION_SEPARATOR).append(CONDITION_TOKEN_DRY);
+			if (isPlayerInside())
+				builder.append(CONDITION_SEPARATOR).append(CONDITION_TOKEN_INSIDE);
 			if (isPlayerRiding()) {
 				builder.append(CONDITION_SEPARATOR);
 				if (player.ridingEntity instanceof EntityMinecart)
@@ -188,6 +192,7 @@ public class EnvironStateHandler implements IClientEffectHandler {
 			EnvironState.dimensionId = world.provider.getDimensionId();
 			EnvironState.dimensionName = world.provider.getDimensionName();
 			EnvironState.fog = FogEffectHandler.currentFogLevel() >= 0.01F;
+			EnvironState.inside = PlayerUtils.isReallyInside(EnvironState.player);
 
 			final BlockPos playerPos = new BlockPos(player.posX, player.posY, player.posZ);
 			final BiomeGenBase trueBiome = PlayerUtils.getPlayerBiome(player, true);
@@ -295,6 +300,10 @@ public class EnvironStateHandler implements IClientEffectHandler {
 			return getPlayer().distanceWalkedModified != player.prevDistanceWalkedModified;
 		}
 
+		public static boolean isPlayerInside() {
+			return inside;
+		}
+
 		public static boolean isFreezing() {
 			return freezing;
 		}
@@ -348,20 +357,20 @@ public class EnvironStateHandler implements IClientEffectHandler {
 		if (JUMP != null && event.entity.worldObj.isRemote && EnvironState.isPlayer(event.entity))
 			PlayerSoundEffectHandler.playSoundAtPlayer(EnvironState.getPlayer(), JUMP, 0);
 	}
-	
+
 	@SubscribeEvent
 	public void onItemUse(final AttackEntityEvent event) {
-		if(SWORD != null && event.entityPlayer.worldObj.isRemote && EnvironState.isPlayer(event.entityPlayer)) {
+		if (SWORD != null && event.entityPlayer.worldObj.isRemote && EnvironState.isPlayer(event.entityPlayer)) {
 			final ItemStack currentItem = event.entityPlayer.getCurrentEquippedItem();
-			if(currentItem != null) {
+			if (currentItem != null) {
 				SoundEffect sound = null;
 				final Item item = currentItem.getItem();
-				if(item instanceof ItemSword)
+				if (item instanceof ItemSword)
 					sound = SWORD;
-				else if(item instanceof ItemAxe)
+				else if (item instanceof ItemAxe)
 					sound = AXE;
 
-				if(sound != null)
+				if (sound != null)
 					PlayerSoundEffectHandler.playSoundAtPlayer(EnvironState.getPlayer(), sound, 0);
 			}
 		}
@@ -379,6 +388,7 @@ public class EnvironStateHandler implements IClientEffectHandler {
 		}
 
 	}
+
 	@SubscribeEvent(priority = EventPriority.HIGHEST)
 	public void diagnostics(final DiagnosticEvent.Gather event) {
 		event.output.add("Dim: " + EnvironState.getDimensionId() + "/" + EnvironState.getDimensionName());

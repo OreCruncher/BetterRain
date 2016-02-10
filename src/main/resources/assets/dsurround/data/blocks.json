@@ -71,6 +71,7 @@
 			"sounds":[
 				{
 					"sound":"dsurround:frog",
+					"conditions":"(?i)(?!.*#inside#.*)(.*)",
 					"volume":0.4,
 					"pitch":1.0,
 					"variable":true
