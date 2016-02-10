@@ -115,7 +115,6 @@ public class Footsteps implements IResourceManagerReloadListener, IClientEffectH
 			;
 		}
 
-		int working = 0;
 		for (final ResourcePackRepository.Entry pack : repo) {
 			try {
 				// TODO: Loading config from json?
@@ -123,13 +122,9 @@ public class Footsteps implements IResourceManagerReloadListener, IClientEffectH
 				config.loadStream(this.dealer.openVariator(pack.getResourcePack()));
 
 				var.loadConfig(config);
-				working = working + 1;
 			} catch (Exception e) {
 				ModLog.debug("No variator found in " + pack.getResourcePackName() + ": " + e.getMessage());
 			}
-		}
-		if (working == 0) {
-			ModLog.info("No variators found in " + repo.size() + " packs!");
 		}
 
 		this.isolator.setVariator(var);
