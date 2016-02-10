@@ -27,16 +27,17 @@ package org.blockartistry.mod.DynSurround.client.footsteps.game.system;
 import java.util.Locale;
 
 import org.blockartistry.mod.DynSurround.ModLog;
+import org.blockartistry.mod.DynSurround.client.EnvironStateHandler.EnvironState;
 import org.blockartistry.mod.DynSurround.client.footsteps.engine.implem.ConfigOptions;
 import org.blockartistry.mod.DynSurround.client.footsteps.engine.interfaces.EventType;
 import org.blockartistry.mod.DynSurround.client.footsteps.engine.interfaces.IOptions.Option;
 import org.blockartistry.mod.DynSurround.client.footsteps.mcpackage.interfaces.IIsolator;
 import org.blockartistry.mod.DynSurround.client.footsteps.mcpackage.interfaces.ISolver;
+import org.blockartistry.mod.DynSurround.util.MathStuff;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.BlockPos;
@@ -72,9 +73,9 @@ public class PFSolver implements ISolver {
 	public void playAssociation(final EntityPlayer ply, final Association assos, final EventType eventType) {
 		if (assos != null && !assos.isNotEmitter()) {
 			if (assos.getNoAssociation()) {
-				isolator.getDefaultStepPlayer().playStep(ply, assos);
+				this.isolator.getDefaultStepPlayer().playStep(ply, assos);
 			} else {
-				isolator.getAcoustics().playAcoustic(ply, assos, eventType);
+				this.isolator.getAcoustics().playAcoustic(ply, assos, eventType);
 			}
 		}
 	}
@@ -82,31 +83,22 @@ public class PFSolver implements ISolver {
 	@Override
 	public Association findAssociationForPlayer(final EntityPlayer ply, final double verticalOffsetAsMinus,
 			final boolean isRightFoot) {
-		int yy = MathHelper.floor_double(ply.getEntityBoundingBox().minY - 0.1d - verticalOffsetAsMinus); // 0.1d:
-																											// Support
-																											// for
-																											// trapdoors
-
-		double rot = Math.toRadians(MathHelper.wrapAngleTo180_float(ply.rotationYaw));
-		double xn = Math.cos(rot);
-		double zn = Math.sin(rot);
-
-		float feetDistanceToCenter = 0.2f * (isRightFoot ? -1 : 1);
-
-		int xx = MathHelper.floor_double(ply.posX + xn * feetDistanceToCenter);
-		int zz = MathHelper.floor_double(ply.posZ + zn * feetDistanceToCenter);
+		final int yy = MathHelper.floor_double(ply.getEntityBoundingBox().minY - 0.1d - verticalOffsetAsMinus);
+		final double rot = MathStuff.toRadians(MathHelper.wrapAngleTo180_float(ply.rotationYaw));
+		final double xn = MathStuff.cos(rot);
+		final double zn = MathStuff.sin(rot);
+		final float feetDistanceToCenter = 0.2f * (isRightFoot ? -1 : 1);
+		final int xx = MathHelper.floor_double(ply.posX + xn * feetDistanceToCenter);
+		final int zz = MathHelper.floor_double(ply.posZ + zn * feetDistanceToCenter);
 
 		return findAssociationForLocation(ply, xx, yy, zz);
 	}
 
 	@Override
 	public Association findAssociationForPlayer(final EntityPlayer ply, final double verticalOffsetAsMinus) {
-		int yy = MathHelper.floor_double(ply.posY - 0.1d - ply.getYOffset() - verticalOffsetAsMinus); // 0.1d:
-																										// Support
-																										// for
-																										// trapdoors
-		int xx = MathHelper.floor_double(ply.posX);
-		int zz = MathHelper.floor_double(ply.posZ);
+		final int yy = MathHelper.floor_double(ply.posY - 0.1d - ply.getYOffset() - verticalOffsetAsMinus);
+		final int xx = MathHelper.floor_double(ply.posX);
+		final int zz = MathHelper.floor_double(ply.posZ);
 		return findAssociationForLocation(ply, xx, yy, zz);
 	}
 
@@ -179,8 +171,7 @@ public class PFSolver implements ISolver {
 
 	@Override
 	public Association findAssociationForBlock(final int xx, int yy, final int zz) {
-		World world = Minecraft.getMinecraft().theWorld;
-
+		final World world = EnvironState.getWorld();
 		IBlockState in = world.getBlockState(new BlockPos(xx, yy, zz));
 		final IBlockState above = world.getBlockState(new BlockPos(xx, yy + 1, zz));
 
@@ -199,7 +190,7 @@ public class PFSolver implements ISolver {
 			if (in == Blocks.air) {
 
 				final IBlockState below = world.getBlockState(new BlockPos(xx, yy - 1, zz));
-				association = isolator.getBlockMap().getBlockMapSubstrate(below.getBlock(),
+				association = this.isolator.getBlockMap().getBlockMapSubstrate(below.getBlock(),
 						below.getBlock().getMetaFromState(below), "bigger");
 				if (association != null) {
 					yy--;
@@ -220,7 +211,8 @@ public class PFSolver implements ISolver {
 				// => this block of code is here, not outside this if else
 				// group.
 
-				String foliage = isolator.getBlockMap().getBlockMapSubstrate(above.getBlock(), above.getBlock().getMetaFromState(above), "foliage");
+				String foliage = this.isolator.getBlockMap().getBlockMapSubstrate(above.getBlock(),
+						above.getBlock().getMetaFromState(above), "foliage");
 				if (foliage != null && !foliage.equals("NOT_EMITTER")) {
 					association = association + "," + foliage;
 					ModLog.debug("Foliage detected: " + foliage);
@@ -242,7 +234,8 @@ public class PFSolver implements ISolver {
 			} else {
 				// PFLog.debugf("Found association for %0 : %1 : %2", in,
 				// association);
-				return (new Association(in.getBlock(), in.getBlock().getMetaFromState(in), xx, yy, zz)).setAssociation(association);
+				return (new Association(in.getBlock(), in.getBlock().getMetaFromState(in), xx, yy, zz))
+						.setAssociation(association);
 			}
 		} else {
 			String primitive = resolvePrimitive(in.getBlock());
@@ -255,10 +248,12 @@ public class PFSolver implements ISolver {
 
 				// PFLog.debugf("Found primitive for %0 : %1 : %2", in,
 				// primitive);
-				return (new Association(in.getBlock(), in.getBlock().getMetaFromState(in), xx, yy, zz)).setPrimitive(primitive);
+				return (new Association(in.getBlock(), in.getBlock().getMetaFromState(in), xx, yy, zz))
+						.setPrimitive(primitive);
 			} else {
 				// PFLog.debugf("No association for %0 : %1", in);
-				return (new Association(in.getBlock(), in.getBlock().getMetaFromState(in), xx, yy, zz)).setNoAssociation();
+				return (new Association(in.getBlock(), in.getBlock().getMetaFromState(in), xx, yy, zz))
+						.setNoAssociation();
 			}
 		}
 	}
@@ -276,20 +271,20 @@ public class PFSolver implements ISolver {
 		String substrate = String.format(Locale.ENGLISH, "%.2f_%.2f", block.stepSound.volume,
 				block.stepSound.frequency);
 
-		String primitive = isolator.getPrimitiveMap().getPrimitiveMapSubstrate(soundName, substrate); // Check
-																										// for
-																										// primitive
-																										// in
-																										// register
+		String primitive = this.isolator.getPrimitiveMap().getPrimitiveMapSubstrate(soundName, substrate); // Check
+																											// for
+																											// primitive
+																											// in
+																											// register
 		if (primitive == null) {
 			if (block.stepSound.soundName != null) {
-				primitive = isolator.getPrimitiveMap().getPrimitiveMapSubstrate(soundName, "break_" + soundName); // Check
-																													// for
-																													// break
-																													// sound
+				primitive = this.isolator.getPrimitiveMap().getPrimitiveMapSubstrate(soundName, "break_" + soundName); // Check
+																														// for
+																														// break
+																														// sound
 			}
 			if (primitive == null) {
-				primitive = isolator.getPrimitiveMap().getPrimitiveMap(soundName);
+				primitive = this.isolator.getPrimitiveMap().getPrimitiveMap(soundName);
 			}
 		}
 
@@ -305,13 +300,13 @@ public class PFSolver implements ISolver {
 	@Override
 	public boolean playSpecialStoppingConditions(final EntityPlayer ply) {
 		if (ply.isInWater()) {
-			float volume = MathHelper.sqrt_double(
+			final float volume = MathHelper.sqrt_double(
 					ply.motionX * ply.motionX * 0.2d + ply.motionY * ply.motionY + ply.motionZ * ply.motionZ * 0.2d)
 					* 0.35f;
-			ConfigOptions options = new ConfigOptions();
+			final ConfigOptions options = new ConfigOptions();
 			options.getMap().put(Option.GLIDING_VOLUME, volume > 1 ? 1 : volume);
 			// material water, see EntityLivingBase line 286
-			isolator.getAcoustics().playAcoustic(ply, "_SWIM",
+			this.isolator.getAcoustics().playAcoustic(ply, "_SWIM",
 					ply.isInsideOfMaterial(Material.water) ? EventType.SWIM : EventType.WALK, options);
 			return true;
 		}
@@ -329,7 +324,7 @@ public class PFSolver implements ISolver {
 		if (!strategy.equals("find_messy_foliage"))
 			return null;
 
-		World world = Minecraft.getMinecraft().theWorld;
+		final World world = EnvironState.getWorld();
 
 		/*
 		 * Block block = PF172Helper.getBlockAt(xx, yy, zz); int metadata =
@@ -343,7 +338,7 @@ public class PFSolver implements ISolver {
 		 * world.getBlockMetadata(xx, yy - 1, zz); } }
 		 */
 
-		final IBlockState above = world.getBlockState(new BlockPos(xx, yy+1,zz));
+		final IBlockState above = world.getBlockState(new BlockPos(xx, yy + 1, zz));
 
 		String association = null;
 		boolean found = false;
@@ -370,13 +365,15 @@ public class PFSolver implements ISolver {
 		 * => this block of code is here, not outside this if else group.
 		 */
 
-		String foliage = isolator.getBlockMap().getBlockMapSubstrate(above.getBlock(), above.getBlock().getMetaFromState(above), "foliage");
+		String foliage = this.isolator.getBlockMap().getBlockMapSubstrate(above.getBlock(),
+				above.getBlock().getMetaFromState(above), "foliage");
 		if (foliage != null && !foliage.equals("NOT_EMITTER")) {
 			// we discard the normal block association, and mark the foliage as
 			// detected
 			// association = association + "," + foliage;
 			association = foliage;
-			String isMessy = isolator.getBlockMap().getBlockMapSubstrate(above.getBlock(), above.getBlock().getMetaFromState(above), "messy");
+			String isMessy = this.isolator.getBlockMap().getBlockMapSubstrate(above.getBlock(),
+					above.getBlock().getMetaFromState(above), "messy");
 
 			if (isMessy != null && isMessy.equals("MESSY_GROUND"))
 				found = true;
