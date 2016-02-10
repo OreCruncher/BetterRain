@@ -85,7 +85,8 @@ public class AcousticsManager extends AcousticsLibrary implements ISoundPlayer, 
 	}
 
 	@Override
-	public void playSound(final Object location, final String soundName, final float volume, final float pitch, final IOptions options) {
+	public void playSound(final Object location, final String soundName, final float volume, final float pitch,
+			final IOptions options) {
 		if (!(location instanceof Entity))
 			return;
 
@@ -109,9 +110,11 @@ public class AcousticsManager extends AcousticsLibrary implements ISoundPlayer, 
 		}
 	}
 
-	protected void actuallyPlaySound(final Entity location, final String soundName, final float volume, final float pitch) {
-		ModLog.debug("    Playing sound " + soundName + " ("
-				+ String.format(Locale.ENGLISH, "v%.2f, p%.2f", volume, pitch) + ")");
+	protected void actuallyPlaySound(final Entity location, final String soundName, final float volume,
+			final float pitch) {
+		if (ModLog.DEBUGGING)
+			ModLog.debug("    Playing sound " + soundName + " ("
+					+ String.format(Locale.ENGLISH, "v%.2f, p%.2f", volume, pitch) + ")");
 		location.playSound(soundName, volume, pitch);
 	}
 
@@ -125,8 +128,9 @@ public class AcousticsManager extends AcousticsLibrary implements ISoundPlayer, 
 	}
 
 	@Override
-	protected void onAcousticNotFound(final Object location, final String acousticName, final EventType event, final IOptions inputOptions) {
-		ModLog.info("Tried to play a missing acoustic: " + acousticName);
+	protected void onAcousticNotFound(final Object location, final String acousticName, final EventType event,
+			final IOptions inputOptions) {
+		ModLog.debug("Tried to play a missing acoustic: " + acousticName);
 	}
 
 	@Override
@@ -143,7 +147,7 @@ public class AcousticsManager extends AcousticsLibrary implements ISoundPlayer, 
 
 			if (time >= sound.getTimeToPlay() || USING_EARLYNESS
 					&& time >= sound.getTimeToPlay() - Math.pow(sound.getMaximumBase(), EARLYNESS_THRESHOLD_POW)) {
-				if (USING_EARLYNESS && time < sound.getTimeToPlay()) {
+				if (ModLog.DEBUGGING && USING_EARLYNESS && time < sound.getTimeToPlay()) {
 					ModLog.debug("    Playing early sound (early by " + (sound.getTimeToPlay() - time)
 							+ "ms, tolerence is " + Math.pow(sound.getMaximumBase(), EARLYNESS_THRESHOLD_POW));
 				}
@@ -153,8 +157,9 @@ public class AcousticsManager extends AcousticsLibrary implements ISoundPlayer, 
 						|| lateness <= sound.getMaximumBase() / LATENESS_THRESHOLD_DIVIDER) {
 					sound.playSound(this);
 				} else {
-					ModLog.debug("    Skipped late sound (late by " + lateness + "ms, tolerence is "
-							+ sound.getMaximumBase() / LATENESS_THRESHOLD_DIVIDER + "ms)");
+					if (ModLog.DEBUGGING)
+						ModLog.debug("    Skipped late sound (late by " + lateness + "ms, tolerence is "
+								+ sound.getMaximumBase() / LATENESS_THRESHOLD_DIVIDER + "ms)");
 				}
 				iter.remove();
 			} else {

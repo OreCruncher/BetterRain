@@ -81,7 +81,8 @@ public abstract class AcousticsLibrary implements ILibrary {
 		} else if (!acoustics.containsKey(acousticName.getData())) {
 			onAcousticNotFound(location, acousticName.getData(), event, inputOptions);
 		} else {
-			ModLog.debug("  Playing acoustic " + acousticName.getData() + " for event " + event.toString().toUpperCase());
+			if(ModLog.DEBUGGING)
+				ModLog.debug("  Playing acoustic " + acousticName.getData() + " for event " + event.toString().toUpperCase());
 			acoustics.get(acousticName.getData()).playSound(mySoundPlayer(), location, event, inputOptions);
 		}
 	}
@@ -95,7 +96,8 @@ public abstract class AcousticsLibrary implements ILibrary {
 		} else if (!acoustics.containsKey(acousticName)) {
 			onAcousticNotFound(location, acousticName, event, inputOptions);
 		} else {
-			ModLog.debug("  Playing acoustic " + acousticName + " for event " + event.toString().toUpperCase());
+			if(ModLog.DEBUGGING)
+				ModLog.debug("  Playing acoustic " + acousticName + " for event " + event.toString().toUpperCase());
 			acoustics.get(acousticName).playSound(mySoundPlayer(), location, event, inputOptions);
 		}
 	}
