@@ -69,7 +69,7 @@ public class EnvironStateHandler implements IClientEffectHandler {
 
 	static {
 		if (ModOptions.getEnableJumpSound())
-			JUMP = new SoundEffect("dsurround:jump", 0.3F, 1.0F, true);
+			JUMP = new SoundEffect("dsurround:jump", 0.4F, 1.0F, true);
 		else
 			JUMP = null;
 
