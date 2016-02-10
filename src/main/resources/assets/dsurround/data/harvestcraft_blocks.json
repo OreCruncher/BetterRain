@@ -2,7 +2,8 @@
 	"entries":[
 		{
 			"blocks":[
-				"harvestcraft:beehive"
+				"harvestcraft:beehive",
+				"harvestcraft:apiary"
 			],
 			"chance":5,
 			"sounds":[
