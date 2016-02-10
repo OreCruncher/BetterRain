@@ -1118,6 +1118,16 @@
 			"ambient/steve/craftsand2"
 		]
 		
+	},
+	"bison":{
+		"category":"ambient",
+		"sounds":[
+			"ambient/bison/bison1",
+			"ambient/bison/bison2",
+			"ambient/bison/bison3",
+			"ambient/bison/bison4"
+		]
+		
 	}
 	
 }

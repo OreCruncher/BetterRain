@@ -63,6 +63,19 @@
 			
 		},
 		{
+			"biomeName":"(?i)(?!.*ice.*)(.*plains.*|grassland|prairie)",
+			"sounds":[
+				{
+					"sound":"dsurround:bison",
+					"conditions":"(?i)(?!.*#raining#.*)(.*#day#.*)",
+					"volume":0.5,
+					"spot":true
+				}
+				
+			]
+			
+		},
+		{
 			"biomeName":"(?i)(?!.*dead.*|.*flower.*|.*fungi.*|.*frost.*|.*snow.*|.*kelp.*)(.*forest.*|.*cherry.*|.*orchard.*|.*wood.*|.*wetland.*|thicket|grove)",
 			"sounds":[
 				{
@@ -255,7 +268,6 @@
 					"variable":true,
 					"spot":true
 				}
-				
 				
 			]
 			
