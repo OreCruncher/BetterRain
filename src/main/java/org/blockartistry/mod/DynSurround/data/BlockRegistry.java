@@ -103,9 +103,11 @@ public final class BlockRegistry {
 		registry.clear();
 		processConfig();
 
-		ModLog.info("*** BLOCK REGISTRY ***");
-		for (final Entry entry : registry.values())
-			ModLog.info(entry.toString());
+		if (ModOptions.getEnableDebugLogging()) {
+			ModLog.info("*** BLOCK REGISTRY ***");
+			for (final Entry entry : registry.values())
+				ModLog.info(entry.toString());
+		}
 	}
 
 	public static List<BlockEffect> getEffects(final Block block) {
@@ -156,17 +158,17 @@ public final class BlockRegistry {
 		} catch (final Exception e) {
 			e.printStackTrace();
 		}
-		
+
 		// Check for each of the loaded mods to see if there is
 		// a config file embedded.
-		for(final ModContainer mod: Loader.instance().getActiveModList()) {
+		for (final ModContainer mod : Loader.instance().getActiveModList()) {
 			try {
 				process(BlockConfig.load(mod.getModId() + "_blocks"));
 			} catch (final Exception e) {
 				e.printStackTrace();
 			}
 		}
-		
+
 		final String[] configFiles = ModOptions.getBlockConfigFiles();
 		for (final String file : configFiles) {
 			final File theFile = new File(Module.dataDirectory(), file);

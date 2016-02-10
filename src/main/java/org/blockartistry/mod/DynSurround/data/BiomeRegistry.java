@@ -94,7 +94,7 @@ public final class BiomeRegistry {
 					return sound;
 			return null;
 		}
-		
+
 		public List<SoundEffect> findSoundMatches(final String conditions) {
 			final List<SoundEffect> results = new ArrayList<SoundEffect>();
 			for (final SoundEffect sound : this.sounds)
@@ -177,9 +177,11 @@ public final class BiomeRegistry {
 
 		processConfig();
 
-		ModLog.info("*** BIOME REGISTRY ***");
-		for (final Entry entry : registry.valueCollection())
-			ModLog.info(entry.toString());
+		if (ModOptions.getEnableDebugLogging()) {
+			ModLog.info("*** BIOME REGISTRY ***");
+			for (final Entry entry : registry.valueCollection())
+				ModLog.info(entry.toString());
+		}
 	}
 
 	private static Entry get(final BiomeGenBase biome) {
@@ -228,7 +230,7 @@ public final class BiomeRegistry {
 	public static SoundEffect getSound(final BiomeGenBase biome, final String conditions) {
 		return get(biome).findSoundMatch(conditions);
 	}
-	
+
 	public static List<SoundEffect> getSounds(final BiomeGenBase biome, final String conditions) {
 		return get(biome).findSoundMatches(conditions);
 	}
