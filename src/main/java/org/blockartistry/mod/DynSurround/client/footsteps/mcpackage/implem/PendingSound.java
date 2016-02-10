@@ -32,13 +32,13 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
 public class PendingSound {
-	private Object location;
-	private String soundName;
-	private float volume;
-	private float pitch;
-	private IOptions options;
-	private long timeToPlay;
-	private long maximum;
+	private final Object location;
+	private final String soundName;
+	private final float volume;
+	private final float pitch;
+	private final IOptions options;
+	private final long timeToPlay;
+	private final long maximum;
 
 	public PendingSound(final Object location, final String soundName, final float volume, final float pitch,
 			final IOptions options, final long timeToPlay, final long maximum) {

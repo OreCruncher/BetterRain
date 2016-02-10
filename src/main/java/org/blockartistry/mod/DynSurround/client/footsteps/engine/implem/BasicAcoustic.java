@@ -47,8 +47,9 @@ public class BasicAcoustic implements IAcoustic {
 	protected IOptions outputOptions;
 
 	@Override
-	public void playSound(final ISoundPlayer player, final Object location, final EventType event, final IOptions inputOptions) {
-		// Special case for intentionnaly empty sounds (as opposed to fallback
+	public void playSound(final ISoundPlayer player, final Object location, final EventType event,
+			final IOptions inputOptions) {
+		// Special case for intentionally empty sounds (as opposed to fall back
 		// sounds)
 		if (StringUtils.isEmpty(this.soundName))
 			return;
@@ -57,7 +58,8 @@ public class BasicAcoustic implements IAcoustic {
 		float pitch = generatePitch(player.getRNG());
 		if (inputOptions != null) {
 			if (inputOptions.hasOption(Option.GLIDING_VOLUME)) {
-				volume = this.volMin + (this.volMax - this.volMin) * (Float) inputOptions.getOption(Option.GLIDING_VOLUME);
+				volume = this.volMin
+						+ (this.volMax - this.volMin) * (Float) inputOptions.getOption(Option.GLIDING_VOLUME);
 			}
 			if (inputOptions.hasOption(Option.GLIDING_PITCH)) {
 				pitch = this.pitchMin
@@ -65,7 +67,6 @@ public class BasicAcoustic implements IAcoustic {
 			}
 		}
 
-		// TODO: Fix this up
 		player.playSound(location, this.soundName, volume, pitch, this.outputOptions);
 	}
 

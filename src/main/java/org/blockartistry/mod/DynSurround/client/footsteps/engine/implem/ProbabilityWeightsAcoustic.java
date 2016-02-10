@@ -36,34 +36,33 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
 public class ProbabilityWeightsAcoustic implements IAcoustic {
-	protected List<IAcoustic> acoustics;
-	protected int[] weights;
-	protected int totalWeight;
-	protected boolean isUseable;
+	protected final List<IAcoustic> acoustics;
+	protected final int[] weights;
+	protected final int totalWeight;
 
 	public ProbabilityWeightsAcoustic(final List<IAcoustic> acoustics, final List<Integer> weights) {
 		this.acoustics = new ArrayList<IAcoustic>(acoustics);
 		this.weights = new int[weights.size()];
-		for(int i = 0; i < weights.size(); i++) {
+
+		int tWeight = 0;
+		for (int i = 0; i < weights.size(); i++) {
 			this.weights[i] = weights.get(i).intValue();
-			this.totalWeight += this.weights[i];
+			tWeight += this.weights[i];
 		}
 
-		this.isUseable = true;
+		this.totalWeight = tWeight;
 	}
 
 	@Override
-	public void playSound(final ISoundPlayer player, final Object location, final EventType event, final IOptions inputOptions) {
-		if (!this.isUseable)
-			return;
-
+	public void playSound(final ISoundPlayer player, final Object location, final EventType event,
+			final IOptions inputOptions) {
 		if (this.totalWeight <= 0)
 			return;
-		
+
 		int targetWeight = player.getRNG().nextInt(this.totalWeight);
 
 		int i = 0;
-		for (i = this.weights.length; (targetWeight -= this.weights[i-1]) >= 0; i--)
+		for (i = this.weights.length; (targetWeight -= this.weights[i - 1]) >= 0; i--)
 			;
 
 		this.acoustics.get(i - 1).playSound(player, location, event, inputOptions);

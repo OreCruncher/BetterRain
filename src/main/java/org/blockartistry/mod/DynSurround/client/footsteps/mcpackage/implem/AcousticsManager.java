@@ -31,6 +31,7 @@ import java.util.Locale;
 import java.util.Random;
 
 import org.blockartistry.mod.DynSurround.ModLog;
+import org.blockartistry.mod.DynSurround.client.EnvironStateHandler.EnvironState;
 import org.blockartistry.mod.DynSurround.client.footsteps.engine.implem.AcousticsLibrary;
 import org.blockartistry.mod.DynSurround.client.footsteps.engine.interfaces.EventType;
 import org.blockartistry.mod.DynSurround.client.footsteps.engine.interfaces.IOptions;
@@ -39,11 +40,11 @@ import org.blockartistry.mod.DynSurround.client.footsteps.engine.interfaces.ISou
 import org.blockartistry.mod.DynSurround.client.footsteps.game.system.Association;
 import org.blockartistry.mod.DynSurround.client.footsteps.mcpackage.interfaces.IDefaultStepPlayer;
 import org.blockartistry.mod.DynSurround.client.footsteps.mcpackage.interfaces.IIsolator;
+import org.blockartistry.mod.DynSurround.util.XorShiftRandom;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.Blocks;
@@ -55,16 +56,16 @@ import net.minecraft.init.Blocks;
  */
 @SideOnly(Side.CLIENT)
 public class AcousticsManager extends AcousticsLibrary implements ISoundPlayer, IDefaultStepPlayer {
-	private IIsolator isolator;
 
-	private final Random random = new Random();
-	private List<PendingSound> pending = new ArrayList<PendingSound>();
+	private static final Random RANDOM = new XorShiftRandom();
+	private static final boolean USING_LATENESS = true;
+	private static final boolean USING_EARLYNESS = true;
+	private static final float LATENESS_THRESHOLD_DIVIDER = 1.5f;
+	private static final double EARLYNESS_THRESHOLD_POW = 0.75d;
+
+	private final List<PendingSound> pending = new ArrayList<PendingSound>();
+	private final IIsolator isolator;
 	private long minimum;
-
-	private boolean USING_LATENESS = true;
-	private boolean USING_EARLYNESS = true;
-	private float LATENESS_THRESHOLD_DIVIDER = 1.5f;
-	private double EARLYNESS_THRESHOLD_POW = 0.75d;
 
 	public AcousticsManager(final IIsolator isolator) {
 		this.isolator = isolator;
@@ -76,7 +77,7 @@ public class AcousticsManager extends AcousticsLibrary implements ISoundPlayer, 
 		if (!block.getMaterial().isLiquid() && block.stepSound != null) {
 			Block.SoundType soundType = block.stepSound;
 
-			if (Minecraft.getMinecraft().theWorld.getBlock(assos.x, assos.y + 1, assos.z) == Blocks.snow_layer) {
+			if (EnvironState.getWorld().getBlock(assos.x, assos.y + 1, assos.z) == Blocks.snow_layer) {
 				soundType = Blocks.snow_layer.stepSound;
 			}
 
@@ -92,7 +93,7 @@ public class AcousticsManager extends AcousticsLibrary implements ISoundPlayer, 
 
 		if (options != null) {
 			if (options.hasOption(Option.DELAY_MIN) && options.hasOption(Option.DELAY_MAX)) {
-				long delay = randAB(this.random, (Long) options.getOption(Option.DELAY_MIN),
+				long delay = randAB(RANDOM, (Long) options.getOption(Option.DELAY_MIN),
 						(Long) options.getOption(Option.DELAY_MAX));
 
 				if (delay < minimum) {
@@ -124,7 +125,7 @@ public class AcousticsManager extends AcousticsLibrary implements ISoundPlayer, 
 
 	@Override
 	public Random getRNG() {
-		return random;
+		return RANDOM;
 	}
 
 	@Override
