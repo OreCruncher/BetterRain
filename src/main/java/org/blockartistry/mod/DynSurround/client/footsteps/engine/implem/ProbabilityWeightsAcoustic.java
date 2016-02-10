@@ -27,38 +27,26 @@ package org.blockartistry.mod.DynSurround.client.footsteps.engine.implem;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.blockartistry.mod.DynSurround.ModLog;
 import org.blockartistry.mod.DynSurround.client.footsteps.engine.interfaces.IAcoustic;
 import org.blockartistry.mod.DynSurround.client.footsteps.engine.interfaces.EventType;
 import org.blockartistry.mod.DynSurround.client.footsteps.engine.interfaces.IOptions;
 import org.blockartistry.mod.DynSurround.client.footsteps.engine.interfaces.ISoundPlayer;
-
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
 public class ProbabilityWeightsAcoustic implements IAcoustic {
 	protected List<IAcoustic> acoustics;
-	protected float probabilityThresholds[];
+	protected int[] weights;
+	protected int totalWeight;
 	protected boolean isUseable;
 
 	public ProbabilityWeightsAcoustic(final List<IAcoustic> acoustics, final List<Integer> weights) {
 		this.acoustics = new ArrayList<IAcoustic>(acoustics);
-
-		this.probabilityThresholds = new float[acoustics.size() - 1];
-
-		float total = 0;
-		for (int i = 0; i < weights.size(); i++) {
-			if (weights.get(i) < 0) {
-				ModLog.info("ERROR: A probability weight can't be negative");
-				return;
-			}
-
-			total = total + weights.get(i);
-		}
-
-		for (int i = 0; i < weights.size() - 1; i++) {
-			this.probabilityThresholds[i] = weights.get(i) / total;
+		this.weights = new int[weights.size()];
+		for(int i = 0; i < weights.size(); i++) {
+			this.weights[i] = weights.get(i).intValue();
+			this.totalWeight += this.weights[i];
 		}
 
 		this.isUseable = true;
@@ -69,13 +57,15 @@ public class ProbabilityWeightsAcoustic implements IAcoustic {
 		if (!this.isUseable)
 			return;
 
-		final float rand = player.getRNG().nextFloat();
+		if (this.totalWeight <= 0)
+			return;
+		
+		int targetWeight = player.getRNG().nextInt(this.totalWeight);
 
-		int marker = 0;
-		while (marker < this.probabilityThresholds.length && this.probabilityThresholds[marker] < rand) {
-			marker = marker + 1;
-		}
+		int i = 0;
+		for (i = this.weights.length; (targetWeight -= this.weights[i-1]) >= 0; i--)
+			;
 
-		this.acoustics.get(marker).playSound(player, location, event, inputOptions);
+		this.acoustics.get(i - 1).playSound(player, location, event, inputOptions);
 	}
 }

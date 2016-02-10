@@ -35,10 +35,9 @@ import cpw.mods.fml.relauncher.SideOnly;
 @SideOnly(Side.CLIENT)
 public class BasicPrimitiveMap implements IPrimitiveMap {
 
-	private Map<String, String> primitiveMap;
+	private final Map<String, String> primitiveMap = new LinkedHashMap<String, String>();
 
 	public BasicPrimitiveMap() {
-		this.primitiveMap = new LinkedHashMap<String, String>();
 	}
 
 	@Override

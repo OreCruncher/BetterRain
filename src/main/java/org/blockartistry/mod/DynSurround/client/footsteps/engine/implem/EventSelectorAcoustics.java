@@ -24,7 +24,6 @@
 
 package org.blockartistry.mod.DynSurround.client.footsteps.engine.implem;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import org.blockartistry.mod.DynSurround.client.footsteps.engine.interfaces.IAcoustic;
@@ -35,34 +34,37 @@ import org.blockartistry.mod.DynSurround.client.footsteps.engine.interfaces.ISou
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import gnu.trove.map.hash.TCustomHashMap;
+import gnu.trove.strategy.IdentityHashingStrategy;
 
 @SideOnly(Side.CLIENT)
 public class EventSelectorAcoustics implements INamedAcoustic {
 	private final String name;
-	
-	private Map<EventType, IAcoustic> pairs;
-	
+
+	private final Map<EventType, IAcoustic> pairs = new TCustomHashMap<EventType, IAcoustic>(
+			IdentityHashingStrategy.INSTANCE);
+
 	public EventSelectorAcoustics(final String acousticName) {
-		name = acousticName;
-		pairs = new HashMap<EventType, IAcoustic>();
+		this.name = acousticName;
 	}
-	
+
 	@Override
 	public String getName() {
-		return name;
+		return this.name;
 	}
-	
+
 	@Override
-	public void playSound(final ISoundPlayer player, final Object location, final EventType event, final IOptions inputOptions) {
-		if (pairs.containsKey(event)) {
-			pairs.get(event).playSound(player, location, event, inputOptions);
+	public void playSound(final ISoundPlayer player, final Object location, final EventType event,
+			final IOptions inputOptions) {
+		if (this.pairs.containsKey(event)) {
+			this.pairs.get(event).playSound(player, location, event, inputOptions);
 		} else if (event.canTransition()) {
-			playSound(player, location, event.getTransitionDestination(), inputOptions); // the possibility of a resonance cascade scenario is extremely unlikely
+			playSound(player, location, event.getTransitionDestination(), inputOptions);
 		}
 	}
-	
+
 	public void setAcousticPair(final EventType type, final IAcoustic acoustic) {
-		pairs.put(type, acoustic);
+		this.pairs.put(type, acoustic);
 	}
-	
+
 }
