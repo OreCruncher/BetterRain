@@ -118,6 +118,8 @@ public final class ModOptions {
 	protected static boolean enableCraftingSound = true;
 	protected static final String CONFIG_ENABLE_FOOTSTEPS_SOUND = "Footsteps";
 	protected static boolean enableFootstepSounds = true;
+	protected static final String CONFIG_FOOTSTEPS_SOUND_FACTOR = "Footsteps Sound Factor";
+	protected static float footstepsSoundFactor = 0.3F;
 
 	protected static final String CATEGORY_PLAYER = "player";
 	protected static final String CONFIG_SUPPRESS_POTION_PARTICLES = "Suppress Potion Particles";
@@ -272,6 +274,10 @@ public final class ModOptions {
 		enableFootstepSounds = config.getBoolean(CONFIG_ENABLE_FOOTSTEPS_SOUND, CATEGORY_SOUND, enableFootstepSounds,
 				comment);
 
+		comment = "Sound scale factor for footstep sounds";
+		footstepsSoundFactor = config.getFloat(CONFIG_FOOTSTEPS_SOUND_FACTOR, CATEGORY_SOUND, footstepsSoundFactor,
+				0.0F, 1.0F, comment);
+
 		// CATEGORY: player.potion hud
 		comment = "Enable display of potion icons in display";
 		potionHudEnabled = config.getBoolean(CONFIG_POTION_HUD_ENABLE, CATEGORY_POTION_HUD, potionHudEnabled, comment);
@@ -424,6 +430,10 @@ public final class ModOptions {
 	
 	public static boolean getEnableFootstepSounds() {
 		return enableFootstepSounds;
+	}
+	
+	public static float getFootstepsSoundFactor() {
+		return footstepsSoundFactor;
 	}
 
 	public static boolean getSuppressPotionParticleEffect() {
