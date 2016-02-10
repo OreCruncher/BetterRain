@@ -24,100 +24,19 @@
 
 package org.blockartistry.mod.DynSurround.client.footsteps.util.property.simple;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.Reader;
-import java.util.Collections;
-import java.util.Enumeration;
 import java.util.Map;
-import java.util.Map.Entry;
-
-import org.blockartistry.mod.DynSurround.client.footsteps.util.property.contract.ConfigSource;
 import org.blockartistry.mod.DynSurround.client.footsteps.util.property.contract.IPropertyHolder;
 import org.blockartistry.mod.DynSurround.client.footsteps.util.property.contract.IVersionable;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-import java.util.Properties;
-import java.util.TreeSet;
-
 @SideOnly(Side.CLIENT)
-public class ConfigProperty implements IPropertyHolder, IVersionable, ConfigSource {
+public class ConfigProperty implements IPropertyHolder, IVersionable {
 	private VersionableProperty mixed;
-
-	private String path;
 
 	public ConfigProperty() {
 		this.mixed = new VersionableProperty();
-
-	}
-
-	@Override
-	public void setSource(final String path) {
-		this.path = path;
-
-	}
-
-	@Override
-	public boolean load() {
-		File file = new File(this.path);
-
-		if (file.exists()) {
-			try {
-				Reader reader = new FileReader(file);
-
-				Properties props = new Properties();
-				props.load(reader);
-
-				for (Entry<Object, Object> entry : props.entrySet()) {
-					this.mixed.setProperty(entry.getKey().toString(), entry.getValue().toString());
-
-				}
-				this.mixed.commit();
-
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-				this.mixed.revert();
-				return false;
-
-			} catch (IOException e) {
-				e.printStackTrace();
-				this.mixed.revert();
-				return false;
-
-			}
-		} else
-			return false;
-
-		return true;
-
-	}
-
-	@Override
-	public boolean save() {
-		try {
-			File userFile = new File(this.path);
-			@SuppressWarnings("serial")
-			Properties props = new Properties() {
-				@Override
-				public synchronized Enumeration<Object> keys() {
-					return Collections.enumeration(new TreeSet<Object>(super.keySet()));
-				}
-			};
-			for (Entry<String, String> property : this.mixed.getAllProperties().entrySet()) {
-				props.setProperty(property.getKey(), property.getValue());
-			}
-
-			props.store(new FileWriter(userFile), "");
-		} catch (IOException e) {
-			e.printStackTrace();
-			return false;
-		}
-		return true;
 
 	}
 

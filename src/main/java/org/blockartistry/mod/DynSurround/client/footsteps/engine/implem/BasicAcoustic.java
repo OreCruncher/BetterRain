@@ -30,6 +30,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.blockartistry.mod.DynSurround.client.footsteps.engine.interfaces.IAcoustic;
 import org.blockartistry.mod.DynSurround.client.footsteps.engine.interfaces.EventType;
 import org.blockartistry.mod.DynSurround.client.footsteps.engine.interfaces.IOptions;
+import org.blockartistry.mod.DynSurround.client.footsteps.engine.interfaces.IOptions.Option;
 import org.blockartistry.mod.DynSurround.client.footsteps.engine.interfaces.ISoundPlayer;
 
 import cpw.mods.fml.relauncher.Side;
@@ -55,12 +56,12 @@ public class BasicAcoustic implements IAcoustic {
 		float volume = generateVolume(player.getRNG());
 		float pitch = generatePitch(player.getRNG());
 		if (inputOptions != null) {
-			if (inputOptions.hasOption("gliding_volume")) {
-				volume = this.volMin + (this.volMax - this.volMin) * (Float) inputOptions.getOption("gliding_volume");
+			if (inputOptions.hasOption(Option.GLIDING_VOLUME)) {
+				volume = this.volMin + (this.volMax - this.volMin) * (Float) inputOptions.getOption(Option.GLIDING_VOLUME);
 			}
-			if (inputOptions.hasOption("gliding_pitch")) {
+			if (inputOptions.hasOption(Option.GLIDING_PITCH)) {
 				pitch = this.pitchMin
-						+ (this.pitchMax - this.pitchMin) * (Float) inputOptions.getOption("gliding_pitch");
+						+ (this.pitchMax - this.pitchMin) * (Float) inputOptions.getOption(Option.GLIDING_PITCH);
 			}
 		}
 

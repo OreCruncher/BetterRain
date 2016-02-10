@@ -41,13 +41,13 @@ public class DelayedAcoustic extends BasicAcoustic implements IOptions {
 	}
 
 	@Override
-	public boolean hasOption(final String option) {
-		return option.equals("delay_min") || option.equals("delay_max");
+	public boolean hasOption(final Option option) {
+		return option == Option.DELAY_MIN || option == Option.DELAY_MAX;
 	}
 
 	@Override
-	public Object getOption(final String option) {
-		return option.equals("delay_min") ? this.delayMin : option.equals("delay_max") ? this.delayMax : null;
+	public Object getOption(final Option option) {
+		return option == Option.DELAY_MIN ? this.delayMin : option == Option.DELAY_MAX ? this.delayMax : null;
 	}
 
 	public void setDelayMin(final long delay) {

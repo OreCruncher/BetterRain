@@ -24,7 +24,7 @@
 
 package org.blockartistry.mod.DynSurround.client.footsteps.engine.implem;
 
-import java.util.HashMap;
+import java.util.IdentityHashMap;
 import java.util.Map;
 
 import org.blockartistry.mod.DynSurround.client.footsteps.engine.interfaces.IOptions;
@@ -34,23 +34,23 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
 public class ConfigOptions implements IOptions {
-	private Map<String, Object> map;
+	private Map<Option, Object> map;
 
 	public ConfigOptions() {
-		this.map = new HashMap<String, Object>();
+		this.map = new IdentityHashMap<Option, Object>();
 	}
 
-	public Map<String, Object> getMap() {
+	public Map<Option, Object> getMap() {
 		return this.map;
 	}
 
 	@Override
-	public boolean hasOption(String option) {
+	public boolean hasOption(final Option option) {
 		return this.map.containsKey(option);
 	}
 
 	@Override
-	public Object getOption(String option) {
+	public Object getOption(final Option option) {
 		return this.map.get(option);
 	}
 }

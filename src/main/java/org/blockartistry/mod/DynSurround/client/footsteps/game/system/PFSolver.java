@@ -29,6 +29,7 @@ import java.util.Locale;
 import org.blockartistry.mod.DynSurround.ModLog;
 import org.blockartistry.mod.DynSurround.client.footsteps.engine.implem.ConfigOptions;
 import org.blockartistry.mod.DynSurround.client.footsteps.engine.interfaces.EventType;
+import org.blockartistry.mod.DynSurround.client.footsteps.engine.interfaces.IOptions.Option;
 import org.blockartistry.mod.DynSurround.client.footsteps.mcpackage.interfaces.IIsolator;
 import org.blockartistry.mod.DynSurround.client.footsteps.mcpackage.interfaces.ISolver;
 
@@ -275,7 +276,7 @@ public class PFSolver implements ISolver {
 		if (ply.isInWater()) {
 			float volume = MathHelper.sqrt_double(ply.motionX * ply.motionX * 0.2d + ply.motionY * ply.motionY + ply.motionZ * ply.motionZ * 0.2d) * 0.35f;
 			ConfigOptions options = new ConfigOptions();
-			options.getMap().put("gliding_volume", volume > 1 ? 1 : volume);
+			options.getMap().put(Option.GLIDING_VOLUME, volume > 1 ? 1 : volume);
 			// material water, see EntityLivingBase line 286
 			isolator.getAcoustics().playAcoustic(ply, "_SWIM", ply.isInsideOfMaterial(Material.water) ? EventType.SWIM : EventType.WALK, options);
 			return true;
