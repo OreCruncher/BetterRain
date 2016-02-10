@@ -24,7 +24,7 @@
 
 package org.blockartistry.mod.DynSurround.client.footsteps.engine.implem;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -42,26 +42,25 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
 public abstract class AcousticsLibrary implements ILibrary {
-	private Map<String, IAcoustic> acoustics;
+	private Map<String, IAcoustic> acoustics = new LinkedHashMap<String, IAcoustic>();
 
 	public AcousticsLibrary() {
-		acoustics = new HashMap<String, IAcoustic>();
 	}
 
 	@Override
 	public void addAcoustic(final INamedAcoustic acoustic) {
-		acoustics.put(acoustic.getName(), acoustic);
+		this.acoustics.put(acoustic.getName(), acoustic);
 	}
 
 	@Override
 	public Set<String> getAcousticsKeySet() {
-		return acoustics.keySet();
+		return this.acoustics.keySet();
 	}
 
 	@Override
 	public IAcoustic getAcoustic(final String acoustic) {
-		if (acoustics.containsKey(acoustic)) {
-			return acoustics.get(acoustic);
+		if (this.acoustics.containsKey(acoustic)) {
+			return this.acoustics.get(acoustic);
 		}
 		return null;
 	}
@@ -79,13 +78,13 @@ public abstract class AcousticsLibrary implements ILibrary {
 			for (final String fragment : fragments) {
 				playAcoustic(location, fragment, event, inputOptions);
 			}
-		} else if (!acoustics.containsKey(acousticName.getData())) {
+		} else if (!this.acoustics.containsKey(acousticName.getData())) {
 			onAcousticNotFound(location, acousticName.getData(), event, inputOptions);
 		} else {
 			if (ModLog.DEBUGGING)
 				ModLog.debug("  Playing acoustic " + acousticName.getData() + " for event "
 						+ event.toString().toUpperCase());
-			acoustics.get(acousticName.getData()).playSound(mySoundPlayer(), location, event, inputOptions);
+			this.acoustics.get(acousticName.getData()).playSound(mySoundPlayer(), location, event, inputOptions);
 		}
 	}
 
@@ -96,18 +95,18 @@ public abstract class AcousticsLibrary implements ILibrary {
 			for (final String fragment : fragments) {
 				playAcoustic(location, fragment, event, inputOptions);
 			}
-		} else if (!acoustics.containsKey(acousticName)) {
+		} else if (!this.acoustics.containsKey(acousticName)) {
 			onAcousticNotFound(location, acousticName, event, inputOptions);
 		} else {
 			if (ModLog.DEBUGGING)
 				ModLog.debug("  Playing acoustic " + acousticName + " for event " + event.toString().toUpperCase());
-			acoustics.get(acousticName).playSound(mySoundPlayer(), location, event, inputOptions);
+			this.acoustics.get(acousticName).playSound(mySoundPlayer(), location, event, inputOptions);
 		}
 	}
 
 	@Override
 	public boolean hasAcoustic(final String acousticName) {
-		return acoustics.containsKey(acousticName);
+		return this.acoustics.containsKey(acousticName);
 	}
 
 	protected abstract void onAcousticNotFound(final Object location, final String acousticName, final EventType event,
