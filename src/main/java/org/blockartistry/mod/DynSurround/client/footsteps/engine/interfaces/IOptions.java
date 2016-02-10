@@ -29,7 +29,17 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
 public interface IOptions {
-	public boolean hasOption(final String option);
+	
+	public static enum Option {
+		DELAY_MIN,
+		DELAY_MAX,
+		SKIPPABLE,
+		GLIDING_VOLUME,
+		GLIDING_PITCH
+		
+	};
+	
+	public boolean hasOption(final Option option);
 
-	public Object getOption(final String option);
+	public Object getOption(final Option option);
 }

@@ -34,6 +34,7 @@ import org.blockartistry.mod.DynSurround.ModLog;
 import org.blockartistry.mod.DynSurround.client.footsteps.engine.implem.AcousticsLibrary;
 import org.blockartistry.mod.DynSurround.client.footsteps.engine.interfaces.EventType;
 import org.blockartistry.mod.DynSurround.client.footsteps.engine.interfaces.IOptions;
+import org.blockartistry.mod.DynSurround.client.footsteps.engine.interfaces.IOptions.Option;
 import org.blockartistry.mod.DynSurround.client.footsteps.engine.interfaces.ISoundPlayer;
 import org.blockartistry.mod.DynSurround.client.footsteps.game.system.Association;
 import org.blockartistry.mod.DynSurround.client.footsteps.mcpackage.interfaces.IDefaultStepPlayer;
@@ -90,9 +91,9 @@ public class AcousticsManager extends AcousticsLibrary implements ISoundPlayer, 
 			return;
 
 		if (options != null) {
-			if (options.hasOption("delay_min") && options.hasOption("delay_max")) {
-				long delay = randAB(this.random, (Long) options.getOption("delay_min"),
-						(Long) options.getOption("delay_max"));
+			if (options.hasOption(Option.DELAY_MIN) && options.hasOption(Option.DELAY_MAX)) {
+				long delay = randAB(this.random, (Long) options.getOption(Option.DELAY_MIN),
+						(Long) options.getOption(Option.DELAY_MAX));
 
 				if (delay < minimum) {
 					minimum = delay;
@@ -100,7 +101,7 @@ public class AcousticsManager extends AcousticsLibrary implements ISoundPlayer, 
 
 				pending.add(
 						new PendingSound(location, soundName, volume, pitch, null, System.currentTimeMillis() + delay,
-								options.hasOption("skippable") ? -1 : (Long) options.getOption("delay_max")));
+								options.hasOption(Option.SKIPPABLE) ? -1 : (Long) options.getOption(Option.DELAY_MAX)));
 			} else {
 				actuallyPlaySound((Entity) location, soundName, volume, pitch);
 			}
