@@ -26,13 +26,18 @@ package org.blockartistry.mod.DynSurround.client;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import org.blockartistry.mod.DynSurround.ModOptions;
 import org.blockartistry.mod.DynSurround.client.EnvironStateHandler.EnvironState;
 import org.blockartistry.mod.DynSurround.client.sound.SoundEffect;
 import org.blockartistry.mod.DynSurround.client.sound.SoundManager;
+import org.blockartistry.mod.DynSurround.client.storm.StormProperties;
 import org.blockartistry.mod.DynSurround.data.BiomeRegistry;
 import org.blockartistry.mod.DynSurround.event.DiagnosticEvent;
 
 import net.minecraft.block.Block;
+import net.minecraft.client.audio.ISound;
+import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.particle.EntityDropParticleFX;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
@@ -41,6 +46,7 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.client.event.sound.PlaySoundEvent;
 import net.minecraftforge.event.entity.EntityEvent.EntityConstructing;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
@@ -48,9 +54,14 @@ import net.minecraftforge.fml.relauncher.Side;
 @SideOnly(Side.CLIENT)
 public class PlayerSoundEffectHandler implements IClientEffectHandler {
 
+	private static final boolean ALWAYS_OVERRIDE_SOUND = ModOptions.getAlwaysOverrideSound();
 	private static final List<EntityDropParticleFX> drops = new ArrayList<EntityDropParticleFX>();
 	private static int playerDimension = 0;
 	private static int reloadTracker = 0;
+
+	private static final int LIQUID_CULL_THRESHOLD = ModOptions.getLiquidSoundCulling();
+	private static int lastWaterSound = 0;
+	private static int lastLavaSound = 0;
 
 	private static boolean didReloadOccur() {
 		final int count = BiomeRegistry.getReloadCount();
@@ -63,8 +74,10 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 
 	@Override
 	public void process(final World world, final EntityPlayer player) {
-		if (didReloadOccur() || player.isDead || playerDimension != EnvironState.getDimensionId())
+		if (didReloadOccur() || player.isDead || playerDimension != EnvironState.getDimensionId()) {
 			SoundManager.clearSounds();
+			drops.clear();
+		}
 
 		// Dead players hear no sounds
 		if (player.isDead)
@@ -146,5 +159,54 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 		}
 
 		drops.clear();
+	}
+
+	/*
+	 * Determines if the sound needs to be replaced by the event handler.
+	 */
+	private static boolean replaceRainSound(final String name) {
+		return "ambient.weather.rain".equals(name);
+	}
+
+	private static boolean isWaterSound(final String name) {
+		return "liquid.water".equals(name);
+	}
+
+	private static boolean isLavaSound(final String name) {
+		return "liquid.lava".equals(name);
+	}
+
+	/*
+	 * Intercept the sound events and patch up the rain sound. If the rain
+	 * experience is to be Vanilla let it just roll on through.
+	 */
+	@SubscribeEvent
+	public void soundEvent(final PlaySoundEvent event) {
+		if ((ALWAYS_OVERRIDE_SOUND || !StormProperties.doVanilla()) && replaceRainSound(event.name)) {
+			final ISound sound = event.sound;
+			event.result = new PositionedSoundRecord(StormProperties.getCurrentStormSound(),
+					StormProperties.getCurrentVolume(), sound.getPitch(), sound.getXPosF(), sound.getYPosF(),
+					sound.getZPosF());
+			return;
+		}
+
+		if (LIQUID_CULL_THRESHOLD <= 0)
+			return;
+
+		final int currentTick = EnvironState.getTickCounter();
+
+		if (isWaterSound(event.name)) {
+			if ((currentTick - lastWaterSound) < LIQUID_CULL_THRESHOLD) {
+				event.result = null;
+				return;
+			}
+			lastWaterSound = currentTick;
+		} else if (isLavaSound(event.name)) {
+			if ((currentTick - lastLavaSound) < LIQUID_CULL_THRESHOLD) {
+				event.result = null;
+				return;
+			}
+			lastLavaSound = currentTick;
+		}
 	}
 }
