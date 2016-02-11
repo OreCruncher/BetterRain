@@ -120,8 +120,8 @@ public final class ModOptions {
 	protected static boolean enableFootstepSounds = true;
 	protected static final String CONFIG_FOOTSTEPS_SOUND_FACTOR = "Footsteps Sound Factor";
 	protected static float footstepsSoundFactor = 0.3F;
-	protected static final String CONFIG_LIQUID_SOUND_CULLING = "Liquid Sound Culling";
-	protected static int liquidSoundCulling = 30;
+	protected static final String CONFIG_SOUND_CULL_THRESHOLD = "Sound Culling Threshold";
+	protected static int soundCullingThreshold = 30;
 
 	protected static final String CATEGORY_PLAYER = "player";
 	protected static final String CONFIG_SUPPRESS_POTION_PARTICLES = "Suppress Potion Particles";
@@ -281,7 +281,7 @@ public final class ModOptions {
 				0.0F, 1.0F, comment);
 
 		comment = "Ticks between water and lava sound events (0 to disable culling)";
-		liquidSoundCulling = config.getInt(CONFIG_LIQUID_SOUND_CULLING, CATEGORY_SOUND, liquidSoundCulling, 0,
+		soundCullingThreshold = config.getInt(CONFIG_SOUND_CULL_THRESHOLD, CATEGORY_SOUND, soundCullingThreshold, 0,
 				Integer.MAX_VALUE, comment);
 
 		// CATEGORY: player.potion hud
@@ -442,10 +442,10 @@ public final class ModOptions {
 		return footstepsSoundFactor;
 	}
 
-	public static int getLiquidSoundCulling() {
-		return liquidSoundCulling;
+	public static int getSoundCullingThreshold() {
+		return soundCullingThreshold;
 	}
-	
+
 	public static boolean getSuppressPotionParticleEffect() {
 		return suppressPotionParticles;
 	}
