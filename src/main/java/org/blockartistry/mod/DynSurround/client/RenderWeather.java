@@ -192,7 +192,7 @@ public final class RenderWeather {
 		}
 
 		// Handle precipitation sounds
-		if (particlesSpawned > 0 && random.nextInt(3) < theThis.rainSoundCounter++) {
+		if (particlesSpawned > 0 && random.nextInt(50) < theThis.rainSoundCounter++) {
 			final int theX = MathHelper.floor_double(spawnX);
 			final int theY = MathHelper.floor_double(spawnY);
 			final int theZ = MathHelper.floor_double(spawnZ);
