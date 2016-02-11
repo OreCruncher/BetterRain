@@ -1151,6 +1151,16 @@
 			"ambient/primate/primate5"
 		]
 		
+	},
+	"bowpull":{
+		"category":"ambient",
+		"sounds":[
+			"ambient/steve/bowpull1",
+			"ambient/steve/bowpull2",
+			"ambient/steve/bowpull3",
+			"ambient/steve/bowpull4"
+		]
+		
 	}
 	
 }
