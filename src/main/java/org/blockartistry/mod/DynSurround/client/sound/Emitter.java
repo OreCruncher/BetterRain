@@ -29,6 +29,12 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.SoundHandler;
 import paulscode.sound.SoundSystemConfig;
 
+/*
+ * Emitters are used to produce sounds that are continuous
+ * or on repeat. They ensure that the sound is always queue
+ * in the sound system even if the underlying sound system
+ * cancels the sound.
+ */
 @SideOnly(Side.CLIENT)
 class Emitter {
 

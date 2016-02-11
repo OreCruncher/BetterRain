@@ -31,7 +31,6 @@ import org.blockartistry.mod.DynSurround.ModOptions;
 import org.blockartistry.mod.DynSurround.client.footsteps.Footsteps;
 import org.blockartistry.mod.DynSurround.client.fx.BlockEffectHandler;
 import org.blockartistry.mod.DynSurround.client.storm.StormProperties;
-import org.blockartistry.mod.DynSurround.data.BiomeRegistry;
 import org.blockartistry.mod.DynSurround.data.DimensionRegistry;
 
 import cpw.mods.fml.client.FMLClientHandler;
@@ -42,20 +41,15 @@ import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.common.gameevent.TickEvent.Phase;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraft.block.Block;
 import net.minecraft.client.audio.ISound;
 import net.minecraft.client.audio.PositionedSoundRecord;
-import net.minecraft.client.particle.EntityDropParticleFX;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
-import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldProvider;
 import net.minecraft.world.WorldProviderEnd;
 import net.minecraft.world.WorldProviderHell;
 import net.minecraftforge.client.event.sound.PlaySoundEvent17;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.entity.EntityEvent.EntityConstructing;
 import net.minecraftforge.event.world.WorldEvent;
 
 @SideOnly(Side.CLIENT)
@@ -119,15 +113,6 @@ public class ClientEffectHandler {
 		}
 	}
 
-	private static List<EntityDropParticleFX> drops = new ArrayList<EntityDropParticleFX>();
-
-	@SubscribeEvent
-	public void entityCreateEvent(final EntityConstructing event) {
-		if (event.entity instanceof EntityDropParticleFX) {
-			drops.add((EntityDropParticleFX) event.entity);
-		}
-	}
-
 	@SubscribeEvent(priority = EventPriority.LOWEST)
 	public void clientTick(final TickEvent.ClientTickEvent event) {
 		final World world = FMLClientHandler.instance().getClient().theWorld;
@@ -135,31 +120,9 @@ public class ClientEffectHandler {
 			return;
 
 		if (event.phase == Phase.START) {
-			drops.clear();
 			final EntityPlayer player = FMLClientHandler.instance().getClient().thePlayer;
 			for (final IClientEffectHandler handler : effectHandlers)
 				handler.process(world, player);
-		} else if (event.phase == Phase.END) {
-			for (final EntityDropParticleFX drop : drops) {
-				if (drop.isEntityAlive()) {
-					if (drop.posY < 1)
-						continue;
-					final int x = MathHelper.floor_double(drop.posX);
-					final int y = MathHelper.floor_double(drop.posY + 0.3D);
-					final int z = MathHelper.floor_double(drop.posZ);
-					Block block = world.getBlock(x, y, z);
-					if (block != Blocks.air && !block.isLeaves(world, x, y, z)) {
-						int soundY = y - 1;
-						for (; soundY > 0 && (block = world.getBlock(x, soundY, z)) == Blocks.air; soundY--)
-							;
-						if (soundY > 0 && block.getMaterial().isSolid()) {
-							final int distance = y - soundY;
-							PlayerSoundEffectHandler.playSoundAtPlayer(null, BiomeRegistry.WATER_DRIP,
-									40 + distance * 2);
-						}
-					}
-				}
-			}
 		}
 	}
 

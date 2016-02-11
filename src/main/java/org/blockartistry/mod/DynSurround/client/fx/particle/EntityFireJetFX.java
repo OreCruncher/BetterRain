@@ -24,8 +24,8 @@
 
 package org.blockartistry.mod.DynSurround.client.fx.particle;
 
-import org.blockartistry.mod.DynSurround.client.PlayerSoundEffectHandler;
 import org.blockartistry.mod.DynSurround.client.sound.SoundEffect;
+import org.blockartistry.mod.DynSurround.client.sound.SoundManager;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -52,7 +52,7 @@ public class EntityFireJetFX extends EntityJetFX {
 		final int x = MathHelper.floor_double(this.posX);
 		final int y = MathHelper.floor_double(this.posY);
 		final int z = MathHelper.floor_double(this.posZ);
-		PlayerSoundEffectHandler.playSoundAt(x, y, z, FIRE, 0);
+		SoundManager.playSoundAt(x, y, z, FIRE, 0);
 	}
 
 	@Override
