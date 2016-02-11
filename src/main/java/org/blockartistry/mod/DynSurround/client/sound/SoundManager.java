@@ -43,8 +43,8 @@ import paulscode.sound.SoundSystemConfig;
 @SideOnly(Side.CLIENT)
 public class SoundManager {
 
-	private static final int AGE_THRESHOLD_TICKS = 4;
-	private static final int SOUND_QUEUE_SLACK = 8;
+	private static final int AGE_THRESHOLD_TICKS = 5;
+	private static final int SOUND_QUEUE_SLACK = 6;
 	private static final Map<SoundEffect, Emitter> emitters = new HashMap<SoundEffect, Emitter>();
 
 	private static final List<SpotSound> pending = new ArrayList<SpotSound>();
