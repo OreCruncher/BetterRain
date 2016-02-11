@@ -361,7 +361,7 @@ public class EnvironStateHandler implements IClientEffectHandler {
 	@SubscribeEvent
 	public void onJump(final LivingJumpEvent event) {
 		if (JUMP != null && event.entity.worldObj.isRemote && EnvironState.isPlayer(event.entity))
-			SoundManager.playSoundAtPlayer(EnvironState.getPlayer(), JUMP, 0);
+			SoundManager.playSoundAtPlayer(EnvironState.getPlayer(), JUMP);
 	}
 
 	@SubscribeEvent
@@ -377,7 +377,7 @@ public class EnvironStateHandler implements IClientEffectHandler {
 					sound = AXE;
 
 				if (sound != null)
-					SoundManager.playSoundAtPlayer(EnvironState.getPlayer(), sound, 0);
+					SoundManager.playSoundAtPlayer(EnvironState.getPlayer(), sound);
 			}
 		}
 	}
@@ -389,7 +389,7 @@ public class EnvironStateHandler implements IClientEffectHandler {
 		if (CRAFTING != null && event.player.worldObj.isRemote && EnvironState.isPlayer(event.player)) {
 			if (craftSoundThrottle < (EnvironState.getTickCounter() - 30)) {
 				craftSoundThrottle = EnvironState.getTickCounter();
-				SoundManager.playSoundAtPlayer(EnvironState.getPlayer(), CRAFTING, 0);
+				SoundManager.playSoundAtPlayer(EnvironState.getPlayer(), CRAFTING);
 			}
 		}
 

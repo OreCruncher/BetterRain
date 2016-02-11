@@ -84,7 +84,7 @@ public class SoundManager {
 			final SpotSound sound = pitr.next();
 			if (sound.getTickAge() >= AGE_THRESHOLD_TICKS)
 				pitr.remove();
-			else if (canFitSound()) {
+			else if (sound.getTickAge() >= 0 && canFitSound()) {
 				Minecraft.getMinecraft().getSoundHandler().playSound(sound);
 				pitr.remove();
 			}
@@ -103,10 +103,7 @@ public class SoundManager {
 		return currentSoundCount() < (SoundSystemConfig.getNumberNormalChannels() - SOUND_QUEUE_SLACK);
 	}
 
-	public static void playSoundAtPlayer(EntityPlayer player, final SoundEffect sound, final int tickDelay) {
-
-		if (tickDelay > 0 && !canFitSound())
-			return;
+	public static void playSoundAtPlayer(EntityPlayer player, final SoundEffect sound) {
 
 		if (player == null)
 			player = EnvironState.getPlayer();
@@ -114,34 +111,28 @@ public class SoundManager {
 		final SoundHandler handler = Minecraft.getMinecraft().getSoundHandler();
 		final SpotSound s = new SpotSound(player, sound);
 
-		if (tickDelay > 0)
-			handler.playDelayedSound(s, tickDelay);
-		else if (!canFitSound())
+		if (!canFitSound())
 			pending.add(s);
 		else
 			handler.playSound(s);
 	}
 
 	public static void playSoundAt(final BlockPos pos, final SoundEffect sound, final int tickDelay) {
-		if (tickDelay > 0 && !canFitSound())
-			return;
-
 		final SoundHandler handler = Minecraft.getMinecraft().getSoundHandler();
-		final SpotSound s = new SpotSound(pos.getX(), pos.getY(), pos.getZ(), sound);
+		final SpotSound s = new SpotSound(pos.getX(), pos.getY(), pos.getZ(), sound, tickDelay);
 
-		if (tickDelay > 0)
-			handler.playDelayedSound(s, tickDelay);
-		else if (!canFitSound())
+		if (tickDelay > 0 || !canFitSound())
 			pending.add(s);
 		else
 			handler.playSound(s);
 	}
 
-	public static List<SoundEffect> activeSounds() {
-		final List<SoundEffect> result = new ArrayList<SoundEffect>(emitters.keySet());
+	public static List<String> getSounds() {
+		final List<String> result = new ArrayList<String>();
+		for (final SoundEffect effect : emitters.keySet())
+			result.add("EMITTER: " + effect.toString());
 		for (final SpotSound effect : pending)
-			result.add(effect.getSoundEffect());
+			result.add((effect.getTickAge() < 0 ? "DELAYED: " : "PENDING: ") + effect.getSoundEffect().toString());
 		return result;
 	}
-
 }
