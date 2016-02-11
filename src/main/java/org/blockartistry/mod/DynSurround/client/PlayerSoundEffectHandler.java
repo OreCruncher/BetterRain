@@ -35,6 +35,7 @@ import org.blockartistry.mod.DynSurround.client.storm.StormProperties;
 import org.blockartistry.mod.DynSurround.data.BiomeRegistry;
 import org.blockartistry.mod.DynSurround.event.DiagnosticEvent;
 
+import gnu.trove.map.hash.TObjectIntHashMap;
 import net.minecraft.block.Block;
 import net.minecraft.client.audio.ISound;
 import net.minecraft.client.audio.PositionedSoundRecord;
@@ -59,9 +60,13 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 	private static int playerDimension = 0;
 	private static int reloadTracker = 0;
 
-	private static final int LIQUID_CULL_THRESHOLD = ModOptions.getLiquidSoundCulling();
-	private static int lastWaterSound = 0;
-	private static int lastLavaSound = 0;
+	private static final int SOUND_CULL_THRESHOLD = ModOptions.getSoundCullingThreshold();
+	private static final TObjectIntHashMap<String> soundCull = new TObjectIntHashMap<String>();
+
+	static {
+		soundCull.put("liquid.water", -SOUND_CULL_THRESHOLD);
+		soundCull.put("liquid.lava", -SOUND_CULL_THRESHOLD);
+	}
 
 	private static boolean didReloadOccur() {
 		final int count = BiomeRegistry.getReloadCount();
@@ -168,14 +173,6 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 		return "ambient.weather.rain".equals(name);
 	}
 
-	private static boolean isWaterSound(final String name) {
-		return "liquid.water".equals(name);
-	}
-
-	private static boolean isLavaSound(final String name) {
-		return "liquid.lava".equals(name);
-	}
-
 	/*
 	 * Intercept the sound events and patch up the rain sound. If the rain
 	 * experience is to be Vanilla let it just roll on through.
@@ -190,23 +187,13 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 			return;
 		}
 
-		if (LIQUID_CULL_THRESHOLD <= 0)
-			return;
-
-		final int currentTick = EnvironState.getTickCounter();
-
-		if (isWaterSound(event.name)) {
-			if ((currentTick - lastWaterSound) < LIQUID_CULL_THRESHOLD) {
+		if (SOUND_CULL_THRESHOLD > 0 && soundCull.containsKey(event.name)) {
+			final int currentTick = EnvironState.getTickCounter();
+			final int lastOccurance = soundCull.get(event.name);
+			if ((currentTick - lastOccurance) < SOUND_CULL_THRESHOLD)
 				event.result = null;
-				return;
-			}
-			lastWaterSound = currentTick;
-		} else if (isLavaSound(event.name)) {
-			if ((currentTick - lastLavaSound) < LIQUID_CULL_THRESHOLD) {
-				event.result = null;
-				return;
-			}
-			lastLavaSound = currentTick;
+			else
+				soundCull.put(event.name, currentTick);
 		}
 	}
 }
