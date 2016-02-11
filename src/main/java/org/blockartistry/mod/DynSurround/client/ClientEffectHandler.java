@@ -31,24 +31,17 @@ import org.blockartistry.mod.DynSurround.ModOptions;
 import org.blockartistry.mod.DynSurround.client.footsteps.Footsteps;
 import org.blockartistry.mod.DynSurround.client.fx.BlockEffectHandler;
 import org.blockartistry.mod.DynSurround.client.storm.StormProperties;
-import org.blockartistry.mod.DynSurround.data.BiomeRegistry;
 import org.blockartistry.mod.DynSurround.data.DimensionRegistry;
 
-import net.minecraft.block.Block;
 import net.minecraft.client.audio.ISound;
 import net.minecraft.client.audio.PositionedSoundRecord;
-import net.minecraft.client.particle.EntityDropParticleFX;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldProvider;
 import net.minecraft.world.WorldProviderEnd;
 import net.minecraft.world.WorldProviderHell;
 import net.minecraftforge.client.event.sound.PlaySoundEvent;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.entity.EntityEvent.EntityConstructing;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.fml.client.FMLClientHandler;
@@ -123,15 +116,6 @@ public class ClientEffectHandler {
 		return tickCount;
 	}
 
-	private static List<EntityDropParticleFX> drops = new ArrayList<EntityDropParticleFX>();
-
-	@SubscribeEvent
-	public void entityCreateEvent(final EntityConstructing event) {
-		if (event.entity instanceof EntityDropParticleFX) {
-			drops.add((EntityDropParticleFX) event.entity);
-		}
-	}
-
 	@SubscribeEvent
 	public void clientTick(final TickEvent.ClientTickEvent event) {
 		final World world = FMLClientHandler.instance().getClient().theWorld;
@@ -139,34 +123,9 @@ public class ClientEffectHandler {
 			return;
 
 		if (event.phase == Phase.START) {
-			drops.clear();
 			final EntityPlayer player = FMLClientHandler.instance().getClient().thePlayer;
 			for (final IClientEffectHandler handler : effectHandlers)
 				handler.process(world, player);
-		} else if (event.phase == Phase.END) {
-			final BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
-			for (final EntityDropParticleFX drop : drops) {
-				if (drop.isEntityAlive()) {
-					if (drop.posY < 1)
-						continue;
-					final int x = MathHelper.floor_double(drop.posX);
-					final int y = MathHelper.floor_double(drop.posY + 0.3D);
-					final int z = MathHelper.floor_double(drop.posZ);
-					pos.set(x, y, z);
-					Block block = world.getBlockState(pos).getBlock();
-					if (block != Blocks.air && !block.isLeaves(world, pos)) {
-						// Find out where it is going to hit
-						BlockPos soundPos = pos.down();
-						while (soundPos.getY() > 0 && (block = world.getBlockState(soundPos).getBlock()) == Blocks.air)
-							soundPos = soundPos.down();
-
-						if (soundPos.getY() > 0 && block.getMaterial().isSolid()) {
-							final int distance = y - soundPos.getY();
-							PlayerSoundEffectHandler.playSoundAt(soundPos, BiomeRegistry.WATER_DRIP, 40 + distance * 2);
-						}
-					}
-				}
-			}
 		}
 	}
 

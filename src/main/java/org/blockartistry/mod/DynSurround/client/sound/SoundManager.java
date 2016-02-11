@@ -30,21 +30,34 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import org.blockartistry.mod.DynSurround.client.EnvironStateHandler.EnvironState;
+
 import net.minecraftforge.fml.relauncher.SideOnly;
+import paulscode.sound.SoundSystemConfig;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.audio.SoundHandler;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.BlockPos;
 import net.minecraftforge.fml.relauncher.Side;
 
 @SideOnly(Side.CLIENT)
 public class SoundManager {
 
+	private static final int AGE_THRESHOLD_TICKS = 4;
+	private static final int SOUND_QUEUE_SLACK = 8;
 	private static final Map<SoundEffect, Emitter> emitters = new HashMap<SoundEffect, Emitter>();
+
+	private static final List<SpotSound> pending = new ArrayList<SpotSound>();
 
 	public static void clearSounds() {
 		for (final Emitter emit : emitters.values())
 			emit.fade();
 		emitters.clear();
+		pending.clear();
 	}
 
-	public static void queueSounds(final List<SoundEffect> sounds) {
+	public static void queueAmbientSounds(final List<SoundEffect> sounds) {
 		// Need to remove sounds that are active but not
 		// in the incoming list
 		final List<SoundEffect> active = new ArrayList<SoundEffect>(emitters.keySet());
@@ -65,10 +78,70 @@ public class SoundManager {
 			final Entry<SoundEffect, Emitter> e = itr.next();
 			e.getValue().update();
 		}
+
+		final Iterator<SpotSound> pitr = pending.iterator();
+		while (pitr.hasNext()) {
+			final SpotSound sound = pitr.next();
+			if (sound.getTickAge() >= AGE_THRESHOLD_TICKS)
+				pitr.remove();
+			else if (canFitSound()) {
+				Minecraft.getMinecraft().getSoundHandler().playSound(sound);
+				pitr.remove();
+			}
+		}
+	}
+
+	public static int currentSoundCount() {
+		return Minecraft.getMinecraft().getSoundHandler().sndManager.playingSounds.size();
+	}
+
+	public static int maxSoundCount() {
+		return SoundSystemConfig.getNumberNormalChannels() + SoundSystemConfig.getNumberStreamingChannels();
+	}
+
+	private static boolean canFitSound() {
+		return currentSoundCount() < (SoundSystemConfig.getNumberNormalChannels() - SOUND_QUEUE_SLACK);
+	}
+
+	public static void playSoundAtPlayer(EntityPlayer player, final SoundEffect sound, final int tickDelay) {
+
+		if (tickDelay > 0 && !canFitSound())
+			return;
+
+		if (player == null)
+			player = EnvironState.getPlayer();
+
+		final SoundHandler handler = Minecraft.getMinecraft().getSoundHandler();
+		final SpotSound s = new SpotSound(player, sound);
+
+		if (tickDelay > 0)
+			handler.playDelayedSound(s, tickDelay);
+		else if (!canFitSound())
+			pending.add(s);
+		else
+			handler.playSound(s);
+	}
+
+	public static void playSoundAt(final BlockPos pos, final SoundEffect sound, final int tickDelay) {
+		if (tickDelay > 0 && !canFitSound())
+			return;
+
+		final SoundHandler handler = Minecraft.getMinecraft().getSoundHandler();
+		final SpotSound s = new SpotSound(pos.getX(), pos.getY(), pos.getZ(), sound);
+
+		if (tickDelay > 0)
+			handler.playDelayedSound(s, tickDelay);
+		else if (!canFitSound())
+			pending.add(s);
+		else
+			handler.playSound(s);
 	}
 
 	public static List<SoundEffect> activeSounds() {
-		return new ArrayList<SoundEffect>(emitters.keySet());
+		final List<SoundEffect> result = new ArrayList<SoundEffect>(emitters.keySet());
+		for (final SpotSound effect : pending)
+			result.add(effect.getSoundEffect());
+		return result;
 	}
 
 }

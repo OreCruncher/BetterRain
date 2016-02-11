@@ -29,6 +29,12 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import paulscode.sound.SoundSystemConfig;
 import net.minecraftforge.fml.relauncher.Side;
 
+/*
+ * Emitters are used to produce sounds that are continuous
+ * or on repeat. They ensure that the sound is always queue
+ * in the sound system even if the underlying sound system
+ * cancels the sound.
+ */
 @SideOnly(Side.CLIENT)
 class Emitter {
 

@@ -26,14 +26,17 @@ package org.blockartistry.mod.DynSurround.client;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.UUID;
 
 import org.blockartistry.mod.DynSurround.ModOptions;
 import org.blockartistry.mod.DynSurround.client.sound.SoundEffect;
+import org.blockartistry.mod.DynSurround.client.sound.SoundManager;
 import org.blockartistry.mod.DynSurround.data.BiomeRegistry;
 import org.blockartistry.mod.DynSurround.data.DimensionRegistry;
 import org.blockartistry.mod.DynSurround.event.DiagnosticEvent;
 import org.blockartistry.mod.DynSurround.util.PlayerUtils;
+import org.blockartistry.mod.DynSurround.util.XorShiftRandom;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
@@ -95,6 +98,9 @@ public class EnvironStateHandler implements IClientEffectHandler {
 	}
 
 	public static class EnvironState {
+		
+		public static final Random RANDOM = new XorShiftRandom();
+		
 		// State that is gathered from the various sources
 		// to avoid requery. Used during the tick.
 		private static String conditions = "";
@@ -355,7 +361,7 @@ public class EnvironStateHandler implements IClientEffectHandler {
 	@SubscribeEvent
 	public void onJump(final LivingJumpEvent event) {
 		if (JUMP != null && event.entity.worldObj.isRemote && EnvironState.isPlayer(event.entity))
-			PlayerSoundEffectHandler.playSoundAtPlayer(EnvironState.getPlayer(), JUMP, 0);
+			SoundManager.playSoundAtPlayer(EnvironState.getPlayer(), JUMP, 0);
 	}
 
 	@SubscribeEvent
@@ -371,7 +377,7 @@ public class EnvironStateHandler implements IClientEffectHandler {
 					sound = AXE;
 
 				if (sound != null)
-					PlayerSoundEffectHandler.playSoundAtPlayer(EnvironState.getPlayer(), sound, 0);
+					SoundManager.playSoundAtPlayer(EnvironState.getPlayer(), sound, 0);
 			}
 		}
 	}
@@ -383,7 +389,7 @@ public class EnvironStateHandler implements IClientEffectHandler {
 		if (CRAFTING != null && event.player.worldObj.isRemote && EnvironState.isPlayer(event.player)) {
 			if (craftSoundThrottle < (EnvironState.getTickCounter() - 30)) {
 				craftSoundThrottle = EnvironState.getTickCounter();
-				PlayerSoundEffectHandler.playSoundAtPlayer(EnvironState.getPlayer(), CRAFTING, 0);
+				SoundManager.playSoundAtPlayer(EnvironState.getPlayer(), CRAFTING, 0);
 			}
 		}
 
