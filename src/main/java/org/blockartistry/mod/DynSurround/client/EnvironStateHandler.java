@@ -47,6 +47,7 @@ import net.minecraft.entity.passive.EntityPig;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemAxe;
+import net.minecraft.item.ItemBow;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemSword;
 import net.minecraft.potion.Potion;
@@ -55,6 +56,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingJumpEvent;
+import net.minecraftforge.event.entity.player.ArrowNockEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
@@ -69,6 +71,7 @@ public class EnvironStateHandler implements IClientEffectHandler {
 	private static final SoundEffect SWORD;
 	private static final SoundEffect AXE;
 	private static final SoundEffect CRAFTING;
+	private static final SoundEffect BOW_PULL;
 
 	static {
 		if (ModOptions.getEnableJumpSound())
@@ -88,7 +91,12 @@ public class EnvironStateHandler implements IClientEffectHandler {
 			CRAFTING = new SoundEffect("dsurround:crafting");
 		else
 			CRAFTING = null;
-	}
+
+		if (ModOptions.getEnableBowPullSound())
+			BOW_PULL = new SoundEffect("dsurround:bowpull");
+		else
+			BOW_PULL = null;
+}
 
 	// Diagnostic strings to display in the debug HUD
 	private static List<String> diagnostics = new ArrayList<String>();
@@ -393,6 +401,17 @@ public class EnvironStateHandler implements IClientEffectHandler {
 			}
 		}
 
+	}
+
+	@SubscribeEvent
+	public void onArrowKnock(final ArrowNockEvent event) {
+		if (BOW_PULL == null || !event.entityPlayer.worldObj.isRemote)
+			return;
+
+		final Item tool = event.result.getItem();
+		if (tool instanceof ItemBow) {
+			SoundManager.playSoundAtPlayer(EnvironState.getPlayer(), BOW_PULL);
+		}
 	}
 
 	@SubscribeEvent(priority = EventPriority.HIGHEST)

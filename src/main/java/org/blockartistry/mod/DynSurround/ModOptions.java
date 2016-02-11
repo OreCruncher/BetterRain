@@ -116,6 +116,8 @@ public final class ModOptions {
 	protected static boolean enableSwingSound = true;
 	protected static final String CONFIG_ENABLE_CRAFTING_SOUND = "Crafting Sound";
 	protected static boolean enableCraftingSound = true;
+	protected static final String CONFIG_ENABLE_BOW_PULL_SOUND = "Bow Pull Sound";
+	protected static boolean enableBowPullSound = true;
 	protected static final String CONFIG_ENABLE_FOOTSTEPS_SOUND = "Footsteps";
 	protected static boolean enableFootstepSounds = true;
 	protected static final String CONFIG_FOOTSTEPS_SOUND_FACTOR = "Footsteps Sound Factor";
@@ -270,6 +272,10 @@ public final class ModOptions {
 
 		comment = "Enable sound when item crafted";
 		enableCraftingSound = config.getBoolean(CONFIG_ENABLE_CRAFTING_SOUND, CATEGORY_SOUND, enableCraftingSound,
+				comment);
+
+		comment = "Enable sound when bow is pulled";
+		enableBowPullSound = config.getBoolean(CONFIG_ENABLE_BOW_PULL_SOUND, CATEGORY_SOUND, enableBowPullSound,
 				comment);
 
 		comment = "Enable footstep sounds";
@@ -432,6 +438,10 @@ public final class ModOptions {
 
 	public static boolean getEnableCraftingSound() {
 		return enableCraftingSound;
+	}
+	
+	public static boolean getEnableBowPullSound() {
+		return enableBowPullSound;
 	}
 
 	public static boolean getEnableFootstepSounds() {
