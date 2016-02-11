@@ -85,11 +85,11 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 
 		SoundEffect sound = BiomeRegistry.getSpotSound(playerBiome, conditions, EnvironState.RANDOM);
 		if (sound != null)
-			SoundManager.playSoundAtPlayer(player, sound, 0);
+			SoundManager.playSoundAtPlayer(player, sound);
 
 		sound = BiomeRegistry.getSpotSound(BiomeRegistry.PLAYER, conditions, EnvironState.RANDOM);
 		if (sound != null)
-			SoundManager.playSoundAtPlayer(player, sound, 0);
+			SoundManager.playSoundAtPlayer(player, sound);
 
 		processWaterDrops();
 	}
@@ -105,10 +105,8 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 		builder.append("SoundSystem: ").append(SoundManager.currentSoundCount()).append('/')
 				.append(SoundManager.maxSoundCount());
 		event.output.add(builder.toString());
-		for (final SoundEffect sound : SoundManager.activeSounds()) {
-			builder.setLength(0);
-			builder.append("Active Sound: ").append(sound.toString());
-			event.output.add(builder.toString());
+		for (final String sound : SoundManager.getSounds()) {
+			event.output.add(sound);
 		}
 	}
 
@@ -120,7 +118,7 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 	}
 
 	private void processWaterDrops() {
-		if(drops.isEmpty())
+		if (drops.isEmpty())
 			return;
 
 		final World world = EnvironState.getWorld();
@@ -138,12 +136,12 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 						;
 					if (soundY > 0 && block.getMaterial().isSolid()) {
 						final int distance = y - soundY;
-						SoundManager.playSoundAtPlayer(null, BiomeRegistry.WATER_DRIP, 40 + distance * 2);
+						SoundManager.playSoundAt(x, soundY + 1, z, BiomeRegistry.WATER_DRIP, 40 + distance * 2);
 					}
 				}
 			}
 		}
-		
+
 		drops.clear();
 	}
 

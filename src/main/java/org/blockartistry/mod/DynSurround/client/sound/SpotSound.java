@@ -43,6 +43,10 @@ public class SpotSound extends PositionedSound {
 	private final int timeMark;
 
 	public SpotSound(final int x, final int y, final int z, final SoundEffect sound) {
+		this(x, y, z, sound, 0);
+	}
+
+	public SpotSound(final int x, final int y, final int z, final SoundEffect sound, final int delay) {
 		super(new ResourceLocation(sound.sound));
 
 		this.sound = sound;
@@ -54,8 +58,8 @@ public class SpotSound extends PositionedSound {
 		this.xPosF = (float) x + 0.5F;
 		this.yPosF = (float) y + 0.5F;
 		this.zPosF = (float) z + 0.5F;
-		
-		this.timeMark = EnvironState.getTickCounter();
+
+		this.timeMark = EnvironState.getTickCounter() + delay;
 	}
 
 	public SpotSound(final EntityPlayer player, final SoundEffect sound) {
@@ -73,7 +77,7 @@ public class SpotSound extends PositionedSound {
 				- EnvironState.RANDOM.nextInt(SPOT_SOUND_RANGE));
 		this.zPosF = MathHelper.floor_double(player.posZ + EnvironState.RANDOM.nextInt(SPOT_SOUND_RANGE)
 				- EnvironState.RANDOM.nextInt(SPOT_SOUND_RANGE));
-		
+
 		this.timeMark = EnvironState.getTickCounter();
 	}
 
@@ -85,7 +89,7 @@ public class SpotSound extends PositionedSound {
 	public int getTickAge() {
 		return EnvironState.getTickCounter() - this.timeMark;
 	}
-	
+
 	public SoundEffect getSoundEffect() {
 		return this.sound;
 	}
