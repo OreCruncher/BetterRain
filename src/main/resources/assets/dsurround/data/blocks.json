@@ -207,11 +207,16 @@
 			"blocks":[
 				"minecraft:monster_egg"
 			],
-			"chance":200,
+			"chance":150,
 			"sounds":[
 				{
 					"sound":"dsurround:hiss",
 					"volume":0.3,
+					"variable":true
+				},
+				{
+					"sound":"dsurround:insectcrawl",
+					"volume":1.0,
 					"variable":true
 				}
 				

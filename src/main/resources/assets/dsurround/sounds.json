@@ -998,6 +998,15 @@
 		]
 		
 	},
+	"insectcrawl":{
+		"category":"ambient",
+		"sounds":[
+			"ambient/insects/crawl1",
+			"ambient/insects/crawl2",
+			"ambient/insects/crawl3"
+		]
+		
+	},
 	"swoosh":{
 		"category":"ambient",
 		"sounds":[
