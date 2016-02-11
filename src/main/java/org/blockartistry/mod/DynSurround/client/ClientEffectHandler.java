@@ -30,7 +30,6 @@ import java.util.List;
 import org.blockartistry.mod.DynSurround.ModOptions;
 import org.blockartistry.mod.DynSurround.client.footsteps.Footsteps;
 import org.blockartistry.mod.DynSurround.client.fx.BlockEffectHandler;
-import org.blockartistry.mod.DynSurround.client.storm.StormProperties;
 import org.blockartistry.mod.DynSurround.data.DimensionRegistry;
 
 import cpw.mods.fml.client.FMLClientHandler;
@@ -41,21 +40,16 @@ import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.common.gameevent.TickEvent.Phase;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraft.client.audio.ISound;
-import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldProvider;
 import net.minecraft.world.WorldProviderEnd;
 import net.minecraft.world.WorldProviderHell;
-import net.minecraftforge.client.event.sound.PlaySoundEvent17;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.world.WorldEvent;
 
 @SideOnly(Side.CLIENT)
 public class ClientEffectHandler {
-
-	private static final boolean ALWAYS_OVERRIDE_SOUND = ModOptions.getAlwaysOverrideSound();
 
 	private static final List<IClientEffectHandler> effectHandlers = new ArrayList<IClientEffectHandler>();
 
@@ -90,27 +84,6 @@ public class ClientEffectHandler {
 
 		if (ModOptions.getSuppressPotionParticleEffect())
 			register(new PotionParticleScrubHandler());
-	}
-
-	/*
-	 * Determines if the sound needs to be replaced by the event handler.
-	 */
-	private static boolean replaceRainSound(final String name) {
-		return "ambient.weather.rain".equals(name);
-	}
-
-	/*
-	 * Intercept the sound events and patch up the rain sound. If the rain
-	 * experience is to be Vanilla let it just roll on through.
-	 */
-	@SubscribeEvent
-	public void soundEvent(final PlaySoundEvent17 event) {
-		if ((ALWAYS_OVERRIDE_SOUND || !StormProperties.doVanilla()) && replaceRainSound(event.name)) {
-			final ISound sound = event.sound;
-			event.result = new PositionedSoundRecord(StormProperties.getCurrentStormSound(),
-					StormProperties.getCurrentVolume(), sound.getPitch(), sound.getXPosF(), sound.getYPosF(),
-					sound.getZPosF());
-		}
 	}
 
 	@SubscribeEvent(priority = EventPriority.LOWEST)
