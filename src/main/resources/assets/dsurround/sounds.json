@@ -1072,7 +1072,10 @@
 	"hiss":{
 		"category":"ambient",
 		"sounds":[
-			"ambient/miscblocks/hiss1"
+			"ambient/miscblocks/hiss1",
+			"ambient/miscblocks/hiss2",
+			"ambient/miscblocks/hiss3",
+			"ambient/miscblocks/hiss4"
 		]
 		
 	},

@@ -191,12 +191,12 @@
 			"blocks":[
 				"minecraft:tallgrass"
 			],
-			"chance":10000,
+			"chance":25000,
 			"sounds":[
 				{
 					"sound":"dsurround:hiss",
 					"conditions":"(?i)(?!.*raining.*|.*cold.*|.*freezing.*)(.*#day#.*)",
-					"volume":0.3,
+					"volume":1.0,
 					"variable":true
 				}
 				
@@ -211,7 +211,7 @@
 			"sounds":[
 				{
 					"sound":"dsurround:hiss",
-					"volume":0.3,
+					"volume":1.0,
 					"variable":true
 				},
 				{
