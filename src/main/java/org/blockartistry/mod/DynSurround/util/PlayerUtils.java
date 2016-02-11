@@ -92,7 +92,7 @@ public final class PlayerUtils {
 	}
 
 	private static final int RANGE = 3;
-	private static final int AREA = (RANGE * 2 + 1) * (RANGE * 2 + 1) / 2;
+	private static final int AREA = MathHelper.floor_float((RANGE * 2 + 1) * (RANGE * 2 + 1) * 0.428F);
 
 	public static boolean isReallyInside(final EntityPlayer entity) {
 		final BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
