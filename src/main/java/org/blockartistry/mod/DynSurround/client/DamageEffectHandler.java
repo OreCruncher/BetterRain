@@ -102,7 +102,7 @@ public final class DamageEffectHandler {
 
 	@SubscribeEvent(priority = EventPriority.LOW)
 	public void onLivingHurt(final LivingHurtEvent event) {
-		if (event.entity.worldObj.isRemote)
+		if (event == null || event.entity == null || event.entity.worldObj == null || event.entity.worldObj.isRemote)
 			return;
 
 		// Living heal should handle heals - I think..
@@ -131,7 +131,7 @@ public final class DamageEffectHandler {
 
 	@SubscribeEvent(priority = EventPriority.LOW)
 	public void onLivingHeal(final LivingHealEvent event) {
-		if (event.entity.worldObj.isRemote)
+		if (event == null || event.entity == null || event.entity.worldObj == null || event.entity.worldObj.isRemote)
 			return;
 
 		// Just in case
