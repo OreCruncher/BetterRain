@@ -26,6 +26,7 @@ package org.blockartistry.mod.DynSurround.client;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import org.blockartistry.mod.DynSurround.ModOptions;
 import org.blockartistry.mod.DynSurround.client.footsteps.Footsteps;
@@ -44,16 +45,22 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldProvider;
-import net.minecraft.world.WorldProviderEnd;
-import net.minecraft.world.WorldProviderHell;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.world.WorldEvent;
 
 @SideOnly(Side.CLIENT)
 public class ClientEffectHandler {
 
+	// These dimensions will be excluded from shimming
+	private static final List<String> dimensionNamePatterns = new ArrayList<String>();
 	private static final List<IClientEffectHandler> effectHandlers = new ArrayList<IClientEffectHandler>();
 
+	static {
+		dimensionNamePatterns.add("^Nether");
+		dimensionNamePatterns.add("^The End");
+		dimensionNamePatterns.add("^Tardis Interior");
+	}
+	
 	public static void register(final IClientEffectHandler handler) {
 		effectHandlers.add(handler);
 		if (handler.hasEvents()) {
@@ -102,9 +109,16 @@ public class ClientEffectHandler {
 				handler.process(world, player);
 		}
 	}
-
+	
 	private static boolean okToHook(final WorldProvider provider) {
-		return !(provider.hasNoSky || !(provider instanceof WorldProviderHell || provider instanceof WorldProviderEnd));
+		if(provider.hasNoSky)
+			return false;
+		
+		final String name = provider.getDimensionName();
+		for(final String pattern: dimensionNamePatterns)
+			if(Pattern.matches(pattern, name))
+				return false;
+		return true;
 	}
 
 	@SubscribeEvent(priority = EventPriority.LOWEST)
