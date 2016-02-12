@@ -32,6 +32,7 @@ import org.blockartistry.mod.DynSurround.client.footsteps.Footsteps;
 import org.blockartistry.mod.DynSurround.client.fx.BlockEffectHandler;
 import org.blockartistry.mod.DynSurround.data.DimensionRegistry;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldProvider;
@@ -85,6 +86,9 @@ public class ClientEffectHandler {
 
 	@SubscribeEvent
 	public void clientTick(final TickEvent.ClientTickEvent event) {
+		if(Minecraft.getMinecraft().isGamePaused())
+			return;
+
 		final World world = FMLClientHandler.instance().getClient().theWorld;
 		if (world == null)
 			return;
