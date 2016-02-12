@@ -66,6 +66,10 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 	static {
 		soundCull.put("liquid.water", -SOUND_CULL_THRESHOLD);
 		soundCull.put("liquid.lava", -SOUND_CULL_THRESHOLD);
+		soundCull.put("mob.sheep.say", -SOUND_CULL_THRESHOLD);
+		soundCull.put("mob.chicken.say", -SOUND_CULL_THRESHOLD);
+		soundCull.put("mob.cow.say", -SOUND_CULL_THRESHOLD);
+		soundCull.put("mob.pig.say", -SOUND_CULL_THRESHOLD);
 	}
 
 	private static boolean didReloadOccur() {
