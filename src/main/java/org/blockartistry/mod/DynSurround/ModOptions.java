@@ -126,6 +126,8 @@ public final class ModOptions {
 	protected static float footstepsSoundFactor = 0.3F;
 	protected static final String CONFIG_SOUND_CULL_THRESHOLD = "Sound Culling Threshold";
 	protected static int soundCullingThreshold = 20;
+	protected static final String CONFIG_BLOCKED_SOUNDS = "Blocked Sounds";
+	protected static String[] blockedSounds = {};
 
 	protected static final String CATEGORY_PLAYER = "player";
 	protected static final String CONFIG_SUPPRESS_POTION_PARTICLES = "Suppress Potion Particles";
@@ -259,7 +261,8 @@ public final class ModOptions {
 				0.0F, 1.0F, comment);
 
 		comment = "Automatically configure sound channels";
-		autoConfigureChannels = config.getBoolean(CONFIG_AUTO_CONFIG_CHANNELS, CATEGORY_SOUND, autoConfigureChannels, comment);
+		autoConfigureChannels = config.getBoolean(CONFIG_AUTO_CONFIG_CHANNELS, CATEGORY_SOUND, autoConfigureChannels,
+				comment);
 
 		comment = "Number of normal sound channels to configure in the sound system (manual)";
 		normalSoundChannelCount = config.getInt(CONFIG_NORMAL_CHANNEL_COUNT, CATEGORY_SOUND, normalSoundChannelCount,
@@ -294,6 +297,9 @@ public final class ModOptions {
 		comment = "Ticks between water and lava sound events (0 to disable culling)";
 		soundCullingThreshold = config.getInt(CONFIG_SOUND_CULL_THRESHOLD, CATEGORY_SOUND, soundCullingThreshold, 0,
 				Integer.MAX_VALUE, comment);
+
+		comment = "Sounds to block from playing";
+		blockedSounds = config.getStringList(CONFIG_BLOCKED_SOUNDS, CATEGORY_SOUND, blockedSounds, comment);
 
 		// CATEGORY: player.potion hud
 		comment = "Enable display of potion icons in display";
@@ -428,7 +434,7 @@ public final class ModOptions {
 	public static boolean getAutoconfigureSoundChannels() {
 		return autoConfigureChannels;
 	}
-	
+
 	public static int getNumberNormalSoundChannels() {
 		return normalSoundChannelCount;
 	}
@@ -448,7 +454,7 @@ public final class ModOptions {
 	public static boolean getEnableCraftingSound() {
 		return enableCraftingSound;
 	}
-	
+
 	public static boolean getEnableBowPullSound() {
 		return enableBowPullSound;
 	}
@@ -465,6 +471,10 @@ public final class ModOptions {
 		return soundCullingThreshold;
 	}
 
+	public static String[] getBlockedSounds() {
+		return blockedSounds;
+	}
+	
 	public static boolean getSuppressPotionParticleEffect() {
 		return suppressPotionParticles;
 	}

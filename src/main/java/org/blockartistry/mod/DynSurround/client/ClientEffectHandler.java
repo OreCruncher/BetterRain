@@ -78,6 +78,9 @@ public class ClientEffectHandler {
 		register(new FogEffectHandler());
 		register(new BlockEffectHandler());
 
+		if(ModOptions.getBlockedSounds().length > 0)
+			register(new SoundBlockHandler());
+		
 		if (ModOptions.getEnableFootstepSounds())
 			register(new Footsteps());
 

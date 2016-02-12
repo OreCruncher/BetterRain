@@ -41,6 +41,8 @@ import org.blockartistry.mod.DynSurround.client.sound.SoundEffect;
 import org.blockartistry.mod.DynSurround.data.config.BlockConfig;
 import org.blockartistry.mod.DynSurround.data.config.BlockConfig.Effect;
 
+import com.google.common.collect.ImmutableList;
+
 import org.blockartistry.mod.DynSurround.data.config.SoundConfig;
 
 import net.minecraft.block.Block;
@@ -189,6 +191,7 @@ public final class BlockRegistry {
 	}
 
 	private static void process(final BlockConfig config) {
+		final List<String> killSounds = ImmutableList.copyOf(ModOptions.getBlockedSounds());
 		for (final BlockConfig.Entry entry : config.entries) {
 			if (entry.blocks.isEmpty())
 				continue;
@@ -220,7 +223,7 @@ public final class BlockRegistry {
 					blockData.stepChance = entry.stepChance.intValue();
 
 				for (final SoundConfig sr : entry.sounds) {
-					if (sr.sound != null) {
+					if (sr.sound != null && !killSounds.contains(sr.sound)) {
 						// Block sounds are always spot sounds
 						sr.spotSound = true;
 						final SoundEffect eff = new SoundEffect(sr);
