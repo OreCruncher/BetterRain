@@ -50,12 +50,11 @@ public final class BiomeRegistry {
 	private static final TIntObjectHashMap<Entry> registry = new TIntObjectHashMap<Entry>();
 
 	public static final BiomeGenBase UNDERGROUND = new FakeBiome(-1, "Underground");
-	public static final BiomeGenBase INSIDE = new FakeBiome(-2, "Inside");
+	public static final BiomeGenBase PLAYER = new FakeBiome(-2, "Player");
 	public static final BiomeGenBase UNDERWATER = new FakeBiome(-3, "Underwater");
 	public static final BiomeGenBase UNDEROCEAN = new FakeBiome(-4, "UnderOCN");
 	public static final BiomeGenBase UNDERDEEPOCEAN = new FakeBiome(-5, "UnderDOCN");
 	public static final BiomeGenBase UNDERRIVER = new FakeBiome(-6, "UnderRVR");
-	public static final BiomeGenBase PLAYER = new FakeBiome(-7, "Player");
 
 	public static final SoundEffect WATER_DRIP = new SoundEffect(Module.MOD_ID + ":waterdrops");
 
@@ -167,7 +166,6 @@ public final class BiomeRegistry {
 
 		// Add our fake biomes
 		registry.put(UNDERGROUND.biomeID, new Entry(UNDERGROUND));
-		registry.put(INSIDE.biomeID, new Entry(INSIDE));
 		registry.put(UNDERWATER.biomeID, new Entry(UNDERWATER));
 		registry.put(UNDEROCEAN.biomeID, new Entry(UNDEROCEAN));
 		registry.put(UNDERDEEPOCEAN.biomeID, new Entry(UNDERDEEPOCEAN));

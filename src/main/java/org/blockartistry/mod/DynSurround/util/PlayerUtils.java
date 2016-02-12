@@ -65,8 +65,6 @@ public final class PlayerUtils {
 					biome = BiomeRegistry.UNDERWATER;
 			} else if (isUnderGround(player, INSIDE_Y_ADJUST))
 				biome = BiomeRegistry.UNDERGROUND;
-			else if (isInside(player, INSIDE_Y_ADJUST))
-				biome = BiomeRegistry.INSIDE;
 		}
 		return biome;
 	}
@@ -89,9 +87,9 @@ public final class PlayerUtils {
 	}
 
 	private static final int RANGE = 3;
-	private static final int AREA = MathHelper.floor_float((RANGE * 2 + 1) * (RANGE * 2 + 1) * 0.428F);
-	
-	public static boolean isReallyInside(final EntityPlayer entity) {
+	private static final int AREA = (RANGE * 2 + 1) * (RANGE * 2 + 1);
+
+	public static float ceilingCoverageRatio(final EntityPlayer entity) {
 		final int targetY = (int) entity.posY;
 		int seeSky = 0;
 		for (int x = -RANGE; x <= RANGE; x++)
@@ -99,12 +97,14 @@ public final class PlayerUtils {
 				final int theX = MathHelper.floor_double(x + entity.posX);
 				final int theZ = MathHelper.floor_double(z + entity.posZ);
 				final int y = entity.worldObj.getTopSolidOrLiquidBlock(theX, theZ);
-				if ((y - targetY) < 2) {
-					if (++seeSky >= AREA)
-						return false;
-				}
+				if ((y - targetY) < 2)
+					++seeSky;
 			}
-		return true;
+		return 1.0F - ((float) seeSky / AREA);
+	}
+
+	public static boolean isReallyInside(final EntityPlayer entity) {
+		return ceilingCoverageRatio(entity) > 0.42F;
 	}
 
 	public static boolean isInside(final EntityPlayer entity, final int yOffset) {
@@ -116,7 +116,7 @@ public final class PlayerUtils {
 		// If the player is underground
 		if (PlayerUtils.isUnderGround(entity, yOffset))
 			return true;
-		
+
 		return isReallyInside(entity);
 	}
 

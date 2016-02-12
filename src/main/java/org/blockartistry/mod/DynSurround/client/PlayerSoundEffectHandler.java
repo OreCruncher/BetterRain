@@ -76,6 +76,10 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 		return false;
 	}
 
+	private static boolean doBiomeSounds() {
+		return EnvironState.isPlayerUnderground() || !EnvironState.isPlayerInside();
+	}
+
 	@Override
 	public void process(final World world, final EntityPlayer player) {
 		if (didReloadOccur() || player.isDead || playerDimension != EnvironState.getDimensionId()) {
@@ -93,17 +97,20 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 		final String conditions = EnvironState.getConditions();
 
 		final List<SoundEffect> sounds = new ArrayList<SoundEffect>();
-		sounds.addAll(BiomeRegistry.getSounds(playerBiome, conditions));
+		if (doBiomeSounds())
+			sounds.addAll(BiomeRegistry.getSounds(playerBiome, conditions));
 		sounds.addAll(BiomeRegistry.getSounds(BiomeRegistry.PLAYER, conditions));
 
 		SoundManager.update();
 		SoundManager.queueAmbientSounds(sounds);
 
-		SoundEffect sound = BiomeRegistry.getSpotSound(playerBiome, conditions, EnvironState.RANDOM);
-		if (sound != null)
-			SoundManager.playSoundAtPlayer(player, sound);
+		if (doBiomeSounds()) {
+			SoundEffect sound = BiomeRegistry.getSpotSound(playerBiome, conditions, EnvironState.RANDOM);
+			if (sound != null)
+				SoundManager.playSoundAtPlayer(player, sound);
+		}
 
-		sound = BiomeRegistry.getSpotSound(BiomeRegistry.PLAYER, conditions, EnvironState.RANDOM);
+		SoundEffect sound = BiomeRegistry.getSpotSound(BiomeRegistry.PLAYER, conditions, EnvironState.RANDOM);
 		if (sound != null)
 			SoundManager.playSoundAtPlayer(player, sound);
 
