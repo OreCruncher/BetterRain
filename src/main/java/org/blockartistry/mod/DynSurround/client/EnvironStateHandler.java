@@ -45,12 +45,15 @@ import cpw.mods.fml.common.gameevent.PlayerEvent.ItemCraftedEvent;
 import cpw.mods.fml.relauncher.Side;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
+import net.minecraft.enchantment.Enchantment;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityBoat;
 import net.minecraft.entity.item.EntityMinecart;
 import net.minecraft.entity.passive.EntityHorse;
 import net.minecraft.entity.passive.EntityPig;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemAxe;
 import net.minecraft.item.ItemBow;
@@ -418,9 +421,10 @@ public class EnvironStateHandler implements IClientEffectHandler {
 		if (BOW_PULL == null || !event.entityPlayer.worldObj.isRemote)
 			return;
 
-		final Item tool = event.result.getItem();
-		if (tool instanceof ItemBow) {
-			SoundManager.playSoundAtPlayer(EnvironState.getPlayer(), BOW_PULL);
+		if (event.result.getItem() instanceof ItemBow) {
+			if (event.entityPlayer.inventory.hasItem(Items.arrow)
+					|| EnchantmentHelper.getEnchantmentLevel(Enchantment.infinity.effectId, event.result) > 0)
+				SoundManager.playSoundAtPlayer(EnvironState.getPlayer(), BOW_PULL);
 		}
 	}
 
