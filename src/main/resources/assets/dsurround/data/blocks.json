@@ -236,6 +236,33 @@
 				
 			]
 			
+		},
+		{
+			"blocks":[
+				"minecraft:deadbush"
+			],
+			"chance":200,
+			"sounds":[
+				{
+					"sound":"dsurround:rattlesnake",
+					"conditions":"(?i)(?!.*#raining#.*).*#day#.*#tcwarm#.*",
+					"volume":1.0
+				},
+				{
+					"sound":"dsurround:hiss",
+					"conditions":"(?i)(?!.*#raining#.*).*#day#.*#tcwarm#.*",
+					"volume":1.0,
+					"variable":true
+				},
+				{
+					"sound":"dsurround:insectcrawl",
+					"conditions":"(?i)(?!.*#raining#.*).*#day#.*#tcwarm#.*",
+					"volume":1.0,
+					"variable":true
+				}
+				
+			]
+			
 		}
 		
 	]
