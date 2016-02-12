@@ -33,6 +33,7 @@ import org.blockartistry.mod.DynSurround.event.DiagnosticEvent;
 import org.blockartistry.mod.DynSurround.util.Color;
 import org.blockartistry.mod.DynSurround.util.DiurnalUtils;
 import org.blockartistry.mod.DynSurround.util.MathStuff;
+import org.blockartistry.mod.DynSurround.util.PlayerUtils;
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.block.Block;
@@ -74,6 +75,7 @@ public class FogEffectHandler implements IClientEffectHandler {
 	private static Color targetFogColor = null;
 	private static Vec3 fogColorTransitionAdjustments = null;
 	private static float brightnessFactor = 1.0F;
+	private static float insideFogOffset = 0.0F;
 	
 	public static float currentFogLevel() {
 		return currentFogLevel;
@@ -122,6 +124,7 @@ public class FogEffectHandler implements IClientEffectHandler {
 
 		// Get the max fog level between the three fog types
 		targetFogLevel = Math.max(biomeFog, Math.max(dustFog, heightFog));
+		insideFogOffset = PlayerUtils.ceilingCoverageRatio(player) * 15.0F;
 
 		// Get the appropriate fog color based on the predominant
 		// fog effect.
@@ -219,8 +222,8 @@ public class FogEffectHandler implements IClientEffectHandler {
 		}
 		
 		final float factor = 1.0F + level * 100.0F;
-		final float near = (event.farPlaneDistance * 0.75F) / (factor * factor);
-		final float horizon = event.farPlaneDistance / (factor);
+		final float near = (event.farPlaneDistance * 0.75F) / (factor * factor) + insideFogOffset;
+		final float horizon = event.farPlaneDistance / (factor) + insideFogOffset;
 		
 		GL11.glFogf(GL11.GL_FOG_START, near);
 		GL11.glFogf(GL11.GL_FOG_END, horizon);

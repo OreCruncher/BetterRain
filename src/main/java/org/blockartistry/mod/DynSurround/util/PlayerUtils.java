@@ -68,8 +68,6 @@ public final class PlayerUtils {
 					biome = BiomeRegistry.UNDERWATER;
 			} else if (isUnderGround(player, INSIDE_Y_ADJUST))
 				biome = BiomeRegistry.UNDERGROUND;
-			else if (isInside(player, INSIDE_Y_ADJUST))
-				biome = BiomeRegistry.INSIDE;
 		}
 		return biome;
 	}
@@ -92,9 +90,9 @@ public final class PlayerUtils {
 	}
 
 	private static final int RANGE = 3;
-	private static final int AREA = MathHelper.floor_float((RANGE * 2 + 1) * (RANGE * 2 + 1) * 0.428F);
+	private static final int AREA = (RANGE * 2 + 1) * (RANGE * 2 + 1);
 
-	public static boolean isReallyInside(final EntityPlayer entity) {
+	public static float ceilingCoverageRatio(final EntityPlayer entity) {
 		final BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
 		final int targetY = (int) entity.posY;
 		int seeSky = 0;
@@ -104,14 +102,16 @@ public final class PlayerUtils {
 				final int theZ = MathHelper.floor_double(z + entity.posZ);
 				pos.set(theX, 0, theZ);
 				final int y = entity.worldObj.getTopSolidOrLiquidBlock(pos).getY();
-				if ((y - targetY) < 3) {
-					if (++seeSky >= AREA)
-						return false;
-				}
+				if ((y - targetY) < 3)
+					++seeSky;
 			}
-		return true;
+		return 1.0F - ((float) seeSky / AREA);
 	}
-	
+
+	public static boolean isReallyInside(final EntityPlayer entity) {
+		return ceilingCoverageRatio(entity) > 0.42F;
+	}
+
 	public static boolean isInside(final EntityPlayer entity, final int yOffset) {
 		// The Nether/End do not have the idea of inside
 		final int dimension = PlayerUtils.getPlayerDimension(entity);
