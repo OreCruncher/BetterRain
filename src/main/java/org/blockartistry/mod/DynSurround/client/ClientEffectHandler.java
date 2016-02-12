@@ -40,6 +40,7 @@ import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.common.gameevent.TickEvent.Phase;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldProvider;
@@ -88,6 +89,9 @@ public class ClientEffectHandler {
 
 	@SubscribeEvent(priority = EventPriority.LOWEST)
 	public void clientTick(final TickEvent.ClientTickEvent event) {
+		if(Minecraft.getMinecraft().isGamePaused())
+			return;
+		
 		final World world = FMLClientHandler.instance().getClient().theWorld;
 		if (world == null)
 			return;
