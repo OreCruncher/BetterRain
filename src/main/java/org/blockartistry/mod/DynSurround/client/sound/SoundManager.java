@@ -24,6 +24,7 @@
 
 package org.blockartistry.mod.DynSurround.client.sound;
 
+import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -31,13 +32,21 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.blockartistry.mod.DynSurround.ModLog;
+import org.blockartistry.mod.DynSurround.ModOptions;
 import org.blockartistry.mod.DynSurround.client.EnvironStateHandler.EnvironState;
+import org.lwjgl.BufferUtils;
+import org.lwjgl.LWJGLException;
+import org.lwjgl.openal.AL;
+import org.lwjgl.openal.ALC10;
+import org.lwjgl.openal.ALC11;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.MathHelper;
 import paulscode.sound.SoundSystemConfig;
 
 @SideOnly(Side.CLIENT)
@@ -137,5 +146,34 @@ public class SoundManager {
 		for (final SpotSound effect : pending)
 			result.add((effect.getTickAge() < 0 ? "DELAYED: " : "PENDING: ") + effect.getSoundEffect().toString());
 		return result;
+	}
+
+	public static void configureSound() {
+		int totalChannels = -1;
+
+		try {
+			AL.create();
+			final IntBuffer ib = BufferUtils.createIntBuffer(1);
+			ALC10.alcGetInteger(AL.getDevice(), ALC11.ALC_MONO_SOURCES, ib);
+			totalChannels = ib.get(0);
+			AL.destroy();
+		} catch (LWJGLException e) {
+			e.printStackTrace();
+		}
+
+		int normalChannels = ModOptions.getNumberNormalSoundChannels();
+		int streamChannels = ModOptions.getNumberStreamingSoundChannels();
+
+		if (ModOptions.getAutoconfigureSoundChannels() && totalChannels > 64) {
+			final int maxCount = Math.max((totalChannels + 1) / 2, 32);
+			normalChannels = MathHelper.floor_float(maxCount * 0.875F);
+			streamChannels = maxCount - normalChannels;
+		}
+
+		ModLog.info("Sound channels: %d normal, %d streaming (total avail: %s)", normalChannels, streamChannels,
+				totalChannels == -1 ? "UNKNOWN" : Integer.toString(totalChannels));
+		SoundSystemConfig.setNumberNormalChannels(normalChannels);
+		SoundSystemConfig.setNumberStreamingChannels(streamChannels);
+
 	}
 }

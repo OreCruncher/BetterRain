@@ -34,6 +34,7 @@ import org.blockartistry.mod.DynSurround.ModOptions;
 import org.blockartistry.mod.DynSurround.client.ClientEffectHandler;
 import org.blockartistry.mod.DynSurround.client.footsteps.game.user.GenerateBlockReport;
 import org.blockartistry.mod.DynSurround.client.hud.GuiHUDHandler;
+import org.blockartistry.mod.DynSurround.client.sound.SoundManager;
 import org.blockartistry.mod.DynSurround.data.BlockRegistry;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
@@ -42,7 +43,6 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.SoundHandler;
-import paulscode.sound.SoundSystemConfig;
 
 @SideOnly(Side.CLIENT)
 public class ProxyClient extends Proxy {
@@ -51,10 +51,7 @@ public class ProxyClient extends Proxy {
 	public void preInit(final FMLPreInitializationEvent event) {
 		super.preInit(event);
 
-		ModLog.info("Sound channels: %d normal, %d streaming", ModOptions.getNumberNormalSoundChannels(),
-				ModOptions.getNumberStreamingSoundChannels());
-		SoundSystemConfig.setNumberNormalChannels(ModOptions.getNumberNormalSoundChannels());
-		SoundSystemConfig.setNumberStreamingChannels(ModOptions.getNumberStreamingSoundChannels());
+		SoundManager.configureSound();
 	}
 
 	@Override
@@ -79,9 +76,9 @@ public class ProxyClient extends Proxy {
 			ModLog.info("*** SOUND REGISTRY ***");
 			for (final String sound : sounds)
 				ModLog.info(sound);
-			
+
 			final GenerateBlockReport report = new GenerateBlockReport();
-			for(final Entry<String, String> entry: report.getResults().getAllProperties().entrySet()) {
+			for (final Entry<String, String> entry : report.getResults().getAllProperties().entrySet()) {
 				ModLog.info("%s = %s", entry.getKey(), entry.getValue());
 			}
 		}

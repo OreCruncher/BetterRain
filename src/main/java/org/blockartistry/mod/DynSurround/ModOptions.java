@@ -106,6 +106,8 @@ public final class ModOptions {
 	protected static boolean enableBiomeSounds = true;
 	protected static final String CONFIG_MASTER_SOUND_FACTOR = "Master Sound Scale Factor";
 	protected static float masterSoundScaleFactor = 0.5F;
+	protected static final String CONFIG_AUTO_CONFIG_CHANNELS = "Autoconfigure Channels";
+	protected static boolean autoConfigureChannels = true;
 	protected static final String CONFIG_NORMAL_CHANNEL_COUNT = "Number Normal Channels";
 	protected static int normalSoundChannelCount = 28;
 	protected static final String CONFIG_STREAMING_CHANNEL_COUNT = "Number Streaming Channels";
@@ -123,7 +125,7 @@ public final class ModOptions {
 	protected static final String CONFIG_FOOTSTEPS_SOUND_FACTOR = "Footsteps Sound Factor";
 	protected static float footstepsSoundFactor = 0.3F;
 	protected static final String CONFIG_SOUND_CULL_THRESHOLD = "Sound Culling Threshold";
-	protected static int soundCullingThreshold = 30;
+	protected static int soundCullingThreshold = 20;
 
 	protected static final String CATEGORY_PLAYER = "player";
 	protected static final String CONFIG_SUPPRESS_POTION_PARTICLES = "Suppress Potion Particles";
@@ -256,11 +258,14 @@ public final class ModOptions {
 		masterSoundScaleFactor = config.getFloat(CONFIG_MASTER_SOUND_FACTOR, CATEGORY_SOUND, masterSoundScaleFactor,
 				0.0F, 1.0F, comment);
 
-		comment = "Number of normal sound channels to configure in the sound system";
+		comment = "Automatically configure sound channels";
+		autoConfigureChannels = config.getBoolean(CONFIG_AUTO_CONFIG_CHANNELS, CATEGORY_SOUND, autoConfigureChannels, comment);
+
+		comment = "Number of normal sound channels to configure in the sound system (manual)";
 		normalSoundChannelCount = config.getInt(CONFIG_NORMAL_CHANNEL_COUNT, CATEGORY_SOUND, normalSoundChannelCount,
 				28, Integer.MAX_VALUE, comment);
 
-		comment = "Number of streaming sound channels to configure in the sound system";
+		comment = "Number of streaming sound channels to configure in the sound system (manual)";
 		streamingSoundChannelCount = config.getInt(CONFIG_STREAMING_CHANNEL_COUNT, CATEGORY_SOUND,
 				streamingSoundChannelCount, 4, Integer.MAX_VALUE, comment);
 
@@ -420,6 +425,10 @@ public final class ModOptions {
 		return masterSoundScaleFactor;
 	}
 
+	public static boolean getAutoconfigureSoundChannels() {
+		return autoConfigureChannels;
+	}
+	
 	public static int getNumberNormalSoundChannels() {
 		return normalSoundChannelCount;
 	}
