@@ -185,6 +185,9 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 	 */
 	@SubscribeEvent
 	public void soundEvent(final PlaySoundEvent17 event) {
+		if(event.sound == null)
+			return;
+		
 		if ((ALWAYS_OVERRIDE_SOUND || !StormProperties.doVanilla()) && replaceRainSound(event.name)) {
 			final ISound sound = event.sound;
 			event.result = new PositionedSoundRecord(StormProperties.getCurrentStormSound(),

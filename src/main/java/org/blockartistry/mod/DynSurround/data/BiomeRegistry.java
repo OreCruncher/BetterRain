@@ -41,6 +41,8 @@ import org.blockartistry.mod.DynSurround.data.config.SoundConfig;
 import org.blockartistry.mod.DynSurround.util.Color;
 import org.blockartistry.mod.DynSurround.util.MyUtils;
 
+import com.google.common.collect.ImmutableList;
+
 import gnu.trove.map.hash.TIntObjectHashMap;
 import net.minecraft.world.biome.BiomeGenBase;
 
@@ -286,6 +288,7 @@ public final class BiomeRegistry {
 	}
 
 	private static void process(final BiomeConfig config) {
+		final List<String> killSounds = ImmutableList.copyOf(ModOptions.getBlockedSounds());
 		for (final BiomeConfig.Entry entry : config.entries) {
 			final Pattern pattern = Pattern.compile(entry.biomeName);
 			for (final Entry biomeEntry : registry.valueCollection()) {
@@ -320,6 +323,8 @@ public final class BiomeRegistry {
 						biomeEntry.spotSoundChance = entry.spotSoundChance.intValue();
 
 					for (final SoundConfig sr : entry.sounds) {
+						if (killSounds.contains(sr.sound))
+							continue;
 						final SoundEffect s = new SoundEffect(sr);
 						if (sr.spotSound != null && sr.spotSound.booleanValue())
 							biomeEntry.spotSounds.add(s);
