@@ -89,9 +89,9 @@ public class ClientEffectHandler {
 
 	@SubscribeEvent(priority = EventPriority.LOWEST)
 	public void clientTick(final TickEvent.ClientTickEvent event) {
-		if(Minecraft.getMinecraft().isGamePaused())
+		if (Minecraft.getMinecraft().isGamePaused())
 			return;
-		
+
 		final World world = FMLClientHandler.instance().getClient().theWorld;
 		if (world == null)
 			return;
@@ -104,7 +104,7 @@ public class ClientEffectHandler {
 	}
 
 	private static boolean okToHook(final WorldProvider provider) {
-		return !(provider instanceof WorldProviderHell || provider instanceof WorldProviderEnd);
+		return !(provider.hasNoSky || !(provider instanceof WorldProviderHell || provider instanceof WorldProviderEnd));
 	}
 
 	@SubscribeEvent(priority = EventPriority.LOWEST)
