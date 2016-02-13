@@ -26,8 +26,6 @@ package org.blockartistry.mod.DynSurround.client.footsteps.engine.implem;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Set;
-
 import org.blockartistry.mod.DynSurround.ModLog;
 import org.blockartistry.mod.DynSurround.client.footsteps.engine.interfaces.IAcoustic;
 import org.blockartistry.mod.DynSurround.client.footsteps.engine.interfaces.EventType;
@@ -50,19 +48,6 @@ public abstract class AcousticsLibrary implements ILibrary {
 	@Override
 	public void addAcoustic(final INamedAcoustic acoustic) {
 		this.acoustics.put(acoustic.getName(), acoustic);
-	}
-
-	@Override
-	public Set<String> getAcousticsKeySet() {
-		return this.acoustics.keySet();
-	}
-
-	@Override
-	public IAcoustic getAcoustic(final String acoustic) {
-		if (this.acoustics.containsKey(acoustic)) {
-			return this.acoustics.get(acoustic);
-		}
-		return null;
 	}
 
 	@Override
@@ -102,11 +87,6 @@ public abstract class AcousticsLibrary implements ILibrary {
 				ModLog.debug("  Playing acoustic " + acousticName + " for event " + event.toString().toUpperCase());
 			this.acoustics.get(acousticName).playSound(mySoundPlayer(), location, event, inputOptions);
 		}
-	}
-
-	@Override
-	public boolean hasAcoustic(final String acousticName) {
-		return this.acoustics.containsKey(acousticName);
 	}
 
 	protected abstract void onAcousticNotFound(final Object location, final String acousticName, final EventType event,

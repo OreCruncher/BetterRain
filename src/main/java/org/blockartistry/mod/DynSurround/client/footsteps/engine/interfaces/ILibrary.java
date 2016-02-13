@@ -24,8 +24,6 @@
 
 package org.blockartistry.mod.DynSurround.client.footsteps.engine.interfaces;
 
-import java.util.Set;
-
 import org.blockartistry.mod.DynSurround.client.footsteps.game.system.Association;
 
 import net.minecraftforge.fml.relauncher.Side;
@@ -49,21 +47,6 @@ public interface ILibrary {
 	public void playAcoustic(final Object location, final Association acousticName, final EventType event, final IOptions options);
 	
 	public void playAcoustic(final Object location, final String acousticName, final EventType event, final IOptions options);
-	
-	/**
-	 * Gets a key set of the acoustic.
-	 */
-	public Set<String> getAcousticsKeySet();
-	
-	/**
-	 * Gets a specific acoustic. Returns null if it does not exist.
-	 */
-	public IAcoustic getAcoustic(final String acoustic);
-	
-	/**
-	 * Checks if such an acoustic exist.
-	 */
-	public boolean hasAcoustic(final String acoustic);
 	
 	/**
 	 * Run various things, such as queued sounds.
