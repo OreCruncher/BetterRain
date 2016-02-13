@@ -26,7 +26,6 @@ package org.blockartistry.mod.DynSurround.client;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.blockartistry.mod.DynSurround.ModOptions;
 import org.blockartistry.mod.DynSurround.client.EnvironStateHandler.EnvironState;
 import org.blockartistry.mod.DynSurround.client.sound.SoundEffect;
@@ -38,7 +37,6 @@ import org.blockartistry.mod.DynSurround.event.DiagnosticEvent;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import gnu.trove.map.hash.TObjectIntHashMap;
 import net.minecraft.block.Block;
 import net.minecraft.client.audio.ISound;
 import net.minecraft.client.audio.PositionedSoundRecord;
@@ -58,18 +56,6 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 	private static final List<EntityDropParticleFX> drops = new ArrayList<EntityDropParticleFX>();
 	private static int playerDimension = 0;
 	private static int reloadTracker = 0;
-
-	private static final int SOUND_CULL_THRESHOLD = ModOptions.getSoundCullingThreshold();
-	private static final TObjectIntHashMap<String> soundCull = new TObjectIntHashMap<String>();
-
-	static {
-		soundCull.put("liquid.water", -SOUND_CULL_THRESHOLD);
-		soundCull.put("liquid.lava", -SOUND_CULL_THRESHOLD);
-		soundCull.put("mob.sheep.say", -SOUND_CULL_THRESHOLD);
-		soundCull.put("mob.chicken.say", -SOUND_CULL_THRESHOLD);
-		soundCull.put("mob.cow.say", -SOUND_CULL_THRESHOLD);
-		soundCull.put("mob.pig.say", -SOUND_CULL_THRESHOLD);
-	}
 
 	private static boolean didReloadOccur() {
 		final int count = BiomeRegistry.getReloadCount();
@@ -185,24 +171,15 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 	 */
 	@SubscribeEvent
 	public void soundEvent(final PlaySoundEvent17 event) {
-		if(event.sound == null)
+		if (event.sound == null)
 			return;
-		
+
 		if ((ALWAYS_OVERRIDE_SOUND || !StormProperties.doVanilla()) && replaceRainSound(event.name)) {
 			final ISound sound = event.sound;
 			event.result = new PositionedSoundRecord(StormProperties.getCurrentStormSound(),
 					StormProperties.getCurrentVolume(), sound.getPitch(), sound.getXPosF(), sound.getYPosF(),
 					sound.getZPosF());
 			return;
-		}
-
-		if (SOUND_CULL_THRESHOLD > 0 && soundCull.containsKey(event.name)) {
-			final int currentTick = EnvironState.getTickCounter();
-			final int lastOccurance = soundCull.get(event.name);
-			if ((currentTick - lastOccurance) < SOUND_CULL_THRESHOLD)
-				event.result = null;
-			else
-				soundCull.put(event.name, currentTick);
 		}
 	}
 

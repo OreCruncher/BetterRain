@@ -24,16 +24,21 @@
 
 package org.blockartistry.mod.DynSurround.client;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import org.blockartistry.mod.DynSurround.ModLog;
 import org.blockartistry.mod.DynSurround.ModOptions;
-
-import com.google.common.collect.ImmutableList;
+import org.blockartistry.mod.DynSurround.client.EnvironStateHandler.EnvironState;
+import org.blockartistry.mod.DynSurround.data.SoundRegistry;
 
 import cpw.mods.fml.common.eventhandler.EventPriority;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import gnu.trove.map.hash.TObjectIntHashMap;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.sound.PlaySoundEvent17;
@@ -41,15 +46,31 @@ import net.minecraftforge.client.event.sound.PlaySoundEvent17;
 @SideOnly(Side.CLIENT)
 public class SoundBlockHandler implements IClientEffectHandler {
 
-	private final List<String> soundsToBlock;
+	private static final int SOUND_CULL_THRESHOLD = ModOptions.getSoundCullingThreshold();
+
+	private boolean initialized = false;
+	private final List<String> soundsToBlock = new ArrayList<String>();
+	private final TObjectIntHashMap<String> soundCull = new TObjectIntHashMap<String>();
 
 	public SoundBlockHandler() {
-		this.soundsToBlock = ImmutableList.copyOf(ModOptions.getBlockedSounds());
 	}
 
 	@Override
 	public void process(final World world, final EntityPlayer player) {
-		// Noop
+		if (!this.initialized) {
+			this.initialized = true;
+			final SoundHandler handler = Minecraft.getMinecraft().getSoundHandler();
+			for (final Object resource : handler.sndRegistry.getKeys()) {
+				final String rs = resource.toString();
+				if (SoundRegistry.isSoundBlocked(rs)) {
+					ModLog.debug("Blocking sound '%s'", rs);
+					this.soundsToBlock.add(rs);
+				} else if (SoundRegistry.isSoundCulled(rs)) {
+					ModLog.debug("Culling sound '%s'", rs);
+					this.soundCull.put(rs, -SOUND_CULL_THRESHOLD);
+				}
+			}
+		}
 	}
 
 	@Override
@@ -59,8 +80,28 @@ public class SoundBlockHandler implements IClientEffectHandler {
 
 	@SubscribeEvent(priority = EventPriority.HIGHEST)
 	public void soundEvent(final PlaySoundEvent17 event) {
-		if (soundsToBlock.contains(event.name)) {
+		if (event.sound == null)
+			return;
+
+		final String resource = event.sound.getPositionedSoundLocation().toString();
+		if (this.soundsToBlock.contains(resource)) {
 			event.result = null;
+			return;
+		}
+
+		if (SOUND_CULL_THRESHOLD <= 0)
+			return;
+
+		// Get the last time the sound was seen
+		final int lastOccurance = this.soundCull.get(resource);
+		if (lastOccurance == 0)
+			return;
+
+		final int currentTick = EnvironState.getTickCounter();
+		if ((currentTick - lastOccurance) < SOUND_CULL_THRESHOLD) {
+			event.result = null;
+		} else {
+			this.soundCull.put(resource, currentTick);
 		}
 	}
 }
