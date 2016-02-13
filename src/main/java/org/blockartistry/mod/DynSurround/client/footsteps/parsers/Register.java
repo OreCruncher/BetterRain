@@ -29,7 +29,7 @@ import java.util.Map.Entry;
 
 import org.blockartistry.mod.DynSurround.ModLog;
 import org.blockartistry.mod.DynSurround.client.footsteps.mcpackage.interfaces.IRegistration;
-import org.blockartistry.mod.DynSurround.client.footsteps.util.property.contract.IPropertyHolder;
+import org.blockartistry.mod.DynSurround.client.footsteps.util.property.simple.ConfigProperty;
 
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -40,7 +40,7 @@ public final class Register {
 	private Register() {
 	}
 
-	public static void setup(final IPropertyHolder props, final IRegistration registration) {
+	public static void setup(final ConfigProperty props, final IRegistration registration) {
 		final Map<String, String> properties = props.getAllProperties();
 		for (final Entry<String, String> entry : properties.entrySet()) {
 			try {

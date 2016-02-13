@@ -33,20 +33,17 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Map.Entry;
 
-import org.blockartistry.mod.DynSurround.client.footsteps.util.property.contract.IPropertyHolder;
-
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.fml.relauncher.Side;
 
 @SideOnly(Side.CLIENT)
-public class ConfigProperty implements IPropertyHolder {
+public class ConfigProperty {
 	private Map<String, String> properties;
 
 	public ConfigProperty() {
 		this.properties = new HashMap<String, String>();
 	}
 
-	@Override
 	public String getString(final String name) {
 		if (!this.properties.containsKey(name))
 			throw new PropertyMissingException();
@@ -54,7 +51,6 @@ public class ConfigProperty implements IPropertyHolder {
 		return this.properties.get(name);
 	}
 
-	@Override
 	public boolean getBoolean(final String name) {
 		if (!this.properties.containsKey(name))
 			throw new PropertyMissingException();
@@ -66,7 +62,6 @@ public class ConfigProperty implements IPropertyHolder {
 		}
 	}
 
-	@Override
 	public int getInteger(final String name) {
 		if (!this.properties.containsKey(name))
 			throw new PropertyMissingException();
@@ -78,7 +73,6 @@ public class ConfigProperty implements IPropertyHolder {
 		}
 	}
 
-	@Override
 	public float getFloat(final String name) {
 		if (!this.properties.containsKey(name))
 			throw new PropertyMissingException();
@@ -90,7 +84,6 @@ public class ConfigProperty implements IPropertyHolder {
 		}
 	}
 
-	@Override
 	public long getLong(final String name) {
 		if (!this.properties.containsKey(name))
 			throw new PropertyMissingException();
@@ -102,7 +95,6 @@ public class ConfigProperty implements IPropertyHolder {
 		}
 	}
 
-	@Override
 	public double getDouble(final String name) {
 		if (!this.properties.containsKey(name))
 			throw new PropertyMissingException();
@@ -114,12 +106,10 @@ public class ConfigProperty implements IPropertyHolder {
 		}
 	}
 
-	@Override
 	public void setProperty(final String name, Object o) {
 		this.properties.put(name, o.toString());
 	}
 
-	@Override
 	public Map<String, String> getAllProperties() {
 		return this.properties;
 	}
@@ -130,7 +120,7 @@ public class ConfigProperty implements IPropertyHolder {
 		return props;
 	}
 
-	public static boolean loadStream(final IPropertyHolder properties, final InputStream stream) {
+	public static boolean loadStream(final ConfigProperty properties, final InputStream stream) {
 		try {
 			final Reader reader = new InputStreamReader(stream);
 			final Properties props = new Properties();
