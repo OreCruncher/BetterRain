@@ -33,7 +33,6 @@ import java.util.Random;
 import org.blockartistry.mod.DynSurround.ModLog;
 import org.blockartistry.mod.DynSurround.client.EnvironStateHandler.EnvironState;
 import org.blockartistry.mod.DynSurround.client.footsteps.engine.implem.AcousticsLibrary;
-import org.blockartistry.mod.DynSurround.client.footsteps.engine.interfaces.EventType;
 import org.blockartistry.mod.DynSurround.client.footsteps.engine.interfaces.IOptions;
 import org.blockartistry.mod.DynSurround.client.footsteps.engine.interfaces.IOptions.Option;
 import org.blockartistry.mod.DynSurround.client.footsteps.engine.interfaces.ISoundPlayer;
@@ -126,12 +125,6 @@ public class AcousticsManager extends AcousticsLibrary implements ISoundPlayer, 
 	@Override
 	public Random getRNG() {
 		return RANDOM;
-	}
-
-	@Override
-	protected void onAcousticNotFound(final Object location, final String acousticName, final EventType event,
-			final IOptions inputOptions) {
-		ModLog.debug("Tried to play a missing acoustic: " + acousticName);
 	}
 
 	@Override
