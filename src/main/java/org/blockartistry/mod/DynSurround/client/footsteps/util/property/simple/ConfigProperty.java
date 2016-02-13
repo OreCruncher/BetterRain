@@ -24,72 +24,130 @@
 
 package org.blockartistry.mod.DynSurround.client.footsteps.util.property.simple;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
+import java.util.Map.Entry;
+
 import org.blockartistry.mod.DynSurround.client.footsteps.util.property.contract.IPropertyHolder;
-import org.blockartistry.mod.DynSurround.client.footsteps.util.property.contract.IVersionable;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
-public class ConfigProperty implements IPropertyHolder, IVersionable {
-	private VersionableProperty mixed;
+public class ConfigProperty implements IPropertyHolder {
+	private Map<String, String> properties;
 
 	public ConfigProperty() {
-		this.mixed = new VersionableProperty();
-
+		this.properties = new HashMap<String, String>();
 	}
 
 	@Override
-	public boolean commit() {
-		return this.mixed.commit();
+	public String getString(final String name) {
+		if (!this.properties.containsKey(name))
+			throw new PropertyMissingException();
 
+		return this.properties.get(name);
 	}
 
 	@Override
-	public void revert() {
-		this.mixed.revert();
+	public boolean getBoolean(final String name) {
+		if (!this.properties.containsKey(name))
+			throw new PropertyMissingException();
 
+		try {
+			return Boolean.parseBoolean(this.properties.get(name));
+		} catch (NumberFormatException e) {
+			throw new PropertyTypeException();
+		}
 	}
 
 	@Override
-	public String getString(String name) {
-		return this.mixed.getString(name);
+	public int getInteger(final String name) {
+		if (!this.properties.containsKey(name))
+			throw new PropertyMissingException();
+
+		try {
+			return Integer.parseInt(this.properties.get(name));
+		} catch (NumberFormatException e) {
+			throw new PropertyTypeException();
+		}
 	}
 
 	@Override
-	public boolean getBoolean(String name) {
-		return this.mixed.getBoolean(name);
+	public float getFloat(final String name) {
+		if (!this.properties.containsKey(name))
+			throw new PropertyMissingException();
+
+		try {
+			return Float.parseFloat(this.properties.get(name));
+		} catch (NumberFormatException e) {
+			throw new PropertyTypeException();
+		}
 	}
 
 	@Override
-	public int getInteger(String name) {
-		return this.mixed.getInteger(name);
+	public long getLong(final String name) {
+		if (!this.properties.containsKey(name))
+			throw new PropertyMissingException();
+
+		try {
+			return Long.parseLong(this.properties.get(name));
+		} catch (NumberFormatException e) {
+			throw new PropertyTypeException();
+		}
 	}
 
 	@Override
-	public float getFloat(String name) {
-		return this.mixed.getFloat(name);
+	public double getDouble(final String name) {
+		if (!this.properties.containsKey(name))
+			throw new PropertyMissingException();
+
+		try {
+			return Double.parseDouble(this.properties.get(name));
+		} catch (NumberFormatException e) {
+			throw new PropertyTypeException();
+		}
 	}
 
 	@Override
-	public long getLong(String name) {
-		return this.mixed.getLong(name);
-	}
-
-	@Override
-	public double getDouble(String name) {
-		return this.mixed.getDouble(name);
-	}
-
-	@Override
-	public void setProperty(String name, Object o) {
-		this.mixed.setProperty(name, o);
+	public void setProperty(final String name, Object o) {
+		this.properties.put(name, o.toString());
 	}
 
 	@Override
 	public Map<String, String> getAllProperties() {
-		return this.mixed.getAllProperties();
+		return this.properties;
+	}
+
+	public static ConfigProperty fromStream(final InputStream stream) {
+		final ConfigProperty props = new ConfigProperty();
+		loadStream(props, stream);
+		return props;
+	}
+
+	public static boolean loadStream(final IPropertyHolder properties, final InputStream stream) {
+		try {
+			final Reader reader = new InputStreamReader(stream);
+			final Properties props = new Properties();
+			props.load(reader);
+
+			for (final Entry<Object, Object> entry : props.entrySet()) {
+				properties.setProperty(entry.getKey().toString(), entry.getValue().toString());
+
+			}
+
+		} catch (final IOException e) {
+			e.printStackTrace();
+			return false;
+		}
+
+		return true;
+
 	}
 
 }

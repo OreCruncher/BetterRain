@@ -45,8 +45,7 @@ import org.blockartistry.mod.DynSurround.client.footsteps.mcpackage.interfaces.I
 import org.blockartistry.mod.DynSurround.client.footsteps.parsers.AcousticsJsonReader;
 import org.blockartistry.mod.DynSurround.client.footsteps.parsers.BlockMapReader;
 import org.blockartistry.mod.DynSurround.client.footsteps.parsers.PrimitiveMapReader;
-import org.blockartistry.mod.DynSurround.client.footsteps.util.property.simple.InputStreamConfigProperty;
-
+import org.blockartistry.mod.DynSurround.client.footsteps.util.property.simple.ConfigProperty;
 import com.google.common.collect.ImmutableList;
 
 import cpw.mods.fml.relauncher.Side;
@@ -107,20 +106,14 @@ public class Footsteps implements IResourceManagerReloadListener, IClientEffectH
 		final IVariator var = new NormalVariator();
 
 		try {
-			final InputStreamConfigProperty config = new InputStreamConfigProperty();
-			config.loadStream(this.dealer.openVariator(null));
-			var.loadConfig(config);
+			var.loadConfig(ConfigProperty.fromStream(this.dealer.openVariator(null)));
 		} catch (final Exception ex) {
 			;
 		}
 
 		for (final ResourcePackRepository.Entry pack : repo) {
 			try {
-				// TODO: Loading config from json?
-				final InputStreamConfigProperty config = new InputStreamConfigProperty();
-				config.loadStream(this.dealer.openVariator(pack.getResourcePack()));
-
-				var.loadConfig(config);
+				var.loadConfig(ConfigProperty.fromStream(this.dealer.openVariator(pack.getResourcePack())));
 			} catch (Exception e) {
 				ModLog.debug("No variator found in " + pack.getResourcePackName() + ": " + e.getMessage());
 			}
@@ -133,20 +126,15 @@ public class Footsteps implements IResourceManagerReloadListener, IClientEffectH
 		final IBlockMap blockMap = new LegacyCapableBlockMap();
 
 		try {
-			final InputStreamConfigProperty config = new InputStreamConfigProperty();
-			config.loadStream(this.dealer.openBlockMap(null));
-			new BlockMapReader().setup(config, blockMap);
+			new BlockMapReader().setup(ConfigProperty.fromStream(this.dealer.openBlockMap(null)), blockMap);
 		} catch (final Exception ex) {
 			;
 		}
 
 		for (ResourcePackRepository.Entry pack : repo) {
 			try {
-				// TODO: Loading config from json?
-				InputStreamConfigProperty blockSound = new InputStreamConfigProperty();
-				blockSound.loadStream(this.dealer.openBlockMap(pack.getResourcePack()));
-
-				new BlockMapReader().setup(blockSound, blockMap);
+				new BlockMapReader().setup(ConfigProperty.fromStream(this.dealer.openBlockMap(pack.getResourcePack())),
+						blockMap);
 			} catch (IOException e) {
 				ModLog.debug("No blockmap found in " + pack.getResourcePackName() + ": " + e.getMessage());
 			}
@@ -159,20 +147,15 @@ public class Footsteps implements IResourceManagerReloadListener, IClientEffectH
 		final IPrimitiveMap primitiveMap = new BasicPrimitiveMap();
 
 		try {
-			final InputStreamConfigProperty config = new InputStreamConfigProperty();
-			config.loadStream(this.dealer.openPrimitiveMap(null));
-			new PrimitiveMapReader().setup(config, primitiveMap);
+			new PrimitiveMapReader().setup(ConfigProperty.fromStream(this.dealer.openPrimitiveMap(null)), primitiveMap);
 		} catch (final Exception ex) {
 			;
 		}
 
 		for (final ResourcePackRepository.Entry pack : repo) {
 			try {
-				// TODO: Loading config from json?
-				InputStreamConfigProperty primitiveSound = new InputStreamConfigProperty();
-				primitiveSound.loadStream(this.dealer.openPrimitiveMap(pack.getResourcePack()));
-
-				new PrimitiveMapReader().setup(primitiveSound, primitiveMap);
+				new PrimitiveMapReader().setup(
+						ConfigProperty.fromStream(this.dealer.openPrimitiveMap(pack.getResourcePack())), primitiveMap);
 			} catch (IOException e) {
 				ModLog.debug("No primitivemap found in " + pack.getResourcePackName() + ": " + e.getMessage());
 			}
