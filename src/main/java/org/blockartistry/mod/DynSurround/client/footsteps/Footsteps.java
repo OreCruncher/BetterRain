@@ -45,15 +45,13 @@ import org.blockartistry.mod.DynSurround.client.footsteps.mcpackage.interfaces.I
 import org.blockartistry.mod.DynSurround.client.footsteps.parsers.AcousticsJsonReader;
 import org.blockartistry.mod.DynSurround.client.footsteps.parsers.Register;
 import org.blockartistry.mod.DynSurround.client.footsteps.util.property.simple.ConfigProperty;
-import com.google.common.collect.ImmutableList;
-
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.IReloadableResourceManager;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.client.resources.IResourceManagerReloadListener;
-import net.minecraft.client.resources.ResourcePackRepository;
+import net.minecraft.client.resources.IResourcePack;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 
@@ -78,15 +76,7 @@ public class Footsteps implements IResourceManagerReloadListener, IClientEffectH
 	public void reloadEverything() {
 		this.isolator = new PFIsolator();
 
-		final List<ResourcePackRepository.Entry> repo = ImmutableList.of();
-		/*
-		 * final List<ResourcePackRepository.Entry> repo =
-		 * this.dealer.findResourcePacks(); if (repo.size() == 0) { ModLog.info(
-		 * "Footsteps didn't find any compatible resource pack."); }
-		 * 
-		 * for (final ResourcePackRepository.Entry pack : repo) { ModLog.debug(
-		 * "Will load: " + pack.getResourcePackName()); }
-		 */
+		final List<IResourcePack> repo = this.dealer.findResourcePacks();
 
 		reloadBlockMap(repo);
 		reloadPrimitiveMap(repo);
@@ -101,92 +91,62 @@ public class Footsteps implements IResourceManagerReloadListener, IClientEffectH
 		 */
 	}
 
-	private void reloadVariator(final List<ResourcePackRepository.Entry> repo) {
+	private void reloadVariator(final List<IResourcePack> repo) {
 		final IVariator var = new NormalVariator();
 
-		try {
-			var.loadConfig(ConfigProperty.fromStream(this.dealer.openVariator(null)));
-		} catch (final Exception ex) {
-			;
-		}
-
-		for (final ResourcePackRepository.Entry pack : repo) {
+		for (final IResourcePack pack : repo) {
 			try {
-				var.loadConfig(ConfigProperty.fromStream(this.dealer.openVariator(pack.getResourcePack())));
-			} catch (Exception e) {
-				ModLog.debug("No variator found in " + pack.getResourcePackName() + ": " + e.getMessage());
+				var.loadConfig(ConfigProperty.fromStream(this.dealer.openVariator(pack)));
+			} catch (final Exception e) {
+				ModLog.debug("Unable to load variator data from pack %s", pack.getPackName());;
 			}
 		}
 
 		this.isolator.setVariator(var);
 	}
 
-	private void reloadBlockMap(final List<ResourcePackRepository.Entry> repo) {
+	private void reloadBlockMap(final List<IResourcePack> repo) {
 		final IBlockMap blockMap = new LegacyCapableBlockMap();
 
-		try {
-			Register.setup(ConfigProperty.fromStream(this.dealer.openBlockMap(null)), blockMap);
-		} catch (final Exception ex) {
-			;
-		}
-
-		for (ResourcePackRepository.Entry pack : repo) {
+		for (final IResourcePack pack : repo) {
 			try {
-				Register.setup(ConfigProperty.fromStream(this.dealer.openBlockMap(pack.getResourcePack())), blockMap);
-			} catch (IOException e) {
-				ModLog.debug("No blockmap found in " + pack.getResourcePackName() + ": " + e.getMessage());
+				Register.setup(ConfigProperty.fromStream(this.dealer.openBlockMap(pack)), blockMap);
+			} catch (final IOException e) {
+				ModLog.debug("Unable to load block map data from pack %s", pack.getPackName());;
 			}
 		}
 
 		this.isolator.setBlockMap(blockMap);
 	}
 
-	private void reloadPrimitiveMap(final List<ResourcePackRepository.Entry> repo) {
+	private void reloadPrimitiveMap(final List<IResourcePack> repo) {
 		final IPrimitiveMap primitiveMap = new BasicPrimitiveMap();
 
-		try {
-			Register.setup(ConfigProperty.fromStream(this.dealer.openPrimitiveMap(null)), primitiveMap);
-		} catch (final Exception ex) {
-			;
-		}
-
-		for (final ResourcePackRepository.Entry pack : repo) {
+		for (final IResourcePack pack : repo) {
 			try {
-				Register.setup(ConfigProperty.fromStream(this.dealer.openPrimitiveMap(pack.getResourcePack())),
+				Register.setup(ConfigProperty.fromStream(this.dealer.openPrimitiveMap(pack)),
 						primitiveMap);
-			} catch (IOException e) {
-				ModLog.debug("No primitivemap found in " + pack.getResourcePackName() + ": " + e.getMessage());
+			} catch (final IOException e) {
+				ModLog.debug("Unable to load primitive map data from pack %s", pack.getPackName());;
 			}
 		}
 
 		this.isolator.setPrimitiveMap(primitiveMap);
 	}
 
-	private void reloadAcoustics(final List<ResourcePackRepository.Entry> repo) {
+	private void reloadAcoustics(final List<IResourcePack> repo) {
 		AcousticsManager acoustics = new AcousticsManager(this.isolator);
 		Scanner scanner = null;
 
-		try {
-			scanner = new Scanner(this.dealer.openAcoustics(null));
-			final String jasonString = scanner.useDelimiter("\\Z").next();
-
-			new AcousticsJsonReader("").parseJSON(jasonString, acoustics);
-		} catch (final Exception ex) {
-			;
-		} finally {
-			if (scanner != null)
-				scanner.close();
-		}
-
-		for (final ResourcePackRepository.Entry pack : repo) {
+		for (final IResourcePack pack : repo) {
 
 			try {
-				scanner = new Scanner(this.dealer.openAcoustics(pack.getResourcePack()));
+				scanner = new Scanner(this.dealer.openAcoustics(pack));
 				final String jasonString = scanner.useDelimiter("\\Z").next();
 
 				new AcousticsJsonReader("").parseJSON(jasonString, acoustics);
-			} catch (IOException e) {
-				ModLog.debug("No acoustics found in " + pack.getResourcePackName() + ": " + e.getMessage());
+			} catch (final IOException e) {
+				ModLog.debug("Unable to load acoustic data from pack %s", pack.getPackName());;
 			} finally {
 				if (scanner != null)
 					scanner.close();
