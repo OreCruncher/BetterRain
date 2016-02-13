@@ -25,6 +25,7 @@
 package org.blockartistry.mod.DynSurround.client.footsteps;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Scanner;
 
@@ -95,10 +96,20 @@ public class Footsteps implements IResourceManagerReloadListener, IClientEffectH
 		final IVariator var = new NormalVariator();
 
 		for (final IResourcePack pack : repo) {
+			InputStream stream = null;
 			try {
-				var.loadConfig(ConfigProperty.fromStream(this.dealer.openVariator(pack)));
+				stream = this.dealer.openVariator(pack);
+				if (stream != null)
+					var.loadConfig(ConfigProperty.fromStream(stream));
 			} catch (final Exception e) {
-				ModLog.debug("Unable to load variator data from pack %s", pack.getPackName());;
+				ModLog.debug("Unable to load variator data from pack %s", pack.getPackName());
+			} finally {
+				if (stream != null)
+					try {
+						stream.close();
+					} catch (final IOException e) {
+						;
+					}
 			}
 		}
 
@@ -109,10 +120,20 @@ public class Footsteps implements IResourceManagerReloadListener, IClientEffectH
 		final IBlockMap blockMap = new LegacyCapableBlockMap();
 
 		for (final IResourcePack pack : repo) {
+			InputStream stream = null;
 			try {
-				Register.setup(ConfigProperty.fromStream(this.dealer.openBlockMap(pack)), blockMap);
+				stream = this.dealer.openBlockMap(pack);
+				if (stream != null)
+					Register.setup(ConfigProperty.fromStream(stream), blockMap);
 			} catch (final IOException e) {
-				ModLog.debug("Unable to load block map data from pack %s", pack.getPackName());;
+				ModLog.debug("Unable to load block map data from pack %s", pack.getPackName());
+			} finally {
+				if (stream != null)
+					try {
+						stream.close();
+					} catch (final IOException e) {
+						;
+					}
 			}
 		}
 
@@ -123,11 +144,20 @@ public class Footsteps implements IResourceManagerReloadListener, IClientEffectH
 		final IPrimitiveMap primitiveMap = new BasicPrimitiveMap();
 
 		for (final IResourcePack pack : repo) {
+			InputStream stream = null;
 			try {
-				Register.setup(ConfigProperty.fromStream(this.dealer.openPrimitiveMap(pack)),
-						primitiveMap);
+				stream = this.dealer.openPrimitiveMap(pack);
+				if (stream != null)
+					Register.setup(ConfigProperty.fromStream(stream), primitiveMap);
 			} catch (final IOException e) {
-				ModLog.debug("Unable to load primitive map data from pack %s", pack.getPackName());;
+				ModLog.debug("Unable to load primitive map data from pack %s", pack.getPackName());
+			} finally {
+				if (stream != null)
+					try {
+						stream.close();
+					} catch (final IOException e) {
+						;
+					}
 			}
 		}
 
@@ -137,19 +167,28 @@ public class Footsteps implements IResourceManagerReloadListener, IClientEffectH
 	private void reloadAcoustics(final List<IResourcePack> repo) {
 		AcousticsManager acoustics = new AcousticsManager(this.isolator);
 		Scanner scanner = null;
+		InputStream stream = null;
 
 		for (final IResourcePack pack : repo) {
-
 			try {
-				scanner = new Scanner(this.dealer.openAcoustics(pack));
-				final String jasonString = scanner.useDelimiter("\\Z").next();
+				stream = this.dealer.openAcoustics(pack);
+				if (stream != null) {
+					scanner = new Scanner(stream);
+					final String jasonString = scanner.useDelimiter("\\Z").next();
 
-				new AcousticsJsonReader("").parseJSON(jasonString, acoustics);
+					new AcousticsJsonReader("").parseJSON(jasonString, acoustics);
+				}
 			} catch (final IOException e) {
-				ModLog.debug("Unable to load acoustic data from pack %s", pack.getPackName());;
+				ModLog.debug("Unable to load acoustic data from pack %s", pack.getPackName());
 			} finally {
-				if (scanner != null)
-					scanner.close();
+				try {
+					if (scanner != null)
+						scanner.close();
+					if (stream != null)
+						stream.close();
+				} catch (final IOException e) {
+					;
+				}
 			}
 		}
 

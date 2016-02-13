@@ -121,6 +121,9 @@ public class ConfigProperty {
 	}
 
 	public static boolean loadStream(final ConfigProperty properties, final InputStream stream) {
+		if(stream == null)
+			return false;
+		
 		try {
 			final Reader reader = new InputStreamReader(stream);
 			final Properties props = new Properties();

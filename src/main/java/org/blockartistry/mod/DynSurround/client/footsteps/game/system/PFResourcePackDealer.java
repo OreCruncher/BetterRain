@@ -33,7 +33,8 @@ import java.util.Set;
 
 import org.blockartistry.mod.DynSurround.ModLog;
 import org.blockartistry.mod.DynSurround.Module;
-
+import cpw.mods.fml.common.Loader;
+import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
@@ -56,12 +57,24 @@ public class PFResourcePackDealer {
 	// Resource pack reference for the built in pack.
 	private static class DefaultPack implements IResourcePack {
 
+		private final String mod;
+
+		public DefaultPack() {
+			this.mod = null;
+		}
+
+		public DefaultPack(final String mod) {
+			this.mod = mod;
+		}
+
 		@Override
 		public InputStream getInputStream(final ResourceLocation loc) throws IOException {
 			final StringBuilder builder = new StringBuilder();
 			builder.append("/assets/dsurround/data/");
 			builder.append(loc.getResourceDomain());
 			builder.append('/');
+			if (this.mod != null)
+				builder.append(this.mod).append('_');
 			builder.append(loc.getResourcePath());
 			return Module.class.getResourceAsStream(builder.toString());
 		}
@@ -89,7 +102,9 @@ public class PFResourcePackDealer {
 
 		@Override
 		public String getPackName() {
-			return "DEFAULT";
+			if (this.mod == null)
+				return "DEFAULT";
+			return "DEFAULT: " + this.mod;
 		}
 
 	}
@@ -101,6 +116,12 @@ public class PFResourcePackDealer {
 
 		final List<IResourcePack> foundEntries = new ArrayList<IResourcePack>();
 		foundEntries.add(new DefaultPack());
+
+		// Tack on loaded mods
+		// Check for each of the loaded mods to see if there is
+		// a config file embedded.
+		for (final ModContainer mod : Loader.instance().getActiveModList())
+			foundEntries.add(new DefaultPack(mod.getModId()));
 
 		for (final ResourcePackRepository.Entry pack : repo) {
 			ModLog.debug("Resource Pack: %s", pack.getResourcePackName());
