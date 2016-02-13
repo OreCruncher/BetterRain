@@ -44,8 +44,6 @@ public interface ILibrary {
 	/**
 	 * Plays an acoustic with additional options.
 	 */
-	public void playAcoustic(final Object location, final Association acousticName, final EventType event, final IOptions options);
-	
 	public void playAcoustic(final Object location, final String acousticName, final EventType event, final IOptions options);
 	
 	/**
