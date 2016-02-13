@@ -174,21 +174,6 @@
 		},
 		{
 			"blocks":[
-				"minecraft:nether_wart"
-			],
-			"chance":100,
-			"sounds":[
-				{
-					"sound":"minecraft:random.pop",
-					"volume":0.3,
-					"variable":true
-				}
-				
-			]
-			
-		},
-		{
-			"blocks":[
 				"minecraft:tallgrass"
 			],
 			"chance":25000,
