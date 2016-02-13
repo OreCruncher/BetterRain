@@ -28,7 +28,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
-public interface IPrimitiveMap {
+public interface IPrimitiveMap extends IRegistration {
 	/**
 	 * This will return null if the primitive is not defined.
 	 */
@@ -39,8 +39,4 @@ public interface IPrimitiveMap {
 	 */
 	public String getPrimitiveMapSubstrate(final String primitive, final String substrate);
 
-	/**
-	 * Register an primitivemap entry.
-	 */
-	public void register(final String key, final String value);
 }

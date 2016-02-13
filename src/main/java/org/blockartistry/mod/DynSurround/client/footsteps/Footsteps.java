@@ -43,8 +43,7 @@ import org.blockartistry.mod.DynSurround.client.footsteps.mcpackage.interfaces.I
 import org.blockartistry.mod.DynSurround.client.footsteps.mcpackage.interfaces.IPrimitiveMap;
 import org.blockartistry.mod.DynSurround.client.footsteps.mcpackage.interfaces.IVariator;
 import org.blockartistry.mod.DynSurround.client.footsteps.parsers.AcousticsJsonReader;
-import org.blockartistry.mod.DynSurround.client.footsteps.parsers.BlockMapReader;
-import org.blockartistry.mod.DynSurround.client.footsteps.parsers.PrimitiveMapReader;
+import org.blockartistry.mod.DynSurround.client.footsteps.parsers.Register;
 import org.blockartistry.mod.DynSurround.client.footsteps.util.property.simple.ConfigProperty;
 import com.google.common.collect.ImmutableList;
 
@@ -126,15 +125,14 @@ public class Footsteps implements IResourceManagerReloadListener, IClientEffectH
 		final IBlockMap blockMap = new LegacyCapableBlockMap();
 
 		try {
-			new BlockMapReader().setup(ConfigProperty.fromStream(this.dealer.openBlockMap(null)), blockMap);
+			Register.setup(ConfigProperty.fromStream(this.dealer.openBlockMap(null)), blockMap);
 		} catch (final Exception ex) {
 			;
 		}
 
 		for (ResourcePackRepository.Entry pack : repo) {
 			try {
-				new BlockMapReader().setup(ConfigProperty.fromStream(this.dealer.openBlockMap(pack.getResourcePack())),
-						blockMap);
+				Register.setup(ConfigProperty.fromStream(this.dealer.openBlockMap(pack.getResourcePack())), blockMap);
 			} catch (IOException e) {
 				ModLog.debug("No blockmap found in " + pack.getResourcePackName() + ": " + e.getMessage());
 			}
@@ -147,15 +145,15 @@ public class Footsteps implements IResourceManagerReloadListener, IClientEffectH
 		final IPrimitiveMap primitiveMap = new BasicPrimitiveMap();
 
 		try {
-			new PrimitiveMapReader().setup(ConfigProperty.fromStream(this.dealer.openPrimitiveMap(null)), primitiveMap);
+			Register.setup(ConfigProperty.fromStream(this.dealer.openPrimitiveMap(null)), primitiveMap);
 		} catch (final Exception ex) {
 			;
 		}
 
 		for (final ResourcePackRepository.Entry pack : repo) {
 			try {
-				new PrimitiveMapReader().setup(
-						ConfigProperty.fromStream(this.dealer.openPrimitiveMap(pack.getResourcePack())), primitiveMap);
+				Register.setup(ConfigProperty.fromStream(this.dealer.openPrimitiveMap(pack.getResourcePack())),
+						primitiveMap);
 			} catch (IOException e) {
 				ModLog.debug("No primitivemap found in " + pack.getResourcePackName() + ": " + e.getMessage());
 			}
