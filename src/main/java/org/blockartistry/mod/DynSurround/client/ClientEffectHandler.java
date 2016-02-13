@@ -59,7 +59,7 @@ public class ClientEffectHandler {
 		dimensionNamePatterns.add("^The End");
 		dimensionNamePatterns.add("^Tardis Interior");
 	}
-	
+
 	public static void register(final IClientEffectHandler handler) {
 		effectHandlers.add(handler);
 		if (handler.hasEvents()) {
@@ -78,9 +78,9 @@ public class ClientEffectHandler {
 		register(new FogEffectHandler());
 		register(new BlockEffectHandler());
 
-		if(ModOptions.getBlockedSounds().length > 0)
+		if (ModOptions.getBlockedSounds().length > 0 || ModOptions.getCulledSounds().length > 0)
 			register(new SoundBlockHandler());
-		
+
 		if (ModOptions.getEnableFootstepSounds())
 			register(new Footsteps());
 
@@ -111,12 +111,12 @@ public class ClientEffectHandler {
 	}
 
 	private static boolean okToHook(final WorldProvider provider) {
-		if(provider.getHasNoSky())
+		if (provider.getHasNoSky())
 			return false;
-		
+
 		final String name = provider.getDimensionName();
-		for(final String pattern: dimensionNamePatterns)
-			if(Pattern.matches(pattern, name))
+		for (final String pattern : dimensionNamePatterns)
+			if (Pattern.matches(pattern, name))
 				return false;
 		return true;
 	}

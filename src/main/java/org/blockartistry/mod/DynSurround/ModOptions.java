@@ -126,6 +126,9 @@ public final class ModOptions {
 	protected static float footstepsSoundFactor = 0.3F;
 	protected static final String CONFIG_SOUND_CULL_THRESHOLD = "Sound Culling Threshold";
 	protected static int soundCullingThreshold = 20;
+	protected static final String CONFIG_CULLED_SOUNDS = "Culled Sounds";
+	protected static String[] culledSounds = { "^minecraft:liquid.*", "minecraft:mob.sheep.say",
+			"minecraft:mob.chicken.say", "minecraft:mob.cow.say", "minecraft:mob.pig.say" };
 	protected static final String CONFIG_BLOCKED_SOUNDS = "Blocked Sounds";
 	protected static String[] blockedSounds = {};
 
@@ -301,6 +304,9 @@ public final class ModOptions {
 		comment = "Sounds to block from playing";
 		blockedSounds = config.getStringList(CONFIG_BLOCKED_SOUNDS, CATEGORY_SOUND, blockedSounds, comment);
 
+		comment = "Sounds to cull from frequent playing";
+		culledSounds = config.getStringList(CONFIG_CULLED_SOUNDS, CATEGORY_SOUND, culledSounds, comment);
+
 		// CATEGORY: player.potion hud
 		comment = "Enable display of potion icons in display";
 		potionHudEnabled = config.getBoolean(CONFIG_POTION_HUD_ENABLE, CATEGORY_POTION_HUD, potionHudEnabled, comment);
@@ -471,10 +477,14 @@ public final class ModOptions {
 		return soundCullingThreshold;
 	}
 
+	public static String[] getCulledSounds() {
+		return culledSounds;
+	}
+
 	public static String[] getBlockedSounds() {
 		return blockedSounds;
 	}
-	
+
 	public static boolean getSuppressPotionParticleEffect() {
 		return suppressPotionParticles;
 	}
