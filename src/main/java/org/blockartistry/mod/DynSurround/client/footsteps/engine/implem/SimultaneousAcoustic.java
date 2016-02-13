@@ -38,7 +38,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
 public class SimultaneousAcoustic implements IAcoustic {
-	protected List<IAcoustic> acoustics;
+	protected final List<IAcoustic> acoustics;
 
 	public SimultaneousAcoustic(final Collection<IAcoustic> acoustics) {
 		this.acoustics = new ArrayList<IAcoustic>(acoustics);
