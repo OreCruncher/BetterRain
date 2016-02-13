@@ -56,11 +56,11 @@ public class EventSelectorAcoustics implements INamedAcoustic {
 	@Override
 	public void playSound(final ISoundPlayer player, final Object location, final EventType event,
 			final IOptions inputOptions) {
-		if (this.pairs.containsKey(event)) {
-			this.pairs.get(event).playSound(player, location, event, inputOptions);
-		} else if (event.canTransition()) {
+		final IAcoustic acoustic = this.pairs.get(event);
+		if(acoustic != null)
+			acoustic.playSound(player, location, event, inputOptions);
+		else if(event.canTransition())
 			playSound(player, location, event.getTransitionDestination(), inputOptions);
-		}
 	}
 
 	public void setAcousticPair(final EventType type, final IAcoustic acoustic) {
