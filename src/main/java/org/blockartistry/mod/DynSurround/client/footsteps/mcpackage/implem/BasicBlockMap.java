@@ -43,7 +43,7 @@ import net.minecraft.block.Block;
 
 @SideOnly(Side.CLIENT)
 public class BasicBlockMap implements IBlockMap {
-	private static final Pattern pattern = Pattern.compile("^([\\w|]+)>([\\w\\.]+)\\^?(\\d+)?\\+?(\\w+)?");
+	private static final Pattern pattern = Pattern.compile("([^:]+)>([^^+]+)\\^?(\\d+)?\\+?(\\w+)?");
 
 	private final Map<Block, TIntObjectHashMap<String>> metaMap = new TCustomHashMap<Block, TIntObjectHashMap<String>>(
 			IdentityHashingStrategy.INSTANCE);
