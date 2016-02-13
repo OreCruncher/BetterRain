@@ -46,61 +46,52 @@ public class Association {
 	public Association() {
 	}
 	
-	public Association(final String raw) {
-		setAssociation(raw);
-	}
-	
 	public Association(final Block block, final int meta, final int xx, final int yy, final int zz) {
-		init(block, meta, xx, yy, zz);
-	}
-	
-	public Association init(final Block block, final int meta, final int xx, final int yy, final int zz) {
 		this.block = block;
 		this.meta = meta;
-		x = xx;
-		y = yy;
-		z = zz;
-		return this;
+		this.x = xx;
+		this.y = yy;
+		this.z = zz;
 	}
 	
 	public String getData() {
-		return data;
+		return this.data;
 	}
 	
 	public Association setAssociation(final String association) {
-		data = association;
-		noAssociation = false;
+		this.data = association;
+		this.noAssociation = false;
 		return this;
 	}
 	
 	public Association setNoAssociation() {
-		noAssociation = true;
+		this.noAssociation = true;
 		return this;
 	}
 	
 	public boolean getNoAssociation() {
-		return noAssociation;
+		return this.noAssociation;
 	}
 	
 	public Association setPrimitive(final String primative) {
-		data = primative;
-		isPrimative = true;
+		this.data = primative;
+		this.isPrimative = true;
 		return this;
 	}
 	
 	public boolean isPrimative() {
-		return isPrimative;
+		return this.isPrimative;
 	}
 	
 	public Block getBlock() {
-		return block;
+		return this.block;
 	}
 	
 	public int getMeta() {
-		return meta;
+		return this.meta;
 	}
 	
 	public boolean isNotEmitter() {
-		return data != null && data.contentEquals("NOT_EMITTER");
+		return this.data != null && this.data.equals("NOT_EMITTER");
 	}
 }
