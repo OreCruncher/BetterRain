@@ -225,7 +225,7 @@ public class PFSolver implements ISolver {
 		}
 
 		if (association != null) {
-			if (association.contentEquals("NOT_EMITTER")) {
+			if (association.equals("NOT_EMITTER")) {
 				// if (in.getBlock() != Blocks.air) { // air block
 				// PFLog.debugf("Not emitter for %0 : %1", in);
 				// }
@@ -240,7 +240,7 @@ public class PFSolver implements ISolver {
 		} else {
 			String primitive = resolvePrimitive(in.getBlock());
 			if (primitive != null) {
-				if (primitive.contentEquals("NOT_EMITTER")) {
+				if (primitive.equals("NOT_EMITTER")) {
 					// PFLog.debugf("Primitive for %0 : %1 : %2 is NOT_EMITTER!
 					// Following behavior is uncertain.", in, primitive);
 					return null;
@@ -384,7 +384,7 @@ public class PFSolver implements ISolver {
 		 */
 
 		if (found && association != null) {
-			return association.contentEquals("NOT_EMITTER") ? null : (new Association()).setAssociation(association);
+			return association.equals("NOT_EMITTER") ? null : (new Association()).setAssociation(association);
 		}
 		return null;
 	}
