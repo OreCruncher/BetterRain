@@ -29,7 +29,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
-public interface IBlockMap {
+public interface IBlockMap extends IRegistration {
 	
 	/**
 	 * This will return null if the block is not defined, and NOT_EMITTER if the block is a non-emitting block,
@@ -41,11 +41,6 @@ public interface IBlockMap {
 	 * This will return null if the substrate does not resolve in the selected carpet.
 	 */
 	public String getBlockMapSubstrate(final Block block, final int meta, final String substrate);
-	
-	/**
-	 * Register a blockmap entry.
-	 */
-	public void register(final String key, final String value);
 	
 	/**
 	 * Checks if a blockmap entry exists for the given block.

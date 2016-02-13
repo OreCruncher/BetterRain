@@ -28,22 +28,25 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.blockartistry.mod.DynSurround.ModLog;
-import org.blockartistry.mod.DynSurround.client.footsteps.mcpackage.interfaces.IPrimitiveMap;
+import org.blockartistry.mod.DynSurround.client.footsteps.mcpackage.interfaces.IRegistration;
 import org.blockartistry.mod.DynSurround.client.footsteps.util.property.contract.IPropertyHolder;
 
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
-public class PrimitiveMapReader {
+public final class Register {
 
-	public void setup(final IPropertyHolder primitiveSound, final IPrimitiveMap primitiveMap) {
-		Map<String, String> properties = primitiveSound.getAllProperties();
+	private Register() {
+	}
+
+	public static void setup(final IPropertyHolder props, final IRegistration registration) {
+		final Map<String, String> properties = props.getAllProperties();
 		for (final Entry<String, String> entry : properties.entrySet()) {
 			try {
-				primitiveMap.register(entry.getKey(), entry.getValue());
+				registration.register(entry.getKey(), entry.getValue());
 			} catch (final Exception e) {
-				ModLog.info("Error when registering primitive " + entry.getKey() + ": " + e.getMessage());
+				ModLog.info("Error making registration " + entry.getKey() + ": " + e.getMessage());
 			}
 		}
 	}
