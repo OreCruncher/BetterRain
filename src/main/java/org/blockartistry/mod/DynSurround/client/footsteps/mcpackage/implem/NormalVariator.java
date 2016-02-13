@@ -30,7 +30,7 @@ import java.util.Set;
 
 import org.blockartistry.mod.DynSurround.ModLog;
 import org.blockartistry.mod.DynSurround.client.footsteps.mcpackage.interfaces.IVariator;
-import org.blockartistry.mod.DynSurround.client.footsteps.util.property.contract.IPropertyHolder;
+import org.blockartistry.mod.DynSurround.client.footsteps.util.property.simple.ConfigProperty;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -86,7 +86,7 @@ public class NormalVariator implements IVariator {
 	// public float WING_SPEED_MIN = 0.2f;
 
 	@Override
-	public void loadConfig(final IPropertyHolder config) {
+	public void loadConfig(final ConfigProperty config) {
 		final Set<String> keysFromConfig = config.getAllProperties().keySet();
 		final Set<String> keys = new HashSet<String>();
 		for (final String key : keysFromConfig) {
