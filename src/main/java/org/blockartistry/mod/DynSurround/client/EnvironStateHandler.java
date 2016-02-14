@@ -39,15 +39,12 @@ import org.blockartistry.mod.DynSurround.util.PlayerUtils;
 import org.blockartistry.mod.DynSurround.util.XorShiftRandom;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityBoat;
 import net.minecraft.entity.item.EntityMinecart;
 import net.minecraft.entity.passive.EntityHorse;
 import net.minecraft.entity.passive.EntityPig;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemAxe;
 import net.minecraft.item.ItemBow;
@@ -59,8 +56,8 @@ import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingJumpEvent;
-import net.minecraftforge.event.entity.player.ArrowNockEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
+import net.minecraftforge.event.entity.player.PlayerUseItemEvent;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -411,14 +408,12 @@ public class EnvironStateHandler implements IClientEffectHandler {
 	}
 
 	@SubscribeEvent
-	public void onArrowKnock(final ArrowNockEvent event) {
+	public void onItemUse(final PlayerUseItemEvent.Start event) {
 		if (BOW_PULL == null || !event.entityPlayer.worldObj.isRemote)
 			return;
 
-		if (event.result.getItem() instanceof ItemBow) {
-			if (event.entityPlayer.inventory.hasItem(Items.arrow)
-					|| EnchantmentHelper.getEnchantmentLevel(Enchantment.infinity.effectId, event.result) > 0)
-				SoundManager.playSoundAtPlayer(EnvironState.getPlayer(), BOW_PULL);
+		if (event.item.getItem() instanceof ItemBow) {
+			SoundManager.playSoundAtPlayer(EnvironState.getPlayer(), BOW_PULL);
 		}
 	}
 
