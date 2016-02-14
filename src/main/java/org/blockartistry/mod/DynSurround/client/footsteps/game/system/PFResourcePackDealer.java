@@ -50,9 +50,9 @@ public class PFResourcePackDealer {
 	// Used for existing packs that have been configured for Presence Footsteps
 	private final ResourceLocation pf_pack = new ResourceLocation("footsteps", "pf_pack.json");
 	private final ResourceLocation acoustics = new ResourceLocation("footsteps", "acoustics.json");
-	private final ResourceLocation blockmap = new ResourceLocation("footsteps", "blockmap.cfg");
-	private final ResourceLocation primitivemap = new ResourceLocation("footsteps", "primitivemap.cfg");
-	private final ResourceLocation variator = new ResourceLocation("footsteps", "variator.cfg");
+	private final ResourceLocation blockmap = new ResourceLocation("footsteps", "blockmap.json");
+	private final ResourceLocation primitivemap = new ResourceLocation("footsteps", "primitivemap.json");
+	private final ResourceLocation variator = new ResourceLocation("footsteps", "variator.json");
 
 	// Resource pack reference for the built in pack.
 	private static class DefaultPack implements IResourcePack {
