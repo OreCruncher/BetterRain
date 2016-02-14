@@ -24,14 +24,10 @@
 
 package org.blockartistry.mod.DynSurround.client.footsteps.util.property.simple;
 
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
-import java.util.Map.Entry;
+import org.blockartistry.mod.DynSurround.util.JsonUtils;
 
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.fml.relauncher.Side;
@@ -120,27 +116,12 @@ public class ConfigProperty {
 		return props;
 	}
 
+	@SuppressWarnings("unchecked")
 	public static boolean loadStream(final ConfigProperty properties, final InputStream stream) {
 		if(stream == null)
 			return false;
-		
-		try {
-			final Reader reader = new InputStreamReader(stream);
-			final Properties props = new Properties();
-			props.load(reader);
-
-			for (final Entry<Object, Object> entry : props.entrySet()) {
-				properties.setProperty(entry.getKey().toString(), entry.getValue().toString());
-
-			}
-
-		} catch (final IOException e) {
-			e.printStackTrace();
-			return false;
-		}
-
+		properties.properties = JsonUtils.load(stream, properties.properties.getClass());
 		return true;
-
 	}
 
 }

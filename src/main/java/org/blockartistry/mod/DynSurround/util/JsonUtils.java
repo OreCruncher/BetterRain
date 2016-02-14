@@ -72,7 +72,7 @@ public class JsonUtils {
 		return (T) clazz.newInstance();
 	}
 
-	protected static <T> T load(final InputStream stream, final Class<T> clazz) {
+	public static <T> T load(final InputStream stream, final Class<T> clazz) {
 		InputStreamReader reader = null;
 		JsonReader reader2 = null;
 

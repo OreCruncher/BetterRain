@@ -44,7 +44,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
 public class BasicBlockMap implements IBlockMap {
-	private static final Pattern pattern = Pattern.compile("([^:]+)>([^^+]+)\\^?(\\d+)?\\+?(\\w+)?");
+	private static final Pattern pattern = Pattern.compile("([^:]+:[^^+]+)\\^?(\\d+)?\\+?(\\w+)?");
 
 	private final Map<Block, TIntObjectHashMap<String>> metaMap = new TCustomHashMap<Block, TIntObjectHashMap<String>>(
 			IdentityHashingStrategy.INSTANCE);
@@ -83,10 +83,10 @@ public class BasicBlockMap implements IBlockMap {
 		final Matcher matcher = pattern.matcher(key);
 		if (matcher.matches()) {
 			final Block block = GameData.getBlockRegistry()
-					.getObject(new ResourceLocation(matcher.group(1), matcher.group(2)));
+					.getObject(new ResourceLocation(matcher.group(1)));
 			if (block != null) {
-				final int meta = matcher.group(3) == null ? -1 : Integer.parseInt(matcher.group(3));
-				final String substrate = matcher.group(4);
+				final int meta = matcher.group(2) == null ? -1 : Integer.parseInt(matcher.group(2));
+				final String substrate = matcher.group(3);
 				if (StringUtils.isEmpty(substrate)) {
 					TIntObjectHashMap<String> metas = this.metaMap.get(block);
 					if (metas == null)
@@ -99,7 +99,7 @@ public class BasicBlockMap implements IBlockMap {
 					sub.put(substrate + "." + meta, value);
 				}
 			} else {
-				ModLog.debug("Unable to locate block for blockmap '%s:%s'", matcher.group(1), matcher.group(2));
+				ModLog.debug("Unable to locate block for blockmap '%s'", matcher.group(1));
 			}
 		} else {
 			ModLog.debug("Malformed key in blockmap '%s'", key);
