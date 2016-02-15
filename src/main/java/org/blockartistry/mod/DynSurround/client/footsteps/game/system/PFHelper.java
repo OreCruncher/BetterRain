@@ -24,6 +24,7 @@
 
 package org.blockartistry.mod.DynSurround.client.footsteps.game.system;
 
+import cpw.mods.fml.common.registry.GameData;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
@@ -33,12 +34,13 @@ public class PFHelper {
 	/**
 	 * Gets the unique name of a given block, defined by its interoperability
 	 * identifier.
-	 * 
-	 * @param block
-	 * @return
 	 */
 	public static String nameOf(final Block block) {
 		// RegistryNamespaced
 		return Block.blockRegistry.getNameForObject(block);
+	}
+	
+	public static Block getBlockNameRaw(final String blockName) {
+		return GameData.getBlockRegistry().getRaw(blockName);
 	}
 }
