@@ -82,8 +82,12 @@ public class BasicBlockMap implements IBlockMap {
 	public void register(final String key, final String value) {
 		final Matcher matcher = pattern.matcher(key);
 		if (matcher.matches()) {
-			final Block block = GameData.getBlockRegistry()
-					.getObject(new ResourceLocation(matcher.group(1)));
+			final ResourceLocation res = new ResourceLocation(matcher.group(1));
+			final Block block;
+			if (GameData.getBlockRegistry().containsKey(res))
+				block = GameData.getBlockRegistry().getObject(res);
+			else
+				block = null;
 			if (block != null) {
 				final int meta = matcher.group(2) == null ? -1 : Integer.parseInt(matcher.group(2));
 				final String substrate = matcher.group(3);
