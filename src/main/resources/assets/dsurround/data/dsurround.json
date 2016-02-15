@@ -50,7 +50,7 @@
 			
 		},
 		{
-			"biomeName":"(?i)(?!.*ice.*)(.*plains.*|.*meadow.*|grassland|prairie|.*field.*)",
+			"biomeName":"(?i)(?!.*ice.*)(.*plains.*|.*meadow.*|grassland|prairie|.*field.*|.*chaparral.*)",
 			"sounds":[
 				{
 					"sound":"dsurround:crickets",
