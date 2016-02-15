@@ -2,10 +2,11 @@
 	"entries":[
 		{
 			"blocks":[
-				"Thaumcraft:blockStairsGreatwood",
-				"Thaumcraft:blockStairsSilverwood",
-				"Thaumcraft:blockCosmeticSlabWood",
-				"Thaumcraft:blockCosmeticDoubleSlabWood"
+				"thaumcraft:plank",
+				"thaumcraft:slab_wood",
+				"thaumcraft:slab_wood_double",
+				"thaumcraft:greatwood_stairs",
+				"thaumcraft:silverwood_stairs"
 			],
 			"stepChance":150,
 			"sounds":[
