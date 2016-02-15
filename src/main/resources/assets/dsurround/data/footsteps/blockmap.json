@@ -150,7 +150,7 @@
 	"minecraft:ice":"ice",
 	"minecraft:snow":"snow",
 	"minecraft:cactus":"grass",
-	"minecraft:clay":"sandstone",
+	"minecraft:clay":"dirt",
 	"minecraft:hardened_clay":"sandstone",
 	"minecraft:reeds":"NOT_EMITTER",
 	"minecraft:reeds+messy":"MESSY_GROUND",
