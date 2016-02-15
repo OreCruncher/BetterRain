@@ -81,7 +81,12 @@ public class BasicBlockMap implements IBlockMap {
 	public void register(final String key, final String value) {
 		final Matcher matcher = pattern.matcher(key);
 		if (matcher.matches()) {
-			final Block block = GameData.getBlockRegistry().getRaw(matcher.group(1));
+			final String res = matcher.group(1);
+			final Block block;
+			if (GameData.getBlockRegistry().containsKey(res))
+				block = GameData.getBlockRegistry().getObject(res);
+			else
+				block = null;
 			if (block != null) {
 				final int meta = matcher.group(2) == null ? -1 : Integer.parseInt(matcher.group(2));
 				final String substrate = matcher.group(3);
@@ -97,7 +102,7 @@ public class BasicBlockMap implements IBlockMap {
 					sub.put(substrate + "." + meta, value);
 				}
 			} else {
-				ModLog.debug("Unable to locate block for blockmap '%s'", matcher.group(1));
+				ModLog.debug("Unable to locate block for blockmap '%s'", res);
 			}
 		} else {
 			ModLog.debug("Malformed key in blockmap '%s'", key);
