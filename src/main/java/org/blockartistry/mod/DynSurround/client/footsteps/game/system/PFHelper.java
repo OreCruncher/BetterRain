@@ -25,6 +25,9 @@
 package org.blockartistry.mod.DynSurround.client.footsteps.game.system;
 
 import net.minecraft.block.Block;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.common.registry.FMLControlledNamespacedRegistry;
+import net.minecraftforge.fml.common.registry.GameData;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -41,4 +44,13 @@ public class PFHelper {
 		// RegistryNamespaced
 		return Block.blockRegistry.getNameForObject(block).toString();
 	}
+
+	public static Block getBlockNameRaw(final String blockName) {
+		final FMLControlledNamespacedRegistry<Block> registry = GameData.getBlockRegistry();
+		final ResourceLocation res = new ResourceLocation(blockName);
+		if (registry.containsKey(res))
+			return registry.getObject(res);
+		return null;
+	}
+
 }

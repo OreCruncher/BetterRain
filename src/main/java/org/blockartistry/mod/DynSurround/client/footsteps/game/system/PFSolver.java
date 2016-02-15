@@ -187,7 +187,7 @@ public class PFSolver implements ISolver {
 			// on
 			// > NOT_EMITTER carpets will not cause solving to skip
 
-			if (in == Blocks.air) {
+			if (in.getBlock() == Blocks.air) {
 
 				final IBlockState below = world.getBlockState(new BlockPos(xx, yy - 1, zz));
 				association = this.isolator.getBlockMap().getBlockMapSubstrate(below.getBlock(),

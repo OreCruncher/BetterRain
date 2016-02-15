@@ -24,9 +24,11 @@
 
 package org.blockartistry.mod.DynSurround.client.footsteps.game.user;
 
-import org.blockartistry.mod.DynSurround.client.footsteps.game.system.PFHelper;
-import org.blockartistry.mod.DynSurround.client.footsteps.util.property.simple.ConfigProperty;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
+import org.blockartistry.mod.DynSurround.client.footsteps.game.system.PFHelper;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockBreakable;
 import net.minecraft.block.BlockBush;
@@ -47,10 +49,12 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
 public class GenerateBlockReport {
-	private ConfigProperty results;
+	private List<String> justNames;
+	private List<String> results;
 
 	public GenerateBlockReport() {
-		this.results = new ConfigProperty();
+		this.justNames = new ArrayList<String>();
+		this.results = new ArrayList<String>();
 
 		for (Object o : Block.blockRegistry) {
 			Block block = (Block) o;
@@ -116,12 +120,20 @@ public class GenerateBlockReport {
 				soundName += "," + "HITBOX";
 			}
 
-			this.results.setProperty(name, soundName);
+			this.justNames.add(name);
+			this.results.add(name + " = " + soundName);
 		}
+
+		Collections.sort(this.justNames);
+		Collections.sort(this.results);
 	}
 
-	public ConfigProperty getResults() {
+	public List<String> getResults() {
 		return this.results;
+	}
+	
+	public List<String> getBlockNames() {
+		return this.justNames;
 	}
 
 }

@@ -27,8 +27,6 @@ package org.blockartistry.mod.DynSurround.proxy;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map.Entry;
-
 import org.blockartistry.mod.DynSurround.ModLog;
 import org.blockartistry.mod.DynSurround.ModOptions;
 import org.blockartistry.mod.DynSurround.client.ClientEffectHandler;
@@ -77,9 +75,10 @@ public class ProxyClient extends Proxy {
 			for (final String sound : sounds)
 				ModLog.info(sound);
 			
+			ModLog.info("*** REGISTERED BLOCK NAMES ***");
 			final GenerateBlockReport report = new GenerateBlockReport();
-			for(final Entry<String, String> entry: report.getResults().getAllProperties().entrySet()) {
-				ModLog.info("%s = %s", entry.getKey(), entry.getValue());
+			for (final String entry : report.getBlockNames()) {
+				ModLog.info(entry);
 			}
 		}
 	}

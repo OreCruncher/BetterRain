@@ -31,14 +31,13 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
 import org.blockartistry.mod.DynSurround.ModLog;
+import org.blockartistry.mod.DynSurround.client.footsteps.game.system.PFHelper;
 import org.blockartistry.mod.DynSurround.client.footsteps.mcpackage.interfaces.IBlockMap;
 
 import gnu.trove.map.hash.TCustomHashMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import gnu.trove.strategy.IdentityHashingStrategy;
 import net.minecraft.block.Block;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.common.registry.GameData;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -82,12 +81,8 @@ public class BasicBlockMap implements IBlockMap {
 	public void register(final String key, final String value) {
 		final Matcher matcher = pattern.matcher(key);
 		if (matcher.matches()) {
-			final ResourceLocation res = new ResourceLocation(matcher.group(1));
-			final Block block;
-			if (GameData.getBlockRegistry().containsKey(res))
-				block = GameData.getBlockRegistry().getObject(res);
-			else
-				block = null;
+			final String blockName = matcher.group(1);
+			final Block block = PFHelper.getBlockNameRaw(blockName);
 			if (block != null) {
 				final int meta = matcher.group(2) == null ? -1 : Integer.parseInt(matcher.group(2));
 				final String substrate = matcher.group(3);
@@ -103,7 +98,7 @@ public class BasicBlockMap implements IBlockMap {
 					sub.put(substrate + "." + meta, value);
 				}
 			} else {
-				ModLog.debug("Unable to locate block for blockmap '%s'", matcher.group(1));
+				ModLog.debug("Unable to locate block for blockmap '%s'", blockName);
 			}
 		} else {
 			ModLog.debug("Malformed key in blockmap '%s'", key);
