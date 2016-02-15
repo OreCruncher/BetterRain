@@ -103,6 +103,10 @@ public class BasicBlockMap implements IBlockMap {
 		entries.add(new MacroEntry(6, "foliage", "brush"));
 		entries.add(new MacroEntry(7, "foliage", "brush"));
 		macros.put("#crop", entries);
+		
+		entries = new ArrayList<MacroEntry>();
+		entries.add(new MacroEntry("bigger", "bluntwood"));
+		macros.put("#fence", entries);
 	}
 
 	public BasicBlockMap() {
