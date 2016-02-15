@@ -1,7 +1,5 @@
 {
-	"Forestry:saplingGE":"NOT_EMITTER",
-	"Forestry:saplingGE+messy":"MESSY_GROUND",
-	"Forestry:saplingGE+foliage":"straw",
+	"Forestry:saplingGE":"#sapling",
 	"Forestry:alveary":"wood",
 	"Forestry:apiculture":"wood",
 	"Forestry:logs":"wood",

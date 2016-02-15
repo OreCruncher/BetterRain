@@ -24,7 +24,10 @@
 
 package org.blockartistry.mod.DynSurround.client.footsteps.mcpackage.implem;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -49,6 +52,58 @@ public class BasicBlockMap implements IBlockMap {
 			IdentityHashingStrategy.INSTANCE);
 	private final Map<Block, Map<String, String>> substrateMap = new TCustomHashMap<Block, Map<String, String>>(
 			IdentityHashingStrategy.INSTANCE);
+
+	private static class MacroEntry {
+		public final int meta;
+		public final String substrate;
+		public final String value;
+
+		public MacroEntry(final String substrate, final String value) {
+			this(-1, substrate, value);
+		}
+
+		public MacroEntry(final int meta, final String substrate, final String value) {
+			this.meta = meta;
+			this.substrate = substrate;
+			this.value = value;
+		}
+	}
+
+	private static final Map<String, List<MacroEntry>> macros = new LinkedHashMap<String, List<MacroEntry>>();
+
+	static {
+		List<MacroEntry> entries = new ArrayList<MacroEntry>();
+		entries.add(new MacroEntry(null, "NOT_EMITTER"));
+		entries.add(new MacroEntry("messy", "MESSY_GROUND"));
+		entries.add(new MacroEntry("foliage", "straw"));
+		macros.put("#sapling", entries);
+
+		entries = new ArrayList<MacroEntry>();
+		entries.add(new MacroEntry(null, "NOT_EMITTER"));
+		entries.add(new MacroEntry("messy", "MESSY_GROUND"));
+		entries.add(new MacroEntry(0, "foliage", "NOT_EMITTER"));
+		entries.add(new MacroEntry(1, "foliage", "NOT_EMITTER"));
+		entries.add(new MacroEntry(2, "foliage", "brush"));
+		entries.add(new MacroEntry(3, "foliage", "brush"));
+		entries.add(new MacroEntry(4, "foliage", "brush_straw_transition"));
+		entries.add(new MacroEntry(5, "foliage", "brush_straw_transition"));
+		entries.add(new MacroEntry(6, "foliage", "straw"));
+		entries.add(new MacroEntry(7, "foliage", "straw"));
+		macros.put("#wheat", entries);
+
+		entries = new ArrayList<MacroEntry>();
+		entries.add(new MacroEntry(null, "NOT_EMITTER"));
+		entries.add(new MacroEntry("messy", "MESSY_GROUND"));
+		entries.add(new MacroEntry(0, "foliage", "NOT_EMITTER"));
+		entries.add(new MacroEntry(1, "foliage", "NOT_EMITTER"));
+		entries.add(new MacroEntry(2, "foliage", "NOT_EMITTER"));
+		entries.add(new MacroEntry(3, "foliage", "NOT_EMITTER"));
+		entries.add(new MacroEntry(4, "foliage", "brush"));
+		entries.add(new MacroEntry(5, "foliage", "brush"));
+		entries.add(new MacroEntry(6, "foliage", "brush"));
+		entries.add(new MacroEntry(7, "foliage", "brush"));
+		macros.put("#crop", entries);
+	}
 
 	public BasicBlockMap() {
 	}
@@ -77,6 +132,30 @@ public class BasicBlockMap implements IBlockMap {
 		return null;
 	}
 
+	private void put(final Block block, final int meta, final String substrate, final String value) {
+		if (StringUtils.isEmpty(substrate)) {
+			TIntObjectHashMap<String> metas = this.metaMap.get(block);
+			if (metas == null)
+				this.metaMap.put(block, metas = new TIntObjectHashMap<String>());
+			metas.put(meta, value);
+		} else {
+			Map<String, String> sub = this.substrateMap.get(block);
+			if (sub == null)
+				this.substrateMap.put(block, sub = new HashMap<String, String>());
+			sub.put(substrate + "." + meta, value);
+		}
+	}
+
+	private void expand(final Block block, final String value) {
+		final List<MacroEntry> macro = macros.get(value);
+		if (macro != null) {
+			for (final MacroEntry entry : macro)
+				put(block, entry.meta, entry.substrate, entry.value);
+		} else {
+			ModLog.debug("Unknown macro '%s'", value);
+		}
+	}
+
 	@Override
 	public void register(final String key, final String value) {
 		final Matcher matcher = pattern.matcher(key);
@@ -86,17 +165,10 @@ public class BasicBlockMap implements IBlockMap {
 			if (block != null) {
 				final int meta = matcher.group(2) == null ? -1 : Integer.parseInt(matcher.group(2));
 				final String substrate = matcher.group(3);
-				if (StringUtils.isEmpty(substrate)) {
-					TIntObjectHashMap<String> metas = this.metaMap.get(block);
-					if (metas == null)
-						this.metaMap.put(block, metas = new TIntObjectHashMap<String>());
-					metas.put(meta, value);
-				} else {
-					Map<String, String> sub = this.substrateMap.get(block);
-					if (sub == null)
-						this.substrateMap.put(block, sub = new HashMap<String, String>());
-					sub.put(substrate + "." + meta, value);
-				}
+				if (value.startsWith("#"))
+					expand(block, value);
+				else
+					put(block, meta, substrate, value);
 			} else {
 				ModLog.debug("Unable to locate block for blockmap '%s'", blockName);
 			}
