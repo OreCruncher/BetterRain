@@ -29,6 +29,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -103,7 +104,7 @@ public class BasicBlockMap implements IBlockMap {
 		entries.add(new MacroEntry(6, "foliage", "brush"));
 		entries.add(new MacroEntry(7, "foliage", "brush"));
 		macros.put("#crop", entries);
-		
+
 		entries = new ArrayList<MacroEntry>();
 		entries.add(new MacroEntry("bigger", "bluntwood"));
 		macros.put("#fence", entries);
@@ -184,5 +185,27 @@ public class BasicBlockMap implements IBlockMap {
 	@Override
 	public boolean hasEntryForBlock(final Block block) {
 		return this.metaMap.containsKey(block) || this.substrateMap.containsKey(block);
+	}
+
+	@Override
+	public void collectData(final Block block, final int meta, final List<String> data) {
+		String temp = this.getBlockMap(block, meta);
+		if (temp != null)
+			data.add(temp);
+
+		final Map<String, String> subs = this.substrateMap.get(block);
+		if (subs != null) {
+			final int len = data.size();
+			temp = "." + meta;
+			for (final Entry<String, String> entry : subs.entrySet())
+				if (entry.getKey().endsWith(temp))
+					data.add(entry.getValue());
+			if (data.size() == len) {
+				temp = ".-1";
+				for (final Entry<String, String> entry : subs.entrySet())
+					if (entry.getKey().endsWith(temp))
+						data.add(entry.getKey() + ":" + entry.getValue());
+			}
+		}
 	}
 }
