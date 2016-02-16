@@ -142,7 +142,7 @@
 				},
 				{
 					"sound":"dsurround:seagulls",
-					"conditions":"(?i)(?!.*#raining#.*).*#day#.*",
+					"conditions":"(?i).*#day#.*",
 					"volume":0.3,
 					"spot":true
 				}
