@@ -24,6 +24,8 @@
 
 package org.blockartistry.mod.DynSurround.client.footsteps.mcpackage.interfaces;
 
+import java.util.List;
+
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
@@ -46,5 +48,7 @@ public interface IBlockMap extends IRegistration {
 	 * Checks if a blockmap entry exists for the given block.
 	 */
 	public boolean hasEntryForBlock(final Block block);
-	
+
+	public void collectData(final Block block, final int meta, final List<String> data);
+
 }

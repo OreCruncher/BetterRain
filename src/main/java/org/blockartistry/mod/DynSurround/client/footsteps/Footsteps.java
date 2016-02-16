@@ -58,13 +58,17 @@ import net.minecraft.world.World;
 
 @SideOnly(Side.CLIENT)
 public class Footsteps implements IResourceManagerReloadListener, IClientEffectHandler {
+	
+	public static Footsteps INSTANCE = null;
 
 	// System
 	private PFResourcePackDealer dealer = new PFResourcePackDealer();
 	private PFIsolator isolator;
 
 	public Footsteps() {
-
+		
+		INSTANCE = this;
+		
 		reloadEverything();
 
 		// Hooking
@@ -212,5 +216,9 @@ public class Footsteps implements IResourceManagerReloadListener, IClientEffectH
 	@Override
 	public boolean hasEvents() {
 		return false;
+	}
+	
+	public IBlockMap getBlockMap() {
+		return this.isolator.getBlockMap();
 	}
 }
