@@ -71,8 +71,19 @@ public class SoundManager {
 		// in the incoming list
 		final List<SoundEffect> active = new ArrayList<SoundEffect>(emitters.keySet());
 		for (final SoundEffect effect : active) {
-			if (!sounds.remove(effect))
+			if (!sounds.contains(effect))
 				emitters.remove(effect).fade();
+			else {
+				final Emitter emitter = emitters.get(effect);
+				SoundEffect incoming = null;
+				for(final SoundEffect sound: sounds)
+					if(sound.equals(effect)) {
+						incoming = sound;
+						break;
+					}
+				emitter.setVolume(incoming.getVolume());
+				sounds.remove(effect);
+			}
 		}
 
 		// Add sounds from the incoming list that are not
@@ -139,7 +150,7 @@ public class SoundManager {
 	public static List<String> getSounds() {
 		final List<String> result = new ArrayList<String>();
 		for (final SoundEffect effect : emitters.keySet())
-			result.add("EMITTER: " + effect.toString());
+			result.add("EMITTER: " + effect.toString() + "[vol:" + emitters.get(effect).getVolume() + "]");
 		for (final SpotSound effect : pending)
 			result.add((effect.getTickAge() < 0 ? "DELAYED: " : "PENDING: ") + effect.getSoundEffect().toString());
 		return result;
