@@ -32,11 +32,13 @@ import org.blockartistry.mod.DynSurround.client.sound.SoundEffect;
 import org.blockartistry.mod.DynSurround.client.sound.SoundManager;
 import org.blockartistry.mod.DynSurround.client.storm.StormProperties;
 import org.blockartistry.mod.DynSurround.data.BiomeRegistry;
+import org.blockartistry.mod.DynSurround.data.BiomeSurvey;
 import org.blockartistry.mod.DynSurround.event.DiagnosticEvent;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import gnu.trove.map.hash.TObjectIntHashMap;
 import net.minecraft.block.Block;
 import net.minecraft.client.audio.ISound;
 import net.minecraft.client.audio.PositionedSoundRecord;
@@ -70,6 +72,27 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 		return EnvironState.isPlayerUnderground() || !EnvironState.isPlayerInside();
 	}
 
+	private static List<SoundEffect> getBiomeSounds(final String conditions) {
+		// Need to collect sounds from all the applicable biomes
+		// along with their weights.
+		final TObjectIntHashMap<SoundEffect> sounds = new TObjectIntHashMap<SoundEffect>();
+		final BiomeSurvey survey = EnvironState.getBiomeSurvey();
+		for (final BiomeGenBase biome : survey.weights.keySet()) {
+			final List<SoundEffect> bs = BiomeRegistry.getSounds(biome, conditions);
+			for (final SoundEffect sound : bs)
+				sounds.put(sound, sounds.get(sound) + survey.weights.get(biome));
+		}
+
+		// Scale the volumes in the resulting list based on the weights
+		final List<SoundEffect> result = new ArrayList<SoundEffect>();
+		for (final SoundEffect sound : sounds.keySet()) {
+			final float scale = 0.3F + 0.7F * ((float) sounds.get(sound) / (float) survey.area);
+			result.add(SoundEffect.scaleVolume(sound, scale));
+		}
+
+		return result;
+	}
+
 	@Override
 	public void process(final World world, final EntityPlayer player) {
 		if (didReloadOccur() || player.isDead || playerDimension != EnvironState.getDimensionId()) {
@@ -88,7 +111,7 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 
 		final List<SoundEffect> sounds = new ArrayList<SoundEffect>();
 		if (doBiomeSounds())
-			sounds.addAll(BiomeRegistry.getSounds(playerBiome, conditions));
+			sounds.addAll(getBiomeSounds(conditions));
 		sounds.addAll(BiomeRegistry.getSounds(BiomeRegistry.PLAYER, conditions));
 
 		SoundManager.update();

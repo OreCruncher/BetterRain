@@ -75,6 +75,15 @@ class Emitter {
 			;
 		}
 	}
+	
+	public void setVolume(final float volume) {
+		if(this.activeSound != null)
+			this.activeSound.setVolume(volume);
+	}
+	
+	public float getVolume() {
+		return this.activeSound != null ? this.activeSound.getVolume() : 0.0F;
+	}
 
 	public void fade() {
 		if (this.activeSound != null)

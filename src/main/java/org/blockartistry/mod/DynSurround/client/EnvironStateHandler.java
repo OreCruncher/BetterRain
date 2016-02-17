@@ -33,6 +33,7 @@ import org.blockartistry.mod.DynSurround.ModOptions;
 import org.blockartistry.mod.DynSurround.client.sound.SoundEffect;
 import org.blockartistry.mod.DynSurround.client.sound.SoundManager;
 import org.blockartistry.mod.DynSurround.data.BiomeRegistry;
+import org.blockartistry.mod.DynSurround.data.BiomeSurvey;
 import org.blockartistry.mod.DynSurround.data.DimensionRegistry;
 import org.blockartistry.mod.DynSurround.event.DiagnosticEvent;
 import org.blockartistry.mod.DynSurround.util.PlayerUtils;
@@ -109,6 +110,7 @@ public class EnvironStateHandler implements IClientEffectHandler {
 	public static class EnvironState {
 
 		public static final Random RANDOM = new XorShiftRandom();
+		private static final int BIOME_SURVEY_RANGE = 6;
 
 		// State that is gathered from the various sources
 		// to avoid requery. Used during the tick.
@@ -126,6 +128,8 @@ public class EnvironStateHandler implements IClientEffectHandler {
 		private static boolean inside;
 
 		private static int tickCounter;
+		
+		private static BiomeSurvey survey;
 
 		private static final String CONDITION_TOKEN_HURT = "hurt";
 		private static final String CONDITION_TOKEN_HUNGRY = "hungry";
@@ -221,6 +225,8 @@ public class EnvironStateHandler implements IClientEffectHandler {
 
 			if (!Minecraft.getMinecraft().isGamePaused())
 				EnvironState.tickCounter++;
+			
+			EnvironState.survey = BiomeSurvey.doSurvey(player, BIOME_SURVEY_RANGE);
 
 		}
 
@@ -350,6 +356,12 @@ public class EnvironStateHandler implements IClientEffectHandler {
 
 		public static int getTickCounter() {
 			return tickCounter;
+		}
+		
+		public static BiomeSurvey getBiomeSurvey() {
+			if(survey == null)
+				survey = BiomeSurvey.doSurvey(getPlayer(), BIOME_SURVEY_RANGE);
+			return survey;
 		}
 
 		public static double distanceToPlayer(final double x, final double y, final double z) {

@@ -39,13 +39,12 @@ public final class SoundEffect {
 	public final String sound;
 	public final String conditions;
 	private final Pattern pattern;
-	public final float volume;
+	public float volume;
 	public final float pitch;
 	public final int weight;
 	public final boolean isSpot;
 	public final boolean variable;
 	public final int repeatDelay;
-	public final boolean skipFade;
 
 	public SoundEffect(final String sound) {
 		this(sound, 1.0F, 1.0F, 0, false);
@@ -70,7 +69,18 @@ public final class SoundEffect {
 		this.isSpot = true;
 		this.variable = variable;
 		this.repeatDelay = repeatDelay;
-		this.skipFade = false;
+	}
+	
+	public SoundEffect(final SoundEffect effect) {
+		this.sound = effect.sound;
+		this.volume = effect.volume;
+		this.pitch = effect.pitch;
+		this.conditions = effect.conditions;
+		this.pattern = effect.pattern;
+		this.weight = effect.weight;
+		this.isSpot = effect.isSpot;
+		this.variable = effect.variable;
+		this.repeatDelay = effect.repeatDelay;
 	}
 
 	public SoundEffect(final SoundConfig record) {
@@ -83,13 +93,12 @@ public final class SoundEffect {
 		this.isSpot = record.spotSound != null && record.spotSound.booleanValue();
 		this.variable = record.variable != null && record.variable.booleanValue();
 		this.repeatDelay = record.repeatDelay == null ? 0 : record.repeatDelay.intValue();
-		this.skipFade = record.skipFade != null && record.skipFade.booleanValue();
 	}
 
 	public boolean matches(final String conditions) {
 		return pattern.matcher(conditions).matches();
 	}
-
+	
 	public float getVolume() {
 		return this.volume;
 	}
@@ -112,8 +121,18 @@ public final class SoundEffect {
 		if (!(anObj instanceof SoundEffect))
 			return false;
 		final SoundEffect s = (SoundEffect) anObj;
-		return this.volume == s.volume && this.pitch == s.pitch && this.sound.equals(s.sound)
-				&& this.conditions.equals(s.conditions);
+		return this.sound.equals(s.sound);
+	}
+	
+	@Override
+	public int hashCode() {
+		return this.sound.hashCode();
+	}
+	
+	public static SoundEffect scaleVolume(final SoundEffect sound, final float scale) {
+		final SoundEffect newEffect = new SoundEffect(sound);
+		newEffect.volume *= scale;
+		return newEffect;
 	}
 
 	public String toString() {
