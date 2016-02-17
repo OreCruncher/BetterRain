@@ -92,6 +92,8 @@ public final class ModOptions {
 	protected static final String CATEGORY_BIOMES = "biomes";
 	protected static final String CONFIG_BIOME_CONFIG_FILES = "Config Files";
 	protected static String[] biomeConfigFiles = {};
+	protected static final String CONFIG_BIOME_ALIASES = "Biome Alias";
+	protected static String[] biomeAliases = {};
 
 	protected static final String CATEGORY_DIMENSIONS = "dimensions";
 	protected static final String CONFIG_DIMENSION_CONFIG_FILES = "Config Files";
@@ -245,6 +247,9 @@ public final class ModOptions {
 		// CATEGORY: Biomes
 		comment = "Configuration files for configuring Biome Registry";
 		biomeConfigFiles = config.getStringList(CONFIG_BIOME_CONFIG_FILES, CATEGORY_BIOMES, biomeConfigFiles, comment);
+
+		comment = "Biome alias list";
+		biomeAliases = config.getStringList(CONFIG_BIOME_ALIASES, CATEGORY_BIOMES, biomeAliases, comment);
 
 		// CATEGORY: Dimensions
 		comment = "Configuration files for configuring Dimension Registry";
@@ -419,6 +424,10 @@ public final class ModOptions {
 
 	public static String[] getBiomeConfigFiles() {
 		return biomeConfigFiles;
+	}
+
+	public static String[] getBiomeAliases() {
+		return biomeAliases;
 	}
 
 	public static String[] getDimensionConfigFiles() {

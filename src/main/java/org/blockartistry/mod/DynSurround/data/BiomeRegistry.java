@@ -26,9 +26,10 @@ package org.blockartistry.mod.DynSurround.data;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
@@ -48,6 +49,7 @@ public final class BiomeRegistry {
 
 	private static int reloadCount = 0;
 	private static final TIntObjectHashMap<Entry> registry = new TIntObjectHashMap<Entry>();
+	private static final Map<String, String> biomeAliases = new HashMap<String, String>();
 
 	public static final BiomeGenBase UNDERGROUND = new FakeBiome(-1, "Underground");
 	public static final BiomeGenBase PLAYER = new FakeBiome(-2, "Player");
@@ -155,6 +157,14 @@ public final class BiomeRegistry {
 
 	public static void initialize() {
 
+		biomeAliases.clear();
+		for (final String entry : ModOptions.getBiomeAliases()) {
+			final String[] parts = StringUtils.split(entry, "=");
+			if (parts.length == 2) {
+				biomeAliases.put(parts[0], parts[1]);
+			}
+		}
+
 		reloadCount++;
 		registry.clear();
 
@@ -180,6 +190,9 @@ public final class BiomeRegistry {
 			for (final Entry entry : registry.valueCollection())
 				ModLog.info(entry.toString());
 		}
+
+		// Free memory because we no longer need
+		biomeAliases.clear();
 	}
 
 	private static Entry get(final BiomeGenBase biome) {
@@ -285,12 +298,17 @@ public final class BiomeRegistry {
 		}
 	}
 
+	final static boolean isBiomeMatch(final BiomeConfig.Entry entry, final String biomeName) {
+		if (Pattern.matches(entry.biomeName, biomeName))
+			return true;
+		final String alias = biomeAliases.get(biomeName);
+		return alias == null ? false : Pattern.matches(entry.biomeName, alias);
+	}
+
 	private static void process(final BiomeConfig config) {
 		for (final BiomeConfig.Entry entry : config.entries) {
-			final Pattern pattern = Pattern.compile(entry.biomeName);
 			for (final Entry biomeEntry : registry.valueCollection()) {
-				final Matcher m = pattern.matcher(resolveName(biomeEntry.biome));
-				if (m.matches()) {
+				if (isBiomeMatch(entry, resolveName(biomeEntry.biome))) {
 					if (entry.hasPrecipitation != null)
 						biomeEntry.hasPrecipitation = entry.hasPrecipitation.booleanValue();
 					if (entry.hasAurora != null)
