@@ -46,8 +46,12 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.common.event.FMLInterModComms;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameData;
 import mcp.mobius.waila.api.IWailaConfigHandler;
 import mcp.mobius.waila.api.IWailaDataAccessor;
@@ -72,11 +76,12 @@ public final class WailaHandler implements IWailaDataProvider {
 			builder.append(blockName.toString());
 			if(stack.getHasSubtypes())
 				builder.append(':').append(stack.getItemDamage());
-			builder.append('[').append(accessor.getMetadata()).append(']');
+			if(accessor != null)
+				builder.append('[').append(accessor.getMetadata()).append(']');
 			text.add(builder.toString());
 		}
 
-		if (Footsteps.INSTANCE != null) {
+		if (accessor != null && Footsteps.INSTANCE != null) {
 			final IBlockMap bm = Footsteps.INSTANCE.getBlockMap();
 			if (bm != null) {
 				bm.collectData(accessor.getBlock(), accessor.getMetadata(), text);
@@ -93,7 +98,7 @@ public final class WailaHandler implements IWailaDataProvider {
 	}
 
 	public WailaHandler() {
-
+		MinecraftForge.EVENT_BUS.register(this);
 	}
 
 	@Override
@@ -130,6 +135,15 @@ public final class WailaHandler implements IWailaDataProvider {
 	public NBTTagCompound getNBTData(final EntityPlayerMP arg0, final TileEntity arg1, final NBTTagCompound arg2,
 			final World arg3, final BlockPos pos) {
 		return null;
+	}
+
+	@SubscribeEvent(priority = EventPriority.LOWEST, receiveCanceled = false)
+	public void onToolTipEvent(final ItemTooltipEvent event) {
+
+		if (event == null || event.itemStack == null || event.toolTip == null)
+			return;
+
+		gatherText(event.itemStack, event.toolTip, null, null);
 	}
 
 	public static void register() {
