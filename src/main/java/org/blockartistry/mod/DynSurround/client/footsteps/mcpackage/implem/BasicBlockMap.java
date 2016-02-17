@@ -78,6 +78,7 @@ public class BasicBlockMap implements IBlockMap {
 		entries.add(new MacroEntry("messy", "MESSY_GROUND"));
 		entries.add(new MacroEntry("foliage", "straw"));
 		macros.put("#sapling", entries);
+		macros.put("#reed", entries);
 
 		entries = new ArrayList<MacroEntry>();
 		entries.add(new MacroEntry(null, "NOT_EMITTER"));
