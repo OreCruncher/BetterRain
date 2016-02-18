@@ -44,6 +44,8 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
 
+// net.minecraft.client.renderer.InventoryEffectRenderer
+
 @SideOnly(Side.CLIENT)
 public class PotionHUD extends Gui implements IGuiOverlay {
 
@@ -98,7 +100,12 @@ public class PotionHUD extends Gui implements IGuiOverlay {
 					this.drawTexturedModalRect(guiLeft + 6, guiTop + 7, 0 + l % 8 * 18, 198 + l / 8 * 18, 18, 18);
 				}
 
-				potion.renderInventoryEffect(guiLeft, guiTop, potioneffect, mc);
+				try {
+					potion.renderInventoryEffect(guiLeft, guiTop, potioneffect, mc);
+				} catch(final Exception ex) {
+					;
+				}
+				
 				if (!potion.shouldRenderInvText(potioneffect))
 					continue;
 				String s1 = I18n.format(potion.getName(), new Object[0]);
