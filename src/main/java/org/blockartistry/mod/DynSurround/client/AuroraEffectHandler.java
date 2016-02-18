@@ -50,41 +50,47 @@ public final class AuroraEffectHandler implements IClientEffectHandler {
 		if (!ModOptions.getAuroraEnable())
 			return;
 
-		if (auroraDimension != data.dimensionId || EnvironState.getDimensionId() != data.dimensionId) {
-			auroras.clear();
-			currentAurora = null;
-			auroraDimension = data.dimensionId;
+		synchronized (auroras) {
+			if (auroraDimension != data.dimensionId || EnvironState.getDimensionId() != data.dimensionId) {
+				auroras.clear();
+				currentAurora = null;
+				auroraDimension = data.dimensionId;
+			}
+			auroras.add(data);
 		}
-		auroras.add(data);
 	}
 
 	public AuroraEffectHandler() {
 	}
 
-	private Aurora getClosestAurora() {
-		if (auroraDimension != EnvironState.getDimensionId()) {
-			auroras.clear();
-		}
+	private Aurora getClosestAurora(final World world) {
 
-		if (auroras.size() == 0) {
-			currentAurora = null;
-			return null;
-		}
-
-		final EntityPlayer player = EnvironState.getPlayer();
-		final int playerX = (int) player.posX;
-		final int playerZ = (int) player.posZ;
-		boolean started = false;
-		int distanceSq = 0;
 		AuroraData ad = null;
-		for (final AuroraData data : auroras) {
-			final int deltaX = data.posX - playerX;
-			final int deltaZ = data.posZ - playerZ;
-			final int d = deltaX * deltaX + deltaZ * deltaZ;
-			if (!started || distanceSq > d) {
-				started = true;
-				distanceSq = d;
-				ad = data;
+
+		synchronized (auroras) {
+			if (auroraDimension != EnvironState.getDimensionId() || DiurnalUtils.isDaytime(world)) {
+				auroras.clear();
+			}
+
+			if (auroras.size() == 0) {
+				currentAurora = null;
+				return null;
+			}
+
+			final EntityPlayer player = EnvironState.getPlayer();
+			final int playerX = (int) player.posX;
+			final int playerZ = (int) player.posZ;
+			boolean started = false;
+			int distanceSq = 0;
+			for (final AuroraData data : auroras) {
+				final int deltaX = data.posX - playerX;
+				final int deltaZ = data.posZ - playerZ;
+				final int d = deltaX * deltaX + deltaZ * deltaZ;
+				if (!started || distanceSq > d) {
+					started = true;
+					distanceSq = d;
+					ad = data;
+				}
 			}
 		}
 
@@ -102,26 +108,19 @@ public final class AuroraEffectHandler implements IClientEffectHandler {
 	public boolean hasEvents() {
 		return false;
 	}
-	
+
 	/*
 	 * Need to get called every tick to process the dust fade timer as well as
 	 * aurora processing.
 	 */
 	@Override
 	public void process(final World world, final EntityPlayer player) {
-		if (auroras.size() > 0) {
-			if (DiurnalUtils.isDaytime(world)) {
-				auroras.clear();
-				currentAurora = null;
-			} else {
-				final Aurora aurora = getClosestAurora();
-				if(aurora != null) {
-					aurora.update();
-					if (aurora.isAlive() && DiurnalUtils.isSunrise(world)) {
-						ModLog.debug("Aurora fade...");
-						aurora.die();
-					}
-				}
+		final Aurora aurora = getClosestAurora(world);
+		if (aurora != null) {
+			aurora.update();
+			if (aurora.isAlive() && DiurnalUtils.isSunrise(world)) {
+				ModLog.debug("Aurora fade...");
+				aurora.die();
 			}
 		}
 	}
