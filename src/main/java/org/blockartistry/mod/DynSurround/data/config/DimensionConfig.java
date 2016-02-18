@@ -36,6 +36,8 @@ public final class DimensionConfig {
 	public final static class Entry {
 		@SerializedName("dimId")
 		public Integer dimensionId = null;
+		@SerializedName("name")
+		public String name = null;
 		@SerializedName("seaLevel")
 		public Integer seaLevel = null;
 		@SerializedName("skyHeight")

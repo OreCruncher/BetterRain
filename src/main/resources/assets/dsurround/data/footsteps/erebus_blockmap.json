@@ -265,8 +265,8 @@
 	"erebus:waspNestBlock":"wood",
 	"erebus:waspNestStairs":"wood",
 	"erebus:waspSpawner":"metalbar",
-	"erebus:waterFlower":"NOT_EMITTER",
-	"erebus:weepingBlue":"NOT_EMITTER",
+	"erebus:waterFlower":"brush",
+	"erebus:weepingBlue":"brush",
 	"erebus:witherWeb":"NOT_EMITTER",
 	"erebus:zombieAntSoldierSpawner":"metalbar",
 	"erebus:zombieAntSpawner":"metalbar"
