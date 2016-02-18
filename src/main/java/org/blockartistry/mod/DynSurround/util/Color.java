@@ -134,6 +134,13 @@ public class Color {
 		return new Color(color).anaglyph();
 	}
 
+	public Color add(final Color color) {
+		this.red += color.red;
+		this.green += color.green;
+		this.blue += color.blue;
+		return this;
+	}
+
 	public Color mix(final Color color) {
 		return mix(color.red, color.green, color.blue);
 	}
