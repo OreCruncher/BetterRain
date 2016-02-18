@@ -28,6 +28,7 @@ import org.blockartistry.mod.DynSurround.ModOptions;
 import org.blockartistry.mod.DynSurround.client.EnvironStateHandler.EnvironState;
 import org.blockartistry.mod.DynSurround.client.storm.StormProperties;
 import org.blockartistry.mod.DynSurround.data.BiomeRegistry;
+import org.blockartistry.mod.DynSurround.data.BiomeSurvey;
 import org.blockartistry.mod.DynSurround.data.DimensionRegistry;
 import org.blockartistry.mod.DynSurround.event.DiagnosticEvent;
 import org.blockartistry.mod.DynSurround.util.Color;
@@ -46,7 +47,6 @@ import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.ActiveRenderInfo;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.MathHelper;
-import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.client.event.EntityViewRenderEvent;
@@ -65,16 +65,9 @@ public class FogEffectHandler implements IClientEffectHandler {
 
 	// The delta indicates how much per tick the density will shift
 	// toward the target.
-	private static final float FOG_DELTA = 0.003F;
 	private static float currentFogLevel = 0.0F;
-	private static float targetFogLevel = 0.0F;
 	private static float insideFogOffset = 0.0F;
-
-	// Time period, in ticks, to transition fog colors
-	private static final int COLOR_TRANSIITON_PERIOD = 40;
 	private static Color currentFogColor = null;
-	private static Color targetFogColor = null;
-	private static Vec3 fogColorTransitionAdjustments = null;
 	private static float brightnessFactor = 1.0F;
 
 	public static float currentFogLevel() {
@@ -91,27 +84,34 @@ public class FogEffectHandler implements IClientEffectHandler {
 
 	@Override
 	public void process(final World world, final EntityPlayer player) {
-		final BiomeGenBase biome = EnvironState.getPlayerBiome();
 
-		if (currentFogColor == null)
-			currentFogColor = new Color(world.getFogColor(1.0F));
-
-		if (targetFogColor == null)
-			targetFogColor = new Color(world.getFogColor(1.0F));
+		currentFogColor = new Color(world.getFogColor(1.0F));
 
 		float biomeFog = 0.0F;
 		float dustFog = 0.0F;
 		float heightFog = 0.0F;
 
-		// If the player Y is higher than the cutoff Y then assess desert
-		// and elevation haze. Don't want to do needless calculations if they
-		// are under ground.
-		if (ENABLE_BIOME_FOG && BiomeRegistry.hasFog(biome))
-			biomeFog = BiomeRegistry.getFogDensity(biome) * BIOME_FOG_FACTOR;
+		if (ENABLE_BIOME_FOG || ENABLE_DESERT_FOG) {
+			final Color tint = new Color(0, 0, 0);
+			final BiomeSurvey survey = EnvironState.getBiomeSurvey();
+			for (final BiomeGenBase b : survey.weights.keySet()) {
+				final float scale = (float) survey.weights.get(b) / (float) survey.area;
+				if (ENABLE_BIOME_FOG && BiomeRegistry.hasFog(b)) {
+					biomeFog += BiomeRegistry.getFogDensity(b) * scale;
+					tint.add(Color.scale(BiomeRegistry.getFogColor(b), scale));
+				} else if (ENABLE_DESERT_FOG && BiomeRegistry.hasDust(b)) {
+					dustFog += StormProperties.getFogDensity() * scale;
+					tint.add(Color.scale(BiomeRegistry.getDustColor(b), scale));
+				} else {
+					tint.add(Color.scale(currentFogColor, scale));
+				}
+			}
 
-		if (ENABLE_DESERT_FOG && BiomeRegistry.hasDust(biome)) {
-			dustFog = StormProperties.getFogDensity() * DESERT_DUST_FACTOR;
+			currentFogColor = tint;
 		}
+
+		biomeFog *= BIOME_FOG_FACTOR;
+		dustFog *= DESERT_DUST_FACTOR;
 
 		if (ENABLE_ELEVATION_HAZE && DimensionRegistry.hasHaze(world)) {
 			final float distance = MathHelper
@@ -123,45 +123,8 @@ public class FogEffectHandler implements IClientEffectHandler {
 		}
 
 		// Get the max fog level between the three fog types
-		targetFogLevel = Math.max(biomeFog, Math.max(dustFog, heightFog));
+		currentFogLevel = Math.max(biomeFog, Math.max(dustFog, heightFog));
 		insideFogOffset = PlayerUtils.ceilingCoverageRatio(player) * 15.0F;
-
-		// Get the appropriate fog color based on the predominant
-		// fog effect.
-		Color newTargetColor = null;
-		if (targetFogLevel == dustFog) {
-			newTargetColor = BiomeRegistry.getDustColor(biome);
-		} else if (targetFogLevel == biomeFog) {
-			newTargetColor = BiomeRegistry.getFogColor(biome);
-		}
-
-		// Height fog/world default
-		if (newTargetColor == null)
-			newTargetColor = new Color(world.getFogColor(1.0F));
-
-		// Calculate the rate of color change from the current fog
-		// color to the new target color. Each of the RGB components
-		// is scaled so that the color transition is smooth.
-		if (fogColorTransitionAdjustments == null || !targetFogColor.equals(newTargetColor)) {
-			targetFogColor = newTargetColor;
-			fogColorTransitionAdjustments = currentFogColor.transitionTo(targetFogColor, COLOR_TRANSIITON_PERIOD);
-		}
-
-		// Move the current fog density to the desired target
-		// density.
-		if (currentFogLevel > targetFogLevel) {
-			currentFogLevel -= FOG_DELTA;
-			if (currentFogLevel < targetFogLevel)
-				currentFogLevel = targetFogLevel;
-		} else if (currentFogLevel < targetFogLevel) {
-			currentFogLevel += FOG_DELTA;
-			if (currentFogLevel > targetFogLevel)
-				currentFogLevel = targetFogLevel;
-		}
-
-		// Adjust the fog color toward the target color based
-		// on the scaled adjustments per tick.
-		currentFogColor.adjust(fogColorTransitionAdjustments, targetFogColor);
 
 		// Calculate the brightness factor to apply to the color. Need
 		// to darken it a bit when it gets night.
@@ -182,7 +145,7 @@ public class FogEffectHandler implements IClientEffectHandler {
 		if (currentFogColor == null || event.getResult() != Result.DEFAULT)
 			return;
 
-		if (currentFogLevel == 0 && targetFogLevel == 0)
+		if (currentFogLevel == 0)
 			return;
 
 		final Block block = ActiveRenderInfo.getBlockAtEntityViewpoint(event.entity.worldObj, event.entity,
@@ -207,20 +170,10 @@ public class FogEffectHandler implements IClientEffectHandler {
 		if (event.getResult() != Result.DEFAULT)
 			return;
 
-		if (currentFogLevel == 0 && targetFogLevel == 0)
+		if (currentFogLevel == 0)
 			return;
 
 		float level = currentFogLevel;
-		if (level > targetFogLevel) {
-			level -= event.renderPartialTicks * FOG_DELTA;
-			if (level < 0)
-				level = 0;
-		} else if (level < targetFogLevel) {
-			level += event.renderPartialTicks * FOG_DELTA;
-			if (level > targetFogLevel)
-				level = targetFogLevel;
-		}
-
 		final float factor = 1.0F + level * 100.0F;
 		final float near = (event.farPlaneDistance * 0.75F) / (factor * factor) + insideFogOffset;
 		final float horizon = event.farPlaneDistance / (factor) + insideFogOffset;
@@ -246,7 +199,6 @@ public class FogEffectHandler implements IClientEffectHandler {
 	public void diagnostics(final DiagnosticEvent.Gather event) {
 		final StringBuilder builder = new StringBuilder();
 		builder.append("Fog:");
-		builder.append(" t:").append(targetFogLevel);
 		builder.append(" c:").append(currentFogLevel);
 		builder.append(" bf:").append(brightnessFactor);
 		event.output.add(builder.toString());

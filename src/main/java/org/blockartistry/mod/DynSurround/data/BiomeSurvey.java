@@ -44,18 +44,14 @@ public final class BiomeSurvey {
 			survey.area = 1;
 			survey.weights.put(BiomeRegistry.UNDERGROUND, 1);
 		} else {
-			final int rangeSquared = range * range;
 			final int x = MathHelper.floor_double(player.posX);
 			final int z = MathHelper.floor_double(player.posZ);
 
 			for (int dX = -range; dX <= range; dX++)
 				for (int dZ = -range; dZ <= range; dZ++) {
-					final int distSquared = dX * dX + dZ * dZ;
-					if (distSquared <= rangeSquared) {
-						survey.area++;
-						final BiomeGenBase biome = player.worldObj.getBiomeGenForCoords(x + dX, z + dZ);
-						survey.weights.put(biome, survey.weights.get(biome) + 1);
-					}
+					survey.area++;
+					final BiomeGenBase biome = player.worldObj.getBiomeGenForCoords(x + dX, z + dZ);
+					survey.weights.adjustOrPutValue(biome, 1, 1);
 				}
 		}
 

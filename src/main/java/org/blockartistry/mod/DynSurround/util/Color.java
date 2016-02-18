@@ -119,7 +119,7 @@ public class Color {
 	public static Color scale(final Color color, final float scaleFactor) {
 		return new Color(color).scale(scaleFactor);
 	}
-	
+
 	public Color anaglyph() {
 		final float r = (this.red * 30.0F + this.green * 59.0F + this.blue * 11.0F) / 100.0F;
 		final float g = (this.red * 30.0F + this.green * 70.0F) / 100.0F;
@@ -129,9 +129,16 @@ public class Color {
 		this.blue = b;
 		return this;
 	}
-	
+
 	public static Color anaglyph(final Color color) {
 		return new Color(color).anaglyph();
+	}
+	
+	public Color add(final Color color) {
+		this.red += color.red;
+		this.green += color.green;
+		this.blue += color.blue;
+		return this;
 	}
 
 	public Color mix(final Color color) {
@@ -163,16 +170,16 @@ public class Color {
 		}
 		return this;
 	}
-	
+
 	public int rgb() {
-		final int iRed = (int)(this.red * 255);
-		final int iGreen = (int)(this.green * 255);
-		final int iBlue = (int)(this.blue * 255);
+		final int iRed = (int) (this.red * 255);
+		final int iGreen = (int) (this.green * 255);
+		final int iBlue = (int) (this.blue * 255);
 		return iRed << 16 | iGreen << 8 | iBlue;
 	}
-	
+
 	public int rgbWithAlpha(final float alpha) {
-		final int iAlpha = (int)(alpha * 255);
+		final int iAlpha = (int) (alpha * 255);
 		return rgb() | (iAlpha << 24);
 	}
 
