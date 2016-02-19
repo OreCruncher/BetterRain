@@ -41,9 +41,9 @@ public final class BiomeSurvey {
 	 */
 	public static BiomeSurvey doSurvey(final EntityPlayer player, final int range) {
 		final BiomeSurvey survey = new BiomeSurvey();
-		if (EnvironState.isPlayerUnderground()) {
+		if (EnvironState.isPlayerUnderground() || EnvironState.isPlayerInSpace()) {
 			survey.area = 1;
-			survey.weights.put(BiomeRegistry.UNDERGROUND, 1);
+			survey.weights.put(EnvironState.getPlayerBiome(), 1);
 		} else {
 			final BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
 			final int x = MathHelper.floor_double(player.posX);
