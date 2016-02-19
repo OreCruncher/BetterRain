@@ -45,6 +45,7 @@ import net.minecraftforge.fml.common.Loader;
 
 public final class DimensionRegistry {
 
+	private static final int SPACE_HEIGHT_OFFSET = 32;
 	private static final boolean CALENDAR_API = Loader.isModLoaded("CalendarAPI");
 	private static final String SEASON_NOT_AVAILABLE = "noseason";
 
@@ -58,6 +59,7 @@ public final class DimensionRegistry {
 	protected Integer seaLevel;
 	protected Integer skyHeight;
 	protected Integer cloudHeight;
+	protected Integer spaceHeight;
 	protected Boolean hasHaze;
 	protected Boolean hasAuroras;
 	protected Boolean hasWeather;
@@ -111,7 +113,7 @@ public final class DimensionRegistry {
 		for (final DimensionConfig.Entry entry : config.entries) {
 			if (entry.dimensionId != null || entry.name != null) {
 				final DimensionConfig.Entry data = getData(entry);
-				if(data == entry)
+				if (data == entry)
 					continue;
 				if (data.dimensionId == null)
 					data.dimensionId = entry.dimensionId;
@@ -137,7 +139,7 @@ public final class DimensionRegistry {
 		this.dimensionId = world.provider.getDimensionId();
 		initialize(world.provider);
 	}
-	
+
 	protected DimensionRegistry(final World world, final DimensionConfig.Entry entry) {
 		this.dimensionId = world.provider.getDimensionId();
 		this.name = world.provider.getDimensionName();
@@ -165,6 +167,8 @@ public final class DimensionRegistry {
 				this.hasWeather = !provider.getHasNoSky();
 			if (this.cloudHeight == null)
 				this.cloudHeight = this.hasHaze ? this.skyHeight / 2 : this.skyHeight;
+			if (this.spaceHeight == null)
+				this.spaceHeight = this.skyHeight + SPACE_HEIGHT_OFFSET;
 			this.initialized = true;
 			ModLog.info("Dimension initialized " + this.toString());
 		}
@@ -189,6 +193,10 @@ public final class DimensionRegistry {
 
 	public int getCloudHeight() {
 		return this.cloudHeight.intValue();
+	}
+
+	public int getSpaceHeight() {
+		return this.spaceHeight.intValue();
 	}
 
 	public boolean getHasHaze() {
@@ -232,7 +240,7 @@ public final class DimensionRegistry {
 					entry = e;
 					break;
 				}
-			if(entry == null) {
+			if (entry == null) {
 				data = new DimensionRegistry(world);
 			} else {
 				data = new DimensionRegistry(world, entry);
@@ -258,6 +266,10 @@ public final class DimensionRegistry {
 
 	public static int getCloudHeight(final World world) {
 		return getData(world).getCloudHeight();
+	}
+
+	public static int getSpaceHeight(final World world) {
+		return getData(world).getSpaceHeight();
 	}
 
 	public static boolean hasAuroras(final World world) {
