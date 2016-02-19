@@ -334,6 +334,10 @@ public class EnvironStateHandler implements IClientEffectHandler {
 		public static boolean isPlayerUnderground() {
 			return playerBiome == BiomeRegistry.UNDERGROUND;
 		}
+		
+		public static boolean isPlayerInSpace() {
+			return playerBiome == BiomeRegistry.OUTERSPACE;
+		}
 
 		public static boolean isFreezing() {
 			return freezing;

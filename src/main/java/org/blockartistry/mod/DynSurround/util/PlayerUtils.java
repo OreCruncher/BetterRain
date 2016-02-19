@@ -50,6 +50,7 @@ public final class PlayerUtils {
 	public static BiomeGenBase getPlayerBiome(final EntityPlayer player, final boolean getTrue) {
 
 		final int theX = MathHelper.floor_double(player.posX);
+		final int theY = MathHelper.floor_double(player.posY);
 		final int theZ = MathHelper.floor_double(player.posZ);
 		BiomeGenBase biome = player.worldObj.getBiomeGenForCoords(theX, theZ);
 
@@ -65,6 +66,8 @@ public final class PlayerUtils {
 					biome = BiomeRegistry.UNDERWATER;
 			} else if (isUnderGround(player, INSIDE_Y_ADJUST))
 				biome = BiomeRegistry.UNDERGROUND;
+			else if (theY >= DimensionRegistry.getSkyHeight(player.worldObj))
+				biome = BiomeRegistry.OUTERSPACE;
 		}
 		return biome;
 	}
