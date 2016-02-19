@@ -39,15 +39,16 @@ import org.blockartistry.mod.DynSurround.Module;
 import org.blockartistry.mod.DynSurround.client.sound.SoundEffect;
 import org.blockartistry.mod.DynSurround.data.config.BiomeConfig;
 import org.blockartistry.mod.DynSurround.data.config.SoundConfig;
+import org.blockartistry.mod.DynSurround.event.RegistryReloadEvent;
 import org.blockartistry.mod.DynSurround.util.Color;
 import org.blockartistry.mod.DynSurround.util.MyUtils;
 
 import gnu.trove.map.hash.TIntObjectHashMap;
 import net.minecraft.world.biome.BiomeGenBase;
+import net.minecraftforge.common.MinecraftForge;
 
 public final class BiomeRegistry {
 
-	private static int reloadCount = 0;
 	private static final TIntObjectHashMap<Entry> registry = new TIntObjectHashMap<Entry>();
 	private static final Map<String, String> biomeAliases = new HashMap<String, String>();
 
@@ -143,10 +144,6 @@ public final class BiomeRegistry {
 		}
 	}
 
-	public static int getReloadCount() {
-		return reloadCount;
-	}
-
 	public static String resolveName(final BiomeGenBase biome) {
 		if (biome == null)
 			return "(Bad Biome)";
@@ -165,7 +162,6 @@ public final class BiomeRegistry {
 			}
 		}
 
-		reloadCount++;
 		registry.clear();
 
 		final BiomeGenBase[] biomeArray = BiomeGenBase.getBiomeGenArray();
@@ -193,6 +189,8 @@ public final class BiomeRegistry {
 
 		// Free memory because we no longer need
 		biomeAliases.clear();
+		
+		MinecraftForge.EVENT_BUS.post(new RegistryReloadEvent.Biome());
 	}
 
 	private static Entry get(final BiomeGenBase biome) {

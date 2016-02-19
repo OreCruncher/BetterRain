@@ -34,6 +34,7 @@ import org.blockartistry.mod.DynSurround.client.storm.StormProperties;
 import org.blockartistry.mod.DynSurround.data.BiomeRegistry;
 import org.blockartistry.mod.DynSurround.data.BiomeSurvey;
 import org.blockartistry.mod.DynSurround.event.DiagnosticEvent;
+import org.blockartistry.mod.DynSurround.event.RegistryReloadEvent;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.relauncher.Side;
@@ -50,23 +51,13 @@ import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.client.event.sound.PlaySoundEvent17;
 import net.minecraftforge.event.entity.EntityEvent.EntityConstructing;
+import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 
 @SideOnly(Side.CLIENT)
 public class PlayerSoundEffectHandler implements IClientEffectHandler {
 
 	private static final boolean ALWAYS_OVERRIDE_SOUND = ModOptions.getAlwaysOverrideSound();
 	private static final List<EntityDropParticleFX> drops = new ArrayList<EntityDropParticleFX>();
-	private static int playerDimension = 0;
-	private static int reloadTracker = 0;
-
-	private static boolean didReloadOccur() {
-		final int count = BiomeRegistry.getReloadCount();
-		if (count != reloadTracker) {
-			reloadTracker = count;
-			return true;
-		}
-		return false;
-	}
 
 	private static boolean doBiomeSounds() {
 		return EnvironState.isPlayerUnderground() || !EnvironState.isPlayerInside();
@@ -92,19 +83,19 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 
 		return result;
 	}
+	
+	private static void resetSounds() {
+		SoundManager.clearSounds();
+		drops.clear();
+	}
 
 	@Override
 	public void process(final World world, final EntityPlayer player) {
-		if (didReloadOccur() || player.isDead || playerDimension != EnvironState.getDimensionId()) {
-			SoundManager.clearSounds();
-			drops.clear();
-		}
-
 		// Dead players hear no sounds
-		if (player.isDead)
+		if (player.isDead) {
+			resetSounds();
 			return;
-
-		playerDimension = EnvironState.getDimensionId();
+		}
 
 		final BiomeGenBase playerBiome = EnvironState.getPlayerBiome();
 		final String conditions = EnvironState.getConditions();
@@ -133,6 +124,24 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 	@Override
 	public boolean hasEvents() {
 		return true;
+	}
+
+	/*
+	 * Fired when the underlying biome config is reloaded.
+	 */
+	@SubscribeEvent
+	public void registryReloadEvent(final RegistryReloadEvent.Biome event) {
+		resetSounds();
+	}
+
+	/*
+	 * Fired when the player joins a world, such as when the dimension
+	 * changes.
+	 */
+	@SubscribeEvent
+	public void playerJoinWorldEvent(final EntityJoinWorldEvent event) {
+		if(event.entity.worldObj.isRemote && EnvironState.isPlayer(event.entity))
+			resetSounds();
 	}
 
 	@SubscribeEvent
