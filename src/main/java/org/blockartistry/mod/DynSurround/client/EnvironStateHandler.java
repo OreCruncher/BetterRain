@@ -32,6 +32,7 @@ import java.util.UUID;
 import org.blockartistry.mod.DynSurround.ModOptions;
 import org.blockartistry.mod.DynSurround.client.sound.SoundEffect;
 import org.blockartistry.mod.DynSurround.client.sound.SoundManager;
+import org.blockartistry.mod.DynSurround.client.storm.StormProperties;
 import org.blockartistry.mod.DynSurround.data.BiomeRegistry;
 import org.blockartistry.mod.DynSurround.data.BiomeSurvey;
 import org.blockartistry.mod.DynSurround.data.DimensionRegistry;
@@ -438,6 +439,7 @@ public class EnvironStateHandler implements IClientEffectHandler {
 	@SubscribeEvent(priority = EventPriority.HIGHEST)
 	public void diagnostics(final DiagnosticEvent.Gather event) {
 		event.output.add("Dim: " + EnvironState.getDimensionId() + "/" + EnvironState.getDimensionName());
+		event.output.add(StormProperties.diagnostic());
 		event.output.add("Biome: " + EnvironState.getBiomeName());
 		event.output.add("Conditions: " + EnvironState.getConditions());
 	}

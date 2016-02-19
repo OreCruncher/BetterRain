@@ -133,10 +133,6 @@ public final class DimensionRegistry {
 		}
 	}
 
-	protected DimensionRegistry(final int dimensionId) {
-		this.dimensionId = dimensionId;
-	}
-
 	protected DimensionRegistry(final World world) {
 		this.dimensionId = world.provider.dimensionId;
 		initialize(world.provider);
@@ -224,15 +220,6 @@ public final class DimensionRegistry {
 			return SEASON_NOT_AVAILABLE;
 
 		return provider.getSeason(calendar).getName();
-	}
-
-	protected static DimensionRegistry getData(final int dimensionId) {
-		DimensionRegistry data = dimensionData.get(dimensionId);
-		if (data == null) {
-			data = new DimensionRegistry(dimensionId);
-			dimensionData.put(dimensionId, data);
-		}
-		return data;
 	}
 
 	public static DimensionRegistry getData(final World world) {
