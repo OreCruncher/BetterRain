@@ -141,6 +141,17 @@ public class Color {
 		return this;
 	}
 
+	private static float blend(final float c1, final float c2, final float factor) {
+		return (float) Math.sqrt((1.0F - factor) * c1 * c1 + factor * c2 * c2);
+	}
+	
+	public Color blend(final Color color, final float factor) {
+		this.red = blend(this.red, color.red, factor);
+		this.green = blend(this.green, color.green, factor);
+		this.blue = blend(this.blue, color.blue, factor);
+		return this;
+	}
+
 	public Color mix(final Color color) {
 		return mix(color.red, color.green, color.blue);
 	}

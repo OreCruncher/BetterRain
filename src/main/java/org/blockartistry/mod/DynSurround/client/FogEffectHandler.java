@@ -69,7 +69,6 @@ public class FogEffectHandler implements IClientEffectHandler {
 	private static float currentFogLevel = 0.0F;
 	private static float insideFogOffset = 0.0F;
 	private static Color currentFogColor = null;
-	private static float brightnessFactor = 1.0F;
 
 	public static float currentFogLevel() {
 		return currentFogLevel;
@@ -93,22 +92,31 @@ public class FogEffectHandler implements IClientEffectHandler {
 		float heightFog = 0.0F;
 
 		if (ENABLE_BIOME_FOG || ENABLE_DESERT_FOG) {
+			// Calculate the brightness factor to apply to the color. Need
+			// to darken it a bit when it gets night.
+			final float celestialAngle = DiurnalUtils.getCelestialAngle(world, 0.0F);
+			final float baseScale = MathHelper
+					.clamp_float(MathStuff.cos(celestialAngle * MathStuff.PI_F * 2.0F) * 2.0F + 0.5F, 0.0F, 1.0F);
+			final float brightnessFactor = baseScale * 0.75F + 0.25F;
+
 			final Color tint = new Color(0, 0, 0);
 			final BiomeSurvey survey = EnvironState.getBiomeSurvey();
+			int coverage = 0;
 			for (final BiomeGenBase b : survey.weights.keySet()) {
-				final float scale = (float) survey.weights.get(b) / (float) survey.area;
+				final int weight = survey.weights.get(b);
+				final float scale = ((float) weight / (float) survey.area);
 				if (ENABLE_BIOME_FOG && BiomeRegistry.hasFog(b)) {
 					biomeFog += BiomeRegistry.getFogDensity(b) * scale;
-					tint.add(Color.scale(BiomeRegistry.getFogColor(b), scale));
+					tint.blend(Color.scale(BiomeRegistry.getFogColor(b), brightnessFactor), scale);
+					coverage += weight;
 				} else if (ENABLE_DESERT_FOG && BiomeRegistry.hasDust(b)) {
 					dustFog += StormProperties.getFogDensity() * scale;
-					tint.add(Color.scale(BiomeRegistry.getDustColor(b), scale));
-				} else {
-					tint.add(Color.scale(currentFogColor, scale));
+					tint.blend(Color.scale(BiomeRegistry.getDustColor(b), brightnessFactor), scale);
+					coverage += weight;
 				}
 			}
 
-			currentFogColor = tint;
+			currentFogColor.blend(tint, (float) coverage / (float) survey.area);
 		}
 
 		biomeFog *= BIOME_FOG_FACTOR;
@@ -126,14 +134,6 @@ public class FogEffectHandler implements IClientEffectHandler {
 		// Get the max fog level between the three fog types
 		currentFogLevel = Math.max(biomeFog, Math.max(dustFog, heightFog));
 		insideFogOffset = PlayerUtils.ceilingCoverageRatio(player) * 15.0F;
-
-		// Calculate the brightness factor to apply to the color. Need
-		// to darken it a bit when it gets night.
-		final float celestialAngle = DiurnalUtils.getCelestialAngle(world, 0.0F);
-		final float baseScale = MathHelper
-				.clamp_float(MathStuff.cos(celestialAngle * MathStuff.PI_F * 2.0F) * 2.0F + 0.5F, 0.0F, 1.0F);
-
-		brightnessFactor = baseScale * 0.75F + 0.25F;
 	}
 
 	/*
@@ -146,7 +146,7 @@ public class FogEffectHandler implements IClientEffectHandler {
 		if (currentFogColor == null || event.getResult() != Result.DEFAULT)
 			return;
 
-		if (currentFogLevel <= 0)
+		if (currentFogLevel == 0)
 			return;
 
 		final Block block = ActiveRenderInfo.getBlockAtEntityViewpoint(event.entity.worldObj, event.entity,
@@ -154,10 +154,9 @@ public class FogEffectHandler implements IClientEffectHandler {
 		if (block.getMaterial() == Material.lava || block.getMaterial() == Material.water)
 			return;
 
-		final Color color = Color.scale(currentFogColor, brightnessFactor).mix(event.red, event.green, event.blue);
-		event.red = color.red;
-		event.green = color.green;
-		event.blue = color.blue;
+		event.red = currentFogColor.red;
+		event.green = currentFogColor.green;
+		event.blue = currentFogColor.blue;
 		event.setResult(Result.ALLOW);
 	}
 
@@ -202,7 +201,6 @@ public class FogEffectHandler implements IClientEffectHandler {
 		final StringBuilder builder = new StringBuilder();
 		builder.append("Fog:");
 		builder.append(" c:").append(currentFogLevel);
-		builder.append(" bf:").append(brightnessFactor);
 		event.output.add(builder.toString());
 	}
 

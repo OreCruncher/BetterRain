@@ -112,19 +112,6 @@ public final class PlayerUtils {
 		return ceilingCoverageRatio(entity) > 0.42F;
 	}
 
-	public static boolean isInside(final EntityPlayer entity, final int yOffset) {
-		// The Nether/End do not have the idea of inside
-		final int dimension = PlayerUtils.getPlayerDimension(entity);
-		if (dimension == 1 || dimension == -1)
-			return false;
-
-		// If the player is underground
-		if (PlayerUtils.isUnderGround(entity, yOffset))
-			return true;
-
-		return isReallyInside(entity);
-	}
-
 	@SideOnly(Side.CLIENT)
 	public static int getClientPlayerDimension() {
 		return getPlayerDimension(FMLClientHandler.instance().getClient().thePlayer);

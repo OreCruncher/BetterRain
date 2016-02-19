@@ -182,7 +182,7 @@
 		{
 			"biomeName":"(?i)(.*swamp.*)",
 			"fog":true,
-			"fogColor":"64,128,64",
+			"fogColor":"64,96,64",
 			"fogDensity":0.02
 		},
 		{
@@ -223,7 +223,7 @@
 				
 			],
 			"fog":true,
-			"fogColor":"64,64,64",
+			"fogColor":"128,128,128",
 			"fogDensity":0.02
 		},
 		{

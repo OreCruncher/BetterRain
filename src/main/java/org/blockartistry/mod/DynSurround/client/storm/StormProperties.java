@@ -26,6 +26,7 @@ package org.blockartistry.mod.DynSurround.client.storm;
 
 import org.blockartistry.mod.DynSurround.ModOptions;
 import org.blockartistry.mod.DynSurround.Module;
+import org.blockartistry.mod.DynSurround.client.EnvironStateHandler.EnvironState;
 import org.blockartistry.mod.DynSurround.data.DimensionEffectData;
 
 import net.minecraft.client.renderer.EntityRenderer;
@@ -160,5 +161,14 @@ public enum StormProperties {
 		StormRenderer.locationRainPng = intensity.rainTexture;
 		StormRenderer.locationSnowPng = intensity.snowTexture;
 		StormRenderer.locationDustPng = intensity.dustTexture;
+	}
+
+	public static String diagnostic() {
+		final StringBuilder builder = new StringBuilder();
+		builder.append("Storm: ").append(intensity.name());
+		builder.append(" level:").append(intensityLevel);
+		builder.append(" dust:").append(fogDensity);
+		builder.append(" str:").append(EnvironState.getWorld().getRainStrength(1.0F));
+		return builder.toString();
 	}
 }
