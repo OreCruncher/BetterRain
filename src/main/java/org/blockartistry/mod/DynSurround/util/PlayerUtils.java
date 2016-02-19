@@ -66,7 +66,7 @@ public final class PlayerUtils {
 					biome = BiomeRegistry.UNDERWATER;
 			} else if (isUnderGround(player, INSIDE_Y_ADJUST))
 				biome = BiomeRegistry.UNDERGROUND;
-			else if (theY >= DimensionRegistry.getSkyHeight(player.worldObj))
+			else if (theY >= DimensionRegistry.getSpaceHeight(player.worldObj))
 				biome = BiomeRegistry.OUTERSPACE;
 		}
 		return biome;
