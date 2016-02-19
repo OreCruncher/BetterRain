@@ -109,8 +109,9 @@ public class FogEffectHandler implements IClientEffectHandler {
 					tint.blend(Color.scale(BiomeRegistry.getFogColor(b), brightnessFactor), scale);
 					coverage += weight;
 				} else if (ENABLE_DESERT_FOG && BiomeRegistry.hasDust(b)) {
-					dustFog += StormProperties.getFogDensity() * scale;
-					tint.blend(Color.scale(BiomeRegistry.getDustColor(b), brightnessFactor), scale);
+					final float str = EnvironState.getWorld().getRainStrength(1.0F);
+					dustFog += StormProperties.getFogDensity() * scale * str;
+					tint.blend(Color.scale(BiomeRegistry.getDustColor(b), brightnessFactor), scale * str);
 					coverage += weight;
 				}
 			}
