@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.blockartistry.mod.DynSurround.ModLog;
 import org.blockartistry.mod.DynSurround.client.footsteps.mcpackage.interfaces.IBlockMap;
 
 import net.minecraft.block.Block;
@@ -42,14 +43,14 @@ public final class ForgeDictionary {
 			"oreEnderium", "oreLapis", "oreDiamond", "oreEmerald", "oreRedstone", "oreQuartz", "oreCoal" };
 
 	private static final String[] metalBlocks = { "blockIron", "blockGold", "blockCopper", "blockTin", "blockSilver",
-			"blockLead", "blockNickle", "blockPlatinum", "blockManaInfused", "blockElectrum", "blockInvar",
-			"blockBronze", "blockSignalum", "blockEnderium", "blockSteel" };
+			"blockLead", "blockNickle", "blockPlatinum", "blockMithril", "blockElectrum", "blockInvar", "blockBronze",
+			"blockSignalum", "blockLumium", "blockEnderium", "blockSteel" };
 
 	private static final String[] woodBlocks = { "logWood", "planksWood", "slabWood", "stairWood" };
 
 	private static final String[] saplings = { "treeSaplings" };
 
-	private static final String[] glassBlocks = { "blockGlass" };
+	private static final String[] glassBlocks = { "blockGlass", "blockGlassHardened", "blockGlassHardenedIlluminated" };
 
 	private static final String[] leafBlocks = { "treeLeaves" };
 
@@ -58,8 +59,10 @@ public final class ForgeDictionary {
 	private static final String[] sandstoneBlocks = { "sandstone" };
 
 	private static final String[] sandBlocks = { "sand" };
-	
+
 	private static final String[] woodChests = { "chestWood", "chestTrapped" };
+
+	private static final String[] rugBlocks = { "wool", "blockClothRock" };
 
 	private static final Map<String, String[]> dictionaryMaps = new HashMap<String, String[]>();
 
@@ -74,10 +77,18 @@ public final class ForgeDictionary {
 		dictionaryMaps.put("sandstone", sandstoneBlocks);
 		dictionaryMaps.put("sand", sandBlocks);
 		dictionaryMaps.put("squeakywood", woodChests);
+		dictionaryMaps.put("rug", rugBlocks);
 	}
 
 	private ForgeDictionary() {
 
+	}
+
+	public static void dumpOreNames() {
+		ModLog.debug("**** FORGE ORE DICTIONARY NAMES ****");
+		for (final String oreName : OreDictionary.getOreNames())
+			ModLog.debug(oreName);
+		ModLog.debug("************************************");
 	}
 
 	public static void initialize(final IBlockMap blockMap) {
