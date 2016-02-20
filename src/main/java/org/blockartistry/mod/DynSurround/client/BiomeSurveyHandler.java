@@ -25,6 +25,7 @@
 package org.blockartistry.mod.DynSurround.client;
 
 import org.blockartistry.mod.DynSurround.client.EnvironStateHandler.EnvironState;
+import org.blockartistry.mod.DynSurround.data.FakeBiome;
 
 import gnu.trove.map.hash.TObjectIntHashMap;
 import net.minecraft.entity.player.EntityPlayer;
@@ -62,7 +63,8 @@ public final class BiomeSurveyHandler implements IClientEffectHandler {
 	public static void doSurvey(final EntityPlayer player, final int range) {
 		area = 0;
 		weights.clear();
-		if (EnvironState.isPlayerUnderground() || EnvironState.isPlayerInSpace()) {
+		
+		if (EnvironState.getPlayerBiome() instanceof FakeBiome) {
 			area = 1;
 			weights.put(EnvironState.getPlayerBiome(), 1);
 		} else {
@@ -85,8 +87,9 @@ public final class BiomeSurveyHandler implements IClientEffectHandler {
 		final int playerX = MathHelper.floor_double(player.posX);
 		final int playerY = MathHelper.floor_double(player.posY);
 		final int playerZ = MathHelper.floor_double(player.posZ);
-		
-		if(lastDimension != EnvironState.getDimensionId() || playerX != lastPlayerX || playerY != lastPlayerY || playerZ != lastPlayerZ) {
+
+		if (lastDimension != EnvironState.getDimensionId() || playerX != lastPlayerX || playerY != lastPlayerY
+				|| playerZ != lastPlayerZ) {
 			lastDimension = EnvironState.getDimensionId();
 			lastPlayerX = playerX;
 			lastPlayerY = playerY;

@@ -363,6 +363,17 @@
 			
 		},
 		{
+			"biomeName":"Clouds",
+			"sounds":[
+				{
+					"sound":"dsurround:wind",
+					"volume":1.0
+				}
+				
+			]
+			
+		},
+		{
 			"biomeName":"Player",
 			"sounds":[
 				{
