@@ -71,6 +71,8 @@ public final class PlayerUtils {
 				biome = BiomeRegistry.UNDERGROUND;
 			else if (theY >= DimensionRegistry.getSpaceHeight(player.worldObj))
 				biome = BiomeRegistry.OUTERSPACE;
+			else if (theY >= DimensionRegistry.getCloudHeight(player.worldObj))
+				biome = BiomeRegistry.CLOUDS;
 		}
 		return biome;
 	}

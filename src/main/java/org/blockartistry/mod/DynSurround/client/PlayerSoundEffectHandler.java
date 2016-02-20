@@ -33,7 +33,6 @@ import org.blockartistry.mod.DynSurround.client.sound.SoundEffect;
 import org.blockartistry.mod.DynSurround.client.sound.SoundManager;
 import org.blockartistry.mod.DynSurround.client.storm.StormProperties;
 import org.blockartistry.mod.DynSurround.data.BiomeRegistry;
-import org.blockartistry.mod.DynSurround.data.BiomeSurvey;
 import org.blockartistry.mod.DynSurround.event.DiagnosticEvent;
 import org.blockartistry.mod.DynSurround.event.RegistryReloadEvent;
 
@@ -69,17 +68,18 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 		// Need to collect sounds from all the applicable biomes
 		// along with their weights.
 		final TObjectIntHashMap<SoundEffect> sounds = new TObjectIntHashMap<SoundEffect>();
-		final BiomeSurvey survey = EnvironState.getBiomeSurvey();
-		for (final BiomeGenBase biome : survey.weights.keySet()) {
+		final TObjectIntHashMap<BiomeGenBase> weights = BiomeSurveyHandler.getBiomes();
+		for (final BiomeGenBase biome : weights.keySet()) {
 			final List<SoundEffect> bs = BiomeRegistry.getSounds(biome, conditions);
 			for (final SoundEffect sound : bs)
-				sounds.put(sound, sounds.get(sound) + survey.weights.get(biome));
+				sounds.put(sound, sounds.get(sound) + weights.get(biome));
 		}
 
 		// Scale the volumes in the resulting list based on the weights
 		final List<SoundEffect> result = new ArrayList<SoundEffect>();
+		final int area = BiomeSurveyHandler.getArea();
 		for (final SoundEffect sound : sounds.keySet()) {
-			final float scale = 0.3F + 0.7F * ((float) sounds.get(sound) / (float) survey.area);
+			final float scale = 0.3F + 0.7F * ((float) sounds.get(sound) / (float) area);
 			result.add(SoundEffect.scaleVolume(sound, scale));
 		}
 

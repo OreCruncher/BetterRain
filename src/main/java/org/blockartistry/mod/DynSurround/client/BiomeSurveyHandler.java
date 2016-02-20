@@ -22,28 +22,44 @@
  * THE SOFTWARE.
  */
 
-package org.blockartistry.mod.DynSurround.data;
+package org.blockartistry.mod.DynSurround.client;
 
 import org.blockartistry.mod.DynSurround.client.EnvironStateHandler.EnvironState;
+
 import gnu.trove.map.hash.TObjectIntHashMap;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.MathHelper;
+import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
-public final class BiomeSurvey {
+@SideOnly(Side.CLIENT)
+public final class BiomeSurveyHandler implements IClientEffectHandler {
 
-	public int area;
-	public final TObjectIntHashMap<BiomeGenBase> weights = new TObjectIntHashMap<BiomeGenBase>();
+	private static final int BIOME_SURVEY_RANGE = 6;
+
+	private static int area;
+	private static final TObjectIntHashMap<BiomeGenBase> weights = new TObjectIntHashMap<BiomeGenBase>();
+
+	public static int getArea() {
+		return area;
+	}
+
+	public static TObjectIntHashMap<BiomeGenBase> getBiomes() {
+		return weights;
+	}
 
 	/*
 	 * Perform a biome survey around the player at the specified range.
 	 */
-	public static BiomeSurvey doSurvey(final EntityPlayer player, final int range) {
-		final BiomeSurvey survey = new BiomeSurvey();
+	public static void doSurvey(final EntityPlayer player, final int range) {
+		area = 0;
+		weights.clear();
 		if (EnvironState.isPlayerUnderground() || EnvironState.isPlayerInSpace()) {
-			survey.area = 1;
-			survey.weights.put(EnvironState.getPlayerBiome(), 1);
+			area = 1;
+			weights.put(EnvironState.getPlayerBiome(), 1);
 		} else {
 			final BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
 			final int x = MathHelper.floor_double(player.posX);
@@ -51,14 +67,23 @@ public final class BiomeSurvey {
 
 			for (int dX = -range; dX <= range; dX++)
 				for (int dZ = -range; dZ <= range; dZ++) {
-					survey.area++;
+					area++;
 					pos.set(x + dX, 0, z + dZ);
 					final BiomeGenBase biome = player.worldObj.getBiomeGenForCoords(pos);
-					survey.weights.adjustOrPutValue(biome, 1, 1);
+					weights.adjustOrPutValue(biome, 1, 1);
 				}
 		}
+	}
 
-		return survey;
+	@Override
+	public void process(final World world, final EntityPlayer player) {
+		doSurvey(player, BIOME_SURVEY_RANGE);
+		
+	}
+
+	@Override
+	public boolean hasEvents() {
+		return false;
 	}
 
 }

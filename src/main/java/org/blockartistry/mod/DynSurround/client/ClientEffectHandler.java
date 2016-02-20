@@ -74,6 +74,7 @@ public class ClientEffectHandler {
 		final ClientEffectHandler handler = new ClientEffectHandler();
 		MinecraftForge.EVENT_BUS.register(handler);
 
+		register(new BiomeSurveyHandler());
 		register(new EnvironStateHandler());
 		register(new FogEffectHandler());
 		register(new BlockEffectHandler());

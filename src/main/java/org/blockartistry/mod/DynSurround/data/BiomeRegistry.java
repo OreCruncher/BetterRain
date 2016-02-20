@@ -59,6 +59,7 @@ public final class BiomeRegistry {
 	public static final BiomeGenBase UNDERDEEPOCEAN = new FakeBiome(-5, "UnderDOCN");
 	public static final BiomeGenBase UNDERRIVER = new FakeBiome(-6, "UnderRVR");
 	public static final BiomeGenBase OUTERSPACE = new FakeBiome(-7, "OuterSpace");
+	public static final BiomeGenBase CLOUDS = new FakeBiome(-8, "Clouds");
 
 	public static final SoundEffect WATER_DRIP = new SoundEffect(Module.MOD_ID + ":waterdrops");
 
@@ -178,6 +179,7 @@ public final class BiomeRegistry {
 		registry.put(UNDERDEEPOCEAN.biomeID, new Entry(UNDERDEEPOCEAN));
 		registry.put(UNDERRIVER.biomeID, new Entry(UNDERRIVER));
 		registry.put(OUTERSPACE.biomeID, new Entry(OUTERSPACE));
+		registry.put(CLOUDS.biomeID, new Entry(CLOUDS));
 		registry.put(PLAYER.biomeID, new Entry(PLAYER));
 		registry.put(WTF.biomeID, new Entry(WTF));
 

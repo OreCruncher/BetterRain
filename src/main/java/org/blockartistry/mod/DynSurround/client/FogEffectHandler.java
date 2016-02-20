@@ -28,7 +28,6 @@ import org.blockartistry.mod.DynSurround.ModOptions;
 import org.blockartistry.mod.DynSurround.client.EnvironStateHandler.EnvironState;
 import org.blockartistry.mod.DynSurround.client.storm.StormProperties;
 import org.blockartistry.mod.DynSurround.data.BiomeRegistry;
-import org.blockartistry.mod.DynSurround.data.BiomeSurvey;
 import org.blockartistry.mod.DynSurround.data.DimensionRegistry;
 import org.blockartistry.mod.DynSurround.event.DiagnosticEvent;
 import org.blockartistry.mod.DynSurround.util.Color;
@@ -37,6 +36,7 @@ import org.blockartistry.mod.DynSurround.util.MathStuff;
 import org.blockartistry.mod.DynSurround.util.PlayerUtils;
 import org.lwjgl.opengl.GL11;
 
+import gnu.trove.map.hash.TObjectIntHashMap;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.ActiveRenderInfo;
@@ -100,11 +100,12 @@ public class FogEffectHandler implements IClientEffectHandler {
 			final float brightnessFactor = baseScale * 0.75F + 0.25F;
 
 			final Color tint = new Color(0, 0, 0);
-			final BiomeSurvey survey = EnvironState.getBiomeSurvey();
+			final TObjectIntHashMap<BiomeGenBase> weights = BiomeSurveyHandler.getBiomes();
+			final int area = BiomeSurveyHandler.getArea();
 			int coverage = 0;
-			for (final BiomeGenBase b : survey.weights.keySet()) {
-				final int weight = survey.weights.get(b);
-				final float scale = ((float) weight / (float) survey.area);
+			for (final BiomeGenBase b : weights.keySet()) {
+				final int weight = weights.get(b);
+				final float scale = ((float) weight / (float) area);
 				if (ENABLE_BIOME_FOG && BiomeRegistry.hasFog(b)) {
 					biomeFog += BiomeRegistry.getFogDensity(b) * scale;
 					tint.blend(Color.scale(BiomeRegistry.getFogColor(b), brightnessFactor), scale);
@@ -117,7 +118,7 @@ public class FogEffectHandler implements IClientEffectHandler {
 				}
 			}
 
-			currentFogColor.blend(tint, (float) coverage / (float) survey.area);
+			currentFogColor.blend(tint, (float) coverage / (float) area);
 		}
 
 		biomeFog *= BIOME_FOG_FACTOR;
