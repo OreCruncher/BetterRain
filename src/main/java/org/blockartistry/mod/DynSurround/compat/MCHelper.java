@@ -48,4 +48,13 @@ public class MCHelper {
 	public static int getBlockMetadata(final World world, final BlockPos pos) {
 		return world.getBlockMetadata(pos.getX(), pos.getY(), pos.getZ());
 	}
+	
+	public static boolean isAirBlock(final World world, final BlockPos pos) {
+		return world.isAirBlock(pos.getX(), pos.getY(), pos.getZ());
+	}
+	
+	public static boolean isLeafBlock(final World world, final BlockPos pos) {
+		return getBlock(world, pos).isLeaves(world, pos.getX(), pos.getY(), pos.getZ());
+	}
+
 }
