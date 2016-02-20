@@ -258,7 +258,6 @@
 		},
 		{
 			"biomeName":"(?i)(.*savanna.*)",
-			"spotSoundChance":400,
 			"sounds":[
 				{
 					"sound":"dsurround:elephant",

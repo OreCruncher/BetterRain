@@ -192,7 +192,7 @@
 			"blocks":[
 				"minecraft:monster_egg"
 			],
-			"chance":150,
+			"chance":300,
 			"sounds":[
 				{
 					"sound":"dsurround:hiss",
@@ -212,7 +212,7 @@
 			"blocks":[
 				"minecraft:bookshelf"
 			],
-			"chance":200,
+			"chance":500,
 			"sounds":[
 				{
 					"sound":"dsurround:bookshelf",
