@@ -24,7 +24,8 @@
 
 package org.blockartistry.mod.DynSurround.client.fx.particle;
 
-import org.blockartistry.mod.DynSurround.client.fx.IParticleFactory;
+import org.blockartistry.mod.DynSurround.compat.IParticleFactory;
+
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.particle.EntityFX;
