@@ -31,6 +31,7 @@ import java.util.Map.Entry;
 
 import org.blockartistry.mod.DynSurround.ModLog;
 import org.blockartistry.mod.DynSurround.client.footsteps.mcpackage.interfaces.IBlockMap;
+import org.blockartistry.mod.DynSurround.compat.MCHelper;
 
 import cpw.mods.fml.relauncher.SideOnly;
 import cpw.mods.fml.relauncher.Side;
@@ -123,7 +124,7 @@ public final class ForgeDictionary {
 				for (final ItemStack stack : stacks) {
 					final Block block = Block.getBlockFromItem(stack.getItem());
 					if (block != null) {
-						String blockName = PFHelper.nameOf(block);
+						String blockName = MCHelper.nameOf(block);
 						if (stack.getHasSubtypes() && stack.getItemDamage() != OreDictionary.WILDCARD_VALUE)
 							blockName += "^" + stack.getItemDamage();
 						blockMap.register(blockName, value);

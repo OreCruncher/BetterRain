@@ -35,8 +35,8 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
 import org.blockartistry.mod.DynSurround.ModLog;
-import org.blockartistry.mod.DynSurround.client.footsteps.game.system.PFHelper;
 import org.blockartistry.mod.DynSurround.client.footsteps.mcpackage.interfaces.IBlockMap;
+import org.blockartistry.mod.DynSurround.compat.MCHelper;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -167,7 +167,7 @@ public class BasicBlockMap implements IBlockMap {
 		final Matcher matcher = pattern.matcher(key);
 		if (matcher.matches()) {
 			final String blockName = matcher.group(1);
-			final Block block = PFHelper.getBlockNameRaw(blockName);
+			final Block block = MCHelper.getBlockNameRaw(blockName);
 			if (block != null) {
 				final int meta = matcher.group(2) == null ? -1 : Integer.parseInt(matcher.group(2));
 				final String substrate = matcher.group(3);
