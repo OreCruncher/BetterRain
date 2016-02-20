@@ -58,4 +58,12 @@ public class MCHelper {
 		return state.getBlock().getMetaFromState(state);
 	}
 
+	public static boolean isAirBlock(final World world, final BlockPos pos) {
+		return world.isAirBlock(pos);
+	}
+	
+	public static boolean isLeafBlock(final World world, final BlockPos pos) {
+		return getBlock(world, pos).isLeaves(world, pos);
+	}
+
 }
