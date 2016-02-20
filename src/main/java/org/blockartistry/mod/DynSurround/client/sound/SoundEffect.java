@@ -110,9 +110,9 @@ public final class SoundEffect {
 		return this.pitch;
 	}
 
-	public void doEffect(final Block block, final World world, final int x, final int y, final int z,
+	public void doEffect(final Block block, final World world, final BlockPos pos,
 			final Random random) {
-		SoundManager.playSoundAt(new BlockPos(x, y, z), this, 0);
+		SoundManager.playSoundAt(pos, this, 0);
 	}
 
 	@Override

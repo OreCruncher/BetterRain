@@ -26,6 +26,7 @@ package org.blockartistry.mod.DynSurround.client.fx;
 import java.util.Random;
 
 import net.minecraft.block.Block;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 
 public abstract class BlockEffect {
@@ -48,12 +49,12 @@ public abstract class BlockEffect {
 		return this.chance;
 	}
 
-	public boolean trigger(final Block block, final World world, final int x, final int y, final int z,
+	public boolean trigger(final Block block, final World world, final BlockPos pos,
 			final Random random) {
 		return random.nextInt(getChance()) == 0;
 	}
 
-	public abstract void doEffect(final Block block, final World world, final int x, final int y, final int z,
+	public abstract void doEffect(final Block block, final World world, final BlockPos pos,
 			final Random random);
 	
 	@Override

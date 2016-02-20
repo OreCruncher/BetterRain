@@ -45,14 +45,13 @@ public abstract class JetEffect extends BlockEffect {
 
 	private static final int MAX_STRENGTH = 10;
 
-	protected final BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
+	protected final BlockPos.MutableBlockPos pos1 = new BlockPos.MutableBlockPos();
 
-	protected int countBlocks(final World world, final int x, final int y, final int z, final Block block,
-			final int dir) {
+	protected int countBlocks(final World world, final BlockPos pos, final Block block, final int dir) {
 		int count = 0;
-		int idx = y;
+		int idx = pos.getY();
 		while (count < MAX_STRENGTH) {
-			if (world.getBlockState(pos.set(x, idx, z)).getBlock() != block)
+			if (world.getBlockState(pos1.set(pos.getX(), idx, pos.getZ())).getBlock() != block)
 				return count;
 			count++;
 			idx += dir;
@@ -61,10 +60,10 @@ public abstract class JetEffect extends BlockEffect {
 	}
 
 	// Takes into account partial blocks because of flow
-	private static double jetSpawnHeight(final World world, final int x, final int y, final int z) {
-		final IBlockState state = world.getBlockState(new BlockPos(x, y, z));
+	private static double jetSpawnHeight(final World world, final BlockPos pos) {
+		final IBlockState state = world.getBlockState(pos);
 		final int meta = state.getBlock().getMetaFromState(state);
-		return 1.1D - BlockLiquid.getLiquidHeightPercent(meta) + y;
+		return 1.1D - BlockLiquid.getLiquidHeightPercent(meta) + pos.getY();
 	}
 
 	public JetEffect(final int chance) {
@@ -82,16 +81,15 @@ public abstract class JetEffect extends BlockEffect {
 		}
 
 		@Override
-		public boolean trigger(final Block block, final World world, final int x, final int y, final int z,
-				final Random random) {
-			return super.trigger(block, world, x, y, z, random) && world.isAirBlock(pos.set(x, y + 1, z));
+		public boolean trigger(final Block block, final World world, final BlockPos pos, final Random random) {
+			return super.trigger(block, world, pos, random) && world.isAirBlock(pos.up());
 		}
 
-		public void doEffect(final Block block, final World world, final int x, final int y, final int z,
-				final Random random) {
-			final int lavaBlocks = countBlocks(world, x, y, z, block, -1);
-			final double spawnHeight = jetSpawnHeight(world, x, y, z);
-			final EntityJetFX effect = new EntityFireJetFX(lavaBlocks, world, x + 0.5D, spawnHeight, z + 0.5D);
+		public void doEffect(final Block block, final World world, final BlockPos pos, final Random random) {
+			final int lavaBlocks = countBlocks(world, pos, block, -1);
+			final double spawnHeight = jetSpawnHeight(world, pos);
+			final EntityJetFX effect = new EntityFireJetFX(lavaBlocks, world, pos.getX() + 0.5D, spawnHeight,
+					pos.getZ() + 0.5D);
 			addEffect(effect);
 		}
 	}
@@ -102,16 +100,15 @@ public abstract class JetEffect extends BlockEffect {
 		}
 
 		@Override
-		public boolean trigger(final Block block, final World world, final int x, final int y, final int z,
-				final Random random) {
-			return super.trigger(block, world, x, y, z, random)
-					&& world.getBlockState(pos.set(x, y - 1, z)).getBlock().getMaterial().isSolid();
+		public boolean trigger(final Block block, final World world, final BlockPos pos, final Random random) {
+			return super.trigger(block, world, pos, random)
+					&& world.getBlockState(pos.down()).getBlock().getMaterial().isSolid();
 		}
 
-		public void doEffect(final Block block, final World world, final int x, final int y, final int z,
-				final Random random) {
-			final int waterBlocks = countBlocks(world, x, y, z, block, 1);
-			final EntityJetFX effect = new EntityBubbleJetFX(waterBlocks, world, x + 0.5D, y + 0.1D, z + 0.5D);
+		public void doEffect(final Block block, final World world, final BlockPos pos, final Random random) {
+			final int waterBlocks = countBlocks(world, pos, block, 1);
+			final EntityJetFX effect = new EntityBubbleJetFX(waterBlocks, world, pos.getX() + 0.5D, pos.getY() + 0.1D,
+					pos.getZ() + 0.5D);
 			addEffect(effect);
 		}
 	}
@@ -122,32 +119,30 @@ public abstract class JetEffect extends BlockEffect {
 			super(chance);
 		}
 
-		protected int lavaCount(final World world, final int x, final int y, final int z) {
-			final BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
+		protected int lavaCount(final World world, final BlockPos pos) {
 			int blockCount = 0;
 			for (int i = -1; i <= 1; i++)
 				for (int j = -1; j <= 1; j++)
 					for (int k = -1; k <= 1; k++) {
-						if (world.getBlockState(pos.set(x + i, y + j, z + k)).getBlock() == Blocks.lava)
+						if (world.getBlockState(pos.add(i, j, k)).getBlock() == Blocks.lava)
 							blockCount++;
 					}
 			return blockCount;
 		}
 
 		@Override
-		public boolean trigger(final Block block, final World world, final int x, final int y, final int z,
-				final Random random) {
-			if (!super.trigger(block, world, x, y, z, random) || !world.isAirBlock(new BlockPos(x, y + 1, z)))
+		public boolean trigger(final Block block, final World world, final BlockPos pos, final Random random) {
+			if (!super.trigger(block, world, pos, random) || !world.isAirBlock(pos.up()))
 				return false;
 
-			return lavaCount(world, x, y, z) != 0;
+			return lavaCount(world, pos) != 0;
 		}
 
-		public void doEffect(final Block block, final World world, final int x, final int y, final int z,
-				final Random random) {
-			final int strength = lavaCount(world, x, y, z);
-			final double spawnHeight = jetSpawnHeight(world, x, y, z);
-			final EntityJetFX effect = new EntitySteamJetFX(strength, world, x + 0.5D, spawnHeight, z + 0.5D);
+		public void doEffect(final Block block, final World world, final BlockPos pos, final Random random) {
+			final int strength = lavaCount(world, pos);
+			final double spawnHeight = jetSpawnHeight(world, pos);
+			final EntityJetFX effect = new EntitySteamJetFX(strength, world, pos.getX() + 0.5D, spawnHeight,
+					pos.getZ() + 0.5D);
 			addEffect(effect);
 		}
 	}
@@ -159,36 +154,34 @@ public abstract class JetEffect extends BlockEffect {
 		}
 
 		@Override
-		public boolean trigger(final Block block, final World world, final int x, final int y, final int z,
-				final Random random) {
-			return super.trigger(block, world, x, y, z, random) && world.isAirBlock(new BlockPos(x, y - 1, z));
+		public boolean trigger(final Block block, final World world, final BlockPos pos, final Random random) {
+			return super.trigger(block, world, pos, random) && world.isAirBlock(pos.down());
 		}
 
-		public void doEffect(final Block block, final World world, final int x, final int y, final int z,
-				final Random random) {
-			final IBlockState state = world.getBlockState(new BlockPos(x, y, z));
-			final EntityJetFX effect = new EntityDustJetFX(2, world, x + 0.5D, y - 0.2D, z + 0.5D, state);
+		public void doEffect(final Block block, final World world, final BlockPos pos, final Random random) {
+			final IBlockState state = world.getBlockState(pos);
+			final EntityJetFX effect = new EntityDustJetFX(2, world, pos.getX() + 0.5D, pos.getY() - 0.2D,
+					pos.getZ() + 0.5D, state);
 			addEffect(effect);
 		}
 	}
-	
+
 	public static class Fountain extends JetEffect {
 		public Fountain(final int chance) {
 			super(chance);
 		}
 
 		@Override
-		public boolean trigger(final Block block, final World world, final int x, final int y, final int z,
-				final Random random) {
-			return super.trigger(block, world, x, y, z, random) && world.isAirBlock(new BlockPos(x, y + 1, z));
+		public boolean trigger(final Block block, final World world, final BlockPos pos, final Random random) {
+			return super.trigger(block, world, pos, random) && world.isAirBlock(pos.up());
 		}
 
-		public void doEffect(final Block block, final World world, final int x, final int y, final int z,
-				final Random random) {
-			final IBlockState state = world.getBlockState(new BlockPos(x, y, z));
-			final EntityJetFX effect = new EntityFountainJetFX(5, world, x + 0.5D, y + 1.1D, z + 0.5D, state);
+		public void doEffect(final Block block, final World world, final BlockPos pos, final Random random) {
+			final IBlockState state = world.getBlockState(pos);
+			final EntityJetFX effect = new EntityFountainJetFX(5, world, pos.getX() + 0.5D, pos.getY() + 1.1D,
+					pos.getZ() + 0.5D, state);
 			addEffect(effect);
 		}
-		
+
 	}
 }

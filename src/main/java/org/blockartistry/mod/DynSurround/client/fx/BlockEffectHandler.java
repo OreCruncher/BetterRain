@@ -76,12 +76,12 @@ public class BlockEffectHandler implements IClientEffectHandler {
 				final List<BlockEffect> chain = BlockRegistry.getEffects(block);
 				if (chain != null) {
 					for (final BlockEffect effect : chain)
-						if (effect.trigger(block, world, x, y, z, random))
-							effect.doEffect(block, world, x, y, z, random);
+						if (effect.trigger(block, world, pos, random))
+							effect.doEffect(block, world, pos, random);
 				}
 				final SoundEffect sound = BlockRegistry.getSound(block, random, conditions);
 				if (sound != null)
-					sound.doEffect(block, world, x, y, z, random);
+					sound.doEffect(block, world, pos, random);
 			}
 		}
 
@@ -91,7 +91,7 @@ public class BlockEffectHandler implements IClientEffectHandler {
 			if (block != Blocks.air && !block.getMaterial().isLiquid()) {
 				final SoundEffect sound = BlockRegistry.getStepSound(block, random, conditions);
 				if (sound != null)
-					sound.doEffect(block, world, playerX, p.getY(), playerZ, random);
+					sound.doEffect(block, world, p, random);
 			}
 		}
 	}
