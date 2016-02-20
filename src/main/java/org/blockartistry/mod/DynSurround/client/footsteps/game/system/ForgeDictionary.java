@@ -32,10 +32,13 @@ import java.util.Map.Entry;
 import org.blockartistry.mod.DynSurround.ModLog;
 import org.blockartistry.mod.DynSurround.client.footsteps.mcpackage.interfaces.IBlockMap;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
 
+@SideOnly(Side.CLIENT)
 public final class ForgeDictionary {
 
 	private static final String[] oreBlocks = { "oreIron", "oreGold", "oreCopper", "oreTin", "oreSilver", "oreLead",
@@ -46,13 +49,14 @@ public final class ForgeDictionary {
 			"blockLead", "blockNickle", "blockPlatinum", "blockMithril", "blockElectrum", "blockInvar", "blockBronze",
 			"blockSignalum", "blockLumium", "blockEnderium", "blockSteel" };
 
-	private static final String[] woodBlocks = { "logWood", "planksWood", "slabWood", "stairWood" };
+	private static final String[] woodBlocks = { "logWood", "planksWood", "slabWood", "stairWood", "plankBamboo",
+			"slabBamboo", "stairBamboo" };
 
-	private static final String[] saplings = { "treeSaplings" };
+	private static final String[] saplings = { "treeSaplings", "saplingTree" };
 
 	private static final String[] glassBlocks = { "blockGlass" };
 
-	private static final String[] leafBlocks = { "treeLeaves" };
+	private static final String[] leafBlocks = { "treeLeaves", "leavesTree", "treeBambooLeaves" };
 
 	private static final String[] stoneBlocks = { "stone", "cobblestone" };
 
@@ -63,6 +67,8 @@ public final class ForgeDictionary {
 	private static final String[] woodChests = { "chestWood", "chestTrapped" };
 
 	private static final String[] rugBlocks = { "wool", "blockClothRock" };
+
+	private static final String[] fenceBlocks = { "fenceWood" };
 
 	private static final Map<String, String[]> dictionaryMaps = new HashMap<String, String[]>();
 
@@ -78,6 +84,7 @@ public final class ForgeDictionary {
 		dictionaryMaps.put("sand", sandBlocks);
 		dictionaryMaps.put("squeakywood", woodChests);
 		dictionaryMaps.put("rug", rugBlocks);
+		dictionaryMaps.put("#fence", fenceBlocks);
 	}
 
 	private ForgeDictionary() {
