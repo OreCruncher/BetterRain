@@ -65,11 +65,11 @@ public final class ForgeDictionary {
 
 	private static final String[] leafBlocks = { "treeLeaves", "leavesTree", "treeBambooLeaves" };
 
-	private static final String[] stoneBlocks = { "stone", "cobblestone", "blockSalt", "blockFuelCoke", "concrete", "blockGraphite" };
+	private static final String[] stoneBlocks = { "stone", "cobblestone", "blockFuelCoke", "concrete", "blockGraphite" };
 
 	private static final String[] sandstoneBlocks = { "sandstone", "blockPrismarine", "blockVinteum", "blockChimerite", "blockBlueTopaz", "blockMoonstone", "blockSunstone" };
 
-	private static final String[] sandBlocks = { "sand" };
+	private static final String[] sandBlocks = { "sand", "blockSalt" };
 
 	private static final String[] woodChests = { "chestWood", "chestTrapped" };
 
