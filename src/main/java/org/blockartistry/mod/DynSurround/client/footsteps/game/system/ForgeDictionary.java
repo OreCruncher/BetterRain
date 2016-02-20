@@ -47,12 +47,14 @@ public final class ForgeDictionary {
 			"oreChimerite", "oreBlueTopaz", "oreMoonstone", "oreVinteum", "oreSunstone", "oreTitanium", "oreOsmium", "denseoreLapis",
 			"oreUranium", "denseoreIron", "denseoreGold", "denseoreRedstone", "denseoreDiamond", "denseoreEmerald", "denseoreCoal", "denseoreCopper",
 		        "denseoreTin", "denseoreSilver", "denseoreLead", "denseoreNickel", "denseorePlatinum", "denseoreMithril", "oreRuby", "oreSapphire", "oreEmery",
-		        "oreAluminum", "oreJade", "oreApatite", "oreSalt", "oreZinc", "orePeridot", "oreSilicon", "oreMoldavite", "oreBloodstone", "oreCinnabar"};
+		        "oreAluminum", "oreJade", "oreApatite", "oreSalt", "oreZinc", "orePeridot", "oreSilicon", "oreMoldavite", "oreBloodstone", "oreCinnabar",
+		        "oreYellorite" };
 
 	private static final String[] metalBlocks = { "blockIron", "blockGold", "blockCopper", "blockTin", "blockSilver",
 			"blockLead", "blockNickle", "blockPlatinum", "blockMithril", "blockElectrum", "blockInvar", "blockBronze",
 			"blockSignalum", "blockLumium", "blockEnderium", "blockSteel", "blockNickel", "blockTitanium", "blockOsmium", "blockUranium",
-			"blockBrass", "blockZinc" };
+			"blockBrass", "blockZinc", "blockConstantan", "slabConstantan", "slabCopper", "slabSilver", "slabElectrum", "slabNickel",
+			"slabAluminum", "blockAluminum", "blockYellorium", "blockCyanite" "blockBlutonium", "blockLudicrite" };
 
 	private static final String[] woodBlocks = { "logWood", "planksWood", "slabWood", "stairWood", "plankBamboo",
 			"slabBamboo", "stairBamboo", "craftingTableWood" };
@@ -63,7 +65,7 @@ public final class ForgeDictionary {
 
 	private static final String[] leafBlocks = { "treeLeaves", "leavesTree", "treeBambooLeaves" };
 
-	private static final String[] stoneBlocks = { "stone", "cobblestone", "blockSalt" };
+	private static final String[] stoneBlocks = { "stone", "cobblestone", "blockSalt", "blockFuelCoke", "concrete", "blockGraphite" };
 
 	private static final String[] sandstoneBlocks = { "sandstone", "blockPrismarine", "blockVinteum", "blockChimerite", "blockBlueTopaz", "blockMoonstone", "blockSunstone" };
 
