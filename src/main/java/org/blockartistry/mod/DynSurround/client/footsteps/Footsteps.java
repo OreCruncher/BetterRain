@@ -31,6 +31,7 @@ import java.util.Scanner;
 
 import org.blockartistry.mod.DynSurround.ModLog;
 import org.blockartistry.mod.DynSurround.client.IClientEffectHandler;
+import org.blockartistry.mod.DynSurround.client.footsteps.game.system.ForgeDictionary;
 import org.blockartistry.mod.DynSurround.client.footsteps.game.system.PFIsolator;
 import org.blockartistry.mod.DynSurround.client.footsteps.game.system.PFReaderH;
 import org.blockartistry.mod.DynSurround.client.footsteps.game.system.PFResourcePackDealer;
@@ -122,6 +123,8 @@ public class Footsteps implements IResourceManagerReloadListener, IClientEffectH
 
 	private void reloadBlockMap(final List<IResourcePack> repo) {
 		final IBlockMap blockMap = new LegacyCapableBlockMap();
+		
+		ForgeDictionary.initialize(blockMap);
 
 		for (final IResourcePack pack : repo) {
 			InputStream stream = null;
