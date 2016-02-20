@@ -31,6 +31,7 @@ import org.blockartistry.mod.DynSurround.ModOptions;
 import org.blockartistry.mod.DynSurround.client.EnvironStateHandler.EnvironState;
 import org.blockartistry.mod.DynSurround.client.sound.SoundEffect;
 import org.blockartistry.mod.DynSurround.compat.BlockPos;
+import org.blockartistry.mod.DynSurround.compat.MCHelper;
 import org.blockartistry.mod.DynSurround.client.IClientEffectHandler;
 import org.blockartistry.mod.DynSurround.data.BlockRegistry;
 import org.blockartistry.mod.DynSurround.util.XorShiftRandom;
@@ -41,7 +42,6 @@ import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
-import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 
 /*
@@ -60,18 +60,13 @@ public class BlockEffectHandler implements IClientEffectHandler {
 		if (Minecraft.getMinecraft().isGamePaused())
 			return;
 
-		final int playerX = MathHelper.floor_double(player.posX);
-		final int playerY = MathHelper.floor_double(player.posY);
-		final int playerZ = MathHelper.floor_double(player.posZ);
-
+		final BlockPos playerPos = new BlockPos(player);
 		final String conditions = EnvironState.getConditions();
 
 		for (int i = 0; i < CHECK_COUNT; i++) {
-			final int x = playerX + random.nextInt(RANGE) - random.nextInt(RANGE);
-			final int y = playerY + random.nextInt(RANGE) - random.nextInt(RANGE);
-			final int z = playerZ + random.nextInt(RANGE) - random.nextInt(RANGE);
-			final BlockPos pos = new BlockPos(x, y, z);
-			final Block block = world.getBlock(x, y, z);
+			final BlockPos pos = playerPos.add(random.nextInt(RANGE) - random.nextInt(RANGE),
+					random.nextInt(RANGE) - random.nextInt(RANGE), random.nextInt(RANGE) - random.nextInt(RANGE));
+			final Block block = MCHelper.getBlock(world, pos);
 			if (block != Blocks.air) {
 				final List<BlockEffect> chain = BlockRegistry.getEffects(block);
 				if (chain != null) {
@@ -87,11 +82,12 @@ public class BlockEffectHandler implements IClientEffectHandler {
 		}
 
 		if (EnvironState.isPlayerOnGround() && EnvironState.isPlayerMoving()) {
-			final Block block = world.getBlock(playerX, playerY - 2, playerZ);
+			final BlockPos pos = playerPos.down(2);
+			final Block block = MCHelper.getBlock(world, pos);
 			if (block != Blocks.air && !block.getMaterial().isLiquid()) {
 				final SoundEffect sound = BlockRegistry.getStepSound(block, random, conditions);
 				if (sound != null)
-					sound.doEffect(block, world, new BlockPos(playerX, playerY - 2, playerZ), random);
+					sound.doEffect(block, world, pos, random);
 			}
 		}
 	}
