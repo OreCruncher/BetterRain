@@ -67,8 +67,8 @@ public final class ForgeDictionary {
 
 	private static final String[] leafBlocks = { "treeLeaves", "leavesTree", "treeBambooLeaves" };
 
-	private static final String[] stoneBlocks = { "stone", "cobblestone", "blockFuelCoke", "concrete",
-			"blockGraphite", "blockCoal" };
+	private static final String[] stoneBlocks = { "stone", "cobblestone", "blockFuelCoke", "concrete", "blockGraphite",
+			"blockCoal" };
 
 	private static final String[] sandstoneBlocks = { "sandstone", "blockPrismarine", "blockVinteum", "blockChimerite",
 			"blockBlueTopaz", "blockMoonstone", "blockSunstone" };
@@ -81,6 +81,10 @@ public final class ForgeDictionary {
 
 	private static final String[] fenceBlocks = { "fenceWood", "fenceGateWood" };
 
+	private static final String[] mudBlocks = {};
+
+	private static final String[] obsidianBlocks = {};
+	
 	private static final Map<String, String[]> dictionaryMaps = new HashMap<String, String[]>();
 
 	static {
@@ -96,6 +100,8 @@ public final class ForgeDictionary {
 		dictionaryMaps.put("squeakywood", woodChests);
 		dictionaryMaps.put("rug", rugBlocks);
 		dictionaryMaps.put("#fence", fenceBlocks);
+		dictionaryMaps.put("mud", mudBlocks);
+		dictionaryMaps.put("obsidian", obsidianBlocks);
 	}
 
 	private ForgeDictionary() {
