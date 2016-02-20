@@ -86,6 +86,8 @@ public final class ForgeDictionary {
 
 	private static final String[] obsidianBlocks = {};
 
+	private static final String[] compositeBlocks = { "blockDiamond", "blockEmerald" };
+
 	private static final Map<String, String[]> dictionaryMaps = new HashMap<String, String[]>();
 
 	static {
@@ -103,6 +105,7 @@ public final class ForgeDictionary {
 		dictionaryMaps.put("#fence", fenceBlocks);
 		dictionaryMaps.put("mud", mudBlocks);
 		dictionaryMaps.put("obsidian", obsidianBlocks);
+		dictionaryMaps.put("composite", compositeBlocks);
 	}
 
 	private ForgeDictionary() {
