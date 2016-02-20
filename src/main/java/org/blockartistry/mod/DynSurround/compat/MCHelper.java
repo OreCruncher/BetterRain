@@ -22,26 +22,22 @@
  * THE SOFTWARE.
  */
 
-package org.blockartistry.mod.DynSurround.client.footsteps.game.system;
+package org.blockartistry.mod.DynSurround.compat;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.common.registry.FMLControlledNamespacedRegistry;
 import net.minecraftforge.fml.common.registry.GameData;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
-public class PFHelper {
-	/**
-	 * Gets the unique name of a given block, defined by its interoperability
-	 * identifier.
-	 * 
-	 * @param block
-	 * @return
-	 */
+public class MCHelper {
+
 	public static String nameOf(final Block block) {
-		// RegistryNamespaced
 		return Block.blockRegistry.getNameForObject(block).toString();
 	}
 
@@ -51,6 +47,15 @@ public class PFHelper {
 		if (registry.containsKey(res))
 			return registry.getObject(res);
 		return null;
+	}
+
+	public static Block getBlock(final World world, final BlockPos pos) {
+		return world.getBlockState(pos).getBlock();
+	}
+
+	public static int getBlockMetadata(final World world, final BlockPos pos) {
+		final IBlockState state = world.getBlockState(pos);
+		return state.getBlock().getMetaFromState(state);
 	}
 
 }

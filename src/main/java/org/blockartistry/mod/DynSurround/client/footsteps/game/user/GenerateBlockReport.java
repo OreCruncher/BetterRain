@@ -28,7 +28,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.blockartistry.mod.DynSurround.client.footsteps.game.system.PFHelper;
+import org.blockartistry.mod.DynSurround.compat.MCHelper;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockBreakable;
 import net.minecraft.block.BlockBush;
@@ -58,7 +59,7 @@ public class GenerateBlockReport {
 
 		for (Object o : Block.blockRegistry) {
 			Block block = (Block) o;
-			String name = PFHelper.nameOf(block);
+			String name = MCHelper.nameOf(block);
 
 			// stepSound.stepSoundName
 			String soundName;

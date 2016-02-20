@@ -25,7 +25,7 @@
 package org.blockartistry.mod.DynSurround.client.footsteps.mcpackage.implem;
 
 import org.blockartistry.mod.DynSurround.ModLog;
-import org.blockartistry.mod.DynSurround.client.footsteps.game.system.PFHelper;
+import org.blockartistry.mod.DynSurround.compat.MCHelper;
 
 import net.minecraft.block.Block;
 import net.minecraftforge.fml.relauncher.Side;
@@ -47,7 +47,7 @@ public class LegacyCapableBlockMap extends BasicBlockMap {
 			final int id = Integer.parseInt(number);
 			final Object o = Block.blockRegistry.getObjectById(id);
 			if (o != null && o instanceof Block) {
-				final String fullKeyRebuild = PFHelper.nameOf((Block) o)
+				final String fullKeyRebuild = MCHelper.nameOf((Block) o)
 						+ (endOfNumber == key.length() ? "" : key.substring(endOfNumber));
 				super.register(fullKeyRebuild, value);
 				ModLog.debug("Adding legacy key: " + fullKeyRebuild + " for " + key);
