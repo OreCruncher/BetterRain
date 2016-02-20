@@ -30,6 +30,7 @@ import java.util.Random;
 import org.blockartistry.mod.DynSurround.ModOptions;
 import org.blockartistry.mod.DynSurround.client.EnvironStateHandler.EnvironState;
 import org.blockartistry.mod.DynSurround.client.sound.SoundEffect;
+import org.blockartistry.mod.DynSurround.compat.BlockPos;
 import org.blockartistry.mod.DynSurround.client.IClientEffectHandler;
 import org.blockartistry.mod.DynSurround.data.BlockRegistry;
 import org.blockartistry.mod.DynSurround.util.XorShiftRandom;
@@ -80,16 +81,16 @@ public class BlockEffectHandler implements IClientEffectHandler {
 
 				final SoundEffect sound = BlockRegistry.getSound(block, random, conditions);
 				if (sound != null)
-					sound.doEffect(block, world, x, y, z, random);
+					sound.doEffect(block, world, new BlockPos(x, y, z), random);
 			}
 		}
 
 		if (EnvironState.isPlayerOnGround() && EnvironState.isPlayerMoving()) {
 			final Block block = world.getBlock(playerX, playerY - 2, playerZ);
-			if(block != Blocks.air && !block.getMaterial().isLiquid()) {
+			if (block != Blocks.air && !block.getMaterial().isLiquid()) {
 				final SoundEffect sound = BlockRegistry.getStepSound(block, random, conditions);
 				if (sound != null)
-					sound.doEffect(block, world, playerX, playerY - 2, playerZ, random);
+					sound.doEffect(block, world, new BlockPos(playerX, playerY - 2, playerZ), random);
 			}
 		}
 	}

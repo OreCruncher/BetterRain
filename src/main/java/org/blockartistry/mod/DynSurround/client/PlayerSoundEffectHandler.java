@@ -31,6 +31,7 @@ import org.blockartistry.mod.DynSurround.client.EnvironStateHandler.EnvironState
 import org.blockartistry.mod.DynSurround.client.sound.SoundEffect;
 import org.blockartistry.mod.DynSurround.client.sound.SoundManager;
 import org.blockartistry.mod.DynSurround.client.storm.StormProperties;
+import org.blockartistry.mod.DynSurround.compat.BlockPos;
 import org.blockartistry.mod.DynSurround.data.BiomeRegistry;
 import org.blockartistry.mod.DynSurround.event.DiagnosticEvent;
 import org.blockartistry.mod.DynSurround.event.RegistryReloadEvent;
@@ -181,7 +182,7 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 						;
 					if (soundY > 0 && block.getMaterial().isSolid()) {
 						final int distance = y - soundY;
-						SoundManager.playSoundAt(x, soundY + 1, z, BiomeRegistry.WATER_DRIP, 40 + distance * 2);
+						SoundManager.playSoundAt(new BlockPos(x, soundY + 1, z), BiomeRegistry.WATER_DRIP, 40 + distance * 2);
 					}
 				}
 			}

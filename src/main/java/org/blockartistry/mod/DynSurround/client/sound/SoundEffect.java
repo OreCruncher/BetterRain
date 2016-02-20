@@ -27,6 +27,7 @@ import java.util.Random;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
+import org.blockartistry.mod.DynSurround.compat.BlockPos;
 import org.blockartistry.mod.DynSurround.data.config.SoundConfig;
 
 import net.minecraft.block.Block;
@@ -109,9 +110,9 @@ public final class SoundEffect {
 		return this.pitch;
 	}
 
-	public void doEffect(final Block block, final World world, final int x, final int y, final int z,
+	public void doEffect(final Block block, final World world, final BlockPos pos,
 			final Random random) {
-		SoundManager.playSoundAt(x, y, z, this, 0);
+		SoundManager.playSoundAt(pos, this, 0);
 	}
 
 	@Override

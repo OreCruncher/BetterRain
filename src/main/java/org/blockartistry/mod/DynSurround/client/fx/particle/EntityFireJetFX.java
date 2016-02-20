@@ -26,13 +26,13 @@ package org.blockartistry.mod.DynSurround.client.fx.particle;
 
 import org.blockartistry.mod.DynSurround.client.sound.SoundEffect;
 import org.blockartistry.mod.DynSurround.client.sound.SoundManager;
+import org.blockartistry.mod.DynSurround.compat.BlockPos;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.particle.EntityFX;
 import net.minecraft.client.particle.EntityFlameFX;
 import net.minecraft.client.particle.EntityLavaFX;
-import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 
 @SideOnly(Side.CLIENT)
@@ -49,10 +49,7 @@ public class EntityFireJetFX extends EntityJetFX {
 
 	@Override
 	public void playSound() {
-		final int x = MathHelper.floor_double(this.posX);
-		final int y = MathHelper.floor_double(this.posY);
-		final int z = MathHelper.floor_double(this.posZ);
-		SoundManager.playSoundAt(x, y, z, FIRE, 0);
+		SoundManager.playSoundAt(new BlockPos(this), FIRE, 0);
 	}
 
 	@Override

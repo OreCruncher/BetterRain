@@ -35,6 +35,7 @@ import java.util.Map.Entry;
 import org.blockartistry.mod.DynSurround.ModLog;
 import org.blockartistry.mod.DynSurround.ModOptions;
 import org.blockartistry.mod.DynSurround.client.EnvironStateHandler.EnvironState;
+import org.blockartistry.mod.DynSurround.compat.BlockPos;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.openal.AL;
@@ -136,13 +137,13 @@ public class SoundManager {
 			handler.playSound(s);
 	}
 
-	public static void playSoundAt(final int x, final int y, final int z, final SoundEffect sound,
+	public static void playSoundAt(final BlockPos pos, final SoundEffect sound,
 			final int tickDelay) {
 		if (tickDelay > 0 && !canFitSound())
 			return;
 
 		final SoundHandler handler = Minecraft.getMinecraft().getSoundHandler();
-		final SpotSound s = new SpotSound(x, y, z, sound, tickDelay);
+		final SpotSound s = new SpotSound(pos, sound, tickDelay);
 
 		if (tickDelay > 0 || !canFitSound())
 			pending.add(s);
