@@ -28,6 +28,7 @@ import org.blockartistry.mod.DynSurround.ModOptions;
 import org.blockartistry.mod.DynSurround.client.EnvironStateHandler.EnvironState;
 import net.minecraft.client.audio.PositionedSound;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -42,11 +43,7 @@ public class SpotSound extends PositionedSound {
 	private final SoundEffect sound;
 	private final int timeMark;
 
-	public SpotSound(final int x, final int y, final int z, final SoundEffect sound) {
-		this(x, y, z, sound, 0);
-	}
-
-	public SpotSound(final int x, final int y, final int z, final SoundEffect sound, final int delay) {
+	public SpotSound(final BlockPos pos, final SoundEffect sound, final int delay) {
 		super(new ResourceLocation(sound.sound));
 
 		this.sound = sound;
@@ -55,9 +52,9 @@ public class SpotSound extends PositionedSound {
 		this.repeat = false;
 		this.repeatDelay = 0;
 
-		this.xPosF = (float) x + 0.5F;
-		this.yPosF = (float) y + 0.5F;
-		this.zPosF = (float) z + 0.5F;
+		this.xPosF = (float) pos.getX() + 0.5F;
+		this.yPosF = (float) pos.getY() + 0.5F;
+		this.zPosF = (float) pos.getZ() + 0.5F;
 
 		this.timeMark = EnvironState.getTickCounter() + delay;
 	}

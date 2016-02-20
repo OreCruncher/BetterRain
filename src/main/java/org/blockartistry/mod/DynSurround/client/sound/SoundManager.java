@@ -139,7 +139,7 @@ public class SoundManager {
 
 	public static void playSoundAt(final BlockPos pos, final SoundEffect sound, final int tickDelay) {
 		final SoundHandler handler = Minecraft.getMinecraft().getSoundHandler();
-		final SpotSound s = new SpotSound(pos.getX(), pos.getY(), pos.getZ(), sound, tickDelay);
+		final SpotSound s = new SpotSound(pos, sound, tickDelay);
 
 		if (tickDelay > 0 || !canFitSound())
 			pending.add(s);
