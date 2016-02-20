@@ -25,6 +25,7 @@
 package org.blockartistry.mod.DynSurround.client;
 
 import org.blockartistry.mod.DynSurround.client.EnvironStateHandler.EnvironState;
+import org.blockartistry.mod.DynSurround.data.FakeBiome;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -41,7 +42,8 @@ public final class BiomeSurveyHandler implements IClientEffectHandler {
 
 	private static int area;
 	private static final TObjectIntHashMap<BiomeGenBase> weights = new TObjectIntHashMap<BiomeGenBase>();
-	
+
+	private static int lastDimension = 0;
 	private static int lastPlayerX = 0;
 	private static int lastPlayerY = 0;
 	private static int lastPlayerZ = 0;
@@ -58,7 +60,7 @@ public final class BiomeSurveyHandler implements IClientEffectHandler {
 		area = 0;
 		weights.clear();
 
-		if (EnvironState.isPlayerUnderground() || EnvironState.isPlayerInSpace()) {
+		if (EnvironState.getPlayerBiome() instanceof FakeBiome) {
 			area = 1;
 			weights.put(EnvironState.getPlayerBiome(), 1);
 		} else {
@@ -79,8 +81,10 @@ public final class BiomeSurveyHandler implements IClientEffectHandler {
 		final int playerX = MathHelper.floor_double(player.posX);
 		final int playerY = MathHelper.floor_double(player.posY);
 		final int playerZ = MathHelper.floor_double(player.posZ);
-		
-		if(playerX != lastPlayerX || playerY != lastPlayerY || playerZ != lastPlayerZ) {
+
+		if (lastDimension != EnvironState.getDimensionId() || playerX != lastPlayerX || playerY != lastPlayerY
+				|| playerZ != lastPlayerZ) {
+			lastDimension = EnvironState.getDimensionId();
 			lastPlayerX = playerX;
 			lastPlayerY = playerY;
 			lastPlayerZ = playerZ;
