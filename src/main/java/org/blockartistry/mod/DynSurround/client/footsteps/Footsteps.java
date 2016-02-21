@@ -47,19 +47,21 @@ import org.blockartistry.mod.DynSurround.client.footsteps.mcpackage.interfaces.I
 import org.blockartistry.mod.DynSurround.client.footsteps.parsers.AcousticsJsonReader;
 import org.blockartistry.mod.DynSurround.client.footsteps.parsers.Register;
 import org.blockartistry.mod.DynSurround.client.footsteps.util.property.simple.ConfigProperty;
+
+import cpw.mods.fml.common.eventhandler.EventPriority;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.IReloadableResourceManager;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.client.resources.IResourceManagerReloadListener;
 import net.minecraft.client.resources.IResourcePack;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
+import net.minecraftforge.event.world.WorldEvent;
 
 @SideOnly(Side.CLIENT)
 public class Footsteps implements IResourceManagerReloadListener, IClientEffectHandler {
-	
+
 	public static Footsteps INSTANCE = null;
 
 	// System
@@ -67,16 +69,7 @@ public class Footsteps implements IResourceManagerReloadListener, IClientEffectH
 	private PFIsolator isolator;
 
 	public Footsteps() {
-		
 		INSTANCE = this;
-		
-		reloadEverything();
-
-		// Hooking
-		final IResourceManager resMan = Minecraft.getMinecraft().getResourceManager();
-		if (resMan instanceof IReloadableResourceManager) {
-			((IReloadableResourceManager) resMan).registerReloadListener(this);
-		}
 	}
 
 	public void reloadEverything() {
@@ -123,7 +116,7 @@ public class Footsteps implements IResourceManagerReloadListener, IClientEffectH
 
 	private void reloadBlockMap(final List<IResourcePack> repo) {
 		final IBlockMap blockMap = new LegacyCapableBlockMap();
-		
+
 		ForgeDictionary.initialize(blockMap);
 
 		for (final IResourcePack pack : repo) {
@@ -212,15 +205,23 @@ public class Footsteps implements IResourceManagerReloadListener, IClientEffectH
 
 	@Override
 	public void process(World world, EntityPlayer player) {
+		if (this.isolator == null)
+			reloadEverything();
 		this.isolator.onFrame();
 		player.nextStepDistance = Integer.MAX_VALUE;
 	}
 
+	@SubscribeEvent(priority = EventPriority.LOWEST)
+	public void onWorldUnload(final WorldEvent.Unload event) {
+		if (event.world.provider.dimensionId == 0)
+			this.isolator = null;
+	}
+
 	@Override
 	public boolean hasEvents() {
-		return false;
+		return true;
 	}
-	
+
 	public IBlockMap getBlockMap() {
 		return this.isolator.getBlockMap();
 	}
