@@ -47,36 +47,29 @@ import org.blockartistry.mod.DynSurround.client.footsteps.mcpackage.interfaces.I
 import org.blockartistry.mod.DynSurround.client.footsteps.parsers.AcousticsJsonReader;
 import org.blockartistry.mod.DynSurround.client.footsteps.parsers.Register;
 import org.blockartistry.mod.DynSurround.client.footsteps.util.property.simple.ConfigProperty;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.IReloadableResourceManager;
+
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.client.resources.IResourceManagerReloadListener;
 import net.minecraft.client.resources.IResourcePack;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.event.world.WorldEvent;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 
 @SideOnly(Side.CLIENT)
 public class Footsteps implements IResourceManagerReloadListener, IClientEffectHandler {
 
 	public static Footsteps INSTANCE = null;
-	
+
 	// System
 	private PFResourcePackDealer dealer = new PFResourcePackDealer();
 	private PFIsolator isolator;
 
 	public Footsteps() {
-
 		INSTANCE = this;
-		
-		reloadEverything();
-
-		// Hooking
-		final IResourceManager resMan = Minecraft.getMinecraft().getResourceManager();
-		if (resMan instanceof IReloadableResourceManager) {
-			((IReloadableResourceManager) resMan).registerReloadListener(this);
-		}
 	}
 
 	public void reloadEverything() {
@@ -212,8 +205,16 @@ public class Footsteps implements IResourceManagerReloadListener, IClientEffectH
 
 	@Override
 	public void process(World world, EntityPlayer player) {
+		if (this.isolator == null)
+			reloadEverything();
 		this.isolator.onFrame();
 		player.nextStepDistance = Integer.MAX_VALUE;
+	}
+
+	@SubscribeEvent(priority = EventPriority.LOWEST)
+	public void onWorldUnload(final WorldEvent.Unload event) {
+		if (event.world.provider.getDimensionId() == 0)
+			this.isolator = null;
 	}
 
 	@Override
