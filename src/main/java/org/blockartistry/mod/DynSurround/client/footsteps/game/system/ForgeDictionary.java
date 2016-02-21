@@ -87,7 +87,7 @@ public final class ForgeDictionary {
 
 	private static final String[] obsidianBlocks = { "oreSunstone", "blockGraphite", "basalt", "stoneBasalt", "blockBasalt", "blockBloodstone" };
 
-	private static final String[] compositeBlocks = { "blockDiamond", "blockEmerald", "blockPeridot", "blockRuby", "blockSapphire"
+	private static final String[] compositeBlocks = { "blockDiamond", "blockEmerald", "blockPeridot", "blockRuby", "blockSapphire",
 	"blockVinteum", "blockChimerite", "blockBlueTopaz", "blockMoonstone", "blockSunstone", "blockAmethyst", "blockMoldavite", "blockAmber",
 	"blockTanzanite", "blockMalachite" };
 
