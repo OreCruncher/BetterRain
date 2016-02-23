@@ -155,6 +155,9 @@ public final class ModOptions {
 	public static void load(final Configuration config) {
 
 		// CATEGORY: Logging
+		config.setCategoryRequiresMcRestart(CATEGORY_LOGGING_CONTROL, true);
+		config.setCategoryComment(CATEGORY_LOGGING_CONTROL, "Defines how Dynamic Surroundings logging will behave");
+
 		String comment = "Enables/disables debug logging of the mod";
 		enableDebugLogging = config.getBoolean(CONFIG_ENABLE_DEBUG_LOGGING, CATEGORY_LOGGING_CONTROL,
 				enableDebugLogging, comment);
@@ -164,6 +167,9 @@ public final class ModOptions {
 				enableVersionChecking, comment);
 
 		// CATEGORY: Rain
+		config.setCategoryRequiresMcRestart(CATEGORY_RAIN, true);
+		config.setCategoryComment(CATEGORY_RAIN, "Options that control rain effects in the client");
+
 		comment = "Factor to apply to rain sound level to adjust";
 		soundLevel = config.getFloat(CONFIG_RAIN_VOLUME, CATEGORY_RAIN, soundLevel, 0.0F, 1.0F, comment);
 
@@ -178,6 +184,9 @@ public final class ModOptions {
 		resetRainOnSleep = config.getBoolean(CONFIG_RESET_RAIN_ON_SLEEP, CATEGORY_RAIN, resetRainOnSleep, comment);
 
 		// CATEGORY: General
+		config.setCategoryRequiresMcRestart(CATEGORY_GENERAL, true);
+		config.setCategoryComment(CATEGORY_GENERAL, "Miscellaneous settings");
+
 		comment = "Default minimum rain strength for a dimension";
 		defaultMinRainStrength = MathHelper.clamp_float(config.getFloat(CONFIG_MIN_RAIN_STRENGTH, CATEGORY_GENERAL,
 				defaultMinRainStrength, 0.0F, 1.0F, comment), 0.0F, 1.0F);
@@ -194,6 +203,9 @@ public final class ModOptions {
 				enableFancyCloudHandling, comment);
 
 		// CATEGORY: Player
+		config.setCategoryRequiresMcRestart(CATEGORY_PLAYER, true);
+		config.setCategoryComment(CATEGORY_PLAYER, "General options for defining sound and effects the player entity");
+
 		comment = "Suppress player's potion particles from rendering";
 		suppressPotionParticles = config.getBoolean(CONFIG_SUPPRESS_POTION_PARTICLES, CATEGORY_PLAYER,
 				suppressPotionParticles, comment);
@@ -202,6 +214,9 @@ public final class ModOptions {
 		enableDamagePopoffs = config.getBoolean(CONFIG_ENABLE_POPOFFS, CATEGORY_PLAYER, enableDamagePopoffs, comment);
 
 		// CATEGORY: Aurora
+		config.setCategoryRequiresMcRestart(CATEGORY_AURORA, true);
+		config.setCategoryComment(CATEGORY_AURORA, "Options that control Aurora behavior and rendering");
+
 		comment = "Whether to enable Aurora processing on server/client";
 		auroraEnable = config.getBoolean(CONFIG_AURORA_ENABLED, CATEGORY_AURORA, auroraEnable, comment);
 
@@ -224,6 +239,9 @@ public final class ModOptions {
 				comment);
 
 		// CATEGORY: Fog
+		config.setCategoryRequiresMcRestart(CATEGORY_FOG, true);
+		config.setCategoryComment(CATEGORY_FOG, "Options that control the various fog effects in the client");
+
 		comment = "Allow desert fog when raining";
 		allowDesertFog = config.getBoolean(CONFIG_ALLOW_DESERT_FOG, CATEGORY_FOG, allowDesertFog, comment);
 
@@ -245,6 +263,9 @@ public final class ModOptions {
 		biomeFogFactor = config.getFloat(CONFIG_BIOME_FOG_FACTOR, CATEGORY_FOG, biomeFogFactor, 0.0F, 5.0F, comment);
 
 		// CATEGORY: Biomes
+		config.setCategoryRequiresMcRestart(CATEGORY_BIOMES, true);
+		config.setCategoryComment(CATEGORY_BIOMES, "Options for controlling biome sound/effects");
+
 		comment = "Configuration files for configuring Biome Registry";
 		biomeConfigFiles = config.getStringList(CONFIG_BIOME_CONFIG_FILES, CATEGORY_BIOMES, biomeConfigFiles, comment);
 
@@ -252,15 +273,24 @@ public final class ModOptions {
 		biomeAliases = config.getStringList(CONFIG_BIOME_ALIASES, CATEGORY_BIOMES, biomeAliases, comment);
 
 		// CATEGORY: Dimensions
+		config.setCategoryRequiresMcRestart(CATEGORY_DIMENSIONS, true);
+		config.setCategoryComment(CATEGORY_DIMENSIONS, "Options for defining per dimension parameters for Dynamic Surroundings");
+
 		comment = "Configuration files for configuring Dimension Registry";
 		dimensionConfigFiles = config.getStringList(CONFIG_DIMENSION_CONFIG_FILES, CATEGORY_DIMENSIONS,
 				dimensionConfigFiles, comment);
 
 		// CATEGORY: Block
+		config.setCategoryRequiresMcRestart(CATEGORY_BLOCK, true);
+		config.setCategoryComment(CATEGORY_BLOCK, "Options for defining block specific sounds/effects");
+
 		comment = "Configuration files for configuring Block sounds and behavior";
 		blockConfigFiles = config.getStringList(CONFIG_BLOCK_CONFIG_FILES, CATEGORY_BLOCK, blockConfigFiles, comment);
 
 		// CATEGORY: Sound
+		config.setCategoryRequiresMcRestart(CATEGORY_SOUND, true);
+		config.setCategoryComment(CATEGORY_SOUND, "General options for defining sound effects");
+
 		comment = "Enable biome sounds";
 		enableBiomeSounds = config.getBoolean(CONFIG_ENABLE_BIOME_SOUNDS, CATEGORY_SOUND, enableBiomeSounds, comment);
 
@@ -313,6 +343,9 @@ public final class ModOptions {
 		culledSounds = config.getStringList(CONFIG_CULLED_SOUNDS, CATEGORY_SOUND, culledSounds, comment);
 
 		// CATEGORY: player.potion hud
+		config.setCategoryRequiresMcRestart(CATEGORY_POTION_HUD, true);
+		config.setCategoryComment(CATEGORY_POTION_HUD, "Options for the Potion HUD overlay");
+
 		comment = "Enable display of potion icons in display";
 		potionHudEnabled = config.getBoolean(CONFIG_POTION_HUD_ENABLE, CATEGORY_POTION_HUD, potionHudEnabled, comment);
 
@@ -331,20 +364,6 @@ public final class ModOptions {
 		comment = "Size scale of icons (lower is smaller)";
 		potionHudScale = config.getFloat(CONFIG_POTION_HUD_SCALE, CATEGORY_POTION_HUD, potionHudScale, 0.0F, 1.0F,
 				comment);
-		
-		
-		// Changing categories requires restart of Minecraft
-		config.setCategoryRequiresMcRestart(CATEGORY_LOGGING_CONTROL, true);
-		config.setCategoryRequiresMcRestart(CATEGORY_RAIN, true);
-		config.setCategoryRequiresMcRestart(CATEGORY_FOG, true);
-		config.setCategoryRequiresMcRestart(CATEGORY_GENERAL, true);
-		config.setCategoryRequiresMcRestart(CATEGORY_AURORA, true);
-		config.setCategoryRequiresMcRestart(CATEGORY_BIOMES, true);
-		config.setCategoryRequiresMcRestart(CATEGORY_DIMENSIONS, true);
-		config.setCategoryRequiresMcRestart(CATEGORY_BLOCK, true);
-		config.setCategoryRequiresMcRestart(CATEGORY_SOUND, true);
-		config.setCategoryRequiresMcRestart(CATEGORY_PLAYER, true);
-		config.setCategoryRequiresMcRestart(CATEGORY_POTION_HUD, true);
 	}
 
 	public static boolean getEnableDebugLogging() {
