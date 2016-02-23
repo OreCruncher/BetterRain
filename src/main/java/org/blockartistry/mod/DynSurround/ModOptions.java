@@ -32,124 +32,124 @@ public final class ModOptions {
 	private ModOptions() {
 	}
 
-	protected static final String CATEGORY_LOGGING_CONTROL = "logging";
-	protected static final String CONFIG_ENABLE_DEBUG_LOGGING = "Enable Debug Logging";
+	public static final String CATEGORY_LOGGING_CONTROL = "logging";
+	public static final String CONFIG_ENABLE_DEBUG_LOGGING = "Enable Debug Logging";
 	protected static boolean enableDebugLogging = false;
 
-	protected static final String CONFIG_ENABLE_ONLINE_VERSION_CHECK = "Enable Online Version Check";
+	public static final String CONFIG_ENABLE_ONLINE_VERSION_CHECK = "Enable Online Version Check";
 	protected static boolean enableVersionChecking = true;
 
-	protected static final String CATEGORY_RAIN = "rain";
-	protected static final String CONFIG_RAIN_VOLUME = "Sound Level";
+	public static final String CATEGORY_RAIN = "rain";
+	public static final String CONFIG_RAIN_VOLUME = "Sound Level";
 	protected static float soundLevel = 1.0F;
-	protected static final String CONFIG_ALWAYS_OVERRIDE_SOUND = "Always Override Sound";
+	public static final String CONFIG_ALWAYS_OVERRIDE_SOUND = "Always Override Sound";
 	protected static boolean alwaysOverrideSound = true;
-	protected static final String CONFIG_ALLOW_DESERT_DUST = "Desert Dust";
+	public static final String CONFIG_ALLOW_DESERT_DUST = "Desert Dust";
 	protected static boolean allowDesertDust = true;
-	protected static final String CONFIG_RESET_RAIN_ON_SLEEP = "Reset Rain on Sleep";
+	public static final String CONFIG_RESET_RAIN_ON_SLEEP = "Reset Rain on Sleep";
 	protected static boolean resetRainOnSleep = true;
 
-	protected static final String CATEGORY_FOG = "fog";
-	protected static final String CONFIG_ALLOW_DESERT_FOG = "Desert Fog";
+	public static final String CATEGORY_FOG = "fog";
+	public static final String CONFIG_ALLOW_DESERT_FOG = "Desert Fog";
 	protected static boolean allowDesertFog = true;
-	protected static final String CONFIG_DESERT_FOG_FACTOR = "Desert Fog Factor";
+	public static final String CONFIG_DESERT_FOG_FACTOR = "Desert Fog Factor";
 	protected static float desertFogFactor = 1.0F;
-	protected static final String CONFIG_ENABLE_ELEVATION_HAZE = "Elevation Haze";
+	public static final String CONFIG_ENABLE_ELEVATION_HAZE = "Elevation Haze";
 	protected static boolean enableElevationHaze = true;
-	protected static final String CONFIG_ELEVATION_HAZE_FACTOR = "Elevation Haze Factor";
+	public static final String CONFIG_ELEVATION_HAZE_FACTOR = "Elevation Haze Factor";
 	protected static float elevationHazeFactor = 1.0F;
-	protected static final String CONFIG_ENABLE_BIOME_FOG = "Biome Fog";
+	public static final String CONFIG_ENABLE_BIOME_FOG = "Biome Fog";
 	protected static boolean enableBiomeFog = true;
-	protected static final String CONFIG_BIOME_FOG_FACTOR = "Biome Fog Factor";
+	public static final String CONFIG_BIOME_FOG_FACTOR = "Biome Fog Factor";
 	protected static float biomeFogFactor = 1.0F;
 
-	protected static final String CATEGORY_GENERAL = "general";
-	protected static final String CONFIG_MIN_RAIN_STRENGTH = "Default Minimum Rain Strength";
+	public static final String CATEGORY_GENERAL = "general";
+	public static final String CONFIG_MIN_RAIN_STRENGTH = "Default Minimum Rain Strength";
 	protected static float defaultMinRainStrength = 0.0F;
-	protected static final String CONFIG_MAX_RAIN_STRENGTH = "Default Maximum Rain Strength";
+	public static final String CONFIG_MAX_RAIN_STRENGTH = "Default Maximum Rain Strength";
 	protected static float defaultMaxRainStrength = 1.0F;
-	protected static final String CONFIG_FX_RANGE = "Special Effect Range";
+	public static final String CONFIG_FX_RANGE = "Special Effect Range";
 	protected static int specialEffectRange = 16;
-	protected static final String CONFIG_FANCY_CLOUD_HANDLING = "Fancy Cloud Handling";
+	public static final String CONFIG_FANCY_CLOUD_HANDLING = "Fancy Cloud Handling";
 	protected static boolean enableFancyCloudHandling = true;
 
-	protected static final String CATEGORY_AURORA = "aurora";
-	protected static final String CONFIG_AURORA_ENABLED = "Enabled";
+	public static final String CATEGORY_AURORA = "aurora";
+	public static final String CONFIG_AURORA_ENABLED = "Enabled";
 	protected static boolean auroraEnable = true;
-	protected static final String CONFIG_Y_PLAYER_RELATIVE = "Height Player Relative";
+	public static final String CONFIG_Y_PLAYER_RELATIVE = "Height Player Relative";
 	protected static boolean auroraHeightPlayerRelative = true;
-	protected static final String CONFIG_PLAYER_FIXED_HEIGHT = "Player Fixed Height";
+	public static final String CONFIG_PLAYER_FIXED_HEIGHT = "Player Fixed Height";
 	protected static float playerFixedHeight = 64.0F;
-	protected static final String CONFIG_MULTIPLE_BANDS = "Multiple Bands";
+	public static final String CONFIG_MULTIPLE_BANDS = "Multiple Bands";
 	protected static boolean auroraMultipleBands = true;
-	protected static final String CONFIG_TRIGGER_BIOME_LIST = "Trigger Biomes";
+	public static final String CONFIG_TRIGGER_BIOME_LIST = "Trigger Biomes";
 	protected static String auroraTriggerBiomes = "";
-	protected static final String CONFIG_AURORA_ANIMATE = "Animate";
+	public static final String CONFIG_AURORA_ANIMATE = "Animate";
 	protected static boolean auroraAnimate = true;
-	protected static final String CONFIG_AURORA_SPAWN_OFFSET = "Spawn Offset";
+	public static final String CONFIG_AURORA_SPAWN_OFFSET = "Spawn Offset";
 	protected static int auroraSpawnOffset = 150;
 
-	protected static final String CATEGORY_BIOMES = "biomes";
-	protected static final String CONFIG_BIOME_CONFIG_FILES = "Config Files";
+	public static final String CATEGORY_BIOMES = "biomes";
+	public static final String CONFIG_BIOME_CONFIG_FILES = "Config Files";
 	protected static String[] biomeConfigFiles = {};
-	protected static final String CONFIG_BIOME_ALIASES = "Biome Alias";
+	public static final String CONFIG_BIOME_ALIASES = "Biome Alias";
 	protected static String[] biomeAliases = {};
 
-	protected static final String CATEGORY_DIMENSIONS = "dimensions";
-	protected static final String CONFIG_DIMENSION_CONFIG_FILES = "Config Files";
+	public static final String CATEGORY_DIMENSIONS = "dimensions";
+	public static final String CONFIG_DIMENSION_CONFIG_FILES = "Config Files";
 	protected static String[] dimensionConfigFiles = {};
 
-	protected static final String CATEGORY_BLOCK = "block";
-	protected static final String CONFIG_BLOCK_CONFIG_FILES = "Config Files";
+	public static final String CATEGORY_BLOCK = "block";
+	public static final String CONFIG_BLOCK_CONFIG_FILES = "Config Files";
 	protected static String[] blockConfigFiles = {};
 
-	protected static final String CATEGORY_SOUND = "sound";
-	protected static final String CONFIG_ENABLE_BIOME_SOUNDS = "Enable Biome Sounds";
+	public static final String CATEGORY_SOUND = "sound";
+	public static final String CONFIG_ENABLE_BIOME_SOUNDS = "Enable Biome Sounds";
 	protected static boolean enableBiomeSounds = true;
-	protected static final String CONFIG_MASTER_SOUND_FACTOR = "Master Sound Scale Factor";
+	public static final String CONFIG_MASTER_SOUND_FACTOR = "Master Sound Scale Factor";
 	protected static float masterSoundScaleFactor = 0.5F;
-	protected static final String CONFIG_AUTO_CONFIG_CHANNELS = "Autoconfigure Channels";
+	public static final String CONFIG_AUTO_CONFIG_CHANNELS = "Autoconfigure Channels";
 	protected static boolean autoConfigureChannels = true;
-	protected static final String CONFIG_NORMAL_CHANNEL_COUNT = "Number Normal Channels";
+	public static final String CONFIG_NORMAL_CHANNEL_COUNT = "Number Normal Channels";
 	protected static int normalSoundChannelCount = 28;
-	protected static final String CONFIG_STREAMING_CHANNEL_COUNT = "Number Streaming Channels";
+	public static final String CONFIG_STREAMING_CHANNEL_COUNT = "Number Streaming Channels";
 	protected static int streamingSoundChannelCount = 4;
-	protected static final String CONFIG_ENABLE_JUMP_SOUND = "Jump Sound";
+	public static final String CONFIG_ENABLE_JUMP_SOUND = "Jump Sound";
 	protected static boolean enableJumpSound = true;
-	protected static final String CONFIG_ENABLE_SWING_SOUND = "Swing Sound";
+	public static final String CONFIG_ENABLE_SWING_SOUND = "Swing Sound";
 	protected static boolean enableSwingSound = true;
-	protected static final String CONFIG_ENABLE_CRAFTING_SOUND = "Crafting Sound";
+	public static final String CONFIG_ENABLE_CRAFTING_SOUND = "Crafting Sound";
 	protected static boolean enableCraftingSound = true;
-	protected static final String CONFIG_ENABLE_BOW_PULL_SOUND = "Bow Pull Sound";
+	public static final String CONFIG_ENABLE_BOW_PULL_SOUND = "Bow Pull Sound";
 	protected static boolean enableBowPullSound = true;
-	protected static final String CONFIG_ENABLE_FOOTSTEPS_SOUND = "Footsteps";
+	public static final String CONFIG_ENABLE_FOOTSTEPS_SOUND = "Footsteps";
 	protected static boolean enableFootstepSounds = true;
-	protected static final String CONFIG_FOOTSTEPS_SOUND_FACTOR = "Footsteps Sound Factor";
+	public static final String CONFIG_FOOTSTEPS_SOUND_FACTOR = "Footsteps Sound Factor";
 	protected static float footstepsSoundFactor = 0.3F;
-	protected static final String CONFIG_SOUND_CULL_THRESHOLD = "Sound Culling Threshold";
+	public static final String CONFIG_SOUND_CULL_THRESHOLD = "Sound Culling Threshold";
 	protected static int soundCullingThreshold = 20;
-	protected static final String CONFIG_CULLED_SOUNDS = "Culled Sounds";
+	public static final String CONFIG_CULLED_SOUNDS = "Culled Sounds";
 	protected static String[] culledSounds = { "^minecraft:liquid.*", "minecraft:mob.sheep.say",
 			"minecraft:mob.chicken.say", "minecraft:mob.cow.say", "minecraft:mob.pig.say" };
-	protected static final String CONFIG_BLOCKED_SOUNDS = "Blocked Sounds";
+	public static final String CONFIG_BLOCKED_SOUNDS = "Blocked Sounds";
 	protected static String[] blockedSounds = {};
 
-	protected static final String CATEGORY_PLAYER = "player";
-	protected static final String CONFIG_SUPPRESS_POTION_PARTICLES = "Suppress Potion Particles";
+	public static final String CATEGORY_PLAYER = "player";
+	public static final String CONFIG_SUPPRESS_POTION_PARTICLES = "Suppress Potion Particles";
 	protected static boolean suppressPotionParticles = false;
-	protected static final String CONFIG_ENABLE_POPOFFS = "Damage Popoffs";
+	public static final String CONFIG_ENABLE_POPOFFS = "Damage Popoffs";
 	protected static boolean enableDamagePopoffs = true;
 
-	protected static final String CATEGORY_POTION_HUD = "player.potion hud";
-	protected static final String CONFIG_POTION_HUD_ENABLE = "Enable";
+	public static final String CATEGORY_POTION_HUD = "player.potion hud";
+	public static final String CONFIG_POTION_HUD_ENABLE = "Enable";
 	protected static boolean potionHudEnabled = true;
-	protected static final String CONFIG_POTION_HUD_TRANSPARENCY = "Transparency";
+	public static final String CONFIG_POTION_HUD_TRANSPARENCY = "Transparency";
 	protected static float potionHudTransparency = 0.5F;
-	protected static final String CONFIG_POTION_HUD_LEFT_OFFSET = "Left Offset";
+	public static final String CONFIG_POTION_HUD_LEFT_OFFSET = "Left Offset";
 	protected static int potionHudLeftOffset = 5;
-	protected static final String CONFIG_POTION_HUD_TOP_OFFSET = "Top Offset";
+	public static final String CONFIG_POTION_HUD_TOP_OFFSET = "Top Offset";
 	protected static int potionHudTopOffset = 5;
-	protected static final String CONFIG_POTION_HUD_SCALE = "Display Scale";
+	public static final String CONFIG_POTION_HUD_SCALE = "Display Scale";
 	protected static float potionHudScale = 0.5F;
 
 	public static void load(final Configuration config) {
@@ -331,7 +331,20 @@ public final class ModOptions {
 		comment = "Size scale of icons (lower is smaller)";
 		potionHudScale = config.getFloat(CONFIG_POTION_HUD_SCALE, CATEGORY_POTION_HUD, potionHudScale, 0.0F, 1.0F,
 				comment);
-
+		
+		
+		// Changing categories requires restart of Minecraft
+		config.setCategoryRequiresMcRestart(CATEGORY_LOGGING_CONTROL, true);
+		config.setCategoryRequiresMcRestart(CATEGORY_RAIN, true);
+		config.setCategoryRequiresMcRestart(CATEGORY_FOG, true);
+		config.setCategoryRequiresMcRestart(CATEGORY_GENERAL, true);
+		config.setCategoryRequiresMcRestart(CATEGORY_AURORA, true);
+		config.setCategoryRequiresMcRestart(CATEGORY_BIOMES, true);
+		config.setCategoryRequiresMcRestart(CATEGORY_DIMENSIONS, true);
+		config.setCategoryRequiresMcRestart(CATEGORY_BLOCK, true);
+		config.setCategoryRequiresMcRestart(CATEGORY_SOUND, true);
+		config.setCategoryRequiresMcRestart(CATEGORY_PLAYER, true);
+		config.setCategoryRequiresMcRestart(CATEGORY_POTION_HUD, true);
 	}
 
 	public static boolean getEnableDebugLogging() {

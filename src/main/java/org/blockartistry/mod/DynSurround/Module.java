@@ -30,6 +30,8 @@ import org.apache.logging.log4j.LogManager;
 import org.blockartistry.mod.DynSurround.proxy.Proxy;
 
 import net.minecraftforge.common.config.Configuration;
+import cpw.mods.fml.client.event.ConfigChangedEvent.OnConfigChangedEvent;
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.Mod.EventHandler;
@@ -38,13 +40,15 @@ import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 
-@Mod(modid = Module.MOD_ID, useMetadata = true, dependencies = Module.DEPENDENCIES, version = Module.VERSION)
+@Mod(modid = Module.MOD_ID, useMetadata = true, dependencies = Module.DEPENDENCIES, version = Module.VERSION, guiFactory = Module.GUI_FACTORY)
 public class Module {
 	public static final String MOD_ID = "dsurround";
 	public static final String MOD_NAME = "Dynamic Surroundings";
 	public static final String VERSION = "@VERSION@";
 	public static final String DEPENDENCIES = "";
+	public static final String GUI_FACTORY = "org.blockartistry.mod.DynSurround.client.gui.ConfigGuiFactory";
 
 	@Instance(MOD_ID)
 	protected static Module instance;
@@ -79,6 +83,8 @@ public class Module {
 	@EventHandler
 	public void preInit(final FMLPreInitializationEvent event) {
 
+		FMLCommonHandler.instance().bus().register(this);
+		
 		// Load up our configuration
 		dataDirectory = new File(event.getModConfigurationDirectory(), Module.MOD_ID);
 		dataDirectory.mkdirs();
@@ -89,7 +95,7 @@ public class Module {
 		config.save();
 
 		ModLog.DEBUGGING = ModOptions.getEnableDebugLogging();
-		
+
 		proxy.preInit(event);
 	}
 
@@ -108,4 +114,10 @@ public class Module {
 	public void serverStarting(final FMLServerStartingEvent event) {
 		proxy.serverStarting(event);
 	}
+	
+	@SubscribeEvent
+	public void configChangedEvent(final OnConfigChangedEvent event) {
+		config.save();
+	}
+
 }
