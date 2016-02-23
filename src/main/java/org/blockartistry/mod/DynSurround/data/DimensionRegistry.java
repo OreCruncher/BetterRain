@@ -71,7 +71,7 @@ public final class DimensionRegistry {
 			e.printStackTrace();
 		}
 
-		for (final String file : ModOptions.getDimensionConfigFiles()) {
+		for (final String file : ModOptions.dimensionConfigFiles) {
 			final File theFile = new File(Module.dataDirectory(), file);
 			if (theFile.exists()) {
 				try {

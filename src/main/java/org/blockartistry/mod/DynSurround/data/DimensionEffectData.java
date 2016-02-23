@@ -61,8 +61,8 @@ public final class DimensionEffectData implements INBTSerialization {
 
 	private int dimensionId = 0;
 	private float intensity = 0.0F;
-	private float minIntensity = ModOptions.getDefaultMinRainIntensity();
-	private float maxIntensity = ModOptions.getDefaultMaxRainIntensity();
+	private float minIntensity = ModOptions.defaultMinRainStrength;
+	private float maxIntensity = ModOptions.defaultMaxRainStrength;
 	private Set<AuroraData> auroras = new HashSet<AuroraData>();
 
 	public DimensionEffectData() {

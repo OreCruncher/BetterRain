@@ -40,7 +40,7 @@ import net.minecraftforge.fml.relauncher.Side;
 class PlayerSound extends MovingSound {
 	
 	private static final Random RANDOM = new XorShiftRandom();
-	private static final float MASTER_SCALE_FACTOR = ModOptions.getMasterSoundScaleFactor();
+	private static final float MASTER_SCALE_FACTOR = ModOptions.masterSoundScaleFactor;
 
 	private final SoundEffect sound;
 

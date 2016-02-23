@@ -103,7 +103,7 @@ public final class BlockRegistry {
 		registry.clear();
 		processConfig();
 
-		if (ModOptions.getEnableDebugLogging()) {
+		if (ModOptions.enableDebugLogging) {
 			ModLog.info("*** BLOCK REGISTRY ***");
 			for (final Entry entry : registry.values())
 				ModLog.info(entry.toString());
@@ -169,7 +169,7 @@ public final class BlockRegistry {
 			}
 		}
 
-		final String[] configFiles = ModOptions.getBlockConfigFiles();
+		final String[] configFiles = ModOptions.blockConfigFiles;
 		for (final String file : configFiles) {
 			final File theFile = new File(Module.dataDirectory(), file);
 			if (theFile.exists()) {

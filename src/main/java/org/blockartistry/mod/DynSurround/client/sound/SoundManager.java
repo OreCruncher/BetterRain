@@ -169,10 +169,10 @@ public class SoundManager {
 			e.printStackTrace();
 		}
 
-		int normalChannels = ModOptions.getNumberNormalSoundChannels();
-		int streamChannels = ModOptions.getNumberStreamingSoundChannels();
+		int normalChannels = ModOptions.normalSoundChannelCount;
+		int streamChannels = ModOptions.streamingSoundChannelCount;
 
-		if (ModOptions.getAutoconfigureSoundChannels() && totalChannels > 64) {
+		if (ModOptions.autoConfigureChannels && totalChannels > 64) {
 			final int maxCount = Math.max((totalChannels + 1) / 2, 32);
 			normalChannels = MathHelper.floor_float(maxCount * 0.875F);
 			streamChannels = maxCount - normalChannels;

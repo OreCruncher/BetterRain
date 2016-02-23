@@ -89,7 +89,7 @@ public final class DamageEffectHandler {
 	}
 
 	public static void initialize() {
-		if (ModOptions.getEnableDamagePopoffs())
+		if (ModOptions.enableDamagePopoffs)
 			MinecraftForge.EVENT_BUS.register(new DamageEffectHandler());
 	}
 
@@ -145,7 +145,7 @@ public final class DamageEffectHandler {
 
 	@SideOnly(Side.CLIENT)
 	public static void handleEvent(final HealthData data) {
-		if (!ModOptions.getEnableDamagePopoffs())
+		if (!ModOptions.enableDamagePopoffs)
 			return;
 
 		// Don't show the players pop-offs

@@ -55,14 +55,14 @@ import net.minecraftforge.fml.relauncher.Side;
 @SideOnly(Side.CLIENT)
 public class FogEffectHandler implements IClientEffectHandler {
 
-	private static final boolean ENABLE_ELEVATION_HAZE = ModOptions.getEnableElevationHaze();
-	private static final boolean ENABLE_DESERT_FOG = ModOptions.getAllowDesertFog();
-	private static final boolean ENABLE_BIOME_FOG = ModOptions.getEnableBiomeFog();
+	private static final boolean ENABLE_ELEVATION_HAZE = ModOptions.enableElevationHaze;
+	private static final boolean ENABLE_DESERT_FOG = ModOptions.allowDesertFog;
+	private static final boolean ENABLE_BIOME_FOG = ModOptions.enableBiomeFog;
 
 	private static final int HAZE_THRESHOLD = 15;
-	private static final float DESERT_DUST_FACTOR = ModOptions.getDesertFogFactor();
-	private static final float ELEVATION_HAZE_FACTOR = ModOptions.getElevationHazeFactor();
-	private static final float BIOME_FOG_FACTOR = ModOptions.getBiomeFogFactor();
+	private static final float DESERT_DUST_FACTOR = ModOptions.desertFogFactor;
+	private static final float ELEVATION_HAZE_FACTOR = ModOptions.elevationHazeFactor;
+	private static final float BIOME_FOG_FACTOR = ModOptions.biomeFogFactor;
 
 	// The delta indicates how much per tick the density will shift
 	// toward the target.

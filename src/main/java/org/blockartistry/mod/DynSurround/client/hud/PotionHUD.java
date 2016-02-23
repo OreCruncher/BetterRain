@@ -50,13 +50,13 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public class PotionHUD extends Gui implements IGuiOverlay {
 
 	private static final ResourceLocation TEXTURE = new ResourceLocation("textures/gui/container/inventory.png");
-	private static final float TRANSPARENCY = ModOptions.getPotionHudTransparency();
+	private static final float TRANSPARENCY = ModOptions.potionHudTransparency;
 	private static final int TEXT_POTION_NAME = (int) (255 * TRANSPARENCY) << 24 | 0xFFFFFF;
 	private static final int TEXT_DURATION = (int) (255 * TRANSPARENCY) << 24 | 0x7F7F7F;
 	private static final int TEXT_DURATION_LOW = (int) (255 * TRANSPARENCY) << 24 | 0xFF0000;
-	private static final float GUITOP = ModOptions.getPotionHudTopOffset();
-	private static final float GUILEFT = ModOptions.getPotionHudLeftOffset();
-	private static final float SCALE = ModOptions.getPotionHudScale();
+	private static final float GUITOP = ModOptions.potionHudTopOffset;
+	private static final float GUILEFT = ModOptions.potionHudLeftOffset;
+	private static final float SCALE = ModOptions.potionHudScale;
 
 	public void doRender(final RenderGameOverlayEvent event) {
 

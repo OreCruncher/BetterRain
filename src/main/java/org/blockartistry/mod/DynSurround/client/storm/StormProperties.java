@@ -41,7 +41,7 @@ public enum StormProperties {
 	VANILLA, NONE(0.0F, "calm"), CALM(0.1F, "calm"), LIGHT(0.33F, "light"), NORMAL(0.66F, "normal"), HEAVY(1.0F,
 			"heavy");
 
-	private static final float SOUND_LEVEL = ModOptions.getSoundLevel();
+	private static final float SOUND_LEVEL = ModOptions.soundLevel;
 
 	private static float intensityLevel = 0.0F;
 	private static StormProperties intensity = VANILLA;

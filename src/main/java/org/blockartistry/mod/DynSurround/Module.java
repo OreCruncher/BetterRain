@@ -95,7 +95,7 @@ public class Module {
 		ModOptions.load(config);
 		config.save();
 
-		ModLog.DEBUGGING = ModOptions.getEnableDebugLogging();
+		ModLog.DEBUGGING = ModOptions.enableDebugLogging;
 		
 		proxy.preInit(event);
 	}

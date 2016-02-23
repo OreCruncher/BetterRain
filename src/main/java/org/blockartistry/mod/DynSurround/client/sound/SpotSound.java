@@ -37,7 +37,7 @@ import net.minecraftforge.fml.relauncher.Side;
 @SideOnly(Side.CLIENT)
 public class SpotSound extends PositionedSound {
 
-	private static final float MASTER_SCALE_FACTOR = ModOptions.getMasterSoundScaleFactor();
+	private static final float MASTER_SCALE_FACTOR = ModOptions.masterSoundScaleFactor;
 	private static final int SPOT_SOUND_RANGE = 6;
 
 	private final SoundEffect sound;

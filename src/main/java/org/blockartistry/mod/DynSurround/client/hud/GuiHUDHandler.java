@@ -53,9 +53,9 @@ public final class GuiHUDHandler {
 	}
 
 	public static void initialize() {
-		if(ModOptions.getEnableDebugLogging())
+		if(ModOptions.enableDebugLogging)
 			register(new DebugHUD());
-		if(ModOptions.getPotionHudEnabled())
+		if(ModOptions.potionHudEnabled)
 			register(new PotionHUD());
 
 		MinecraftForge.EVENT_BUS.register(new GuiHUDHandler());

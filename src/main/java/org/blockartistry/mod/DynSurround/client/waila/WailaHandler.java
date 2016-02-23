@@ -147,7 +147,7 @@ public final class WailaHandler implements IWailaDataProvider {
 	}
 
 	public static void register() {
-		if (ModOptions.getEnableDebugLogging())
+		if (ModOptions.enableDebugLogging)
 			FMLInterModComms.sendMessage("Waila", "register", WailaHandler.class.getName() + ".callbackRegister");
 	}
 }

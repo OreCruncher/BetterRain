@@ -57,7 +57,7 @@ import net.minecraftforge.fml.relauncher.Side;
 @SideOnly(Side.CLIENT)
 public class PlayerSoundEffectHandler implements IClientEffectHandler {
 
-	private static final boolean ALWAYS_OVERRIDE_SOUND = ModOptions.getAlwaysOverrideSound();
+	private static final boolean ALWAYS_OVERRIDE_SOUND = ModOptions.alwaysOverrideSound;
 	private static final List<EntityDropParticleFX> drops = new ArrayList<EntityDropParticleFX>();
 
 	private static boolean doBiomeSounds() {

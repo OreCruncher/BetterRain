@@ -51,7 +51,7 @@ import net.minecraftforge.fml.relauncher.Side;
 public class BlockEffectHandler implements IClientEffectHandler {
 
 	private static final Random random = new XorShiftRandom();
-	private static final int RANGE = ModOptions.getSpecialEffectRange();
+	private static final int RANGE = ModOptions.specialEffectRange;
 	private static final double RATIO = 0.0335671847202175D;
 	private static final int CHECK_COUNT = (int) (Math.pow(RANGE * 2 - 1, 3) * RATIO);
 

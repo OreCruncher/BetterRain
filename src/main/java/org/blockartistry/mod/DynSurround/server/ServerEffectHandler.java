@@ -52,11 +52,11 @@ public final class ServerEffectHandler {
 
 	private static final float RESET = -10.0F;
 
-	private static final boolean AURORA_ENABLE = ModOptions.getAuroraEnable();
+	private static final boolean AURORA_ENABLE = ModOptions.auroraEnable;
 
 	// Offset from the player location so they can see it
 	// without looking straight up.
-	private static final int Z_OFFSET = -ModOptions.getAuroraSpawnOffset();
+	private static final int Z_OFFSET = -ModOptions.auroraSpawnOffset;
 
 	// Minimum distance between auroras, squared
 	private static final long MIN_AURORA_DISTANCE_SQ = 400 * 400;

@@ -159,7 +159,7 @@ public final class VersionCheck implements Runnable {
 			FMLInterModComms.sendRuntimeMessage(Module.MOD_ID, "VersionChecker", "addVersionCheck", nbt);
 		}
 
-		if (ModOptions.getOnlineVersionChecking()) {
+		if (ModOptions.enableVersionChecking) {
 			final VersionCheck test = new VersionCheck();
 			MinecraftForge.EVENT_BUS.register(test);
 			new Thread(test).start();

@@ -36,7 +36,7 @@ public final class SoundRegistry {
 	private static final List<Pattern> blockSoundNamePatterns = new ArrayList<Pattern>();
 
 	static {
-		for (final String sound : ModOptions.getCulledSounds()) {
+		for (final String sound : ModOptions.culledSounds) {
 			try {
 				cullSoundNamePatterns.add(Pattern.compile(sound));
 			} catch (final Exception ex) {
@@ -44,7 +44,7 @@ public final class SoundRegistry {
 			}
 		}
 		
-		for (final String sound : ModOptions.getBlockedSounds()) {
+		for (final String sound : ModOptions.blockedSounds) {
 			try {
 				blockSoundNamePatterns.add(Pattern.compile(sound));
 			} catch (final Exception ex) {
