@@ -38,7 +38,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 @SideOnly(Side.CLIENT)
 public final class Aurora {
 
-	private static final boolean MULTIPLES = ModOptions.getAuroraMultipleBands();
+	private static final boolean MULTIPLES = ModOptions.auroraMultipleBands;
 
 	private static final float ANGLE1 = MathStuff.PI_F / 16.0F;
 	private static final float ANGLE2 = MathStuff.toRadians(90.0F / 7.0F);

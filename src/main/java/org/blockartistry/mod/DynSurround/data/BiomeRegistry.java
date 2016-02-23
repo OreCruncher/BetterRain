@@ -157,7 +157,7 @@ public final class BiomeRegistry {
 	public static void initialize() {
 
 		biomeAliases.clear();
-		for (final String entry : ModOptions.getBiomeAliases()) {
+		for (final String entry : ModOptions.biomeAliases) {
 			final String[] parts = StringUtils.split(entry, "=");
 			if (parts.length == 2) {
 				biomeAliases.put(parts[0], parts[1]);
@@ -185,7 +185,7 @@ public final class BiomeRegistry {
 
 		processConfig();
 
-		if (ModOptions.getEnableDebugLogging()) {
+		if (ModOptions.enableDebugLogging) {
 			ModLog.info("*** BIOME REGISTRY ***");
 			for (final Entry entry : registry.valueCollection())
 				ModLog.info(entry.toString());
@@ -281,7 +281,7 @@ public final class BiomeRegistry {
 			e.printStackTrace();
 		}
 
-		final String[] configFiles = ModOptions.getBiomeConfigFiles();
+		final String[] configFiles = ModOptions.biomeConfigFiles;
 		for (final String file : configFiles) {
 			final File theFile = new File(Module.dataDirectory(), file);
 			if (theFile.exists()) {

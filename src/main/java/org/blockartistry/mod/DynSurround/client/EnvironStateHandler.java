@@ -76,12 +76,12 @@ public class EnvironStateHandler implements IClientEffectHandler {
 	private static final SoundEffect BOW_PULL;
 
 	static {
-		if (ModOptions.getEnableJumpSound())
+		if (ModOptions.enableJumpSound)
 			JUMP = new SoundEffect("dsurround:jump", 0.4F, 1.0F, true);
 		else
 			JUMP = null;
 
-		if (ModOptions.getEnableSwingSound()) {
+		if (ModOptions.enableSwingSound) {
 			SWORD = new SoundEffect("dsurround:swoosh", 1.0F, 1.0F);
 			AXE = new SoundEffect("dsurround:swoosh", 1.0F, 0.5F);
 		} else {
@@ -89,12 +89,12 @@ public class EnvironStateHandler implements IClientEffectHandler {
 			AXE = null;
 		}
 
-		if (ModOptions.getEnableCraftingSound())
+		if (ModOptions.enableCraftingSound)
 			CRAFTING = new SoundEffect("dsurround:crafting");
 		else
 			CRAFTING = null;
 
-		if (ModOptions.getEnableBowPullSound())
+		if (ModOptions.enableBowPullSound)
 			BOW_PULL = new SoundEffect("dsurround:bowpull");
 		else
 			BOW_PULL = null;
@@ -372,7 +372,7 @@ public class EnvironStateHandler implements IClientEffectHandler {
 		EnvironState.tick(world, player);
 
 		// Gather diagnostics if needed
-		if (ModOptions.getEnableDebugLogging()) {
+		if (ModOptions.enableDebugLogging) {
 			final DiagnosticEvent.Gather gather = new DiagnosticEvent.Gather(world, player);
 			MinecraftForge.EVENT_BUS.post(gather);
 			diagnostics = gather.output;

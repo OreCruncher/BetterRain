@@ -44,9 +44,9 @@ import org.lwjgl.opengl.GL11;
 @SideOnly(Side.CLIENT)
 public final class AuroraRenderer implements IAtmosRenderer {
 
-	private static final boolean ANIMATE = ModOptions.getAuroraAnimate();
-	private static final boolean HEIGHT_PLAYER_RELATIVE = ModOptions.getAuroraHeightPlayerRelative();
-	private static final float PLAYER_FIXED_HEIGHT = ModOptions.getPlayerFixedHeight();
+	private static final boolean ANIMATE = ModOptions.auroraAnimate;
+	private static final boolean HEIGHT_PLAYER_RELATIVE = ModOptions.auroraHeightPlayerRelative;
+	private static final float PLAYER_FIXED_HEIGHT = ModOptions.playerFixedHeight;
 
 	@Override
 	public void render(final EntityRenderer renderer, final float partialTick) {

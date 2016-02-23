@@ -46,7 +46,7 @@ import net.minecraftforge.client.event.sound.PlaySoundEvent17;
 @SideOnly(Side.CLIENT)
 public class SoundBlockHandler implements IClientEffectHandler {
 
-	private static final int SOUND_CULL_THRESHOLD = ModOptions.getSoundCullingThreshold();
+	private static final int SOUND_CULL_THRESHOLD = ModOptions.soundCullingThreshold;
 
 	private boolean initialized = false;
 	private final List<String> soundsToBlock = new ArrayList<String>();

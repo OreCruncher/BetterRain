@@ -65,7 +65,7 @@ public class ProxyClient extends Proxy {
 	public void postInit(final FMLPostInitializationEvent event) {
 		super.postInit(event);
 
-		if (ModOptions.getEnableDebugLogging()) {
+		if (ModOptions.enableDebugLogging) {
 			final SoundHandler handler = Minecraft.getMinecraft().getSoundHandler();
 			final List<String> sounds = new ArrayList<String>();
 			for (final Object resource : handler.sndRegistry.getKeys())

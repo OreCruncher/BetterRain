@@ -47,7 +47,7 @@ public final class AuroraEffectHandler implements IClientEffectHandler {
 	public static Aurora currentAurora;
 
 	public static void addAurora(final AuroraData data) {
-		if (!ModOptions.getAuroraEnable())
+		if (!ModOptions.auroraEnable)
 			return;
 
 		synchronized (auroras) {

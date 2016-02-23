@@ -32,7 +32,7 @@ import net.minecraft.world.biome.BiomeGenBase;
 
 public class WeatherUtils {
 
-	private static final boolean BLOW_DUST = ModOptions.getAllowDesertDust();
+	private static final boolean BLOW_DUST = ModOptions.allowDesertFog;
 
 	public static boolean biomeHasDust(final BiomeGenBase biome) {
 		return BLOW_DUST && BiomeRegistry.hasDust(biome) && !StormProperties.doVanilla();

@@ -82,19 +82,19 @@ public class ClientEffectHandler {
 		register(new FogEffectHandler());
 		register(new BlockEffectHandler());
 
-		if (ModOptions.getBlockedSounds().length > 0 || ModOptions.getCulledSounds().length > 0)
+		if (ModOptions.blockedSounds.length > 0 || ModOptions.culledSounds.length > 0)
 			register(new SoundBlockHandler());
 
-		if (ModOptions.getEnableFootstepSounds())
+		if (ModOptions.enableFootstepSounds)
 			register(new Footsteps());
 
-		if (ModOptions.getAuroraEnable())
+		if (ModOptions.auroraEnable)
 			register(new AuroraEffectHandler());
 
-		if (ModOptions.getEnableBiomeSounds())
+		if (ModOptions.enableBiomeSounds)
 			register(new PlayerSoundEffectHandler());
 
-		if (ModOptions.getSuppressPotionParticleEffect())
+		if (ModOptions.suppressPotionParticles)
 			register(new PotionParticleScrubHandler());
 	}
 
@@ -136,7 +136,7 @@ public class ClientEffectHandler {
 
 		// Shim the provider so we can tap into the
 		// sky and cloud stuff.
-		if (ModOptions.getEnableFancyCloudHandling() && okToHook(e.world.provider)) {
+		if (ModOptions.enableFancyCloudHandling && okToHook(e.world.provider)) {
 			e.world.provider = new WorldProviderShim(e.world, e.world.provider);
 		}
 	}
