@@ -117,7 +117,8 @@ public class Module {
 	
 	@SubscribeEvent
 	public void configChangedEvent(final OnConfigChangedEvent event) {
-		config.save();
+		if(event.modID.equals(Module.MOD_ID))
+			config.save();
 	}
 
 }
