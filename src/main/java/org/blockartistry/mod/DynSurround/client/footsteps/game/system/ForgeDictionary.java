@@ -50,14 +50,17 @@ public final class ForgeDictionary {
 			"denseoreCoal", "denseoreCopper", "denseoreTin", "denseoreSilver", "denseoreLead", "denseoreNickel",
 			"denseorePlatinum", "denseoreMithril", "oreRuby", "oreSapphire", "oreEmery", "oreAluminum", "oreJade",
 			"oreApatite", "oreSalt", "oreZinc", "orePeridot", "oreSilicon", "oreMoldavite", "oreBloodstone",
-			"oreCinnabar", "oreYellorite", "oreTemporal", "oreAmethyst", "oreAmber", "oreMalachite", "oreTanzanite" };
+			"oreCinnabar", "oreYellorite", "oreTemporal", "oreAmethyst", "oreAmber", "oreMalachite", "oreTanzanite",
+			"oreTritanium", "oreTungsten", "oreTelsalite", "oreCheese", "denseorePeridot", "denseoreZinc",
+			"denseoreRuby", "denseoreSapphire", "denseoreAmethyst", "denseoreTungsten", "oreHeeEndium" };
 
 	private static final String[] metalBlocks = { "blockIron", "blockGold", "blockCopper", "blockTin", "blockSilver",
 			"blockLead", "blockNickle", "blockPlatinum", "blockMithril", "blockElectrum", "blockInvar", "blockBronze",
 			"blockSignalum", "blockLumium", "blockEnderium", "blockSteel", "blockNickel", "blockTitanium",
 			"blockOsmium", "blockUranium", "blockBrass", "blockZinc", "blockConstantan", "slabConstantan", "slabCopper",
 			"slabSilver", "slabElectrum", "slabNickel", "slabAluminum", "blockAluminum", "blockYellorium",
-			"blockCyanite", "blockBlutonium", "blockLudicrite", "blockTemporal" };
+			"blockCyanite", "blockBlutonium", "blockLudicrite", "blockTemporal", "blockTritanium", "blockTungsten",
+			"blockHeeEndium" };
 
 	private static final String[] woodBlocks = { "logWood", "planksWood", "slabWood", "stairWood", "plankBamboo",
 			"slabBamboo", "stairBamboo", "craftingTableWood" };
@@ -69,8 +72,8 @@ public final class ForgeDictionary {
 	private static final String[] leafBlocks = { "treeLeaves", "leavesTree", "treeBambooLeaves" };
 
 	private static final String[] stoneBlocks = { "stone", "cobblestone", "blockFuelCoke", "concrete", "blockCoal",
-			"andesite", "blockAndesite", "stoneAndesite", "marble", "stoneMarble", "blockMarble", "stoneDiorite",
-			"diorite", "blockDiorite", "blockGranite", "stoneGranite" };
+			"andesite", "blockAndesite", "stoneAndesite", "stoneDiorite", "diorite", "blockDiorite", "blockGranite",
+			"stoneGranite" };
 
 	private static final String[] sandstoneBlocks = { "sandstone", "blockPrismarine", "limestone", "stoneLimestone",
 			"blockLimestone" };
@@ -90,9 +93,10 @@ public final class ForgeDictionary {
 
 	private static final String[] compositeBlocks = { "blockDiamond", "blockEmerald", "blockPeridot", "blockRuby",
 			"blockSapphire", "blockVinteum", "blockChimerite", "blockBlueTopaz", "blockMoonstone", "blockSunstone",
-			"blockAmethyst", "blockMoldavite", "blockAmber", "blockTanzanite", "blockMalachite" };
+			"blockAmethyst", "blockMoldavite", "blockAmber", "blockTanzanite", "blockMalachite", "blockChalcedony",
+			"blockTeslaite" };
 
-	private static final String[] marbleBlocks = { "blockQuartz" };
+	private static final String[] marbleBlocks = { "blockQuartz", "marble", "stoneMarble", "blockMarble" };
 
 	private static final Map<String, String[]> dictionaryMaps = new HashMap<String, String[]>();
 
