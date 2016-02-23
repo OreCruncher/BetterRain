@@ -43,6 +43,7 @@ public final class BiomeSurveyHandler implements IClientEffectHandler {
 	private static int area;
 	private static final TObjectIntHashMap<BiomeGenBase> weights = new TObjectIntHashMap<BiomeGenBase>();
 
+	private static BiomeGenBase lastPlayerBiome = null;
 	private static int lastDimension = 0;
 	private static int lastPlayerX = 0;
 	private static int lastPlayerY = 0;
@@ -83,7 +84,8 @@ public final class BiomeSurveyHandler implements IClientEffectHandler {
 		final int playerZ = MathHelper.floor_double(player.posZ);
 
 		if (lastDimension != EnvironState.getDimensionId() || playerX != lastPlayerX || playerY != lastPlayerY
-				|| playerZ != lastPlayerZ) {
+				|| playerZ != lastPlayerZ || lastPlayerBiome != EnvironState.getPlayerBiome()) {
+			lastPlayerBiome = EnvironState.getPlayerBiome();
 			lastDimension = EnvironState.getDimensionId();
 			lastPlayerX = playerX;
 			lastPlayerY = playerY;
