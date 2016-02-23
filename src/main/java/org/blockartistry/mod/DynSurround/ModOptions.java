@@ -24,7 +24,12 @@
 
 package org.blockartistry.mod.DynSurround;
 
-import net.minecraft.util.MathHelper;
+import org.blockartistry.mod.DynSurround.util.ConfigProcessor;
+import org.blockartistry.mod.DynSurround.util.ConfigProcessor.Comment;
+import org.blockartistry.mod.DynSurround.util.ConfigProcessor.MinMaxFloat;
+import org.blockartistry.mod.DynSurround.util.ConfigProcessor.MinMaxInt;
+import org.blockartistry.mod.DynSurround.util.ConfigProcessor.Parameter;
+
 import net.minecraftforge.common.config.Configuration;
 
 public final class ModOptions {
@@ -34,336 +39,292 @@ public final class ModOptions {
 
 	public static final String CATEGORY_LOGGING_CONTROL = "logging";
 	public static final String CONFIG_ENABLE_DEBUG_LOGGING = "Enable Debug Logging";
-	protected static boolean enableDebugLogging = false;
-
 	public static final String CONFIG_ENABLE_ONLINE_VERSION_CHECK = "Enable Online Version Check";
-	protected static boolean enableVersionChecking = true;
+
+	@Parameter(category = CATEGORY_LOGGING_CONTROL, property = CONFIG_ENABLE_DEBUG_LOGGING)
+	@Comment("Enables/disables debug logging of the mod")
+	public static boolean enableDebugLogging = false;
+	@Parameter(category = CATEGORY_LOGGING_CONTROL, property = CONFIG_ENABLE_ONLINE_VERSION_CHECK)
+	@Comment("Enables/disables online version checking")
+	public static boolean enableVersionChecking = true;
 
 	public static final String CATEGORY_RAIN = "rain";
 	public static final String CONFIG_RAIN_VOLUME = "Sound Level";
-	protected static float soundLevel = 1.0F;
 	public static final String CONFIG_ALWAYS_OVERRIDE_SOUND = "Always Override Sound";
-	protected static boolean alwaysOverrideSound = true;
 	public static final String CONFIG_ALLOW_DESERT_DUST = "Desert Dust";
-	protected static boolean allowDesertDust = true;
 	public static final String CONFIG_RESET_RAIN_ON_SLEEP = "Reset Rain on Sleep";
-	protected static boolean resetRainOnSleep = true;
+
+	@Parameter(category = CATEGORY_RAIN, property = CONFIG_RAIN_VOLUME)
+	@MinMaxFloat(min = 0.0F, max = 1.0F)
+	@Comment("Factor to apply to rain sound level to adjust")
+	public static float soundLevel = 1.0F;
+	@Parameter(category = CATEGORY_RAIN, property = CONFIG_ALWAYS_OVERRIDE_SOUND)
+	@Comment("Always override Vanilla rain sound even when dimension is blacklisted")
+	public static boolean alwaysOverrideSound = true;
+	@Parameter(category = CATEGORY_RAIN, property = CONFIG_ALLOW_DESERT_DUST)
+	@Comment("Allow desert dust when raining")
+	public static boolean allowDesertDust = true;
+	@Parameter(category = CATEGORY_RAIN, property = CONFIG_RESET_RAIN_ON_SLEEP)
+	@Comment("Reset rain/thunder when all players sleep")
+	public static boolean resetRainOnSleep = true;
 
 	public static final String CATEGORY_FOG = "fog";
 	public static final String CONFIG_ALLOW_DESERT_FOG = "Desert Fog";
-	protected static boolean allowDesertFog = true;
 	public static final String CONFIG_DESERT_FOG_FACTOR = "Desert Fog Factor";
-	protected static float desertFogFactor = 1.0F;
 	public static final String CONFIG_ENABLE_ELEVATION_HAZE = "Elevation Haze";
-	protected static boolean enableElevationHaze = true;
 	public static final String CONFIG_ELEVATION_HAZE_FACTOR = "Elevation Haze Factor";
-	protected static float elevationHazeFactor = 1.0F;
 	public static final String CONFIG_ENABLE_BIOME_FOG = "Biome Fog";
-	protected static boolean enableBiomeFog = true;
 	public static final String CONFIG_BIOME_FOG_FACTOR = "Biome Fog Factor";
-	protected static float biomeFogFactor = 1.0F;
+
+	@Parameter(category = CATEGORY_FOG, property = CONFIG_ALLOW_DESERT_FOG)
+	@Comment("Allow desert fog when raining")
+	public static boolean allowDesertFog = true;
+	@Parameter(category = CATEGORY_FOG, property = CONFIG_DESERT_FOG_FACTOR)
+	@MinMaxFloat(min = 0.0F, max = 5.0F)
+	@Comment("Visibility factor to apply to desert fog (higher is thicker)")
+	public static float desertFogFactor = 1.0F;
+	@Parameter(category = CATEGORY_FOG, property = CONFIG_ENABLE_ELEVATION_HAZE)
+	@Comment("Higher the player elevation the more haze that is experienced")
+	public static boolean enableElevationHaze = true;
+	@Parameter(category = CATEGORY_FOG, property = CONFIG_ELEVATION_HAZE_FACTOR)
+	@MinMaxFloat(min = 0.0F, max = 5.0F)
+	@Comment("Visibility factor to apply to elevation haze (higher is thicker)")
+	public static float elevationHazeFactor = 1.0F;
+	@Parameter(category = CATEGORY_FOG, property = CONFIG_ENABLE_BIOME_FOG)
+	@Comment("Enable biome specific fog density and color")
+	public static boolean enableBiomeFog = true;
+	@Parameter(category = CATEGORY_FOG, property = CONFIG_BIOME_FOG_FACTOR)
+	@MinMaxFloat(min = 0.0F, max = 5.0F)
+	@Comment("Visibility factor to apply to biome fog (higher is thicker)")
+	public static float biomeFogFactor = 1.0F;
 
 	public static final String CATEGORY_GENERAL = "general";
 	public static final String CONFIG_MIN_RAIN_STRENGTH = "Default Minimum Rain Strength";
-	protected static float defaultMinRainStrength = 0.0F;
 	public static final String CONFIG_MAX_RAIN_STRENGTH = "Default Maximum Rain Strength";
-	protected static float defaultMaxRainStrength = 1.0F;
 	public static final String CONFIG_FX_RANGE = "Special Effect Range";
-	protected static int specialEffectRange = 16;
 	public static final String CONFIG_FANCY_CLOUD_HANDLING = "Fancy Cloud Handling";
-	protected static boolean enableFancyCloudHandling = true;
+
+	@Parameter(category = CATEGORY_GENERAL, property = CONFIG_MIN_RAIN_STRENGTH)
+	@MinMaxFloat(min = 0.0F, max = 1.0F)
+	@Comment("Default minimum rain strength for a dimension")
+	public static float defaultMinRainStrength = 0.0F;
+	@Parameter(category = CATEGORY_GENERAL, property = CONFIG_MAX_RAIN_STRENGTH)
+	@MinMaxFloat(min = 0.0F, max = 1.0F)
+	@Comment("Default maximum rain strength for a dimension")
+	public static float defaultMaxRainStrength = 1.0F;
+	@Parameter(category = CATEGORY_GENERAL, property = CONFIG_FX_RANGE)
+	@MinMaxInt(min = 16, max = 32)
+	@Comment("Block radius/range around player for special effect application")
+	public static int specialEffectRange = 16;
+	@Parameter(category = CATEGORY_GENERAL, property = CONFIG_FANCY_CLOUD_HANDLING)
+	@Comment("Adjust cloud graphics based on configured cloud height")
+	public static boolean enableFancyCloudHandling = true;
 
 	public static final String CATEGORY_AURORA = "aurora";
 	public static final String CONFIG_AURORA_ENABLED = "Enabled";
-	protected static boolean auroraEnable = true;
 	public static final String CONFIG_Y_PLAYER_RELATIVE = "Height Player Relative";
-	protected static boolean auroraHeightPlayerRelative = true;
 	public static final String CONFIG_PLAYER_FIXED_HEIGHT = "Player Fixed Height";
-	protected static float playerFixedHeight = 64.0F;
 	public static final String CONFIG_MULTIPLE_BANDS = "Multiple Bands";
-	protected static boolean auroraMultipleBands = true;
-	public static final String CONFIG_TRIGGER_BIOME_LIST = "Trigger Biomes";
-	protected static String auroraTriggerBiomes = "";
 	public static final String CONFIG_AURORA_ANIMATE = "Animate";
-	protected static boolean auroraAnimate = true;
 	public static final String CONFIG_AURORA_SPAWN_OFFSET = "Spawn Offset";
-	protected static int auroraSpawnOffset = 150;
+
+	@Parameter(category = CATEGORY_AURORA, property = CONFIG_AURORA_ENABLED)
+	@Comment("Whether to enable Aurora processing on server/client")
+	public static boolean auroraEnable = true;
+	@Parameter(category = CATEGORY_AURORA, property = CONFIG_Y_PLAYER_RELATIVE)
+	@Comment("true to keep the aurora at a height above player; false to fix it to an altitude")
+	public static boolean auroraHeightPlayerRelative = true;
+	@Parameter(category = CATEGORY_AURORA, property = CONFIG_PLAYER_FIXED_HEIGHT)
+	@MinMaxFloat(min = 16.0F, max = 2048.0F)
+	@Comment("Number of blocks to say fixed above player if Aurora is player relative")
+	public static float playerFixedHeight = 64.0F;
+	@Parameter(category = CATEGORY_AURORA, property = CONFIG_MULTIPLE_BANDS)
+	@Comment("Allow Auroras with multiple bands")
+	public static boolean auroraMultipleBands = true;
+	@Parameter(category = CATEGORY_AURORA, property = CONFIG_AURORA_ANIMATE)
+	@Comment("Animate Aurora so it waves")
+	public static boolean auroraAnimate = true;
+	@Parameter(category = CATEGORY_AURORA, property = CONFIG_AURORA_SPAWN_OFFSET)
+	@MinMaxInt(min = 0, max = 200)
+	@Comment("Number of blocks north of player location to spawn an aurora")
+	public static int auroraSpawnOffset = 150;
 
 	public static final String CATEGORY_BIOMES = "biomes";
 	public static final String CONFIG_BIOME_CONFIG_FILES = "Config Files";
-	protected static String[] biomeConfigFiles = {};
 	public static final String CONFIG_BIOME_ALIASES = "Biome Alias";
-	protected static String[] biomeAliases = {};
+
+	@Parameter(category = CATEGORY_BIOMES, property = CONFIG_BIOME_CONFIG_FILES)
+	@Comment("Configuration files for configuring Biome Registry")
+	public static String[] biomeConfigFiles = {};
+	@Parameter(category = CATEGORY_BIOMES, property = CONFIG_BIOME_ALIASES)
+	@Comment("Biome alias list")
+	public static String[] biomeAliases = {};
 
 	public static final String CATEGORY_DIMENSIONS = "dimensions";
 	public static final String CONFIG_DIMENSION_CONFIG_FILES = "Config Files";
-	protected static String[] dimensionConfigFiles = {};
+
+	@Parameter(category = CATEGORY_DIMENSIONS, property = CONFIG_DIMENSION_CONFIG_FILES)
+	@Comment("Configuration files for configuring Dimension Registry")
+	public static String[] dimensionConfigFiles = {};
 
 	public static final String CATEGORY_BLOCK = "block";
 	public static final String CONFIG_BLOCK_CONFIG_FILES = "Config Files";
-	protected static String[] blockConfigFiles = {};
+
+	@Parameter(category = CATEGORY_BLOCK, property = CONFIG_BLOCK_CONFIG_FILES)
+	@Comment("Configuration files for configuring Block sounds and behavior")
+	public static String[] blockConfigFiles = {};
 
 	public static final String CATEGORY_SOUND = "sound";
 	public static final String CONFIG_ENABLE_BIOME_SOUNDS = "Enable Biome Sounds";
-	protected static boolean enableBiomeSounds = true;
 	public static final String CONFIG_MASTER_SOUND_FACTOR = "Master Sound Scale Factor";
-	protected static float masterSoundScaleFactor = 0.5F;
 	public static final String CONFIG_AUTO_CONFIG_CHANNELS = "Autoconfigure Channels";
-	protected static boolean autoConfigureChannels = true;
 	public static final String CONFIG_NORMAL_CHANNEL_COUNT = "Number Normal Channels";
-	protected static int normalSoundChannelCount = 28;
 	public static final String CONFIG_STREAMING_CHANNEL_COUNT = "Number Streaming Channels";
-	protected static int streamingSoundChannelCount = 4;
 	public static final String CONFIG_ENABLE_JUMP_SOUND = "Jump Sound";
-	protected static boolean enableJumpSound = true;
 	public static final String CONFIG_ENABLE_SWING_SOUND = "Swing Sound";
-	protected static boolean enableSwingSound = true;
 	public static final String CONFIG_ENABLE_CRAFTING_SOUND = "Crafting Sound";
-	protected static boolean enableCraftingSound = true;
 	public static final String CONFIG_ENABLE_BOW_PULL_SOUND = "Bow Pull Sound";
-	protected static boolean enableBowPullSound = true;
 	public static final String CONFIG_ENABLE_FOOTSTEPS_SOUND = "Footsteps";
-	protected static boolean enableFootstepSounds = true;
 	public static final String CONFIG_FOOTSTEPS_SOUND_FACTOR = "Footsteps Sound Factor";
-	protected static float footstepsSoundFactor = 0.3F;
 	public static final String CONFIG_SOUND_CULL_THRESHOLD = "Sound Culling Threshold";
-	protected static int soundCullingThreshold = 20;
 	public static final String CONFIG_CULLED_SOUNDS = "Culled Sounds";
-	protected static String[] culledSounds = { "^minecraft:liquid.*", "minecraft:mob.sheep.say",
-			"minecraft:mob.chicken.say", "minecraft:mob.cow.say", "minecraft:mob.pig.say" };
 	public static final String CONFIG_BLOCKED_SOUNDS = "Blocked Sounds";
-	protected static String[] blockedSounds = {};
+
+	@Parameter(category = CATEGORY_SOUND, property = CONFIG_ENABLE_BIOME_SOUNDS)
+	@Comment("Enable biome background and spot sounds")
+	public static boolean enableBiomeSounds = true;
+	@Parameter(category = CATEGORY_SOUND, property = CONFIG_MASTER_SOUND_FACTOR)
+	@MinMaxFloat(min = 0.0F, max = 1.0F)
+	@Comment("Master sound scale factor for biome and block sounds")
+	public static float masterSoundScaleFactor = 0.5F;
+	@Parameter(category = CATEGORY_SOUND, property = CONFIG_AUTO_CONFIG_CHANNELS)
+	@Comment("Automatically configure sound channels")
+	public static boolean autoConfigureChannels = true;
+	@Parameter(category = CATEGORY_SOUND, property = CONFIG_NORMAL_CHANNEL_COUNT)
+	@MinMaxInt(min = 28)
+	@Comment("Number of normal sound channels to configure in the sound system (manual)")
+	public static int normalSoundChannelCount = 28;
+	@Parameter(category = CATEGORY_SOUND, property = CONFIG_STREAMING_CHANNEL_COUNT)
+	@MinMaxInt(min = 4)
+	@Comment("Number of streaming sound channels to configure in the sound system (manual)")
+	public static int streamingSoundChannelCount = 4;
+	@Parameter(category = CATEGORY_SOUND, property = CONFIG_ENABLE_JUMP_SOUND)
+	@Comment("Enable sound effect when jumping")
+	public static boolean enableJumpSound = true;
+	@Parameter(category = CATEGORY_SOUND, property = CONFIG_ENABLE_SWING_SOUND)
+	@Comment("Enable weapons swing sound effect when attacking")
+	public static boolean enableSwingSound = true;
+	@Parameter(category = CATEGORY_SOUND, property = CONFIG_ENABLE_CRAFTING_SOUND)
+	@Comment("Enable sound when item crafted")
+	public static boolean enableCraftingSound = true;
+	@Parameter(category = CATEGORY_SOUND, property = CONFIG_ENABLE_BOW_PULL_SOUND)
+	@Comment("Enable sound when bow is pulled")
+	public static boolean enableBowPullSound = true;
+	@Parameter(category = CATEGORY_SOUND, property = CONFIG_ENABLE_FOOTSTEPS_SOUND)
+	@Comment("Enable footstep sounds")
+	public static boolean enableFootstepSounds = true;
+	@Parameter(category = CATEGORY_SOUND, property = CONFIG_FOOTSTEPS_SOUND_FACTOR)
+	@MinMaxFloat(min = 0.0F, max = 1.0F)
+	@Comment("Sound scale factor for footstep sounds")
+	public static float footstepsSoundFactor = 0.3F;
+	@Parameter(category = CATEGORY_SOUND, property = CONFIG_SOUND_CULL_THRESHOLD)
+	@MinMaxInt(min = 0)
+	@Comment("Ticks between culled sound events (0 to disable culling)")
+	public static int soundCullingThreshold = 20;
+	@Parameter(category = CATEGORY_SOUND, property = CONFIG_CULLED_SOUNDS)
+	@Comment("Sounds to cull from frequent playing")
+	public static String[] culledSounds = { "^minecraft:liquid.*", "minecraft:mob.sheep.say",
+			"minecraft:mob.chicken.say", "minecraft:mob.cow.say", "minecraft:mob.pig.say" };
+	@Parameter(category = CATEGORY_SOUND, property = CONFIG_BLOCKED_SOUNDS)
+	@Comment("Sounds to block from playing")
+	public static String[] blockedSounds = {};
 
 	public static final String CATEGORY_PLAYER = "player";
 	public static final String CONFIG_SUPPRESS_POTION_PARTICLES = "Suppress Potion Particles";
-	protected static boolean suppressPotionParticles = false;
 	public static final String CONFIG_ENABLE_POPOFFS = "Damage Popoffs";
-	protected static boolean enableDamagePopoffs = true;
+
+	@Parameter(category = CATEGORY_PLAYER, property = CONFIG_SUPPRESS_POTION_PARTICLES)
+	@Comment("Suppress player's potion particles from rendering")
+	public static boolean suppressPotionParticles = false;
+	@Parameter(category = CATEGORY_PLAYER, property = CONFIG_ENABLE_POPOFFS)
+	@Comment("Controls display of damage pop-offs when an entity is damaged")
+	public static boolean enableDamagePopoffs = true;
 
 	public static final String CATEGORY_POTION_HUD = "player.potion hud";
 	public static final String CONFIG_POTION_HUD_ENABLE = "Enable";
-	protected static boolean potionHudEnabled = true;
 	public static final String CONFIG_POTION_HUD_TRANSPARENCY = "Transparency";
-	protected static float potionHudTransparency = 0.5F;
 	public static final String CONFIG_POTION_HUD_LEFT_OFFSET = "Left Offset";
-	protected static int potionHudLeftOffset = 5;
 	public static final String CONFIG_POTION_HUD_TOP_OFFSET = "Top Offset";
-	protected static int potionHudTopOffset = 5;
 	public static final String CONFIG_POTION_HUD_SCALE = "Display Scale";
-	protected static float potionHudScale = 0.5F;
+
+	@Parameter(category = CATEGORY_POTION_HUD, property = CONFIG_POTION_HUD_ENABLE)
+	@Comment("Enable display of potion icons in display")
+	public static boolean potionHudEnabled = true;
+	@Parameter(category = CATEGORY_POTION_HUD, property = CONFIG_POTION_HUD_TRANSPARENCY)
+	@MinMaxFloat(min = 0.0F, max = 1.0F)
+	@Comment("Transparency factor for icons (higher more solid)")
+	public static float potionHudTransparency = 0.5F;
+	@Parameter(category = CATEGORY_POTION_HUD, property = CONFIG_POTION_HUD_LEFT_OFFSET)
+	@MinMaxInt(min = 0)
+	@Comment("Offset from left side of screen")
+	public static int potionHudLeftOffset = 5;
+	@Parameter(category = CATEGORY_POTION_HUD, property = CONFIG_POTION_HUD_TOP_OFFSET)
+	@MinMaxInt(min = 0)
+	@Comment("Offset from top of screen")
+	public static int potionHudTopOffset = 5;
+	@Parameter(category = CATEGORY_POTION_HUD, property = CONFIG_POTION_HUD_SCALE)
+	@MinMaxFloat(min = 0.0F, max = 1.0F)
+	@Comment("Size scale of icons (lower is smaller)")
+	public static float potionHudScale = 0.5F;
 
 	public static void load(final Configuration config) {
+
+		ConfigProcessor.process(config, ModOptions.class);
 
 		// CATEGORY: Logging
 		config.setCategoryRequiresMcRestart(CATEGORY_LOGGING_CONTROL, true);
 		config.setCategoryComment(CATEGORY_LOGGING_CONTROL, "Defines how Dynamic Surroundings logging will behave");
 
-		String comment = "Enables/disables debug logging of the mod";
-		enableDebugLogging = config.getBoolean(CONFIG_ENABLE_DEBUG_LOGGING, CATEGORY_LOGGING_CONTROL,
-				enableDebugLogging, comment);
-
-		comment = "Enables/disables online version checking";
-		enableVersionChecking = config.getBoolean(CONFIG_ENABLE_ONLINE_VERSION_CHECK, CATEGORY_LOGGING_CONTROL,
-				enableVersionChecking, comment);
-
 		// CATEGORY: Rain
 		config.setCategoryRequiresMcRestart(CATEGORY_RAIN, true);
 		config.setCategoryComment(CATEGORY_RAIN, "Options that control rain effects in the client");
-
-		comment = "Factor to apply to rain sound level to adjust";
-		soundLevel = config.getFloat(CONFIG_RAIN_VOLUME, CATEGORY_RAIN, soundLevel, 0.0F, 1.0F, comment);
-
-		comment = "Always override Vanilla rain sound even when dimension is blacklisted";
-		alwaysOverrideSound = config.getBoolean(CONFIG_ALWAYS_OVERRIDE_SOUND, CATEGORY_RAIN, alwaysOverrideSound,
-				comment);
-
-		comment = "Allow desert dust when raining";
-		allowDesertDust = config.getBoolean(CONFIG_ALLOW_DESERT_DUST, CATEGORY_RAIN, allowDesertDust, comment);
-
-		comment = "Reset rain/thunder when all players sleep";
-		resetRainOnSleep = config.getBoolean(CONFIG_RESET_RAIN_ON_SLEEP, CATEGORY_RAIN, resetRainOnSleep, comment);
 
 		// CATEGORY: General
 		config.setCategoryRequiresMcRestart(CATEGORY_GENERAL, true);
 		config.setCategoryComment(CATEGORY_GENERAL, "Miscellaneous settings");
 
-		comment = "Default minimum rain strength for a dimension";
-		defaultMinRainStrength = MathHelper.clamp_float(config.getFloat(CONFIG_MIN_RAIN_STRENGTH, CATEGORY_GENERAL,
-				defaultMinRainStrength, 0.0F, 1.0F, comment), 0.0F, 1.0F);
-
-		comment = "Default maximum rain strength for a dimension";
-		defaultMaxRainStrength = MathHelper.clamp_float(config.getFloat(CONFIG_MAX_RAIN_STRENGTH, CATEGORY_GENERAL,
-				defaultMaxRainStrength, 0.0F, 1.0F, comment), defaultMinRainStrength, 1.0F);
-
-		comment = "Block radius/range around player for special effect application";
-		specialEffectRange = config.getInt(CONFIG_FX_RANGE, CATEGORY_GENERAL, specialEffectRange, 8, 32, comment);
-
-		comment = "Adjust cloud graphics based on configured cloud height";
-		enableFancyCloudHandling = config.getBoolean(CONFIG_FANCY_CLOUD_HANDLING, CATEGORY_GENERAL,
-				enableFancyCloudHandling, comment);
-
 		// CATEGORY: Player
 		config.setCategoryRequiresMcRestart(CATEGORY_PLAYER, true);
 		config.setCategoryComment(CATEGORY_PLAYER, "General options for defining sound and effects the player entity");
-
-		comment = "Suppress player's potion particles from rendering";
-		suppressPotionParticles = config.getBoolean(CONFIG_SUPPRESS_POTION_PARTICLES, CATEGORY_PLAYER,
-				suppressPotionParticles, comment);
-
-		comment = "Controls display of damage popoffs when an entity is damaged";
-		enableDamagePopoffs = config.getBoolean(CONFIG_ENABLE_POPOFFS, CATEGORY_PLAYER, enableDamagePopoffs, comment);
 
 		// CATEGORY: Aurora
 		config.setCategoryRequiresMcRestart(CATEGORY_AURORA, true);
 		config.setCategoryComment(CATEGORY_AURORA, "Options that control Aurora behavior and rendering");
 
-		comment = "Whether to enable Aurora processing on server/client";
-		auroraEnable = config.getBoolean(CONFIG_AURORA_ENABLED, CATEGORY_AURORA, auroraEnable, comment);
-
-		comment = "true to keep the aurora at a height above player; false to fix it to an altitude";
-		auroraHeightPlayerRelative = config.getBoolean(CONFIG_Y_PLAYER_RELATIVE, CATEGORY_AURORA,
-				auroraHeightPlayerRelative, comment);
-
-		comment = "Number of blocks to say fixed above player if Aurora is player relative";
-		playerFixedHeight = config.getFloat(CONFIG_PLAYER_FIXED_HEIGHT, CATEGORY_AURORA, playerFixedHeight, 16.0F,
-				2048.0F, comment);
-
-		comment = "Allow Auroras with multiple bands";
-		auroraMultipleBands = config.getBoolean(CONFIG_MULTIPLE_BANDS, CATEGORY_AURORA, auroraMultipleBands, comment);
-
-		comment = "Animate Aurora";
-		auroraAnimate = config.getBoolean(CONFIG_AURORA_ANIMATE, CATEGORY_AURORA, auroraAnimate, comment);
-
-		comment = "Number of blocks north of player location to spawn an aurora";
-		auroraSpawnOffset = config.getInt(CONFIG_AURORA_SPAWN_OFFSET, CATEGORY_AURORA, auroraSpawnOffset, 0, 200,
-				comment);
-
 		// CATEGORY: Fog
 		config.setCategoryRequiresMcRestart(CATEGORY_FOG, true);
 		config.setCategoryComment(CATEGORY_FOG, "Options that control the various fog effects in the client");
-
-		comment = "Allow desert fog when raining";
-		allowDesertFog = config.getBoolean(CONFIG_ALLOW_DESERT_FOG, CATEGORY_FOG, allowDesertFog, comment);
-
-		comment = "Visibility factor to apply to desert fog (higher is thicker)";
-		desertFogFactor = config.getFloat(CONFIG_DESERT_FOG_FACTOR, CATEGORY_FOG, desertFogFactor, 0.0F, 5.0F, comment);
-
-		comment = "Higher the player elevation the more haze that is experienced";
-		enableElevationHaze = config.getBoolean(CONFIG_ENABLE_ELEVATION_HAZE, CATEGORY_FOG, enableElevationHaze,
-				comment);
-
-		comment = "Visibility factor to apply to elevation haze (higher is thicker)";
-		elevationHazeFactor = config.getFloat(CONFIG_ELEVATION_HAZE_FACTOR, CATEGORY_FOG, elevationHazeFactor, 0.0F,
-				5.0F, comment);
-
-		comment = "Enable biome specific fog density and color";
-		enableBiomeFog = config.getBoolean(CONFIG_ENABLE_BIOME_FOG, CATEGORY_FOG, enableBiomeFog, comment);
-
-		comment = "Visibility factor to apply to biome fog (higher is thicker)";
-		biomeFogFactor = config.getFloat(CONFIG_BIOME_FOG_FACTOR, CATEGORY_FOG, biomeFogFactor, 0.0F, 5.0F, comment);
 
 		// CATEGORY: Biomes
 		config.setCategoryRequiresMcRestart(CATEGORY_BIOMES, true);
 		config.setCategoryComment(CATEGORY_BIOMES, "Options for controlling biome sound/effects");
 
-		comment = "Configuration files for configuring Biome Registry";
-		biomeConfigFiles = config.getStringList(CONFIG_BIOME_CONFIG_FILES, CATEGORY_BIOMES, biomeConfigFiles, comment);
-
-		comment = "Biome alias list";
-		biomeAliases = config.getStringList(CONFIG_BIOME_ALIASES, CATEGORY_BIOMES, biomeAliases, comment);
-
 		// CATEGORY: Dimensions
 		config.setCategoryRequiresMcRestart(CATEGORY_DIMENSIONS, true);
-		config.setCategoryComment(CATEGORY_DIMENSIONS, "Options for defining per dimension parameters for Dynamic Surroundings");
-
-		comment = "Configuration files for configuring Dimension Registry";
-		dimensionConfigFiles = config.getStringList(CONFIG_DIMENSION_CONFIG_FILES, CATEGORY_DIMENSIONS,
-				dimensionConfigFiles, comment);
+		config.setCategoryComment(CATEGORY_DIMENSIONS,
+				"Options for defining per dimension parameters for Dynamic Surroundings");
 
 		// CATEGORY: Block
 		config.setCategoryRequiresMcRestart(CATEGORY_BLOCK, true);
 		config.setCategoryComment(CATEGORY_BLOCK, "Options for defining block specific sounds/effects");
 
-		comment = "Configuration files for configuring Block sounds and behavior";
-		blockConfigFiles = config.getStringList(CONFIG_BLOCK_CONFIG_FILES, CATEGORY_BLOCK, blockConfigFiles, comment);
-
 		// CATEGORY: Sound
 		config.setCategoryRequiresMcRestart(CATEGORY_SOUND, true);
 		config.setCategoryComment(CATEGORY_SOUND, "General options for defining sound effects");
 
-		comment = "Enable biome sounds";
-		enableBiomeSounds = config.getBoolean(CONFIG_ENABLE_BIOME_SOUNDS, CATEGORY_SOUND, enableBiomeSounds, comment);
-
-		comment = "Master sound scale factor for biome and block sounds";
-		masterSoundScaleFactor = config.getFloat(CONFIG_MASTER_SOUND_FACTOR, CATEGORY_SOUND, masterSoundScaleFactor,
-				0.0F, 1.0F, comment);
-
-		comment = "Automatically configure sound channels";
-		autoConfigureChannels = config.getBoolean(CONFIG_AUTO_CONFIG_CHANNELS, CATEGORY_SOUND, autoConfigureChannels,
-				comment);
-
-		comment = "Number of normal sound channels to configure in the sound system (manual)";
-		normalSoundChannelCount = config.getInt(CONFIG_NORMAL_CHANNEL_COUNT, CATEGORY_SOUND, normalSoundChannelCount,
-				28, Integer.MAX_VALUE, comment);
-
-		comment = "Number of streaming sound channels to configure in the sound system (manual)";
-		streamingSoundChannelCount = config.getInt(CONFIG_STREAMING_CHANNEL_COUNT, CATEGORY_SOUND,
-				streamingSoundChannelCount, 4, Integer.MAX_VALUE, comment);
-
-		comment = "Enable sound effect when jumping";
-		enableJumpSound = config.getBoolean(CONFIG_ENABLE_JUMP_SOUND, CATEGORY_SOUND, enableJumpSound, comment);
-
-		comment = "Enable weapons swing sound effect when attacking";
-		enableSwingSound = config.getBoolean(CONFIG_ENABLE_SWING_SOUND, CATEGORY_SOUND, enableSwingSound, comment);
-
-		comment = "Enable sound when item crafted";
-		enableCraftingSound = config.getBoolean(CONFIG_ENABLE_CRAFTING_SOUND, CATEGORY_SOUND, enableCraftingSound,
-				comment);
-
-		comment = "Enable sound when bow is pulled";
-		enableBowPullSound = config.getBoolean(CONFIG_ENABLE_BOW_PULL_SOUND, CATEGORY_SOUND, enableBowPullSound,
-				comment);
-
-		comment = "Enable footstep sounds";
-		enableFootstepSounds = config.getBoolean(CONFIG_ENABLE_FOOTSTEPS_SOUND, CATEGORY_SOUND, enableFootstepSounds,
-				comment);
-
-		comment = "Sound scale factor for footstep sounds";
-		footstepsSoundFactor = config.getFloat(CONFIG_FOOTSTEPS_SOUND_FACTOR, CATEGORY_SOUND, footstepsSoundFactor,
-				0.0F, 1.0F, comment);
-
-		comment = "Ticks between water and lava sound events (0 to disable culling)";
-		soundCullingThreshold = config.getInt(CONFIG_SOUND_CULL_THRESHOLD, CATEGORY_SOUND, soundCullingThreshold, 0,
-				Integer.MAX_VALUE, comment);
-
-		comment = "Sounds to block from playing";
-		blockedSounds = config.getStringList(CONFIG_BLOCKED_SOUNDS, CATEGORY_SOUND, blockedSounds, comment);
-
-		comment = "Sounds to cull from frequent playing";
-		culledSounds = config.getStringList(CONFIG_CULLED_SOUNDS, CATEGORY_SOUND, culledSounds, comment);
-
 		// CATEGORY: player.potion hud
 		config.setCategoryRequiresMcRestart(CATEGORY_POTION_HUD, true);
 		config.setCategoryComment(CATEGORY_POTION_HUD, "Options for the Potion HUD overlay");
-
-		comment = "Enable display of potion icons in display";
-		potionHudEnabled = config.getBoolean(CONFIG_POTION_HUD_ENABLE, CATEGORY_POTION_HUD, potionHudEnabled, comment);
-
-		comment = "Transparency factor for icons (higher more solid)";
-		potionHudTransparency = config.getFloat(CONFIG_POTION_HUD_TRANSPARENCY, CATEGORY_POTION_HUD,
-				potionHudTransparency, 0.0F, 1.0F, comment);
-
-		comment = "Offset from left side of screen";
-		potionHudLeftOffset = config.getInt(CONFIG_POTION_HUD_LEFT_OFFSET, CATEGORY_POTION_HUD, potionHudLeftOffset, 0,
-				Integer.MAX_VALUE, comment);
-
-		comment = "Offset from top of screen";
-		potionHudTopOffset = config.getInt(CONFIG_POTION_HUD_TOP_OFFSET, CATEGORY_POTION_HUD, potionHudTopOffset, 0,
-				Integer.MAX_VALUE, comment);
-
-		comment = "Size scale of icons (lower is smaller)";
-		potionHudScale = config.getFloat(CONFIG_POTION_HUD_SCALE, CATEGORY_POTION_HUD, potionHudScale, 0.0F, 1.0F,
-				comment);
 	}
 
 	public static boolean getEnableDebugLogging() {
