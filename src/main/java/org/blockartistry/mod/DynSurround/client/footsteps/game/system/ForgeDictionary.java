@@ -52,7 +52,7 @@ public final class ForgeDictionary {
 			"oreApatite", "oreSalt", "oreZinc", "orePeridot", "oreSilicon", "oreMoldavite", "oreBloodstone",
 			"oreCinnabar", "oreYellorite", "oreTemporal", "oreAmethyst", "oreAmber", "oreMalachite", "oreTanzanite",
 			"oreTritanium", "oreTungsten", "oreTelsalite", "oreCheese", "denseorePeridot", "denseoreZinc", "denseoreRuby",
-			"denseoreSapphire", "denseoreAmethyst", "denseoreTungsten", "denseoreAmethyst", "oreHeeEndium" };
+			"denseoreSapphire", "denseoreAmethyst", "denseoreTungsten", "oreHeeEndium" };
 
 	private static final String[] metalBlocks = { "blockIron", "blockGold", "blockCopper", "blockTin", "blockSilver",
 			"blockLead", "blockNickle", "blockPlatinum", "blockMithril", "blockElectrum", "blockInvar", "blockBronze",
