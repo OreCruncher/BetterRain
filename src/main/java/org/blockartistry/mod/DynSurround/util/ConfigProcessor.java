@@ -30,9 +30,11 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.lang.reflect.Field;
 
+import org.apache.commons.lang3.StringUtils;
 import org.blockartistry.mod.DynSurround.ModLog;
 
 import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.common.config.Property;
 
 public final class ConfigProcessor {
 
@@ -42,6 +44,8 @@ public final class ConfigProcessor {
 		String category();
 
 		String property();
+
+		String defaultValue();
 	}
 
 	@Retention(RetentionPolicy.RUNTIME)
@@ -66,6 +70,14 @@ public final class ConfigProcessor {
 		float max() default Float.MAX_VALUE;
 	}
 
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target({ ElementType.FIELD })
+	public static @interface RestartRequired {
+		boolean world() default true;
+
+		boolean server() default true;
+	}
+
 	public static void process(final Configuration config, final Class<?> clazz) {
 		process(config, clazz, null);
 	}
@@ -83,7 +95,8 @@ public final class ConfigProcessor {
 					final Object defaultValue = field.get(parameters);
 
 					if (defaultValue instanceof Boolean) {
-						field.set(parameters, config.getBoolean(property, category, (Boolean) defaultValue, comment));
+						field.set(parameters, config.getBoolean(property, category,
+								Boolean.valueOf(annotation.defaultValue()), comment));
 					} else if (defaultValue instanceof Integer) {
 						int minInt = Integer.MIN_VALUE;
 						int maxInt = Integer.MAX_VALUE;
@@ -92,8 +105,8 @@ public final class ConfigProcessor {
 							minInt = mmi.min();
 							maxInt = mmi.max();
 						}
-						field.set(parameters,
-								config.getInt(property, category, (Integer) defaultValue, minInt, maxInt, comment));
+						field.set(parameters, config.getInt(property, category,
+								Integer.valueOf(annotation.defaultValue()), minInt, maxInt, comment));
 					} else if (defaultValue instanceof Float) {
 						float minFloat = Float.MIN_VALUE;
 						float maxFloat = Float.MAX_VALUE;
@@ -102,14 +115,26 @@ public final class ConfigProcessor {
 							minFloat = mmf.min();
 							maxFloat = mmf.max();
 						}
-						field.set(parameters,
-								config.getFloat(property, category, (Float) defaultValue, minFloat, maxFloat, comment));
+						field.set(parameters, config.getFloat(property, category,
+								Float.valueOf(annotation.defaultValue()), minFloat, maxFloat, comment));
 					} else if (defaultValue instanceof String) {
-						field.set(parameters, config.getString(property, category, (String) defaultValue, comment));
+						field.set(parameters, config.getString(property, category, annotation.defaultValue(), comment));
 					} else if (defaultValue instanceof String[]) {
-						field.set(parameters,
-								config.getStringList(property, category, (String[]) defaultValue, comment));
+						field.set(parameters, config.getStringList(property, category,
+								StringUtils.split(annotation.defaultValue(), ','), comment));
 					}
+					
+					// Configure restart settings
+					final Property prop = config.getCategory(category).get(property);
+					if (field.getAnnotation(RestartRequired.class) != null) {
+						final RestartRequired restart = field.getAnnotation(RestartRequired.class);
+						prop.setRequiresMcRestart(restart.server());
+						prop.setRequiresWorldRestart(restart.world());
+					} else {
+						prop.setRequiresMcRestart(false);
+						prop.setRequiresWorldRestart(false);
+					}
+
 				} catch (final Throwable t) {
 					ModLog.error("Unable to parse configuration", t);
 				}

@@ -47,10 +47,6 @@ import org.lwjgl.opengl.GL11;
 @SideOnly(Side.CLIENT)
 public final class AuroraRenderer implements IAtmosRenderer {
 
-	private static final boolean ANIMATE = ModOptions.auroraAnimate;
-	private static final boolean HEIGHT_PLAYER_RELATIVE = ModOptions.auroraHeightPlayerRelative;
-	private static final float PLAYER_FIXED_HEIGHT = ModOptions.playerFixedHeight;
-
 	@Override
 	public void render(final EntityRenderer renderer, final float partialTick) {
 		if (AuroraEffectHandler.currentAurora != null) {
@@ -75,9 +71,9 @@ public final class AuroraRenderer implements IAtmosRenderer {
 		final Tessellator tess = Tessellator.getInstance();
 		final WorldRenderer renderer = tess.getWorldRenderer();
 		final float tranY;
-		if (HEIGHT_PLAYER_RELATIVE) {
+		if (ModOptions.auroraHeightPlayerRelative) {
 			// Fix height above player
-			tranY = PLAYER_FIXED_HEIGHT;
+			tranY = ModOptions.playerFixedHeight;
 		} else {
 			// Adjust to keep aurora at the same altitude
 			tranY = DimensionRegistry.getCloudHeight(mc.theWorld) + 5 - (float) (mc.thePlayer.lastTickPosY
@@ -90,7 +86,7 @@ public final class AuroraRenderer implements IAtmosRenderer {
 		final double tranZ = aurora.posZ
 				- (mc.thePlayer.lastTickPosZ + (mc.thePlayer.posZ - mc.thePlayer.lastTickPosZ) * partialTick);
 
-		if (ANIMATE)
+		if (ModOptions.auroraAnimate)
 			aurora.translate(partialTick);
 
 		final Color base = aurora.getBaseColor();

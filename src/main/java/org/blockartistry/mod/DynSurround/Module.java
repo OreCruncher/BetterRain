@@ -28,6 +28,7 @@ import java.io.File;
 
 import org.apache.logging.log4j.LogManager;
 import org.blockartistry.mod.DynSurround.proxy.Proxy;
+import org.blockartistry.mod.DynSurround.util.ConfigProcessor;
 
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
@@ -118,7 +119,9 @@ public class Module {
 	
 	@SubscribeEvent
 	public void configChangedEvent(final OnConfigChangedEvent event) {
-		if(event.modID.equals(Module.MOD_ID))
+		if(event.modID.equals(Module.MOD_ID)) {
 			config.save();
+			ConfigProcessor.process(config, ModOptions.class);
+		}
 	}
 }

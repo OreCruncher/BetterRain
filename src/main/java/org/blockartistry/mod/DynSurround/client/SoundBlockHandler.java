@@ -46,8 +46,6 @@ import net.minecraftforge.fml.relauncher.Side;
 @SideOnly(Side.CLIENT)
 public class SoundBlockHandler implements IClientEffectHandler {
 
-	private static final int SOUND_CULL_THRESHOLD = ModOptions.soundCullingThreshold;
-
 	private boolean initialized = false;
 	private final List<String> soundsToBlock = new ArrayList<String>();
 	private final TObjectIntHashMap<String> soundCull = new TObjectIntHashMap<String>();
@@ -67,7 +65,7 @@ public class SoundBlockHandler implements IClientEffectHandler {
 					this.soundsToBlock.add(rs);
 				} else if (SoundRegistry.isSoundCulled(rs)) {
 					ModLog.debug("Culling sound '%s'", rs);
-					this.soundCull.put(rs, -SOUND_CULL_THRESHOLD);
+					this.soundCull.put(rs, -ModOptions.soundCullingThreshold);
 				}
 			}
 		}
@@ -89,7 +87,7 @@ public class SoundBlockHandler implements IClientEffectHandler {
 			return;
 		}
 
-		if (SOUND_CULL_THRESHOLD <= 0)
+		if (ModOptions.soundCullingThreshold <= 0)
 			return;
 
 		// Get the last time the sound was seen
@@ -98,7 +96,7 @@ public class SoundBlockHandler implements IClientEffectHandler {
 			return;
 
 		final int currentTick = EnvironState.getTickCounter();
-		if ((currentTick - lastOccurance) < SOUND_CULL_THRESHOLD) {
+		if ((currentTick - lastOccurance) < ModOptions.soundCullingThreshold) {
 			event.result = null;
 		} else {
 			this.soundCull.put(resource, currentTick);

@@ -36,8 +36,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 @SideOnly(Side.CLIENT)
 public class UserConfigSoundPlayerWrapper implements ISoundPlayer {
 
-	private static final float MASTER_VOLUME_SCALE = ModOptions.footstepsSoundFactor;
-
 	private ISoundPlayer wrapped;
 
 	public UserConfigSoundPlayerWrapper(final ISoundPlayer wrapped) {
@@ -47,7 +45,7 @@ public class UserConfigSoundPlayerWrapper implements ISoundPlayer {
 	@Override
 	public void playSound(final Object location, final String soundName, final float volume, final float pitch,
 			final IOptions options) {
-		this.wrapped.playSound(location, soundName, volume * MASTER_VOLUME_SCALE, pitch, options);
+		this.wrapped.playSound(location, soundName, volume * ModOptions.footstepsSoundFactor, pitch, options);
 	}
 
 	@Override
