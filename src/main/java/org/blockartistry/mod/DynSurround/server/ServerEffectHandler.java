@@ -51,12 +51,6 @@ public final class ServerEffectHandler {
 
 	private static final float RESET = -10.0F;
 
-	private static final boolean AURORA_ENABLE = ModOptions.auroraEnable;
-
-	// Offset from the player location so they can see it
-	// without looking straight up.
-	private static final int Z_OFFSET = -ModOptions.auroraSpawnOffset;
-
 	// Minimum distance between auroras, squared
 	private static final long MIN_AURORA_DISTANCE_SQ = 400 * 400;
 
@@ -68,7 +62,7 @@ public final class ServerEffectHandler {
 	public void tickEvent(final TickEvent.WorldTickEvent event) {
 
 		if (event.phase == Phase.END) {
-			if (AURORA_ENABLE)
+			if (ModOptions.auroraEnable)
 				processAuroras(event);
 			return;
 		}
@@ -86,7 +80,7 @@ public final class ServerEffectHandler {
 	private static boolean isAuroraInRange(final EntityPlayerMP player, final Set<AuroraData> data) {
 		for (final AuroraData aurora : data) {
 			final long deltaX = aurora.posX - (int) player.posX;
-			final long deltaZ = aurora.posZ - (int) player.posZ + Z_OFFSET;
+			final long deltaZ = aurora.posZ - (int) player.posZ + -ModOptions.auroraSpawnOffset;
 			final long distSq = deltaX * deltaX + deltaZ * deltaZ;
 			if (distSq <= MIN_AURORA_DISTANCE_SQ)
 				return true;
@@ -138,7 +132,7 @@ public final class ServerEffectHandler {
 						final int preset = AuroraPreset.randomId();
 						// final int colorSet = ColorPair.testId();
 						// final int preset = AuroraPreset.testId();
-						final AuroraData aurora = new AuroraData(player, Z_OFFSET, colorSet, preset);
+						final AuroraData aurora = new AuroraData(player, -ModOptions.auroraSpawnOffset, colorSet, preset);
 						if (data.add(aurora)) {
 							ModLog.debug("Spawned new aurora: " + aurora.toString());
 						}

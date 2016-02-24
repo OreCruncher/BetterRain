@@ -50,19 +50,19 @@ import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
 public class PotionHUD extends Gui implements IGuiOverlay {
 
 	private static final ResourceLocation TEXTURE = new ResourceLocation("textures/gui/container/inventory.png");
-	private static final float TRANSPARENCY = ModOptions.potionHudTransparency;
-	private static final int TEXT_POTION_NAME = (int) (255 * TRANSPARENCY) << 24 | 0xFFFFFF;
-	private static final int TEXT_DURATION = (int) (255 * TRANSPARENCY) << 24 | 0x7F7F7F;
-	private static final int TEXT_DURATION_LOW = (int) (255 * TRANSPARENCY) << 24 | 0xFF0000;
-	private static final float GUITOP = ModOptions.potionHudTopOffset;
-	private static final float GUILEFT = ModOptions.potionHudLeftOffset;
-	private static final float SCALE = ModOptions.potionHudScale;
 
 	public void doRender(final RenderGameOverlayEvent event) {
 
 		if (event.isCancelable() || event.type != ElementType.EXPERIENCE) {
 			return;
 		}
+
+		final int TEXT_POTION_NAME = (int) (255 * ModOptions.potionHudTransparency) << 24 | 0xFFFFFF;
+		final int TEXT_DURATION = (int) (255 * ModOptions.potionHudTransparency) << 24 | 0x7F7F7F;
+		final int TEXT_DURATION_LOW = (int) (255 * ModOptions.potionHudTransparency) << 24 | 0xFF0000;
+		final float GUITOP = ModOptions.potionHudTopOffset;
+		final float GUILEFT = ModOptions.potionHudLeftOffset;
+		final float SCALE = ModOptions.potionHudScale;
 
 		final Minecraft mc = Minecraft.getMinecraft();
 		final FontRenderer font = mc.fontRenderer;
@@ -77,7 +77,7 @@ public class PotionHUD extends Gui implements IGuiOverlay {
 		if (!collection.isEmpty()) {
 
 			GL11.glPushMatrix();
-			GL11.glColor4f(1.0F, 1.0F, 1.0F, TRANSPARENCY);
+			GL11.glColor4f(1.0F, 1.0F, 1.0F, ModOptions.potionHudTransparency);
 			GL11.glDisable(GL11.GL_LIGHTING);
 			GL11.glTranslatef(GUILEFT, GUITOP, 0.0F);
 			GL11.glScalef(SCALE, SCALE, SCALE);
@@ -90,8 +90,8 @@ public class PotionHUD extends Gui implements IGuiOverlay {
 			for (final Iterator<PotionEffect> iterator = collection.iterator(); iterator.hasNext(); guiTop += k) {
 				final PotionEffect potioneffect = iterator.next();
 				final Potion potion = Potion.potionTypes[potioneffect.getPotionID()];
-				
-				GL11.glColor4f(1.0F, 1.0F, 1.0F, TRANSPARENCY);
+
+				GL11.glColor4f(1.0F, 1.0F, 1.0F, ModOptions.potionHudTransparency);
 				mc.getTextureManager().bindTexture(TEXTURE);
 				this.drawTexturedModalRect(guiLeft, guiTop, 0, 166, 140, 32);
 
@@ -102,10 +102,10 @@ public class PotionHUD extends Gui implements IGuiOverlay {
 
 				try {
 					potion.renderInventoryEffect(guiLeft, guiTop, potioneffect, mc);
-				} catch(final Exception ex) {
+				} catch (final Exception ex) {
 					;
 				}
-				
+
 				if (!potion.shouldRenderInvText(potioneffect))
 					continue;
 				String s1 = I18n.format(potion.getName(), new Object[0]);

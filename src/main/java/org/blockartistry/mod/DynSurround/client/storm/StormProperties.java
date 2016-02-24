@@ -41,8 +41,6 @@ public enum StormProperties {
 	VANILLA, NONE(0.0F, "calm"), CALM(0.1F, "calm"), LIGHT(0.33F, "light"), NORMAL(0.66F, "normal"), HEAVY(1.0F,
 			"heavy");
 
-	private static final float SOUND_LEVEL = ModOptions.soundLevel;
-
 	private static float intensityLevel = 0.0F;
 	private static StormProperties intensity = VANILLA;
 	private static float fogDensity = 0.0F;
@@ -96,7 +94,7 @@ public enum StormProperties {
 	}
 
 	public static float getCurrentVolume() {
-		return (doVanilla() ? 0.66F : intensityLevel) * SOUND_LEVEL;
+		return (doVanilla() ? 0.66F : intensityLevel) * ModOptions.soundLevel;
 	}
 
 	public static ResourceLocation getCurrentStormSound() {

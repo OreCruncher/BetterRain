@@ -51,9 +51,7 @@ import net.minecraft.world.World;
 public class BlockEffectHandler implements IClientEffectHandler {
 
 	private static final Random random = new XorShiftRandom();
-	private static final int RANGE = ModOptions.specialEffectRange;
 	private static final double RATIO = 0.0335671847202175D;
-	private static final int CHECK_COUNT = (int) (Math.pow(RANGE * 2 - 1, 3) * RATIO);
 
 	@Override
 	public void process(final World world, final EntityPlayer player) {
@@ -62,7 +60,9 @@ public class BlockEffectHandler implements IClientEffectHandler {
 
 		final BlockPos playerPos = new BlockPos(player);
 		final String conditions = EnvironState.getConditions();
-
+		final int RANGE = ModOptions.specialEffectRange;
+		final int CHECK_COUNT = (int) (Math.pow(RANGE * 2 - 1, 3) * RATIO);
+		
 		for (int i = 0; i < CHECK_COUNT; i++) {
 			final BlockPos pos = playerPos.add(random.nextInt(RANGE) - random.nextInt(RANGE),
 					random.nextInt(RANGE) - random.nextInt(RANGE), random.nextInt(RANGE) - random.nextInt(RANGE));

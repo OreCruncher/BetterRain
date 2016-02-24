@@ -56,7 +56,6 @@ import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 @SideOnly(Side.CLIENT)
 public class PlayerSoundEffectHandler implements IClientEffectHandler {
 
-	private static final boolean ALWAYS_OVERRIDE_SOUND = ModOptions.alwaysOverrideSound;
 	private static final List<EntityDropParticleFX> drops = new ArrayList<EntityDropParticleFX>();
 
 	private static boolean doBiomeSounds() {
@@ -207,7 +206,7 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 		if (event.sound == null)
 			return;
 
-		if ((ALWAYS_OVERRIDE_SOUND || !StormProperties.doVanilla()) && replaceRainSound(event.name)) {
+		if ((ModOptions.alwaysOverrideSound || !StormProperties.doVanilla()) && replaceRainSound(event.name)) {
 			final ISound sound = event.sound;
 			event.result = new PositionedSoundRecord(StormProperties.getCurrentStormSound(),
 					StormProperties.getCurrentVolume(), sound.getPitch(), sound.getXPosF(), sound.getYPosF(),

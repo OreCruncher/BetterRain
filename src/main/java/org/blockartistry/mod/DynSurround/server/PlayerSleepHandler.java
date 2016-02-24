@@ -30,10 +30,8 @@ import net.minecraft.world.WorldServer;
 
 public class PlayerSleepHandler {
 
-	public static final boolean RESET_ON_SLEEP = ModOptions.resetRainOnSleep;
-
 	public static void resetRainAndThunder(final WorldServer world) {
-		if (RESET_ON_SLEEP)
+		if (ModOptions.resetRainOnSleep)
 			world.provider.resetRainAndThunder();
 	}
 

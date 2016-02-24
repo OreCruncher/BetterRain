@@ -85,14 +85,12 @@ public class DynSurroundConfigGui extends GuiConfig {
 	@SuppressWarnings("rawtypes")
 	private ConfigElement getCategoryConfigElement(final String category, final String label) {
 		final ConfigCategory cat = config.getCategory(category);
-		cat.setRequiresMcRestart(true);
 		return new MyConfigElement(cat, label);
 	}
 
 	@SuppressWarnings("rawtypes")
 	private ConfigElement getPropertyConfigElement(final String category, final String property, final String label) {
 		final Property prop = config.getCategory(category).get(property);
-		prop.setRequiresMcRestart(true);
 		return new MyConfigElement(prop, label);
 	}
 }

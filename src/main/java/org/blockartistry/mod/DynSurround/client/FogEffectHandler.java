@@ -54,14 +54,7 @@ import net.minecraftforge.client.event.EntityViewRenderEvent;
 @SideOnly(Side.CLIENT)
 public class FogEffectHandler implements IClientEffectHandler {
 
-	private static final boolean ENABLE_ELEVATION_HAZE = ModOptions.enableElevationHaze;
-	private static final boolean ENABLE_DESERT_FOG = ModOptions.allowDesertFog;
-	private static final boolean ENABLE_BIOME_FOG = ModOptions.enableBiomeFog;
-
 	private static final int HAZE_THRESHOLD = 15;
-	private static final float DESERT_DUST_FACTOR = ModOptions.desertFogFactor;
-	private static final float ELEVATION_HAZE_FACTOR = ModOptions.elevationHazeFactor;
-	private static final float BIOME_FOG_FACTOR = ModOptions.biomeFogFactor;
 
 	// The delta indicates how much per tick the density will shift
 	// toward the target.
@@ -90,7 +83,7 @@ public class FogEffectHandler implements IClientEffectHandler {
 		float dustFog = 0.0F;
 		float heightFog = 0.0F;
 
-		if (ENABLE_BIOME_FOG || ENABLE_DESERT_FOG) {
+		if (ModOptions.enableBiomeFog || ModOptions.allowDesertFog) {
 			// Calculate the brightness factor to apply to the color. Need
 			// to darken it a bit when it gets night.
 			final float celestialAngle = DiurnalUtils.getCelestialAngle(world, 0.0F);
@@ -106,11 +99,11 @@ public class FogEffectHandler implements IClientEffectHandler {
 			for (final BiomeGenBase b : weights.keySet()) {
 				final int weight = weights.get(b);
 				final float scale = ((float) weight / (float) area);
-				if (ENABLE_BIOME_FOG && BiomeRegistry.hasFog(b)) {
+				if (ModOptions.enableBiomeFog && BiomeRegistry.hasFog(b)) {
 					biomeFog += BiomeRegistry.getFogDensity(b) * scale;
 					tint.blend(Color.scale(BiomeRegistry.getFogColor(b), brightnessFactor), scale);
 					coverage += weight;
-				} else if (ENABLE_DESERT_FOG && BiomeRegistry.hasDust(b)) {
+				} else if (ModOptions.allowDesertFog && BiomeRegistry.hasDust(b)) {
 					final float str = EnvironState.getWorld().getRainStrength(1.0F);
 					dustFog += StormProperties.getFogDensity() * scale * str;
 					tint.blend(Color.scale(BiomeRegistry.getDustColor(b), brightnessFactor), scale * str);
@@ -121,15 +114,15 @@ public class FogEffectHandler implements IClientEffectHandler {
 			currentFogColor.blend(tint, (float) coverage / (float) area);
 		}
 
-		biomeFog *= BIOME_FOG_FACTOR;
-		dustFog *= DESERT_DUST_FACTOR;
+		biomeFog *= ModOptions.biomeFogFactor;
+		dustFog *= ModOptions.desertFogFactor;
 
-		if (ENABLE_ELEVATION_HAZE && DimensionRegistry.hasHaze(world)) {
+		if (ModOptions.enableElevationHaze && DimensionRegistry.hasHaze(world)) {
 			final float distance = MathHelper
 					.abs(DimensionRegistry.getCloudHeight(world) - (float) (player.posY + player.getEyeHeight()));
 			final float hazeBandRange = HAZE_THRESHOLD * (1.0F + world.getRainStrength(1.0F) * 2);
 			if (distance < hazeBandRange) {
-				heightFog = (hazeBandRange - distance) / 50.0F / hazeBandRange * ELEVATION_HAZE_FACTOR;
+				heightFog = (hazeBandRange - distance) / 50.0F / hazeBandRange * ModOptions.elevationHazeFactor;
 			}
 		}
 

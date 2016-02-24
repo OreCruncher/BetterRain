@@ -38,8 +38,6 @@ import cpw.mods.fml.relauncher.SideOnly;
 @SideOnly(Side.CLIENT)
 public final class Aurora {
 
-	private static final boolean MULTIPLES = ModOptions.auroraMultipleBands;
-
 	private static final float ANGLE1 = MathStuff.PI_F / 16.0F;
 	private static final float ANGLE2 = MathStuff.toRadians(90.0F / 7.0F);
 	private static final int FADE_LIMIT = 1280;
@@ -134,7 +132,7 @@ public final class Aurora {
 	}
 
 	private void generateBands() {
-		this.bands = new Node[MULTIPLES ? 3 : 1][];
+		this.bands = new Node[ModOptions.auroraMultipleBands ? 3 : 1][];
 		final Node[] band0 = this.bands[0] = populate();
 		final Node[] band1, band2;
 		if (this.bands.length > 1) {

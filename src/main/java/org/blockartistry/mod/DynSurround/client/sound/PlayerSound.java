@@ -40,7 +40,6 @@ import net.minecraft.util.ResourceLocation;
 class PlayerSound extends MovingSound {
 	
 	private static final Random RANDOM = new XorShiftRandom();
-	private static final float MASTER_SCALE_FACTOR = ModOptions.masterSoundScaleFactor;
 
 	private final SoundEffect sound;
 
@@ -80,7 +79,7 @@ class PlayerSound extends MovingSound {
 
 	@Override
 	public float getVolume() {
-		return super.getVolume() * MASTER_SCALE_FACTOR;
+		return super.getVolume() * ModOptions.masterSoundScaleFactor;
 	}
 	
 	public void setVolume(final float volume) {
