@@ -238,10 +238,10 @@ public final class ModOptions {
 	@Comment("Enable footstep sounds")
 	@RestartRequired
 	public static boolean enableFootstepSounds = true;
-	@Parameter(category = CATEGORY_SOUND, property = CONFIG_FOOTSTEPS_SOUND_FACTOR, defaultValue = "0.3")
+	@Parameter(category = CATEGORY_SOUND, property = CONFIG_FOOTSTEPS_SOUND_FACTOR, defaultValue = "0.05")
 	@MinMaxFloat(min = 0.0F, max = 1.0F)
 	@Comment("Sound scale factor for footstep sounds")
-	public static float footstepsSoundFactor = 0.3F;
+	public static float footstepsSoundFactor = 0.05F;
 	@Parameter(category = CATEGORY_SOUND, property = CONFIG_SOUND_CULL_THRESHOLD, defaultValue = "20")
 	@MinMaxInt(min = 0)
 	@Comment("Ticks between culled sound events (0 to disable culling)")
