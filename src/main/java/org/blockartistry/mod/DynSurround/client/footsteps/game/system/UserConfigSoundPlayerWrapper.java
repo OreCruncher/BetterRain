@@ -36,7 +36,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 @SideOnly(Side.CLIENT)
 public class UserConfigSoundPlayerWrapper implements ISoundPlayer {
 
-	private static final float MASTER_VOLUME_SCALE = ModOptions.masterSoundScaleFactor;
+	private static final float MASTER_VOLUME_SCALE = ModOptions.footstepsSoundFactor;
 
 	private ISoundPlayer wrapped;
 
