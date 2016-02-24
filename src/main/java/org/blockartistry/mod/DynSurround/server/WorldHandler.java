@@ -40,8 +40,12 @@ public class WorldHandler {
 	private static final float STRENGTH_ADJUST = 0.01F;
 	private static final Random random = new XorShiftRandom();
 
-	private static int nextInterval(final boolean flag) {
-		return random.nextInt(flag ? 12000 : 168000) + (flag ? 3600 : 12000);
+	private static int nextThunderInterval(final boolean isThundering) {
+		return random.nextInt(isThundering ? 12000 : 168000) + (isThundering ? 3600 : 12000);
+	}
+	
+	private static int nextRainInterval(final boolean isRaining) {
+		return random.nextInt(isRaining ? 12000 : 168000) + 12000;
 	}
 
 	public static void updateWeatherBody(final World world) {
@@ -56,7 +60,7 @@ public class WorldHandler {
 		int i = info.getThunderTime();
 
 		if (i <= 0) {
-			info.setThunderTime(nextInterval(info.isThundering()));
+			info.setThunderTime(nextThunderInterval(info.isThundering()));
 		} else {
 			--i;
 			info.setThunderTime(i);
@@ -73,7 +77,7 @@ public class WorldHandler {
 		int j = info.getRainTime();
 
 		if (j <= 0) {
-			info.setRainTime(nextInterval(info.isRaining()));
+			info.setRainTime(nextRainInterval(info.isRaining()));
 		} else {
 			--j;
 			info.setRainTime(j);
