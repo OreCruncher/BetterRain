@@ -31,8 +31,6 @@ import org.blockartistry.mod.DynSurround.data.BiomeRegistry;
 import org.blockartistry.mod.DynSurround.data.DimensionRegistry;
 import org.blockartistry.mod.DynSurround.event.DiagnosticEvent;
 import org.blockartistry.mod.DynSurround.util.Color;
-import org.blockartistry.mod.DynSurround.util.DiurnalUtils;
-import org.blockartistry.mod.DynSurround.util.MathStuff;
 import org.blockartistry.mod.DynSurround.util.PlayerUtils;
 import org.lwjgl.opengl.GL11;
 
@@ -77,41 +75,34 @@ public class FogEffectHandler implements IClientEffectHandler {
 	@Override
 	public void process(final World world, final EntityPlayer player) {
 
-		currentFogColor = new Color(world.getFogColor(1.0F));
+		currentFogColor = new Color(world.getSkyColor(player, 1.0F));
 
 		float biomeFog = 0.0F;
 		float dustFog = 0.0F;
 		float heightFog = 0.0F;
 
 		if (ModOptions.enableBiomeFog || ModOptions.allowDesertFog) {
-			// Calculate the brightness factor to apply to the color. Need
-			// to darken it a bit when it gets night.
-			final float celestialAngle = DiurnalUtils.getCelestialAngle(world, 0.0F);
-			final float baseScale = MathHelper
-					.clamp_float(MathStuff.cos(celestialAngle * MathStuff.PI_F * 2.0F) * 2.0F + 0.5F, 0.0F, 1.0F);
-			final float brightnessFactor = baseScale * 0.75F + 0.25F;
-
+			final float brightnessFactor = world.getSunBrightnessBody(1.0F);
 			final Color tint = new Color(0, 0, 0);
-			int coverage = 0;
-			
 			final TObjectIntHashMap<BiomeGenBase> weights = BiomeSurveyHandler.getBiomes();
 			final int area = BiomeSurveyHandler.getArea();
+
 			for (final BiomeGenBase b : weights.keySet()) {
 				final int weight = weights.get(b);
 				final float scale = ((float) weight / (float) area);
 				if (ModOptions.enableBiomeFog && BiomeRegistry.hasFog(b)) {
 					biomeFog += BiomeRegistry.getFogDensity(b) * scale;
-					tint.blend(Color.scale(BiomeRegistry.getFogColor(b), brightnessFactor), scale);
-					coverage += weight;
+					tint.add(Color.scale(BiomeRegistry.getFogColor(b), brightnessFactor).scale(scale));
 				} else if (ModOptions.allowDesertFog && BiomeRegistry.hasDust(b)) {
 					final float str = EnvironState.getWorld().getRainStrength(1.0F);
 					dustFog += StormProperties.getFogDensity() * scale * str;
-					tint.blend(Color.scale(BiomeRegistry.getDustColor(b), brightnessFactor), scale * str);
-					coverage += weight;
+					tint.add(Color.scale(BiomeRegistry.getDustColor(b), brightnessFactor).scale(scale));
+				} else {
+					tint.add(Color.scale(currentFogColor, scale));
 				}
 			}
 
-			currentFogColor.blend(tint, (float) coverage / (float) area);
+			currentFogColor = tint;
 		}
 
 		biomeFog *= ModOptions.biomeFogFactor;
