@@ -38,7 +38,7 @@ public interface ISoundPlayer {
 			final IOptions options);
 
 	/**
-	 * Returns a random number generator.
+	 * Returns a RANDOM number generator.
 	 */
 	public Random getRNG();
 }

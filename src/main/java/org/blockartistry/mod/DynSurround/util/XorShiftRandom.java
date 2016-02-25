@@ -33,14 +33,14 @@ import javax.annotation.Nonnull;
  * Essentially swipe the ThreadLocalRandom code, but not make it thread
  * specific.  ThreadLocalRandom is fast, and this version avoids
  * synchronization and permits the use of seed values to maintain the
- * deterministic random behavior when using a specific world seed.
+ * deterministic RANDOM behavior when using a specific world seed.
  * 
  * (By fast I mean like 4x faster using nextInt())
  */
 public class XorShiftRandom extends Random {
 
 	/**
-	 * Shared random.  Not thread safe.
+	 * Shared RANDOM.  Not thread safe.
 	 */
 	public static final XorShiftRandom shared = new XorShiftRandom();
 
