@@ -94,7 +94,7 @@ public final class ForgeDictionary {
 	private static final String[] compositeBlocks = { "blockDiamond", "blockEmerald", "blockPeridot", "blockRuby",
 			"blockSapphire", "blockVinteum", "blockChimerite", "blockBlueTopaz", "blockMoonstone", "blockSunstone",
 			"blockAmethyst", "blockMoldavite", "blockAmber", "blockTanzanite", "blockMalachite", "blockChalcedony",
-			"blockTeslaite" };
+			"blockTeslaite", "blockJade" };
 
 	private static final String[] marbleBlocks = { "blockQuartz", "marble", "stoneMarble", "blockMarble" };
 
