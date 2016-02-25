@@ -53,6 +53,7 @@ public final class ModOptions {
 
 	public static final String CATEGORY_RAIN = "rain";
 	public static final String CONFIG_RAIN_VOLUME = "Sound Level";
+	public static final String CONFIG_RAIN_PARTICLE_BASE = "Particle Count Base";
 	public static final String CONFIG_ALWAYS_OVERRIDE_SOUND = "Always Override Sound";
 	public static final String CONFIG_ALLOW_DESERT_DUST = "Desert Dust";
 	public static final String CONFIG_RESET_RAIN_ON_SLEEP = "Reset Rain on Sleep";
@@ -61,6 +62,10 @@ public final class ModOptions {
 	@MinMaxFloat(min = 0.0F, max = 1.0F)
 	@Comment("Factor to apply to rain sound level to adjust")
 	public static float soundLevel = 1.0F;
+	@Parameter(category = CATEGORY_RAIN, property = CONFIG_RAIN_PARTICLE_BASE, defaultValue = "100")
+	@MinMaxInt(min = 0, max = 500)
+	@Comment("Base count of rain splash particles to generate per tick")
+	public static int particleCountBase = 100;
 	@Parameter(category = CATEGORY_RAIN, property = CONFIG_ALWAYS_OVERRIDE_SOUND, defaultValue = "true")
 	@Comment("Always override Vanilla rain sound even when dimension is blacklisted")
 	public static boolean alwaysOverrideSound = true;

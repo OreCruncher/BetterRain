@@ -41,7 +41,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.world.World;
 
 /*
- * Provides support for BlockLiquids.  It hooks the random display
+ * Provides support for BlockLiquids.  It hooks the RANDOM display
  * routine in order to generate particle effects based on the
  * liquid block.
  */

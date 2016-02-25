@@ -30,7 +30,7 @@ import java.util.concurrent.atomic.AtomicLong;
 /**
  * Essentially swipe the ThreadLocalRandom code, but not make it thread
  * specific. ThreadLocalRandom is fast, and this version avoids synchronization
- * and permits the use of seed values to maintain the deterministic random
+ * and permits the use of seed values to maintain the deterministic RANDOM
  * behavior when using a specific world seed.
  * 
  * (By fast I mean like 4x faster using nextInt())
@@ -38,7 +38,7 @@ import java.util.concurrent.atomic.AtomicLong;
 public class XorShiftRandom extends Random {
 
 	/**
-	 * Shared random. Not thread safe.
+	 * Shared RANDOM. Not thread safe.
 	 */
 	public static final XorShiftRandom shared = new XorShiftRandom();
 

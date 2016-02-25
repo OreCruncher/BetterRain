@@ -25,6 +25,7 @@
 package org.blockartistry.mod.DynSurround.client.storm;
 
 import org.apache.commons.lang3.StringUtils;
+import org.blockartistry.mod.DynSurround.ModOptions;
 import org.blockartistry.mod.DynSurround.client.WeatherUtils;
 import org.blockartistry.mod.DynSurround.client.EnvironStateHandler.EnvironState;
 import org.blockartistry.mod.DynSurround.client.fx.particle.ParticleFactory;
@@ -72,13 +73,17 @@ public class StormSplashRenderer {
 
 	}
 
-	protected static final int RANGE_FACTOR = 10;
-	protected static final XorShiftRandom random = new XorShiftRandom();
-	protected static final NoiseGeneratorSimplex gen = new NoiseGeneratorSimplex(random);
+	protected static final int PARTICLE_SOUND_CHANCE = 20;
+	protected static final int RANGE = 10;
+	protected static final XorShiftRandom RANDOM = new XorShiftRandom();
+	protected static final NoiseGeneratorSimplex GENERATOR = new NoiseGeneratorSimplex(RANDOM);
 
 	protected static float calculateRainSoundVolume(final World world) {
-		return MathHelper.clamp_float((float) (StormProperties.getCurrentVolume()
-				+ gen.func_151605_a(DiurnalUtils.getClockTime(world) / 100, 1) / 5.0F), 0.0F, 1.0F);
+		return MathHelper
+				.clamp_float(
+						(float) (StormProperties.getCurrentVolume()
+								+ GENERATOR.func_151605_a(DiurnalUtils.getClockTime(world) / 100, 1) / 5.0F),
+						0.0F, 1.0F);
 	}
 
 	protected EntityFX getBlockParticleFX(final Block block, final boolean dust, final World world, final double x,
@@ -89,7 +94,7 @@ public class StormSplashRenderer {
 			factory = null;
 		} else if (block == Blocks.soul_sand) {
 			factory = null;
-		} else if (block == Blocks.netherrack && random.nextInt(20) == 0) {
+		} else if (block == Blocks.netherrack && RANDOM.nextInt(20) == 0) {
 			factory = ParticleFactory.lavaSpark;
 		} else if (block.getMaterial() == Material.lava) {
 			factory = ParticleFactory.smoke;
@@ -144,10 +149,10 @@ public class StormSplashRenderer {
 		if (!theThis.mc.gameSettings.fancyGraphics)
 			rainStrengthFactor /= 2.0F;
 
-		if (rainStrengthFactor == 0.0F)
+		if (rainStrengthFactor <= 0.0F)
 			return;
 
-		random.setSeed((long) theThis.rendererUpdateCount * 312987231L);
+		RANDOM.setSeed((long) theThis.rendererUpdateCount * 312987231L);
 		final EntityLivingBase entity = theThis.mc.renderViewEntity;
 		final WorldClient worldclient = theThis.mc.theWorld;
 		final int playerX = MathHelper.floor_double(entity.posX);
@@ -158,32 +163,31 @@ public class StormSplashRenderer {
 		double spawnZ = 0.0D;
 		int particlesSpawned = 0;
 
-		int particleCount = (int) (250.0F * rainStrengthFactor * rainStrengthFactor);
+		int particleCount = (int) (ModOptions.particleCountBase * rainStrengthFactor * rainStrengthFactor);
 
 		if (theThis.mc.gameSettings.particleSetting == 1)
 			particleCount >>= 1;
 
 		for (int j1 = 0; j1 < particleCount; ++j1) {
-			final int locX = playerX + random.nextInt(RANGE_FACTOR) - random.nextInt(RANGE_FACTOR);
-			final int locZ = playerZ + random.nextInt(RANGE_FACTOR) - random.nextInt(RANGE_FACTOR);
-			final int locY = getPrecipitationHeight(worldclient, RANGE_FACTOR / 2, locX, locZ);
+			final int locX = playerX + RANDOM.nextInt(RANGE) - RANDOM.nextInt(RANGE);
+			final int locZ = playerZ + RANDOM.nextInt(RANGE) - RANDOM.nextInt(RANGE);
+			final int locY = getPrecipitationHeight(worldclient, RANGE / 2, locX, locZ);
 			final BiomeGenBase biome = worldclient.getBiomeGenForCoords(locX, locZ);
 			final boolean hasDust = WeatherUtils.biomeHasDust(biome);
 
-			if (locY <= playerY + RANGE_FACTOR && locY >= playerY - RANGE_FACTOR
-					&& (hasDust || (BiomeRegistry.hasPrecipitation(biome)
-							&& biome.getFloatTemperature(locX, locY, locZ) >= 0.15F))) {
+			if (locY <= playerY + RANGE && locY >= playerY - RANGE && (hasDust || (BiomeRegistry.hasPrecipitation(biome)
+					&& biome.getFloatTemperature(locX, locY, locZ) >= 0.15F))) {
 
 				final Block block = worldclient.getBlock(locX, locY - 1, locZ);
-				final double posX = locX + random.nextFloat();
+				final double posX = locX + RANDOM.nextFloat();
 				final double posY = locY + 0.1F - block.getBlockBoundsMinY();
-				final double posZ = locZ + random.nextFloat();
+				final double posZ = locZ + RANDOM.nextFloat();
 
 				final EntityFX particle = getBlockParticleFX(block, hasDust, worldclient, posX, posY, posZ);
 				if (particle != null)
 					theThis.mc.effectRenderer.addEffect(particle);
 
-				if (random.nextInt(++particlesSpawned) == 0) {
+				if (RANDOM.nextInt(++particlesSpawned) == 0) {
 					spawnX = posX;
 					spawnY = posY;
 					spawnZ = posZ;
@@ -191,7 +195,7 @@ public class StormSplashRenderer {
 			}
 		}
 
-		if (particlesSpawned > 0 && random.nextInt(50) < theThis.rainSoundCounter++) {
+		if (particlesSpawned > 0 && RANDOM.nextInt(PARTICLE_SOUND_CHANCE) < theThis.rainSoundCounter++) {
 			theThis.rainSoundCounter = 0;
 			playSplashSound(theThis, worldclient, entity, spawnX, spawnY, spawnZ);
 		}
