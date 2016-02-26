@@ -131,6 +131,7 @@ public class DynSurroundConfigGui extends GuiConfig {
 			
 			config.save();
 			ConfigProcessor.process(config, ModOptions.class);
+			SoundRegistry.initialize();
 		}
 	}
 
