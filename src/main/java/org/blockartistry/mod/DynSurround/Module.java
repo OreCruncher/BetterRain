@@ -28,10 +28,7 @@ import java.io.File;
 
 import org.apache.logging.log4j.LogManager;
 import org.blockartistry.mod.DynSurround.proxy.Proxy;
-import org.blockartistry.mod.DynSurround.util.ConfigProcessor;
-
 import net.minecraftforge.common.config.Configuration;
-import cpw.mods.fml.client.event.ConfigChangedEvent.OnConfigChangedEvent;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.SidedProxy;
@@ -41,7 +38,6 @@ import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 
 @Mod(modid = Module.MOD_ID, useMetadata = true, dependencies = Module.DEPENDENCIES, version = Module.VERSION, guiFactory = Module.GUI_FACTORY)
 public class Module {
@@ -116,12 +112,4 @@ public class Module {
 		proxy.serverStarting(event);
 	}
 	
-	@SubscribeEvent
-	public void configChangedEvent(final OnConfigChangedEvent event) {
-		if(event.modID.equals(Module.MOD_ID)) {
-			config.save();
-			ConfigProcessor.process(config, ModOptions.class);
-		}
-	}
-
 }

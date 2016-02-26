@@ -26,6 +26,7 @@ package org.blockartistry.mod.DynSurround;
 
 import org.blockartistry.mod.DynSurround.util.ConfigProcessor;
 import org.blockartistry.mod.DynSurround.util.ConfigProcessor.Comment;
+import org.blockartistry.mod.DynSurround.util.ConfigProcessor.Hidden;
 import org.blockartistry.mod.DynSurround.util.ConfigProcessor.MinMaxFloat;
 import org.blockartistry.mod.DynSurround.util.ConfigProcessor.MinMaxInt;
 import org.blockartistry.mod.DynSurround.util.ConfigProcessor.Parameter;
@@ -258,7 +259,7 @@ public final class ModOptions {
 			"minecraft:mob.chicken.say", "minecraft:mob.cow.say", "minecraft:mob.pig.say" };
 	@Parameter(category = CATEGORY_SOUND, property = CONFIG_BLOCKED_SOUNDS, defaultValue = "")
 	@Comment("Sounds to block from playing")
-	@RestartRequired
+	@Hidden
 	public static String[] blockedSounds = {};
 
 	public static final String CATEGORY_PLAYER = "player";

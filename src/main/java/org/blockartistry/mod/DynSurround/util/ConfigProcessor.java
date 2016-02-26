@@ -78,6 +78,12 @@ public final class ConfigProcessor {
 		boolean server() default true;
 	}
 
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target({ ElementType.FIELD })
+	public static @interface Hidden {
+
+	}
+	
 	public static void process(final Configuration config, final Class<?> clazz) {
 		process(config, clazz, null);
 	}
@@ -134,6 +140,8 @@ public final class ConfigProcessor {
 						prop.setRequiresMcRestart(false);
 						prop.setRequiresWorldRestart(false);
 					}
+					
+					prop.setShowInGui(field.getAnnotation(Hidden.class) == null);
 
 				} catch (final Throwable t) {
 					ModLog.error("Unable to parse configuration", t);
