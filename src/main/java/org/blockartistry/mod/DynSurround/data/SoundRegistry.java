@@ -35,7 +35,10 @@ public final class SoundRegistry {
 	private static final List<Pattern> cullSoundNamePatterns = new ArrayList<Pattern>();
 	private static final List<Pattern> blockSoundNamePatterns = new ArrayList<Pattern>();
 
-	static {
+	public static void initialize() {
+		cullSoundNamePatterns.clear();
+		blockSoundNamePatterns.clear();
+		
 		for (final String sound : ModOptions.culledSounds) {
 			try {
 				cullSoundNamePatterns.add(Pattern.compile(sound));

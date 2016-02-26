@@ -28,11 +28,8 @@ import java.io.File;
 
 import org.apache.logging.log4j.LogManager;
 import org.blockartistry.mod.DynSurround.proxy.Proxy;
-import org.blockartistry.mod.DynSurround.util.ConfigProcessor;
-
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
-import net.minecraftforge.fml.client.event.ConfigChangedEvent.OnConfigChangedEvent;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.Mod.Instance;
 import net.minecraftforge.fml.common.SidedProxy;
@@ -40,7 +37,6 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 @net.minecraftforge.fml.common.Mod(modid = Module.MOD_ID, useMetadata = true, dependencies = Module.DEPENDENCIES, version = Module.VERSION, guiFactory = Module.GUI_FACTORY)
 public class Module {
@@ -115,13 +111,5 @@ public class Module {
 	@EventHandler
 	public void serverStarting(final FMLServerStartingEvent event) {
 		proxy.serverStarting(event);
-	}
-	
-	@SubscribeEvent
-	public void configChangedEvent(final OnConfigChangedEvent event) {
-		if(event.modID.equals(Module.MOD_ID)) {
-			config.save();
-			ConfigProcessor.process(config, ModOptions.class);
-		}
 	}
 }

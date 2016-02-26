@@ -25,10 +25,18 @@
 package org.blockartistry.mod.DynSurround.client.gui;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map.Entry;
 
 import org.blockartistry.mod.DynSurround.ModOptions;
 import org.blockartistry.mod.DynSurround.Module;
+import org.blockartistry.mod.DynSurround.data.SoundRegistry;
+import org.blockartistry.mod.DynSurround.util.ConfigProcessor;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.audio.SoundHandler;
+import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraftforge.common.config.ConfigCategory;
 import net.minecraftforge.common.config.ConfigElement;
@@ -43,6 +51,9 @@ import net.minecraftforge.fml.relauncher.Side;
 public class DynSurroundConfigGui extends GuiConfig {
 
 	private final Configuration config = Module.config();
+
+	private final ConfigElement soundElement;
+	private final ConfigCategory soundCategory;
 
 	public DynSurroundConfigGui(final GuiScreen parentScreen) {
 		super(parentScreen, new ArrayList<IConfigElement>(), Module.MOD_ID, true, true, Module.MOD_NAME);
@@ -71,6 +82,12 @@ public class DynSurroundConfigGui extends GuiConfig {
 		this.configElements.add(getPropertyConfigElement(ModOptions.CATEGORY_POTION_HUD,
 				ModOptions.CONFIG_POTION_HUD_ENABLE, "Potion HUD Overlay"));
 
+		this.soundCategory = new ConfigCategory("Blocked Sounds");
+		this.soundCategory.setComment("Sounds that will be blocked from playing");
+		this.soundElement = new MyConfigElement(this.soundCategory);
+		generateSoundList();
+		this.configElements.add(this.soundElement);
+
 		this.configElements.add(getCategoryConfigElement(ModOptions.CATEGORY_GENERAL, "General Settings"));
 		this.configElements.add(getCategoryConfigElement(ModOptions.CATEGORY_RAIN, "Rain Settings"));
 		this.configElements.add(getCategoryConfigElement(ModOptions.CATEGORY_FOG, "Fog Settings"));
@@ -79,6 +96,7 @@ public class DynSurroundConfigGui extends GuiConfig {
 		this.configElements.add(getCategoryConfigElement(ModOptions.CATEGORY_DIMENSIONS, "Dimension Configuration"));
 		this.configElements.add(getCategoryConfigElement(ModOptions.CATEGORY_SOUND, "Sound Effects"));
 		this.configElements.add(getCategoryConfigElement(ModOptions.CATEGORY_PLAYER, "Player Effects"));
+		this.configElements.add(getCategoryConfigElement(ModOptions.CATEGORY_LOGGING_CONTROL, "Logging Options"));
 	}
 
 	private ConfigElement getCategoryConfigElement(final String category, final String label) {
@@ -89,5 +107,43 @@ public class DynSurroundConfigGui extends GuiConfig {
 	private ConfigElement getPropertyConfigElement(final String category, final String property, final String label) {
 		final Property prop = config.getCategory(category).get(property);
 		return new MyConfigElement(prop, label);
+	}
+
+	@Override
+	protected void actionPerformed(final GuiButton button) {
+
+		super.actionPerformed(button);
+		
+		// Done button was pressed
+		if (button.id == 2000) {
+			final List<String> sounds = new ArrayList<String>();
+			for (final Entry<String, Property> entry : this.soundCategory.entrySet()) {
+				if (entry.getValue().getBoolean())
+					sounds.add(entry.getKey());
+			}
+
+			final String[] results = sounds.toArray(new String[sounds.size()]);
+			this.config.getCategory(ModOptions.CATEGORY_SOUND).get(ModOptions.CONFIG_BLOCKED_SOUNDS).set(results);
+			
+			config.save();
+			ConfigProcessor.process(config, ModOptions.class);
+		}
+	}
+
+	protected void generateSoundList() {
+		final SoundHandler handler = Minecraft.getMinecraft().getSoundHandler();
+		final List<String> sounds = new ArrayList<String>();
+		for (final Object resource : handler.sndRegistry.getKeys())
+			sounds.add(resource.toString());
+		Collections.sort(sounds);
+
+		for (final String sound : sounds) {
+			final Property prop = new Property(sound, "false", Property.Type.BOOLEAN);
+			prop.setDefaultValue(false);
+			prop.setRequiresMcRestart(true);
+			prop.set(SoundRegistry.isSoundBlocked(sound));
+			this.soundCategory.put(sound, prop);
+		}
+
 	}
 }
