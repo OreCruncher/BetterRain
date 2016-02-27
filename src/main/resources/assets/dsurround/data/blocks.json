@@ -82,22 +82,6 @@
 		},
 		{
 			"blocks":[
-				"minecraft:redstone_ore"
-			],
-			"chance":200,
-			"sounds":[
-				{
-					"sound":"minecraft:random.fizz",
-					"volume":0.3,
-					"pitch":1.0,
-					"variable":false
-				}
-				
-			]
-			
-		},
-		{
-			"blocks":[
 				"minecraft:soul_sand"
 			],
 			"chance":8000,
@@ -136,31 +120,11 @@
 		},
 		{
 			"blocks":[
-				"minecraft:wheat",
-				"minecraft:carrots",
-				"minecraft:potatoes",
-				"minecraft:pumpkin_stem",
-				"minecraft:melon_stem"
-			],
-			"chance":1200,
-			"sounds":[
-				{
-					"sound":"dsurround:insectbuzz",
-					"conditions":"(?i)(?!.*raining.*|.*cold.*|.*freezing.*)(.*#day#.*)",
-					"volume":0.15,
-					"variable":true
-				}
-				
-			]
-			
-		},
-		{
-			"blocks":[
 				"minecraft:nether_brick",
 				"minecraft:nether_brick_fence",
 				"minecraft:nether_brick_stairs"
 			],
-			"chance":4000,
+			"chance":8000,
 			"sounds":[
 				{
 					"sound":"dsurround:breathing",
@@ -192,7 +156,7 @@
 			"blocks":[
 				"minecraft:monster_egg"
 			],
-			"chance":300,
+			"chance":600,
 			"sounds":[
 				{
 					"sound":"dsurround:hiss",
