@@ -94,7 +94,7 @@ public final class ConfigProcessor {
 				final String category = annotation.category();
 				final String property = annotation.property();
 				final String comment = field.getAnnotation(Comment.class) != null
-						? field.getAnnotation(Comment.class).value() : "";
+						? field.getAnnotation(Comment.class).value() : "NEEDS COMMENT";
 
 				try {
 					final Object defaultValue = field.get(parameters);
