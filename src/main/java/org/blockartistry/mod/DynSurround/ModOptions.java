@@ -293,8 +293,10 @@ public final class ModOptions {
 	public static final String CATEGORY_PLAYER = "player";
 	public static final String CONFIG_SUPPRESS_POTION_PARTICLES = "Suppress Potion Particles";
 	public static final String CONFIG_ENABLE_POPOFFS = "Damage Popoffs";
+	public static final String CONFIG_HURT_THRESHOLD = "Hurt Threshold";
+	public static final String CONFIG_HUNGER_THRESHOLD = "Hunger Threshold";
 	private static final List<String> playerSort = Arrays.asList(CONFIG_SUPPRESS_POTION_PARTICLES,
-			CONFIG_ENABLE_POPOFFS);
+			CONFIG_ENABLE_POPOFFS, CONFIG_HURT_THRESHOLD, CONFIG_HUNGER_THRESHOLD);
 
 	@Parameter(category = CATEGORY_PLAYER, property = CONFIG_SUPPRESS_POTION_PARTICLES, defaultValue = "false")
 	@Comment("Suppress player's potion particles from rendering")
@@ -304,6 +306,14 @@ public final class ModOptions {
 	@Comment("Controls display of damage pop-offs when an entity is damaged")
 	@RestartRequired
 	public static boolean enableDamagePopoffs = true;
+	@Parameter(category = CATEGORY_PLAYER, property = CONFIG_HURT_THRESHOLD, defaultValue = "8")
+	@Comment("Amount of health bar remaining to trigger player hurt sound")
+	@MinMaxInt(min = 0, max = 10)
+	public static int playerHurtThreshold = 8;
+	@Parameter(category = CATEGORY_PLAYER, property = CONFIG_HUNGER_THRESHOLD, defaultValue = "8")
+	@Comment("Amount of food bar remaining to trigger player hunger sound")
+	@MinMaxInt(min = 0, max = 10)
+	public static int playerHungerThreshold = 8;
 
 	public static final String CATEGORY_POTION_HUD = "player.potion hud";
 	public static final String CONFIG_POTION_HUD_ENABLE = "Enable";
@@ -393,20 +403,21 @@ public final class ModOptions {
 		config.setCategoryRequiresMcRestart(CATEGORY_POTION_HUD, false);
 		config.setCategoryComment(CATEGORY_POTION_HUD, "Options for the Potion HUD overlay");
 		config.setCategoryPropertyOrder(CATEGORY_POTION_HUD, new ArrayList<String>(potionHudSort));
-		
-		// Iterate through the config list looking for properties without comments.  These will
+
+		// Iterate through the config list looking for properties without
+		// comments. These will
 		// be scrubbed.
-		for(final String cat: config.getCategoryNames())
+		for (final String cat : config.getCategoryNames())
 			scrubCategory(config.getCategory(cat));
 	}
-	
+
 	private static void scrubCategory(final ConfigCategory category) {
 		final List<String> killList = new ArrayList<String>();
-		for( final Entry<String, Property> entry: category.entrySet())
-			if(StringUtils.isEmpty(entry.getValue().comment))
+		for (final Entry<String, Property> entry : category.entrySet())
+			if (StringUtils.isEmpty(entry.getValue().comment))
 				killList.add(entry.getKey());
-		
-		for(final String kill: killList)
+
+		for (final String kill : killList)
 			category.remove(kill);
 	}
 }

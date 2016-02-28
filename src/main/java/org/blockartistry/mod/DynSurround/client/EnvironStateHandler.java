@@ -127,7 +127,7 @@ public class EnvironStateHandler implements IClientEffectHandler {
 		private static boolean inside;
 
 		private static int tickCounter;
-		
+
 		private static final String CONDITION_TOKEN_HURT = "hurt";
 		private static final String CONDITION_TOKEN_HUNGRY = "hungry";
 		private static final String CONDITION_TOKEN_BURNING = "burning";
@@ -267,11 +267,11 @@ public class EnvironStateHandler implements IClientEffectHandler {
 		}
 
 		public static boolean isPlayerHurt() {
-			return !isCreative() && (getPlayer().getHealth() / getPlayer().getMaxHealth()) <= 0.40F;
+			return !isCreative() && getPlayer().getHealth() <= ModOptions.playerHurtThreshold;
 		}
 
 		public static boolean isPlayerHungry() {
-			return !isCreative() && (getPlayer().getFoodStats().getFoodLevel() / 20.0F) <= 0.40F;
+			return !isCreative() && getPlayer().getFoodStats().getFoodLevel() <= ModOptions.playerHungerThreshold;
 		}
 
 		public static boolean isPlayerBurning() {
@@ -327,11 +327,11 @@ public class EnvironStateHandler implements IClientEffectHandler {
 		public static boolean isPlayerUnderground() {
 			return playerBiome == BiomeRegistry.UNDERGROUND;
 		}
-		
+
 		public static boolean isPlayerInSpace() {
 			return playerBiome == BiomeRegistry.OUTERSPACE;
 		}
-		
+
 		public static boolean isPlayerInClouds() {
 			return playerBiome == BiomeRegistry.CLOUDS;
 		}
@@ -359,7 +359,7 @@ public class EnvironStateHandler implements IClientEffectHandler {
 		public static int getTickCounter() {
 			return tickCounter;
 		}
-		
+
 		public static double distanceToPlayer(final double x, final double y, final double z) {
 			if (player == null)
 				return Double.MAX_VALUE;
@@ -433,7 +433,10 @@ public class EnvironStateHandler implements IClientEffectHandler {
 
 	@SubscribeEvent(priority = EventPriority.HIGHEST)
 	public void diagnostics(final DiagnosticEvent.Gather event) {
+		final EntityPlayer player = EnvironState.getPlayer();
 		event.output.add("Dim: " + EnvironState.getDimensionId() + "/" + EnvironState.getDimensionName());
+		event.output.add("Player: h " + player.getHealth() + "/" + player.getMaxHealth() + "; f "
+				+ player.getFoodStats().getFoodLevel() + "; s " + player.getFoodStats().getSaturationLevel());
 		event.output.add(StormProperties.diagnostic());
 		event.output.add("Biome: " + EnvironState.getBiomeName());
 		event.output.add("Conditions: " + EnvironState.getConditions());
