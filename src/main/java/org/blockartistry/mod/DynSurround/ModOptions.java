@@ -24,6 +24,12 @@
 
 package org.blockartistry.mod.DynSurround;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map.Entry;
+
+import org.apache.commons.lang3.StringUtils;
 import org.blockartistry.mod.DynSurround.util.ConfigProcessor;
 import org.blockartistry.mod.DynSurround.util.ConfigProcessor.Comment;
 import org.blockartistry.mod.DynSurround.util.ConfigProcessor.Hidden;
@@ -32,7 +38,11 @@ import org.blockartistry.mod.DynSurround.util.ConfigProcessor.MinMaxInt;
 import org.blockartistry.mod.DynSurround.util.ConfigProcessor.Parameter;
 import org.blockartistry.mod.DynSurround.util.ConfigProcessor.RestartRequired;
 
+import com.google.common.collect.ImmutableList;
+
+import net.minecraftforge.common.config.ConfigCategory;
 import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.common.config.Property;
 
 public final class ModOptions {
 
@@ -42,6 +52,8 @@ public final class ModOptions {
 	public static final String CATEGORY_LOGGING_CONTROL = "logging";
 	public static final String CONFIG_ENABLE_DEBUG_LOGGING = "Enable Debug Logging";
 	public static final String CONFIG_ENABLE_ONLINE_VERSION_CHECK = "Enable Online Version Check";
+	private static final List<String> loggingSort = Arrays.asList(CONFIG_ENABLE_ONLINE_VERSION_CHECK,
+			CONFIG_ENABLE_DEBUG_LOGGING);
 
 	@Parameter(category = CATEGORY_LOGGING_CONTROL, property = CONFIG_ENABLE_DEBUG_LOGGING, defaultValue = "false")
 	@Comment("Enables/disables debug logging of the mod")
@@ -58,6 +70,8 @@ public final class ModOptions {
 	public static final String CONFIG_ALWAYS_OVERRIDE_SOUND = "Always Override Sound";
 	public static final String CONFIG_ALLOW_DESERT_DUST = "Desert Dust";
 	public static final String CONFIG_RESET_RAIN_ON_SLEEP = "Reset Rain on Sleep";
+	private static final List<String> rainSort = Arrays.asList(CONFIG_RAIN_VOLUME, CONFIG_ALLOW_DESERT_DUST,
+			CONFIG_RESET_RAIN_ON_SLEEP, CONFIG_ALWAYS_OVERRIDE_SOUND, CONFIG_RAIN_PARTICLE_BASE);
 
 	@Parameter(category = CATEGORY_RAIN, property = CONFIG_RAIN_VOLUME, defaultValue = "1.0")
 	@MinMaxFloat(min = 0.0F, max = 1.0F)
@@ -81,6 +95,9 @@ public final class ModOptions {
 	public static final String CONFIG_ELEVATION_HAZE_FACTOR = "Elevation Haze Factor";
 	public static final String CONFIG_ENABLE_BIOME_FOG = "Biome Fog";
 	public static final String CONFIG_BIOME_FOG_FACTOR = "Biome Fog Factor";
+	private static final List<String> fogSort = Arrays.asList(CONFIG_ALLOW_DESERT_FOG, CONFIG_DESERT_FOG_FACTOR,
+			CONFIG_ENABLE_BIOME_FOG, CONFIG_BIOME_FOG_FACTOR, CONFIG_ENABLE_ELEVATION_HAZE,
+			CONFIG_ELEVATION_HAZE_FACTOR);
 
 	@Parameter(category = CATEGORY_FOG, property = CONFIG_ALLOW_DESERT_FOG, defaultValue = "true")
 	@Comment("Allow desert fog when raining")
@@ -109,6 +126,9 @@ public final class ModOptions {
 	public static final String CONFIG_MAX_RAIN_STRENGTH = "Default Maximum Rain Strength";
 	public static final String CONFIG_FX_RANGE = "Special Effect Range";
 	public static final String CONFIG_FANCY_CLOUD_HANDLING = "Fancy Cloud Handling";
+	private static final List<String> generalSort = ImmutableList.<String> builder()
+			.add(CONFIG_FANCY_CLOUD_HANDLING, CONFIG_FX_RANGE, CONFIG_MIN_RAIN_STRENGTH, CONFIG_MAX_RAIN_STRENGTH)
+			.build();
 
 	@Parameter(category = CATEGORY_GENERAL, property = CONFIG_MIN_RAIN_STRENGTH, defaultValue = "0.0")
 	@MinMaxFloat(min = 0.0F, max = 1.0F)
@@ -134,6 +154,8 @@ public final class ModOptions {
 	public static final String CONFIG_MULTIPLE_BANDS = "Multiple Bands";
 	public static final String CONFIG_AURORA_ANIMATE = "Animate";
 	public static final String CONFIG_AURORA_SPAWN_OFFSET = "Spawn Offset";
+	private static final List<String> auroraSort = Arrays.asList(CONFIG_AURORA_ENABLED, CONFIG_AURORA_ANIMATE,
+			CONFIG_MULTIPLE_BANDS, CONFIG_Y_PLAYER_RELATIVE, CONFIG_PLAYER_FIXED_HEIGHT, CONFIG_AURORA_SPAWN_OFFSET);
 
 	@Parameter(category = CATEGORY_AURORA, property = CONFIG_AURORA_ENABLED, defaultValue = "true")
 	@Comment("Whether to enable Aurora processing on server/client")
@@ -160,6 +182,7 @@ public final class ModOptions {
 	public static final String CATEGORY_BIOMES = "biomes";
 	public static final String CONFIG_BIOME_CONFIG_FILES = "Config Files";
 	public static final String CONFIG_BIOME_ALIASES = "Biome Alias";
+	private static final List<String> biomesSort = Arrays.asList(CONFIG_BIOME_CONFIG_FILES, CONFIG_BIOME_ALIASES);
 
 	@Parameter(category = CATEGORY_BIOMES, property = CONFIG_BIOME_CONFIG_FILES, defaultValue = "")
 	@Comment("Configuration files for configuring Biome Registry")
@@ -201,6 +224,11 @@ public final class ModOptions {
 	public static final String CONFIG_SOUND_CULL_THRESHOLD = "Sound Culling Threshold";
 	public static final String CONFIG_CULLED_SOUNDS = "Culled Sounds";
 	public static final String CONFIG_BLOCKED_SOUNDS = "Blocked Sounds";
+	private static final List<String> soundsSort = Arrays.asList(CONFIG_ENABLE_BIOME_SOUNDS, CONFIG_MASTER_SOUND_FACTOR,
+			CONFIG_ENABLE_FOOTSTEPS_SOUND, CONFIG_FOOTSTEPS_SOUND_FACTOR, CONFIG_ENABLE_JUMP_SOUND,
+			CONFIG_ENABLE_SWING_SOUND, CONFIG_ENABLE_CRAFTING_SOUND, CONFIG_ENABLE_BOW_PULL_SOUND,
+			CONFIG_AUTO_CONFIG_CHANNELS, CONFIG_NORMAL_CHANNEL_COUNT, CONFIG_STREAMING_CHANNEL_COUNT,
+			CONFIG_BLOCKED_SOUNDS, CONFIG_SOUND_CULL_THRESHOLD, CONFIG_CULLED_SOUNDS);
 
 	@Parameter(category = CATEGORY_SOUND, property = CONFIG_ENABLE_BIOME_SOUNDS, defaultValue = "true")
 	@Comment("Enable biome background and spot sounds")
@@ -265,6 +293,8 @@ public final class ModOptions {
 	public static final String CATEGORY_PLAYER = "player";
 	public static final String CONFIG_SUPPRESS_POTION_PARTICLES = "Suppress Potion Particles";
 	public static final String CONFIG_ENABLE_POPOFFS = "Damage Popoffs";
+	private static final List<String> playerSort = Arrays.asList(CONFIG_SUPPRESS_POTION_PARTICLES,
+			CONFIG_ENABLE_POPOFFS);
 
 	@Parameter(category = CATEGORY_PLAYER, property = CONFIG_SUPPRESS_POTION_PARTICLES, defaultValue = "false")
 	@Comment("Suppress player's potion particles from rendering")
@@ -281,6 +311,9 @@ public final class ModOptions {
 	public static final String CONFIG_POTION_HUD_LEFT_OFFSET = "Left Offset";
 	public static final String CONFIG_POTION_HUD_TOP_OFFSET = "Top Offset";
 	public static final String CONFIG_POTION_HUD_SCALE = "Display Scale";
+	private static final List<String> potionHudSort = Arrays.asList(CONFIG_POTION_HUD_ENABLE,
+			CONFIG_POTION_HUD_TRANSPARENCY, CONFIG_POTION_HUD_SCALE, CONFIG_POTION_HUD_TOP_OFFSET,
+			CONFIG_POTION_HUD_LEFT_OFFSET);
 
 	@Parameter(category = CATEGORY_POTION_HUD, property = CONFIG_POTION_HUD_ENABLE, defaultValue = "true")
 	@Comment("Enable display of potion icons in display")
@@ -310,30 +343,37 @@ public final class ModOptions {
 		// CATEGORY: Logging
 		config.setCategoryRequiresMcRestart(CATEGORY_LOGGING_CONTROL, true);
 		config.setCategoryComment(CATEGORY_LOGGING_CONTROL, "Defines how Dynamic Surroundings logging will behave");
+		config.setCategoryPropertyOrder(CATEGORY_LOGGING_CONTROL, new ArrayList<String>(loggingSort));
 
 		// CATEGORY: Rain
 		config.setCategoryRequiresMcRestart(CATEGORY_RAIN, false);
 		config.setCategoryComment(CATEGORY_RAIN, "Options that control rain effects in the client");
+		config.setCategoryPropertyOrder(CATEGORY_RAIN, new ArrayList<String>(rainSort));
 
 		// CATEGORY: General
 		config.setCategoryRequiresMcRestart(CATEGORY_GENERAL, false);
 		config.setCategoryComment(CATEGORY_GENERAL, "Miscellaneous settings");
+		config.setCategoryPropertyOrder(CATEGORY_GENERAL, new ArrayList<String>(generalSort));
 
 		// CATEGORY: Player
 		config.setCategoryRequiresMcRestart(CATEGORY_PLAYER, false);
 		config.setCategoryComment(CATEGORY_PLAYER, "General options for defining sound and effects the player entity");
+		config.setCategoryPropertyOrder(CATEGORY_PLAYER, new ArrayList<String>(playerSort));
 
 		// CATEGORY: Aurora
 		config.setCategoryRequiresMcRestart(CATEGORY_AURORA, false);
 		config.setCategoryComment(CATEGORY_AURORA, "Options that control Aurora behavior and rendering");
+		config.setCategoryPropertyOrder(CATEGORY_AURORA, new ArrayList<String>(auroraSort));
 
 		// CATEGORY: Fog
 		config.setCategoryRequiresMcRestart(CATEGORY_FOG, false);
 		config.setCategoryComment(CATEGORY_FOG, "Options that control the various fog effects in the client");
+		config.setCategoryPropertyOrder(CATEGORY_FOG, new ArrayList<String>(fogSort));
 
 		// CATEGORY: Biomes
 		config.setCategoryRequiresMcRestart(CATEGORY_BIOMES, false);
 		config.setCategoryComment(CATEGORY_BIOMES, "Options for controlling biome sound/effects");
+		config.setCategoryPropertyOrder(CATEGORY_BIOMES, new ArrayList<String>(biomesSort));
 
 		// CATEGORY: Dimensions
 		config.setCategoryRequiresMcRestart(CATEGORY_DIMENSIONS, false);
@@ -347,9 +387,26 @@ public final class ModOptions {
 		// CATEGORY: Sound
 		config.setCategoryRequiresMcRestart(CATEGORY_SOUND, false);
 		config.setCategoryComment(CATEGORY_SOUND, "General options for defining sound effects");
+		config.setCategoryPropertyOrder(CATEGORY_SOUND, new ArrayList<String>(soundsSort));
 
 		// CATEGORY: player.potion hud
 		config.setCategoryRequiresMcRestart(CATEGORY_POTION_HUD, false);
 		config.setCategoryComment(CATEGORY_POTION_HUD, "Options for the Potion HUD overlay");
+		config.setCategoryPropertyOrder(CATEGORY_POTION_HUD, new ArrayList<String>(potionHudSort));
+		
+		// Iterate through the config list looking for properties without comments.  These will
+		// be scrubbed.
+		for(final String cat: config.getCategoryNames())
+			scrubCategory(config.getCategory(cat));
+	}
+	
+	private static void scrubCategory(final ConfigCategory category) {
+		final List<String> killList = new ArrayList<String>();
+		for( final Entry<String, Property> entry: category.entrySet())
+			if(StringUtils.isEmpty(entry.getValue().comment))
+				killList.add(entry.getKey());
+		
+		for(final String kill: killList)
+			category.remove(kill);
 	}
 }
