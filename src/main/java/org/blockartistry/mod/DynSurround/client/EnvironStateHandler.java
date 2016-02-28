@@ -380,13 +380,19 @@ public class EnvironStateHandler implements IClientEffectHandler {
 
 	@SubscribeEvent
 	public void onJump(final LivingJumpEvent event) {
-		if (JUMP != null && event.entity.worldObj.isRemote && EnvironState.isPlayer(event.entity))
+		if (JUMP == null || event.entity == null || event.entity.worldObj == null)
+			return;
+
+		if (event.entity.worldObj.isRemote && EnvironState.isPlayer(event.entity))
 			SoundManager.playSoundAtPlayer(EnvironState.getPlayer(), JUMP);
 	}
 
 	@SubscribeEvent
 	public void onItemUse(final AttackEntityEvent event) {
-		if (SWORD != null && event.entityPlayer.worldObj.isRemote && EnvironState.isPlayer(event.entityPlayer)) {
+		if (SWORD == null || event.entityPlayer == null || event.entityPlayer.worldObj == null)
+			return;
+
+		if (event.entityPlayer.worldObj.isRemote && EnvironState.isPlayer(event.entityPlayer)) {
 			final ItemStack currentItem = event.entityPlayer.getCurrentEquippedItem();
 			if (currentItem != null) {
 				SoundEffect sound = null;
@@ -406,7 +412,10 @@ public class EnvironStateHandler implements IClientEffectHandler {
 
 	@SubscribeEvent
 	public void onCrafting(final ItemCraftedEvent event) {
-		if (CRAFTING != null && event.player.worldObj.isRemote && EnvironState.isPlayer(event.player)) {
+		if (CRAFTING == null || event.player == null || event.player.worldObj == null)
+			return;
+
+		if (event.player.worldObj.isRemote && EnvironState.isPlayer(event.player)) {
 			if (craftSoundThrottle < (EnvironState.getTickCounter() - 30)) {
 				craftSoundThrottle = EnvironState.getTickCounter();
 				SoundManager.playSoundAtPlayer(EnvironState.getPlayer(), CRAFTING);
@@ -417,10 +426,10 @@ public class EnvironStateHandler implements IClientEffectHandler {
 
 	@SubscribeEvent
 	public void onItemUse(final PlayerUseItemEvent.Start event) {
-		if (BOW_PULL == null || !event.entityPlayer.worldObj.isRemote)
+		if (BOW_PULL == null || event.entityPlayer == null || event.entityPlayer.worldObj == null)
 			return;
 
-		if (event.item.getItem() instanceof ItemBow) {
+		if (event.entityPlayer.worldObj.isRemote && event.item.getItem() instanceof ItemBow) {
 			SoundManager.playSoundAtPlayer(EnvironState.getPlayer(), BOW_PULL);
 		}
 	}
