@@ -68,9 +68,6 @@ import net.minecraftforge.fml.relauncher.Side;
 @SideOnly(Side.CLIENT)
 public class EnvironStateHandler implements IClientEffectHandler {
 
-	private static final float PLAYER_HURT_THRESHOLD = 8.0F;
-	private static final float PLAYER_HUNGER_THRESHOLD = 8.0F;
-
 	private static final SoundEffect JUMP;
 	private static final SoundEffect SWORD;
 	private static final SoundEffect AXE;
@@ -266,11 +263,11 @@ public class EnvironStateHandler implements IClientEffectHandler {
 		}
 
 		public static boolean isPlayerHurt() {
-			return !isCreative() && (getPlayer().getHealth() <= PLAYER_HURT_THRESHOLD);
+			return !isCreative() && getPlayer().getHealth() <= ModOptions.playerHurtThreshold;
 		}
 
 		public static boolean isPlayerHungry() {
-			return !isCreative() && (getPlayer().getFoodStats().getFoodLevel() <= PLAYER_HUNGER_THRESHOLD);
+			return !isCreative() && getPlayer().getFoodStats().getFoodLevel() <= ModOptions.playerHungerThreshold;
 		}
 
 		public static boolean isPlayerBurning() {
