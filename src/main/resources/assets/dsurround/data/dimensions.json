@@ -11,7 +11,7 @@
 			"dimId":1,
 			"weather":false,
 			"haze":false,
-			"aurora":true,
+			"aurora":false,
 			"seaLevel":0,
 			"cloudHeight":128
 		},
