@@ -38,6 +38,7 @@ import org.blockartistry.mod.DynSurround.Module;
 import org.blockartistry.mod.DynSurround.client.fx.BlockEffect;
 import org.blockartistry.mod.DynSurround.client.fx.JetEffect;
 import org.blockartistry.mod.DynSurround.client.sound.SoundEffect;
+import org.blockartistry.mod.DynSurround.client.sound.SoundEffect.SoundType;
 import org.blockartistry.mod.DynSurround.data.config.BlockConfig;
 import org.blockartistry.mod.DynSurround.data.config.BlockConfig.Effect;
 import org.blockartistry.mod.DynSurround.data.config.SoundConfig;
@@ -221,10 +222,8 @@ public final class BlockRegistry {
 
 				for (final SoundConfig sr : entry.sounds) {
 					if (sr.sound != null && !SoundRegistry.isSoundBlocked(sr.sound)) {
-						// Block sounds are always spot sounds
-						sr.spotSound = true;
 						final SoundEffect eff = new SoundEffect(sr);
-						if (sr.step != null && sr.step.booleanValue())
+						if (eff.type == SoundType.STEP)
 							blockData.stepSounds.add(eff);
 						else
 							blockData.sounds.add(eff);

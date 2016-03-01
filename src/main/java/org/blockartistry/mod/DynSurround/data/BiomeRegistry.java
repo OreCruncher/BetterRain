@@ -37,6 +37,7 @@ import org.blockartistry.mod.DynSurround.ModLog;
 import org.blockartistry.mod.DynSurround.ModOptions;
 import org.blockartistry.mod.DynSurround.Module;
 import org.blockartistry.mod.DynSurround.client.sound.SoundEffect;
+import org.blockartistry.mod.DynSurround.client.sound.SoundEffect.SoundType;
 import org.blockartistry.mod.DynSurround.data.config.BiomeConfig;
 import org.blockartistry.mod.DynSurround.data.config.SoundConfig;
 import org.blockartistry.mod.DynSurround.event.RegistryReloadEvent;
@@ -343,7 +344,7 @@ public final class BiomeRegistry {
 						if (SoundRegistry.isSoundBlocked(sr.sound))
 							continue;
 						final SoundEffect s = new SoundEffect(sr);
-						if (sr.spotSound != null && sr.spotSound.booleanValue())
+						if (s.type == SoundType.SPOT)
 							biomeEntry.spotSounds.add(s);
 						else
 							biomeEntry.sounds.add(s);

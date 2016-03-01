@@ -35,15 +35,15 @@
 				{
 					"sound":"dsurround:insectbuzz",
 					"conditions":"(?i)(?!.*#raining#.*)(.*)",
+					"soundType":"spot",
 					"volume":0.5,
-					"variable":true,
-					"spot":true
+					"variable":true
 				},
 				{
 					"sound":"dsurround:primates",
 					"conditions":"(?i)(?!.*#raining#.*)(.*#day#.*)",
-					"volume":0.3,
-					"spot":true
+					"soundType":"spot",
+					"volume":0.3
 				}
 				
 			]
@@ -60,9 +60,9 @@
 				{
 					"sound":"dsurround:insectbuzz",
 					"conditions":"(?i)(?!.*#raining#.*)(.*)",
+					"soundType":"spot",
 					"volume":0.5,
-					"variable":true,
-					"spot":true
+					"variable":true
 				}
 				
 			]
@@ -74,8 +74,8 @@
 				{
 					"sound":"dsurround:bison",
 					"conditions":"(?i)(?!.*#raining#.*)(.*#day#.*)",
-					"volume":0.5,
-					"spot":true
+					"soundType":"spot",
+					"volume":0.5
 				}
 				
 			]
@@ -96,8 +96,8 @@
 				{
 					"sound":"dsurround:owl",
 					"conditions":"(?i)(?!.*#raining#.*).*#night#.*",
-					"volume":0.3,
-					"spot":true
+					"soundType":"spot",
+					"volume":0.3
 				}
 				
 			]
@@ -121,14 +121,14 @@
 				{
 					"sound":"dsurround:owl",
 					"conditions":"(?i)(?!.*#raining#.*).*#night#.*",
-					"volume":0.3,
-					"spot":true
+					"soundType":"spot",
+					"volume":0.3
 				},
 				{
 					"sound":"dsurround:wolf",
 					"conditions":"(?i)(?!.*#raining#.*).*#night#.*",
-					"volume":0.3,
-					"spot":true
+					"soundType":"spot",
+					"volume":0.3
 				}
 				
 			]
@@ -143,8 +143,8 @@
 				{
 					"sound":"dsurround:seagulls",
 					"conditions":"(?i).*#day#.*",
-					"volume":0.3,
-					"spot":true
+					"soundType":"spot",
+					"volume":0.3
 				}
 				
 			]
@@ -159,9 +159,9 @@
 				{
 					"sound":"dsurround:insectbuzz",
 					"conditions":"(?i)(?!.*#raining#.*)(.*)",
+					"soundType":"spot",
 					"volume":0.5,
-					"variable":true,
-					"spot":true
+					"variable":true
 				}
 				
 			]
@@ -196,9 +196,9 @@
 				{
 					"sound":"dsurround:insectbuzz",
 					"conditions":"(?i)(?!.*#raining#.*)(.*)",
+					"soundType":"spot",
 					"volume":0.5,
-					"variable":true,
-					"spot":true
+					"variable":true
 				}
 				
 			]
@@ -216,9 +216,9 @@
 				{
 					"sound":"dsurround:insectbuzz",
 					"conditions":"(?i)(?!.*#raining#.*)(.*)",
+					"soundType":"spot",
 					"volume":0.5,
-					"variable":true,
-					"spot":true
+					"variable":true
 				}
 				
 			],
@@ -231,8 +231,8 @@
 			"sounds":[
 				{
 					"sound":"dsurround:crocodile",
-					"volume":0.7,
-					"spot":true
+					"soundType":"spot",
+					"volume":0.7
 				}
 				
 			]
@@ -249,8 +249,8 @@
 				{
 					"sound":"dsurround:rattlesnake",
 					"conditions":"(?i)(?!.*#raining#.*).*#day#.*",
-					"volume":1.0,
-					"spot":true
+					"soundType":"spot",
+					"volume":1.0
 				}
 				
 			]
@@ -262,16 +262,16 @@
 				{
 					"sound":"dsurround:elephant",
 					"conditions":"(?i).*#day#.*",
-					"volume":0.7,
-					"spot":true
+					"soundType":"spot",
+					"volume":0.7
 				},
 				{
 					"sound":"dsurround:insectbuzz",
 					"conditions":"(?i)(.*)",
+					"soundType":"spot",
 					"volume":0.5,
 					"weight":20,
-					"variable":true,
-					"spot":true
+					"variable":true
 				}
 				
 			]
@@ -307,15 +307,15 @@
 				},
 				{
 					"sound":"dsurround:rockfall",
+					"soundType":"spot",
 					"volume":0.3,
-					"spot":true,
 					"weight":30
 				},
 				{
 					"sound":"dsurround:monstergrowl",
 					"conditions":"(?i).*#night#.*",
+					"soundType":"spot",
 					"volume":0.3,
-					"spot":true,
 					"weight":10
 				}
 				
@@ -342,8 +342,8 @@
 				},
 				{
 					"sound":"dsurround:whale",
-					"volume":0.3,
-					"spot":true
+					"soundType":"spot",
+					"volume":0.3
 				}
 				
 			]
@@ -377,13 +377,12 @@
 			"sounds":[
 				{
 					"sound":"dsurround:heartbeat",
-					"conditions":"(?i).*#hurt#.*",
-					"skipFade":true
+					"conditions":"(?i).*#hurt#.*"
 				},
 				{
 					"sound":"dsurround:tummy",
 					"conditions":"(?i).*#hungry#.*",
-					"skipFade":true,
+					"soundType":"periodic",
 					"repeatDelay":300
 				}
 				

@@ -32,9 +32,9 @@
 			"sounds":[
 				{
 					"sound":"dsurround:floorsqueak",
+					"soundType":"step",
 					"volume":0.2,
-					"variable":true,
-					"step":true
+					"variable":true
 				}
 				
 			]

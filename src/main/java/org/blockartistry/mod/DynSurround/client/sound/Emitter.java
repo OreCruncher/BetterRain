@@ -23,6 +23,11 @@
 
 package org.blockartistry.mod.DynSurround.client.sound;
 
+import java.util.Random;
+
+import org.blockartistry.mod.DynSurround.client.sound.SoundEffect.SoundType;
+import org.blockartistry.mod.DynSurround.util.XorShiftRandom;
+
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
@@ -38,6 +43,8 @@ import paulscode.sound.SoundSystemConfig;
 @SideOnly(Side.CLIENT)
 class Emitter {
 
+	protected static final Random RANDOM = new XorShiftRandom();
+
 	protected final SoundEffect effect;
 	protected PlayerSound activeSound;
 
@@ -49,15 +56,14 @@ class Emitter {
 
 	public void update() {
 		final SoundHandler handler = Minecraft.getMinecraft().getSoundHandler();
-		if (activeSound != null) {
-			if (handler.isSoundPlaying(activeSound))
+		if (this.activeSound != null) {
+			if (handler.isSoundPlaying(this.activeSound))
 				return;
-			activeSound.fadeAway();
-			activeSound = null;
-			if (this.effect.repeatDelay > 0) {
-				this.repeatDelay = this.effect.repeatDelay;
+			this.activeSound.fadeAway();
+			this.activeSound = null;
+			this.repeatDelay = this.effect.getRepeat(RANDOM);
+			if (this.repeatDelay > 0)
 				return;
-			}
 		} else if (this.repeatDelay > 0) {
 			if (--this.repeatDelay > 0)
 				return;
@@ -65,22 +71,28 @@ class Emitter {
 
 		// If the volume is turned off don't send
 		// down a sound.
-		if(SoundSystemConfig.getMasterGain() <= 0)
+		if (SoundSystemConfig.getMasterGain() <= 0)
 			return;
-		
-		this.activeSound = new PlayerSound(effect);
+
+		final PlayerSound theSound = new PlayerSound(effect);
+		if (this.effect.type == SoundType.PERIODIC) {
+			this.repeatDelay = this.effect.getRepeat(RANDOM);
+		} else {
+			this.activeSound = theSound;
+		}
+
 		try {
-			handler.playSound(this.activeSound);
+			handler.playSound(theSound);
 		} catch (final Throwable t) {
 			;
 		}
 	}
-	
+
 	public void setVolume(final float volume) {
-		if(this.activeSound != null)
+		if (this.activeSound != null)
 			this.activeSound.setVolume(volume);
 	}
-	
+
 	public float getVolume() {
 		return this.activeSound != null ? this.activeSound.getVolume() : 0.0F;
 	}
@@ -90,4 +102,3 @@ class Emitter {
 			this.activeSound.fadeAway();
 	}
 }
-
