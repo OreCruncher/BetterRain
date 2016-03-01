@@ -86,7 +86,7 @@ public final class ForgeDictionary {
 
 	private static final String[] fenceBlocks = { "fenceWood", "fenceGateWood" };
 
-	private static final String[] mudBlocks = { "blockSlime" };
+	private static final String[] mudBlocks = { "blockSlime", "blockCheese" };
 
 	private static final String[] obsidianBlocks = { "oreSunstone", "blockGraphite", "basalt", "stoneBasalt",
 			"blockBasalt", "blockBloodstone" };
