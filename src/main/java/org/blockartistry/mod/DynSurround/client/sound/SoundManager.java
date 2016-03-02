@@ -36,7 +36,6 @@ import org.blockartistry.mod.DynSurround.ModLog;
 import org.blockartistry.mod.DynSurround.ModOptions;
 import org.blockartistry.mod.DynSurround.client.EnvironStateHandler.EnvironState;
 import org.lwjgl.BufferUtils;
-import org.lwjgl.LWJGLException;
 import org.lwjgl.openal.AL;
 import org.lwjgl.openal.ALC10;
 import org.lwjgl.openal.ALC11;
@@ -76,8 +75,8 @@ public class SoundManager {
 			else {
 				final Emitter emitter = emitters.get(effect);
 				SoundEffect incoming = null;
-				for(final SoundEffect sound: sounds)
-					if(sound.equals(effect)) {
+				for (final SoundEffect sound : sounds)
+					if (sound.equals(effect)) {
 						incoming = sound;
 						break;
 					}
@@ -160,12 +159,15 @@ public class SoundManager {
 		int totalChannels = -1;
 
 		try {
-			AL.create();
+			final boolean create = !AL.isCreated();
+			if (create)
+				AL.create();
 			final IntBuffer ib = BufferUtils.createIntBuffer(1);
 			ALC10.alcGetInteger(AL.getDevice(), ALC11.ALC_MONO_SOURCES, ib);
 			totalChannels = ib.get(0);
-			AL.destroy();
-		} catch (LWJGLException e) {
+			if (create)
+				AL.destroy();
+		} catch (final Throwable e) {
 			e.printStackTrace();
 		}
 
