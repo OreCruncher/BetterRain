@@ -40,9 +40,11 @@ import net.minecraft.util.ResourceLocation;
 class PlayerSound extends MovingSound {
 
 	private static final float DONE_VOLUME_THRESHOLD = 0.001F;
+	private static final float FADE_AMOUNT = 0.005F;
 	private static final Random RANDOM = new XorShiftRandom();
 
 	private final SoundEffect sound;
+	private boolean isFading;
 
 	public PlayerSound(final SoundEffect sound) {
 		super(new ResourceLocation(sound.sound));
@@ -64,8 +66,7 @@ class PlayerSound extends MovingSound {
 	}
 
 	public void fadeAway() {
-		this.volume = 0.0F;
-		this.donePlaying = true;
+		this.isFading = true;
 	}
 
 	public boolean sameSound(final SoundEffect snd) {
@@ -76,6 +77,10 @@ class PlayerSound extends MovingSound {
 	public void update() {
 		if (this.donePlaying)
 			return;
+
+		if (this.isFading) {
+			this.volume -= FADE_AMOUNT;
+		}
 
 		if (this.volume <= DONE_VOLUME_THRESHOLD) {
 			this.donePlaying = true;
@@ -93,7 +98,8 @@ class PlayerSound extends MovingSound {
 	}
 
 	public void setVolume(final float volume) {
-		this.volume = volume;
+		if (volume < this.volume || !this.isFading)
+			this.volume = volume;
 	}
 
 	@Override
