@@ -72,10 +72,29 @@ public class FogEffectHandler implements IClientEffectHandler {
 		return true;
 	}
 
+	private static float calcHazeBand(final World world, final EntityPlayer player) {
+		final float distance = MathHelper
+				.abs(DimensionRegistry.getCloudHeight(world) - (float) (player.posY + player.getEyeHeight()));
+		final float hazeBandRange = HAZE_THRESHOLD * (1.0F + world.getRainStrength(1.0F) * 2);
+		if (distance < hazeBandRange)
+			return (hazeBandRange - distance) / 50.0F / hazeBandRange * ModOptions.elevationHazeFactor;
+
+		return 0.0F;
+	}
+
+	private static float calcHazeGradient(final World world, final EntityPlayer player) {
+		final float factor = 1.0F + world.getRainStrength(1.0F);
+		final float skyHeight = DimensionRegistry.getSkyHeight(world) / factor;
+		final float groundLevel = DimensionRegistry.getSeaLevel(world);
+		final float ratio = (MathHelper.floor_double(player.posY + player.getEyeHeight()) - groundLevel)
+				/ (skyHeight - groundLevel);
+		return ratio * ratio * ratio * ratio * ModOptions.elevationHazeFactor;
+	}
+
 	@Override
 	public void process(final World world, final EntityPlayer player) {
 
-		currentFogColor = new Color(world.getSkyColor(player, 1.0F));
+		currentFogColor = new Color(world.getFogColor(1.0F));
 
 		float biomeFog = 0.0F;
 		float dustFog = 0.0F;
@@ -109,12 +128,7 @@ public class FogEffectHandler implements IClientEffectHandler {
 		dustFog *= ModOptions.desertFogFactor;
 
 		if (ModOptions.enableElevationHaze && DimensionRegistry.hasHaze(world)) {
-			final float distance = MathHelper
-					.abs(DimensionRegistry.getCloudHeight(world) - (float) (player.posY + player.getEyeHeight()));
-			final float hazeBandRange = HAZE_THRESHOLD * (1.0F + world.getRainStrength(1.0F) * 2);
-			if (distance < hazeBandRange) {
-				heightFog = (hazeBandRange - distance) / 50.0F / hazeBandRange * ModOptions.elevationHazeFactor;
-			}
+			heightFog = ModOptions.elevationHazeAsBand ? calcHazeBand(world, player) : calcHazeGradient(world, player);
 		}
 
 		// Get the max fog level between the three fog types
