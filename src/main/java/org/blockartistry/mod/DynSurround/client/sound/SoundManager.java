@@ -30,8 +30,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-
 import org.blockartistry.mod.DynSurround.ModLog;
 import org.blockartistry.mod.DynSurround.ModOptions;
 import org.blockartistry.mod.DynSurround.client.EnvironStateHandler.EnvironState;
@@ -43,7 +41,7 @@ import org.lwjgl.openal.ALC11;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import paulscode.sound.SoundSystemConfig;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.audio.SoundHandler;
+import net.minecraft.client.audio.ISound;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.MathHelper;
@@ -92,19 +90,17 @@ public class SoundManager {
 	}
 
 	public static void update() {
-		final Iterator<Entry<SoundEffect, Emitter>> itr = emitters.entrySet().iterator();
-		while (itr.hasNext()) {
-			final Entry<SoundEffect, Emitter> e = itr.next();
-			e.getValue().update();
-		}
+		for(final Emitter emitter: emitters.values())
+			emitter.update();
 
 		final Iterator<SpotSound> pitr = pending.iterator();
 		while (pitr.hasNext()) {
 			final SpotSound sound = pitr.next();
-			if (sound.getTickAge() >= AGE_THRESHOLD_TICKS)
+			if (sound.getTickAge() >= AGE_THRESHOLD_TICKS) {
+				ModLog.debug("AGING: " + sound.toString());
 				pitr.remove();
-			else if (sound.getTickAge() >= 0 && canFitSound()) {
-				Minecraft.getMinecraft().getSoundHandler().playSound(sound);
+			} else if (sound.getTickAge() >= 0 && canFitSound()) {
+				playSound(sound);
 				pitr.remove();
 			}
 		}
@@ -122,28 +118,37 @@ public class SoundManager {
 		return currentSoundCount() < (SoundSystemConfig.getNumberNormalChannels() - SOUND_QUEUE_SLACK);
 	}
 
+	static void playSound(final ISound sound) {
+		if (sound != null) {
+			if (ModOptions.enableDebugLogging)
+				ModLog.debug("PLAYING: " + sound.toString());
+			Minecraft.getMinecraft().getSoundHandler().playSound(sound);
+		}
+	}
+
 	public static void playSoundAtPlayer(EntityPlayer player, final SoundEffect sound) {
 
 		if (player == null)
 			player = EnvironState.getPlayer();
 
-		final SoundHandler handler = Minecraft.getMinecraft().getSoundHandler();
 		final SpotSound s = new SpotSound(player, sound);
 
 		if (!canFitSound())
 			pending.add(s);
 		else
-			handler.playSound(s);
+			playSound(s);
 	}
 
 	public static void playSoundAt(final BlockPos pos, final SoundEffect sound, final int tickDelay) {
-		final SoundHandler handler = Minecraft.getMinecraft().getSoundHandler();
+		if (tickDelay > 0 && !canFitSound())
+			return;
+
 		final SpotSound s = new SpotSound(pos, sound, tickDelay);
 
 		if (tickDelay > 0 || !canFitSound())
 			pending.add(s);
 		else
-			handler.playSound(s);
+			playSound(s);
 	}
 
 	public static List<String> getSounds() {

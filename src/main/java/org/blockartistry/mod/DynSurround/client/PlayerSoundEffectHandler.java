@@ -106,7 +106,6 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 			sounds.addAll(getBiomeSounds(conditions));
 		sounds.addAll(BiomeRegistry.getSounds(BiomeRegistry.PLAYER, conditions));
 
-		SoundManager.update();
 		SoundManager.queueAmbientSounds(sounds);
 
 		if (doBiomeSounds()) {
@@ -120,6 +119,8 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 			SoundManager.playSoundAtPlayer(player, sound);
 
 		processWaterDrops();
+		
+		SoundManager.update();
 	}
 
 	@Override

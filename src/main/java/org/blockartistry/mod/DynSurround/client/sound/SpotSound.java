@@ -37,7 +37,6 @@ import net.minecraftforge.fml.relauncher.Side;
 @SideOnly(Side.CLIENT)
 public class SpotSound extends PositionedSound {
 
-	private static final float MASTER_SCALE_FACTOR = ModOptions.masterSoundScaleFactor;
 	private static final int SPOT_SOUND_RANGE = 6;
 
 	private final SoundEffect sound;
@@ -80,7 +79,7 @@ public class SpotSound extends PositionedSound {
 
 	@Override
 	public float getVolume() {
-		return super.getVolume() * MASTER_SCALE_FACTOR;
+		return super.getVolume() * ModOptions.masterSoundScaleFactor;
 	}
 
 	public int getTickAge() {
@@ -89,6 +88,11 @@ public class SpotSound extends PositionedSound {
 
 	public SoundEffect getSoundEffect() {
 		return this.sound;
+	}
+
+	@Override
+	public String toString() {
+		return this.sound.toString();
 	}
 
 }

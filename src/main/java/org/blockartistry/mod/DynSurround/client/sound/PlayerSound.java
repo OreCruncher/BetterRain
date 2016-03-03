@@ -38,7 +38,8 @@ import net.minecraftforge.fml.relauncher.Side;
 
 @SideOnly(Side.CLIENT)
 class PlayerSound extends MovingSound {
-	
+
+	private static final float DONE_VOLUME_THRESHOLD = 0.001F;
 	private static final Random RANDOM = new XorShiftRandom();
 
 	private final SoundEffect sound;
@@ -57,9 +58,9 @@ class PlayerSound extends MovingSound {
 
 		final EntityPlayer player = EnvironState.getPlayer();
 		// Initial position
-		this.xPosF = (float) (player.posX);
-		this.yPosF = (float) (player.posY + 1);
-		this.zPosF = (float) (player.posZ);
+		this.xPosF = MathHelper.floor_double(player.posX);
+		this.yPosF = MathHelper.floor_double(player.posY + 1);
+		this.zPosF = MathHelper.floor_double(player.posZ);
 	}
 
 	public void fadeAway() {
@@ -73,32 +74,26 @@ class PlayerSound extends MovingSound {
 
 	@Override
 	public void update() {
-		if (this.volume == 0.0F)
+		if (this.donePlaying)
+			return;
+
+		if (this.volume <= DONE_VOLUME_THRESHOLD) {
 			this.donePlaying = true;
+		} else if (EnvironState.getPlayer() != null) {
+			final EntityPlayer player = EnvironState.getPlayer();
+			this.xPosF = MathHelper.floor_double(player.posX);
+			this.yPosF = MathHelper.floor_double(player.posY + 1);
+			this.zPosF = MathHelper.floor_double(player.posZ);
+		}
 	}
 
 	@Override
 	public float getVolume() {
-		return super.getVolume() * ModOptions.masterSoundScaleFactor;
+		return this.volume * ModOptions.masterSoundScaleFactor;
 	}
 
 	public void setVolume(final float volume) {
 		this.volume = volume;
-	}
-
-	@Override
-	public float getXPosF() {
-		return MathHelper.floor_double(EnvironState.getPlayer().posX);
-	}
-
-	@Override
-	public float getYPosF() {
-		return MathHelper.floor_double(EnvironState.getPlayer().posY + 1);
-	}
-
-	@Override
-	public float getZPosF() {
-		return MathHelper.floor_double(EnvironState.getPlayer().posZ);
 	}
 
 	@Override
@@ -117,4 +112,3 @@ class PlayerSound extends MovingSound {
 		return false;
 	}
 }
-
