@@ -25,6 +25,7 @@ package org.blockartistry.mod.DynSurround.client.sound;
 
 import java.util.Random;
 
+import org.blockartistry.mod.DynSurround.ModLog;
 import org.blockartistry.mod.DynSurround.client.sound.SoundEffect.SoundType;
 import org.blockartistry.mod.DynSurround.util.XorShiftRandom;
 
@@ -59,6 +60,7 @@ class Emitter {
 		if (this.activeSound != null) {
 			if (handler.isSoundPlaying(this.activeSound))
 				return;
+			ModLog.debug("FADE: " + this.activeSound.toString());
 			this.activeSound.fadeAway();
 			this.activeSound = null;
 			this.repeatDelay = this.effect.getRepeat(RANDOM);
@@ -82,7 +84,7 @@ class Emitter {
 		}
 
 		try {
-			handler.playSound(theSound);
+			SoundManager.playSound(theSound);
 		} catch (final Throwable t) {
 			;
 		}
