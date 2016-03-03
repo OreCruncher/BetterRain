@@ -93,11 +93,12 @@ public final class ModOptions {
 	public static final String CONFIG_DESERT_FOG_FACTOR = "Desert Fog Factor";
 	public static final String CONFIG_ENABLE_ELEVATION_HAZE = "Elevation Haze";
 	public static final String CONFIG_ELEVATION_HAZE_FACTOR = "Elevation Haze Factor";
+	public static final String CONFIG_ELEVATION_HAZE_AS_BAND = "Elevation Haze as Band";
 	public static final String CONFIG_ENABLE_BIOME_FOG = "Biome Fog";
 	public static final String CONFIG_BIOME_FOG_FACTOR = "Biome Fog Factor";
 	private static final List<String> fogSort = Arrays.asList(CONFIG_ALLOW_DESERT_FOG, CONFIG_DESERT_FOG_FACTOR,
 			CONFIG_ENABLE_BIOME_FOG, CONFIG_BIOME_FOG_FACTOR, CONFIG_ENABLE_ELEVATION_HAZE,
-			CONFIG_ELEVATION_HAZE_FACTOR);
+			CONFIG_ELEVATION_HAZE_FACTOR, CONFIG_ELEVATION_HAZE_AS_BAND);
 
 	@Parameter(category = CATEGORY_FOG, property = CONFIG_ALLOW_DESERT_FOG, defaultValue = "true")
 	@Comment("Allow desert fog when raining")
@@ -113,6 +114,9 @@ public final class ModOptions {
 	@MinMaxFloat(min = 0.0F, max = 5.0F)
 	@Comment("Visibility factor to apply to elevation haze (higher is thicker)")
 	public static float elevationHazeFactor = 1.0F;
+	@Parameter(category = CATEGORY_FOG, property = CONFIG_ELEVATION_HAZE_AS_BAND, defaultValue = "true")
+	@Comment("Calculate haze as a band at cloud height rather than gradient to build height")
+	public static boolean elevationHazeAsBand = true;
 	@Parameter(category = CATEGORY_FOG, property = CONFIG_ENABLE_BIOME_FOG, defaultValue = "true")
 	@Comment("Enable biome specific fog density and color")
 	public static boolean enableBiomeFog = true;
