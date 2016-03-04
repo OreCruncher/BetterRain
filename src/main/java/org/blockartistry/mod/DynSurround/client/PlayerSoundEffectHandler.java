@@ -119,7 +119,7 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 			SoundManager.playSoundAtPlayer(player, sound);
 
 		processWaterDrops();
-		
+
 		SoundManager.update();
 	}
 
@@ -137,12 +137,11 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 	}
 
 	/*
-	 * Fired when the player joins a world, such as when the dimension
-	 * changes.
+	 * Fired when the player joins a world, such as when the dimension changes.
 	 */
 	@SubscribeEvent
 	public void playerJoinWorldEvent(final EntityJoinWorldEvent event) {
-		if(event.entity.worldObj.isRemote && EnvironState.isPlayer(event.entity))
+		if (event.entity.worldObj.isRemote && EnvironState.isPlayer(event.entity))
 			resetSounds();
 	}
 

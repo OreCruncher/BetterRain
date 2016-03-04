@@ -228,11 +228,12 @@ public final class ModOptions {
 	public static final String CONFIG_SOUND_CULL_THRESHOLD = "Sound Culling Threshold";
 	public static final String CONFIG_CULLED_SOUNDS = "Culled Sounds";
 	public static final String CONFIG_BLOCKED_SOUNDS = "Blocked Sounds";
+	public static final String CONFIG_SOUND_VOLUMES = "Sound Volume";
 	private static final List<String> soundsSort = Arrays.asList(CONFIG_ENABLE_BIOME_SOUNDS, CONFIG_MASTER_SOUND_FACTOR,
 			CONFIG_ENABLE_FOOTSTEPS_SOUND, CONFIG_FOOTSTEPS_SOUND_FACTOR, CONFIG_ENABLE_JUMP_SOUND,
 			CONFIG_ENABLE_SWING_SOUND, CONFIG_ENABLE_CRAFTING_SOUND, CONFIG_ENABLE_BOW_PULL_SOUND,
 			CONFIG_AUTO_CONFIG_CHANNELS, CONFIG_NORMAL_CHANNEL_COUNT, CONFIG_STREAMING_CHANNEL_COUNT,
-			CONFIG_BLOCKED_SOUNDS, CONFIG_SOUND_CULL_THRESHOLD, CONFIG_CULLED_SOUNDS);
+			CONFIG_BLOCKED_SOUNDS, CONFIG_SOUND_CULL_THRESHOLD, CONFIG_CULLED_SOUNDS, CONFIG_SOUND_VOLUMES);
 
 	@Parameter(category = CATEGORY_SOUND, property = CONFIG_ENABLE_BIOME_SOUNDS, defaultValue = "true")
 	@Comment("Enable biome background and spot sounds")
@@ -293,6 +294,10 @@ public final class ModOptions {
 	@Comment("Sounds to block from playing")
 	@Hidden
 	public static String[] blockedSounds = {};
+	@Parameter(category = CATEGORY_SOUND, property = CONFIG_SOUND_VOLUMES, defaultValue = "")
+	@Comment("Individual sound scaling factors")
+	@Hidden
+	public static String[] soundVolumes = {};
 
 	public static final String CATEGORY_PLAYER = "player";
 	public static final String CONFIG_SUPPRESS_POTION_PARTICLES = "Suppress Potion Particles";
