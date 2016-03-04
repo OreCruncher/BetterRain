@@ -27,18 +27,24 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang3.StringUtils;
 import org.blockartistry.mod.DynSurround.ModLog;
 import org.blockartistry.mod.DynSurround.ModOptions;
+
+import gnu.trove.map.hash.TObjectFloatHashMap;
 
 public final class SoundRegistry {
 
 	private static final List<Pattern> cullSoundNamePatterns = new ArrayList<Pattern>();
 	private static final List<Pattern> blockSoundNamePatterns = new ArrayList<Pattern>();
 
+	private static final TObjectFloatHashMap<String> volumeControl = new TObjectFloatHashMap<String>();
+
 	public static void initialize() {
 		cullSoundNamePatterns.clear();
 		blockSoundNamePatterns.clear();
-		
+		volumeControl.clear();
+
 		for (final String sound : ModOptions.culledSounds) {
 			try {
 				cullSoundNamePatterns.add(Pattern.compile(sound));
@@ -46,7 +52,7 @@ public final class SoundRegistry {
 				ModLog.info("Unable to compile pattern for cull sound '%s'", sound);
 			}
 		}
-		
+
 		for (final String sound : ModOptions.blockedSounds) {
 			try {
 				blockSoundNamePatterns.add(Pattern.compile(sound));
@@ -54,10 +60,22 @@ public final class SoundRegistry {
 				ModLog.info("Unable to compile pattern for blocked sound '%s'", sound);
 			}
 		}
+
+		for (final String volume : ModOptions.soundVolumes) {
+			final String[] tokens = StringUtils.split(volume, "=");
+			if (tokens.length == 2) {
+				try {
+					final float vol = Integer.parseInt(tokens[1]) / 100.0F;
+					volumeControl.put(tokens[0], vol);
+				} catch (final Throwable t) {
+					ModLog.error("Unable to process sound volume entry: " + volume, t);
+				}
+			}
+		}
 	}
 
 	private SoundRegistry() {
-		
+
 	}
 
 	public static boolean isSoundCulled(final String sound) {
@@ -66,12 +84,16 @@ public final class SoundRegistry {
 				return true;
 		return false;
 	}
-	
+
 	public static boolean isSoundBlocked(final String sound) {
 		for (final Pattern pattern : blockSoundNamePatterns)
 			if (pattern.matcher(sound).matches())
 				return true;
 		return false;
+	}
+
+	public static float getVolumeScale(final String soundName) {
+		return volumeControl.contains(soundName) ? volumeControl.get(soundName) : 1.0F;
 	}
 
 }

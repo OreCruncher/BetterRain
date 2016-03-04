@@ -34,6 +34,7 @@ import org.blockartistry.mod.DynSurround.ModLog;
 import org.blockartistry.mod.DynSurround.ModOptions;
 import org.blockartistry.mod.DynSurround.client.EnvironStateHandler.EnvironState;
 import org.blockartistry.mod.DynSurround.compat.BlockPos;
+import org.blockartistry.mod.DynSurround.data.SoundRegistry;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.openal.AL;
 import org.lwjgl.openal.ALC10;
@@ -43,6 +44,8 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.ISound;
+import net.minecraft.client.audio.SoundCategory;
+import net.minecraft.client.audio.SoundPoolEntry;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.MathHelper;
 import paulscode.sound.SoundSystemConfig;
@@ -90,7 +93,7 @@ public class SoundManager {
 	}
 
 	public static void update() {
-		for(final Emitter emitter: emitters.values())
+		for (final Emitter emitter : emitters.values())
 			emitter.update();
 
 		final Iterator<SpotSound> pitr = pending.iterator();
@@ -191,4 +194,19 @@ public class SoundManager {
 		SoundSystemConfig.setNumberStreamingChannels(streamChannels);
 
 	}
+
+	// Redirect hook from Minecraft's SoundManager so we can scale the volume
+	// for each individual sound.
+	public static float getNormalizedVolume(final ISound sound, final SoundPoolEntry poolEntry,
+			final SoundCategory category) {
+		final float volumeScale = SoundRegistry.getVolumeScale(sound.getPositionedSoundLocation().toString());
+		return (float) MathHelper.clamp_double((double) sound.getVolume() * poolEntry.getVolume()
+				* (double) getSoundCategoryVolume(category) * volumeScale, 0.0D, 1.0D);
+	}
+
+	public static float getSoundCategoryVolume(final SoundCategory category) {
+		return category != null && category != SoundCategory.MASTER
+				? Minecraft.getMinecraft().gameSettings.getSoundLevel(category) : 1.0F;
+	}
+
 }

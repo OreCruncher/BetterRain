@@ -35,6 +35,7 @@ import org.blockartistry.mod.DynSurround.data.SoundRegistry;
 import org.blockartistry.mod.DynSurround.util.ConfigProcessor;
 
 import cpw.mods.fml.client.config.GuiConfig;
+import cpw.mods.fml.client.config.GuiConfigEntries.NumberSliderEntry;
 import cpw.mods.fml.client.config.IConfigElement;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -42,6 +43,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.util.MathHelper;
 import net.minecraftforge.common.config.ConfigCategory;
 import net.minecraftforge.common.config.ConfigElement;
 import net.minecraftforge.common.config.Configuration;
@@ -55,6 +57,10 @@ public class DynSurroundConfigGui extends GuiConfig {
 	@SuppressWarnings("rawtypes")
 	private final ConfigElement soundElement;
 	private final ConfigCategory soundCategory;
+
+	@SuppressWarnings("rawtypes")
+	private final ConfigElement soundVolumeElement;
+	private final ConfigCategory soundVolumeCategory;
 
 	@SuppressWarnings("rawtypes")
 	public DynSurroundConfigGui(final GuiScreen parentScreen) {
@@ -87,8 +93,14 @@ public class DynSurroundConfigGui extends GuiConfig {
 		this.soundCategory = new ConfigCategory("Blocked Sounds");
 		this.soundCategory.setComment("Sounds that will be blocked from playing");
 		this.soundElement = new MyConfigElement(this.soundCategory);
-		generateSoundList();
+		generateSoundList(this.soundCategory);
 		this.configElements.add(this.soundElement);
+
+		this.soundVolumeCategory = new ConfigCategory("Sound Volumes");
+		this.soundVolumeCategory.setComment("Individual sound volume control");
+		this.soundVolumeElement = new MyConfigElement(this.soundVolumeCategory);
+		generateSoundVolumeList(this.soundVolumeCategory);
+		this.configElements.add(this.soundVolumeElement);
 
 		this.configElements.add(getCategoryConfigElement(ModOptions.CATEGORY_GENERAL, "General Settings"));
 		this.configElements.add(getCategoryConfigElement(ModOptions.CATEGORY_RAIN, "Rain Settings"));
@@ -117,25 +129,41 @@ public class DynSurroundConfigGui extends GuiConfig {
 	protected void actionPerformed(final GuiButton button) {
 
 		super.actionPerformed(button);
-		
+
 		// Done button was pressed
 		if (button.id == 2000) {
-			final List<String> sounds = new ArrayList<String>();
-			for (final Entry<String, Property> entry : this.soundCategory.entrySet()) {
-				if (entry.getValue().getBoolean())
-					sounds.add(entry.getKey());
-			}
-
-			final String[] results = sounds.toArray(new String[sounds.size()]);
-			this.config.getCategory(ModOptions.CATEGORY_SOUND).get(ModOptions.CONFIG_BLOCKED_SOUNDS).set(results);
-			
+			saveSoundList();
+			saveSoundVolumeList();
 			config.save();
 			ConfigProcessor.process(config, ModOptions.class);
 			SoundRegistry.initialize();
 		}
 	}
 
-	protected void generateSoundList() {
+	protected void saveSoundList() {
+		final List<String> sounds = new ArrayList<String>();
+		for (final Entry<String, Property> entry : this.soundCategory.entrySet()) {
+			if (entry.getValue().getBoolean())
+				sounds.add(entry.getKey());
+		}
+
+		final String[] results = sounds.toArray(new String[sounds.size()]);
+		this.config.getCategory(ModOptions.CATEGORY_SOUND).get(ModOptions.CONFIG_BLOCKED_SOUNDS).set(results);
+	}
+
+	protected void saveSoundVolumeList() {
+		final List<String> sounds = new ArrayList<String>();
+		for (final Entry<String, Property> entry : this.soundVolumeCategory.entrySet()) {
+			final int value = entry.getValue().getInt();
+			if (value != 100)
+				sounds.add(entry.getKey() + "=" + value);
+		}
+
+		final String[] results = sounds.toArray(new String[sounds.size()]);
+		this.config.getCategory(ModOptions.CATEGORY_SOUND).get(ModOptions.CONFIG_SOUND_VOLUMES).set(results);
+	}
+
+	protected void generateSoundList(final ConfigCategory cat) {
 		final SoundHandler handler = Minecraft.getMinecraft().getSoundHandler();
 		final List<String> sounds = new ArrayList<String>();
 		for (final Object resource : handler.sndRegistry.getKeys())
@@ -147,8 +175,26 @@ public class DynSurroundConfigGui extends GuiConfig {
 			prop.setDefaultValue(false);
 			prop.setRequiresMcRestart(true);
 			prop.set(SoundRegistry.isSoundBlocked(sound));
-			this.soundCategory.put(sound, prop);
+			cat.put(sound, prop);
 		}
+	}
 
+	protected void generateSoundVolumeList(final ConfigCategory cat) {
+		final SoundHandler handler = Minecraft.getMinecraft().getSoundHandler();
+		final List<String> sounds = new ArrayList<String>();
+		for (final Object resource : handler.sndRegistry.getKeys())
+			sounds.add(resource.toString());
+		Collections.sort(sounds);
+
+		for (final String sound : sounds) {
+			final Property prop = new Property(sound, "100", Property.Type.INTEGER);
+			prop.setMinValue(0);
+			prop.setMaxValue(200);
+			prop.setDefaultValue(100);
+			prop.setRequiresMcRestart(false);
+			prop.set(MathHelper.floor_float(SoundRegistry.getVolumeScale(sound) * 100));
+			prop.setConfigEntryClass(NumberSliderEntry.class);
+			cat.put(sound, prop);
+		}
 	}
 }

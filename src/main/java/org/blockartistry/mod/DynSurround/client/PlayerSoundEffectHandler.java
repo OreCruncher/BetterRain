@@ -83,7 +83,7 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 
 		return result;
 	}
-	
+
 	private static void resetSounds() {
 		SoundManager.clearSounds();
 		drops.clear();
@@ -136,12 +136,11 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 	}
 
 	/*
-	 * Fired when the player joins a world, such as when the dimension
-	 * changes.
+	 * Fired when the player joins a world, such as when the dimension changes.
 	 */
 	@SubscribeEvent
 	public void playerJoinWorldEvent(final EntityJoinWorldEvent event) {
-		if(event.entity.worldObj.isRemote && EnvironState.isPlayer(event.entity))
+		if (event.entity.worldObj.isRemote && EnvironState.isPlayer(event.entity))
 			resetSounds();
 	}
 
@@ -182,7 +181,8 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 						;
 					if (soundY > 0 && block.getMaterial().isSolid()) {
 						final int distance = y - soundY;
-						SoundManager.playSoundAt(new BlockPos(x, soundY + 1, z), BiomeRegistry.WATER_DRIP, 40 + distance * 2);
+						SoundManager.playSoundAt(new BlockPos(x, soundY + 1, z), BiomeRegistry.WATER_DRIP,
+								40 + distance * 2);
 					}
 				}
 			}
@@ -212,7 +212,6 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 			event.result = new PositionedSoundRecord(StormProperties.getCurrentStormSound(),
 					StormProperties.getCurrentVolume(), sound.getPitch(), sound.getXPosF(), sound.getYPosF(),
 					sound.getZPosF());
-			return;
 		}
 	}
 
