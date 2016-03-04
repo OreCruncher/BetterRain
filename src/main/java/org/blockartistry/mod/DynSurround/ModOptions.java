@@ -360,56 +360,67 @@ public final class ModOptions {
 		ConfigProcessor.process(config, ModOptions.class);
 
 		// CATEGORY: Logging
-		config.setCategoryRequiresMcRestart(CATEGORY_LOGGING_CONTROL, true);
+		config.setCategoryRequiresMcRestart(CATEGORY_LOGGING_CONTROL, false);
+		config.setCategoryRequiresWorldRestart(CATEGORY_LOGGING_CONTROL, false);
 		config.setCategoryComment(CATEGORY_LOGGING_CONTROL, "Defines how Dynamic Surroundings logging will behave");
 		config.setCategoryPropertyOrder(CATEGORY_LOGGING_CONTROL, new ArrayList<String>(loggingSort));
 
 		// CATEGORY: Rain
 		config.setCategoryRequiresMcRestart(CATEGORY_RAIN, false);
+		config.setCategoryRequiresWorldRestart(CATEGORY_RAIN, false);
 		config.setCategoryComment(CATEGORY_RAIN, "Options that control rain effects in the client");
 		config.setCategoryPropertyOrder(CATEGORY_RAIN, new ArrayList<String>(rainSort));
 
 		// CATEGORY: General
 		config.setCategoryRequiresMcRestart(CATEGORY_GENERAL, false);
+		config.setCategoryRequiresWorldRestart(CATEGORY_GENERAL, false);
 		config.setCategoryComment(CATEGORY_GENERAL, "Miscellaneous settings");
 		config.setCategoryPropertyOrder(CATEGORY_GENERAL, new ArrayList<String>(generalSort));
 
 		// CATEGORY: Player
 		config.setCategoryRequiresMcRestart(CATEGORY_PLAYER, false);
+		config.setCategoryRequiresWorldRestart(CATEGORY_PLAYER, false);
 		config.setCategoryComment(CATEGORY_PLAYER, "General options for defining sound and effects the player entity");
 		config.setCategoryPropertyOrder(CATEGORY_PLAYER, new ArrayList<String>(playerSort));
 
 		// CATEGORY: Aurora
 		config.setCategoryRequiresMcRestart(CATEGORY_AURORA, false);
+		config.setCategoryRequiresWorldRestart(CATEGORY_AURORA, false);
 		config.setCategoryComment(CATEGORY_AURORA, "Options that control Aurora behavior and rendering");
 		config.setCategoryPropertyOrder(CATEGORY_AURORA, new ArrayList<String>(auroraSort));
 
 		// CATEGORY: Fog
 		config.setCategoryRequiresMcRestart(CATEGORY_FOG, false);
+		config.setCategoryRequiresWorldRestart(CATEGORY_FOG, false);
 		config.setCategoryComment(CATEGORY_FOG, "Options that control the various fog effects in the client");
 		config.setCategoryPropertyOrder(CATEGORY_FOG, new ArrayList<String>(fogSort));
 
 		// CATEGORY: Biomes
 		config.setCategoryRequiresMcRestart(CATEGORY_BIOMES, false);
+		config.setCategoryRequiresWorldRestart(CATEGORY_BIOMES, false);
 		config.setCategoryComment(CATEGORY_BIOMES, "Options for controlling biome sound/effects");
 		config.setCategoryPropertyOrder(CATEGORY_BIOMES, new ArrayList<String>(biomesSort));
 
 		// CATEGORY: Dimensions
 		config.setCategoryRequiresMcRestart(CATEGORY_DIMENSIONS, false);
+		config.setCategoryRequiresWorldRestart(CATEGORY_DIMENSIONS, false);
 		config.setCategoryComment(CATEGORY_DIMENSIONS,
 				"Options for defining per dimension parameters for Dynamic Surroundings");
 
 		// CATEGORY: Block
 		config.setCategoryRequiresMcRestart(CATEGORY_BLOCK, false);
+		config.setCategoryRequiresWorldRestart(CATEGORY_BLOCK, false);
 		config.setCategoryComment(CATEGORY_BLOCK, "Options for defining block specific sounds/effects");
 
 		// CATEGORY: Sound
 		config.setCategoryRequiresMcRestart(CATEGORY_SOUND, false);
+		config.setCategoryRequiresWorldRestart(CATEGORY_SOUND, false);
 		config.setCategoryComment(CATEGORY_SOUND, "General options for defining sound effects");
 		config.setCategoryPropertyOrder(CATEGORY_SOUND, new ArrayList<String>(soundsSort));
 
 		// CATEGORY: player.potion hud
 		config.setCategoryRequiresMcRestart(CATEGORY_POTION_HUD, false);
+		config.setCategoryRequiresWorldRestart(CATEGORY_POTION_HUD, false);
 		config.setCategoryComment(CATEGORY_POTION_HUD, "Options for the Potion HUD overlay");
 		config.setCategoryPropertyOrder(CATEGORY_POTION_HUD, new ArrayList<String>(potionHudSort));
 

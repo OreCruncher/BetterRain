@@ -61,7 +61,7 @@ public class DynSurroundConfigGui extends GuiConfig {
 	private final ConfigCategory soundVolumeCategory;
 
 	public DynSurroundConfigGui(final GuiScreen parentScreen) {
-		super(parentScreen, new ArrayList<IConfigElement>(), Module.MOD_ID, true, true, Module.MOD_NAME);
+		super(parentScreen, new ArrayList<IConfigElement>(), Module.MOD_ID, false, false, Module.MOD_NAME);
 		this.titleLine2 = this.config.getConfigFile().getAbsolutePath();
 
 		this.configElements.add(getPropertyConfigElement(ModOptions.CATEGORY_AURORA, ModOptions.CONFIG_AURORA_ENABLED,
@@ -159,6 +159,9 @@ public class DynSurroundConfigGui extends GuiConfig {
 	}
 
 	protected void generateSoundList(final ConfigCategory cat) {
+		cat.setRequiresMcRestart(false);
+		cat.setRequiresWorldRestart(false);
+
 		final SoundHandler handler = Minecraft.getMinecraft().getSoundHandler();
 		final List<String> sounds = new ArrayList<String>();
 		for (final Object resource : handler.sndRegistry.getKeys())
@@ -168,13 +171,17 @@ public class DynSurroundConfigGui extends GuiConfig {
 		for (final String sound : sounds) {
 			final Property prop = new Property(sound, "false", Property.Type.BOOLEAN);
 			prop.setDefaultValue(false);
-			prop.setRequiresMcRestart(true);
+			prop.setRequiresMcRestart(false);
+			prop.setRequiresWorldRestart(false);
 			prop.set(SoundRegistry.isSoundBlocked(sound));
 			cat.put(sound, prop);
 		}
 	}
 
 	protected void generateSoundVolumeList(final ConfigCategory cat) {
+		cat.setRequiresMcRestart(false);
+		cat.setRequiresWorldRestart(false);
+		
 		final SoundHandler handler = Minecraft.getMinecraft().getSoundHandler();
 		final List<String> sounds = new ArrayList<String>();
 		for (final Object resource : handler.sndRegistry.getKeys())
@@ -187,6 +194,7 @@ public class DynSurroundConfigGui extends GuiConfig {
 			prop.setMaxValue(200);
 			prop.setDefaultValue(100);
 			prop.setRequiresMcRestart(false);
+			prop.setRequiresWorldRestart(false);
 			prop.set(MathHelper.floor_float(SoundRegistry.getVolumeScale(sound) * 100));
 			prop.setConfigEntryClass(NumberSliderEntry.class);
 			cat.put(sound, prop);
