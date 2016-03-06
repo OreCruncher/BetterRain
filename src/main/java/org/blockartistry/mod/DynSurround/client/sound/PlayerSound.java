@@ -40,7 +40,7 @@ import net.minecraftforge.fml.relauncher.Side;
 class PlayerSound extends MovingSound {
 
 	private static final float DONE_VOLUME_THRESHOLD = 0.001F;
-	private static final float FADE_AMOUNT = 0.005F;
+	private static final float FADE_AMOUNT = 0.01F;
 	private static final Random RANDOM = new XorShiftRandom();
 
 	private final SoundEffect sound;

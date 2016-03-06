@@ -37,7 +37,6 @@ public final class SoundRegistry {
 
 	private static final List<Pattern> cullSoundNamePatterns = new ArrayList<Pattern>();
 	private static final List<Pattern> blockSoundNamePatterns = new ArrayList<Pattern>();
-
 	private static final TObjectFloatHashMap<String> volumeControl = new TObjectFloatHashMap<String>();
 
 	public static void initialize() {
@@ -48,16 +47,16 @@ public final class SoundRegistry {
 		for (final String sound : ModOptions.culledSounds) {
 			try {
 				cullSoundNamePatterns.add(Pattern.compile(sound));
-			} catch (final Exception ex) {
-				ModLog.info("Unable to compile pattern for cull sound '%s'", sound);
+			} catch (final Throwable ex) {
+				ModLog.warn("Unable to compile pattern for culled sound '%s'", sound);
 			}
 		}
 
 		for (final String sound : ModOptions.blockedSounds) {
 			try {
 				blockSoundNamePatterns.add(Pattern.compile(sound));
-			} catch (final Exception ex) {
-				ModLog.info("Unable to compile pattern for blocked sound '%s'", sound);
+			} catch (final Throwable ex) {
+				ModLog.warn("Unable to compile pattern for blocked sound '%s'", sound);
 			}
 		}
 

@@ -104,7 +104,7 @@ public final class SoundEffect {
 	}
 
 	public SoundEffect(final SoundConfig record) {
-		this.sound = record.sound;
+		this.sound = StringUtils.isEmpty(record.sound) ? "MISSING SOUND" : record.sound;
 		this.conditions = StringUtils.isEmpty(record.conditions) ? ".*" : record.conditions;
 		this.volume = record.volume == null ? 1.0F : record.volume.floatValue();
 		this.pitch = record.pitch == null ? 1.0F : record.pitch.floatValue();

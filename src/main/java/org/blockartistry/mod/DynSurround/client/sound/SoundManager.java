@@ -199,9 +199,24 @@ public class SoundManager {
 	// for each individual sound.
 	public static float getNormalizedVolume(final ISound sound, final SoundPoolEntry poolEntry,
 			final SoundCategory category) {
-		final float volumeScale = SoundRegistry.getVolumeScale(sound.getSoundLocation().toString());
-		return (float) MathHelper.clamp_double((double) sound.getVolume() * poolEntry.getVolume()
-				* (double) getSoundCategoryVolume(category) * volumeScale, 0.0D, 1.0D);
+		float result = 0.0F;
+		if (sound == null) {
+			ModLog.warn("getNormalizedVolume(): Null sound parameter");
+		} else if (poolEntry == null) {
+			ModLog.warn("getNormalizedVolume(): Null poolEntry parameter");
+		} else if (category == null) {
+			ModLog.warn("getNormalizedVolume(): Null category parameter");
+		} else {
+			final String soundName = sound.getSoundLocation().toString();
+			try {
+				final float volumeScale = SoundRegistry.getVolumeScale(soundName);
+				result = (float) MathHelper.clamp_double((double) sound.getVolume() * poolEntry.getVolume()
+						* (double) getSoundCategoryVolume(category) * volumeScale, 0.0D, 1.0D);
+			} catch (final Throwable t) {
+				ModLog.error("getNormalizedVolume(): Unable to calculate " + soundName, t);
+			}
+		}
+		return result;
 	}
 
 	public static float getSoundCategoryVolume(final SoundCategory category) {
