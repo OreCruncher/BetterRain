@@ -115,13 +115,13 @@ public class DynSurroundConfigGui extends GuiConfig {
 
 	@SuppressWarnings("rawtypes")
 	private ConfigElement getCategoryConfigElement(final String category, final String label) {
-		final ConfigCategory cat = config.getCategory(category);
+		final ConfigCategory cat = this.config.getCategory(category);
 		return new MyConfigElement(cat, label);
 	}
 
 	@SuppressWarnings("rawtypes")
 	private ConfigElement getPropertyConfigElement(final String category, final String property, final String label) {
-		final Property prop = config.getCategory(category).get(property);
+		final Property prop = this.config.getCategory(category).get(property);
 		return new MyConfigElement(prop, label);
 	}
 
@@ -134,8 +134,8 @@ public class DynSurroundConfigGui extends GuiConfig {
 		if (button.id == 2000) {
 			saveSoundList();
 			saveSoundVolumeList();
-			config.save();
-			ConfigProcessor.process(config, ModOptions.class);
+			this.config.save();
+			ConfigProcessor.process(this.config, ModOptions.class);
 			SoundRegistry.initialize();
 		}
 	}
