@@ -30,8 +30,10 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang3.StringUtils;
 import org.blockartistry.mod.DynSurround.ModLog;
 import org.blockartistry.mod.DynSurround.ModOptions;
+import org.blockartistry.mod.DynSurround.event.SoundConfigEvent;
 
 import gnu.trove.map.hash.TObjectFloatHashMap;
+import net.minecraftforge.common.MinecraftForge;
 
 public final class SoundRegistry {
 
@@ -71,6 +73,8 @@ public final class SoundRegistry {
 				}
 			}
 		}
+		
+		MinecraftForge.EVENT_BUS.post(new SoundConfigEvent.Reload());
 	}
 
 	private SoundRegistry() {
