@@ -31,6 +31,7 @@ import org.blockartistry.mod.DynSurround.ModLog;
 import org.blockartistry.mod.DynSurround.ModOptions;
 import org.blockartistry.mod.DynSurround.client.EnvironStateHandler.EnvironState;
 import org.blockartistry.mod.DynSurround.data.SoundRegistry;
+import org.blockartistry.mod.DynSurround.event.SoundConfigEvent;
 
 import cpw.mods.fml.common.eventhandler.EventPriority;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
@@ -46,7 +47,6 @@ import net.minecraftforge.client.event.sound.PlaySoundEvent17;
 @SideOnly(Side.CLIENT)
 public class SoundBlockHandler implements IClientEffectHandler {
 
-	private boolean initialized = false;
 	private final List<String> soundsToBlock = new ArrayList<String>();
 	private final TObjectIntHashMap<String> soundCull = new TObjectIntHashMap<String>();
 
@@ -55,20 +55,7 @@ public class SoundBlockHandler implements IClientEffectHandler {
 
 	@Override
 	public void process(final World world, final EntityPlayer player) {
-		if (!this.initialized) {
-			this.initialized = true;
-			final SoundHandler handler = Minecraft.getMinecraft().getSoundHandler();
-			for (final Object resource : handler.sndRegistry.getKeys()) {
-				final String rs = resource.toString();
-				if (SoundRegistry.isSoundBlocked(rs)) {
-					ModLog.debug("Blocking sound '%s'", rs);
-					this.soundsToBlock.add(rs);
-				} else if (SoundRegistry.isSoundCulled(rs)) {
-					ModLog.debug("Culling sound '%s'", rs);
-					this.soundCull.put(rs, -ModOptions.soundCullingThreshold);
-				}
-			}
-		}
+
 	}
 
 	@Override
@@ -76,6 +63,23 @@ public class SoundBlockHandler implements IClientEffectHandler {
 		return true;
 	}
 
+	@SubscribeEvent
+	public void soundConfigReload(final SoundConfigEvent.Reload event) {
+		this.soundsToBlock.clear();
+		this.soundCull.clear();
+		final SoundHandler handler = Minecraft.getMinecraft().getSoundHandler();
+		for (final Object resource : handler.sndRegistry.getKeys()) {
+			final String rs = resource.toString();
+			if (SoundRegistry.isSoundBlocked(rs)) {
+				ModLog.debug("Blocking sound '%s'", rs);
+				this.soundsToBlock.add(rs);
+			} else if (SoundRegistry.isSoundCulled(rs)) {
+				ModLog.debug("Culling sound '%s'", rs);
+				this.soundCull.put(rs, -ModOptions.soundCullingThreshold);
+			}
+		}
+	}
+	
 	@SubscribeEvent(priority = EventPriority.HIGHEST)
 	public void soundEvent(final PlaySoundEvent17 event) {
 		if (event.sound == null)
