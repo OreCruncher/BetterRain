@@ -63,7 +63,7 @@ public final class ForgeDictionary {
 			"blockHeeEndium" };
 
 	private static final String[] woodBlocks = { "logWood", "planksWood", "slabWood", "stairWood", "plankBamboo",
-			"slabBamboo", "stairBamboo", "craftingTableWood" };
+			"slabBamboo", "stairBamboo", "craftingTableWood", "plankWood" };
 
 	private static final String[] saplings = { "treeSaplings", "saplingTree" };
 
