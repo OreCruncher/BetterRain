@@ -432,7 +432,8 @@ public class EnvironStateHandler implements IClientEffectHandler {
 
 	@SubscribeEvent
 	public void onItemUse(final PlayerUseItemEvent.Start event) {
-		if (BOW_PULL == null || event.entityPlayer == null || event.entityPlayer.worldObj == null)
+		if (BOW_PULL == null || event.entityPlayer == null || event.entityPlayer.worldObj == null || event.item == null
+				|| event.item.getItem() == null)
 			return;
 
 		if (event.entityPlayer.worldObj.isRemote && event.item.getItem() instanceof ItemBow) {
