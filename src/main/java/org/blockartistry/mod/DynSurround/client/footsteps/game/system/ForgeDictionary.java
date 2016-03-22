@@ -52,7 +52,8 @@ public final class ForgeDictionary {
 			"oreApatite", "oreSalt", "oreZinc", "orePeridot", "oreSilicon", "oreMoldavite", "oreBloodstone",
 			"oreCinnabar", "oreYellorite", "oreTemporal", "oreAmethyst", "oreAmber", "oreMalachite", "oreTanzanite",
 			"oreTritanium", "oreTungsten", "oreTelsalite", "oreCheese", "denseorePeridot", "denseoreZinc",
-			"denseoreRuby", "denseoreSapphire", "denseoreAmethyst", "denseoreTungsten", "oreHeeEndium" };
+			"denseoreRuby", "denseoreSapphire", "denseoreAmethyst", "denseoreTungsten", "oreHeeEndium", "oreStarSteel",
+			"oreColdIron", "oreAdamantine", "oreMercury" };
 
 	private static final String[] metalBlocks = { "blockIron", "blockGold", "blockCopper", "blockTin", "blockSilver",
 			"blockLead", "blockNickle", "blockPlatinum", "blockMithril", "blockElectrum", "blockInvar", "blockBronze",
@@ -60,7 +61,7 @@ public final class ForgeDictionary {
 			"blockOsmium", "blockUranium", "blockBrass", "blockZinc", "blockConstantan", "slabConstantan", "slabCopper",
 			"slabSilver", "slabElectrum", "slabNickel", "slabAluminum", "blockAluminum", "blockYellorium",
 			"blockCyanite", "blockBlutonium", "blockLudicrite", "blockTemporal", "blockTritanium", "blockTungsten",
-			"blockHeeEndium" };
+			"blockHeeEndium", "blockPsiMetal", "blockStarSteel", "blockAdamantine", "blockColdIron", "blockAquarium" };
 
 	private static final String[] woodBlocks = { "logWood", "planksWood", "slabWood", "stairWood", "plankBamboo",
 			"slabBamboo", "stairBamboo", "craftingTableWood", "plankWood" };
@@ -78,7 +79,7 @@ public final class ForgeDictionary {
 	private static final String[] sandstoneBlocks = { "sandstone", "blockPrismarine", "limestone", "stoneLimestone",
 			"blockLimestone" };
 
-	private static final String[] sandBlocks = { "sand", "blockSalt" };
+	private static final String[] sandBlocks = { "sand", "blockSalt", "blockPsiDust" };
 
 	private static final String[] woodChests = { "chestWood", "chestTrapped" };
 
@@ -94,7 +95,7 @@ public final class ForgeDictionary {
 	private static final String[] compositeBlocks = { "blockDiamond", "blockEmerald", "blockPeridot", "blockRuby",
 			"blockSapphire", "blockVinteum", "blockChimerite", "blockBlueTopaz", "blockMoonstone", "blockSunstone",
 			"blockAmethyst", "blockMoldavite", "blockAmber", "blockTanzanite", "blockMalachite", "blockChalcedony",
-			"blockTeslaite", "blockJade" };
+			"blockTeslaite", "blockJade", "blockPsiGem" };
 
 	private static final String[] marbleBlocks = { "blockQuartz", "marble", "stoneMarble", "blockMarble" };
 
