@@ -53,7 +53,7 @@ public final class ForgeDictionary {
 			"oreCinnabar", "oreYellorite", "oreTemporal", "oreAmethyst", "oreAmber", "oreMalachite", "oreTanzanite",
 			"oreTritanium", "oreTungsten", "oreTelsalite", "oreCheese", "denseorePeridot", "denseoreZinc",
 			"denseoreRuby", "denseoreSapphire", "denseoreAmethyst", "denseoreTungsten", "oreHeeEndium", "oreStarSteel",
-			"oreColdIron", "oreAdamantine", "oreMercury" };
+			"oreColdIron", "oreAdamantine", "oreMercury", "oreFossil" };
 
 	private static final String[] metalBlocks = { "blockIron", "blockGold", "blockCopper", "blockTin", "blockSilver",
 			"blockLead", "blockNickle", "blockPlatinum", "blockMithril", "blockElectrum", "blockInvar", "blockBronze",
@@ -61,7 +61,14 @@ public final class ForgeDictionary {
 			"blockOsmium", "blockUranium", "blockBrass", "blockZinc", "blockConstantan", "slabConstantan", "slabCopper",
 			"slabSilver", "slabElectrum", "slabNickel", "slabAluminum", "blockAluminum", "blockYellorium",
 			"blockCyanite", "blockBlutonium", "blockLudicrite", "blockTemporal", "blockTritanium", "blockTungsten",
-			"blockHeeEndium", "blockPsiMetal", "blockStarSteel", "blockAdamantine", "blockColdIron", "blockAquarium" };
+			"blockHeeEndium", "blockPsiMetal", "blockStarsteel", "blockAdamantine", "blockColdiron", "blockAquarium",
+			"plateAdamantine", "plateBrass", "plateAquarium", "plateBronze", "plateStarsteel", "plateCopper", "plateGold", 
+			"plateElectrum", "plateGold", "plateInvar", "plateIron", "plateLead", "plateMithril", "plateNickel", 
+			"plateTin", "plateSteel", "plateSilver", "plateZinc", "bars", "trapdoorAdamantine", "trapdoorMithril", "trapdoorSilver", 
+			"trapdoorAquarium", "trapdoorInvar", "trapdoorBrass", "trapdoorBronze", "trapdoorColdiron", "trapdoorElectrum", "trapdoorLead", 
+			"trapdoorNickel", "trapdoorStarsteel", "trapdoorTin", "trapdoorSteel", "doorAdamantine", "doorAquarium", "doorBrass", "doorBronze",
+			"doorColdiron", "doorCopper", "doorElectrum", "doorInvar", "doorLead", "doorMithril", "doorNickel", "doorSilver", "doorStarsteel", 
+			"doorSteel", "doorTin", "blockWroughtIron" };
 
 	private static final String[] woodBlocks = { "logWood", "planksWood", "slabWood", "stairWood", "plankBamboo",
 			"slabBamboo", "stairBamboo", "craftingTableWood", "plankWood" };
@@ -74,7 +81,7 @@ public final class ForgeDictionary {
 
 	private static final String[] stoneBlocks = { "stone", "cobblestone", "blockFuelCoke", "concrete", "blockCoal",
 			"andesite", "blockAndesite", "stoneAndesite", "stoneDiorite", "diorite", "blockDiorite", "blockGranite",
-			"stoneGranite" };
+			"stoneGranite", "blockCharcoal" };
 
 	private static final String[] sandstoneBlocks = { "sandstone", "blockPrismarine", "limestone", "stoneLimestone",
 			"blockLimestone" };
