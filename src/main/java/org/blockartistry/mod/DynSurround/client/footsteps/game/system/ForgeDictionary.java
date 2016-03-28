@@ -62,13 +62,14 @@ public final class ForgeDictionary {
 			"slabSilver", "slabElectrum", "slabNickel", "slabAluminum", "blockAluminum", "blockYellorium",
 			"blockCyanite", "blockBlutonium", "blockLudicrite", "blockTemporal", "blockTritanium", "blockTungsten",
 			"blockHeeEndium", "blockPsiMetal", "blockStarsteel", "blockAdamantine", "blockColdiron", "blockAquarium",
-			"plateAdamantine", "plateBrass", "plateAquarium", "plateBronze", "plateStarsteel", "plateCopper", "plateGold", 
-			"plateElectrum", "plateGold", "plateInvar", "plateIron", "plateLead", "plateMithril", "plateNickel", 
-			"plateTin", "plateSteel", "plateSilver", "plateZinc", "bars", "trapdoorAdamantine", "trapdoorMithril", "trapdoorSilver", 
-			"trapdoorAquarium", "trapdoorInvar", "trapdoorBrass", "trapdoorBronze", "trapdoorColdiron", "trapdoorElectrum", "trapdoorLead", 
-			"trapdoorNickel", "trapdoorStarsteel", "trapdoorTin", "trapdoorSteel", "doorAdamantine", "doorAquarium", "doorBrass", "doorBronze",
-			"doorColdiron", "doorCopper", "doorElectrum", "doorInvar", "doorLead", "doorMithril", "doorNickel", "doorSilver", "doorStarsteel", 
-			"doorSteel", "doorTin", "blockWroughtIron" };
+			"plateAdamantine", "plateBrass", "plateAquarium", "plateBronze", "plateStarsteel", "plateCopper",
+			"plateGold", "plateElectrum", "plateGold", "plateInvar", "plateIron", "plateLead", "plateMithril",
+			"plateNickel", "plateTin", "plateSteel", "plateSilver", "plateZinc", "bars", "trapdoorAdamantine",
+			"trapdoorMithril", "trapdoorSilver", "trapdoorAquarium", "trapdoorInvar", "trapdoorBrass", "trapdoorBronze",
+			"trapdoorColdiron", "trapdoorElectrum", "trapdoorLead", "trapdoorNickel", "trapdoorStarsteel",
+			"trapdoorTin", "trapdoorSteel", "doorAdamantine", "doorAquarium", "doorBrass", "doorBronze", "doorColdiron",
+			"doorCopper", "doorElectrum", "doorInvar", "doorLead", "doorMithril", "doorNickel", "doorSilver",
+			"doorStarsteel", "doorSteel", "doorTin", "blockWroughtIron" };
 
 	private static final String[] woodBlocks = { "logWood", "planksWood", "slabWood", "stairWood", "plankBamboo",
 			"slabBamboo", "stairBamboo", "craftingTableWood", "plankWood" };
