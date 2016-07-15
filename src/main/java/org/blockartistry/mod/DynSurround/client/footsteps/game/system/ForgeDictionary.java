@@ -53,7 +53,7 @@ public final class ForgeDictionary {
 			"oreCinnabar", "oreYellorite", "oreTemporal", "oreAmethyst", "oreAmber", "oreMalachite", "oreTanzanite",
 			"oreTritanium", "oreTungsten", "oreTelsalite", "oreCheese", "denseorePeridot", "denseoreZinc",
 			"denseoreRuby", "denseoreSapphire", "denseoreAmethyst", "denseoreTungsten", "oreHeeEndium", "oreStarSteel",
-			"oreColdIron", "oreAdamantine", "oreMercury", "oreFossil" };
+			"oreColdIron", "oreAdamantine", "oreMercury", "oreFossil", "oreShadow" };
 
 	private static final String[] metalBlocks = { "blockIron", "blockGold", "blockCopper", "blockTin", "blockSilver",
 			"blockLead", "blockNickle", "blockPlatinum", "blockMithril", "blockElectrum", "blockInvar", "blockBronze",
@@ -69,7 +69,7 @@ public final class ForgeDictionary {
 			"trapdoorColdiron", "trapdoorElectrum", "trapdoorLead", "trapdoorNickel", "trapdoorStarsteel",
 			"trapdoorTin", "trapdoorSteel", "doorAdamantine", "doorAquarium", "doorBrass", "doorBronze", "doorColdiron",
 			"doorCopper", "doorElectrum", "doorInvar", "doorLead", "doorMithril", "doorNickel", "doorSilver",
-			"doorStarsteel", "doorSteel", "doorTin", "blockWroughtIron" };
+			"doorStarsteel", "doorSteel", "doorTin", "blockWroughtIron", "blockVoid" };
 
 	private static final String[] woodBlocks = { "logWood", "planksWood", "slabWood", "stairWood", "plankBamboo",
 			"slabBamboo", "stairBamboo", "craftingTableWood", "plankWood" };
@@ -87,7 +87,7 @@ public final class ForgeDictionary {
 	private static final String[] sandstoneBlocks = { "sandstone", "blockPrismarine", "limestone", "stoneLimestone",
 			"blockLimestone" };
 
-	private static final String[] sandBlocks = { "sand", "blockSalt", "blockPsiDust" };
+	private static final String[] sandBlocks = { "sand", "blockSalt", "blockPsiDust", "denseSand", "dustAsh" };
 
 	private static final String[] woodChests = { "chestWood", "chestTrapped" };
 
@@ -103,7 +103,7 @@ public final class ForgeDictionary {
 	private static final String[] compositeBlocks = { "blockDiamond", "blockEmerald", "blockPeridot", "blockRuby",
 			"blockSapphire", "blockVinteum", "blockChimerite", "blockBlueTopaz", "blockMoonstone", "blockSunstone",
 			"blockAmethyst", "blockMoldavite", "blockAmber", "blockTanzanite", "blockMalachite", "blockChalcedony",
-			"blockTeslaite", "blockJade", "blockPsiGem" };
+			"blockTeslaite", "blockJade", "blockPsiGem", "blockNetherStar" };
 
 	private static final String[] marbleBlocks = { "blockQuartz", "marble", "stoneMarble", "blockMarble" };
 
