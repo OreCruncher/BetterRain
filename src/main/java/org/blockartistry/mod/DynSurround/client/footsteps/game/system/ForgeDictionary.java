@@ -74,11 +74,11 @@ public final class ForgeDictionary {
 	private static final String[] woodBlocks = { "logWood", "planksWood", "slabWood", "stairWood", "plankBamboo",
 			"slabBamboo", "stairBamboo", "craftingTableWood", "plankWood", "genericWood" };
 
-	private static final String[] saplings = { "treeSaplings", "saplingTree", "genericSapling" };
+	private static final String[] saplings = { "treeSaplings", "saplingTree", "genericSapling", "sapling", "treeSapling" };
 
 	private static final String[] glassBlocks = { "blockGlass", "genericGlass" };
 
-	private static final String[] leafBlocks = { "treeLeaves", "leavesTree", "treeBambooLeaves", "genericLeaves" };
+	private static final String[] leafBlocks = { "treeLeaves", "leavesTree", "treeBambooLeaves", "genericLeaves", "leaves" };
 
 	private static final String[] stoneBlocks = { "stone", "cobblestone", "blockFuelCoke", "concrete", "blockCoal",
 			"andesite", "blockAndesite", "stoneAndesite", "stoneDiorite", "diorite", "blockDiorite", "blockGranite",
