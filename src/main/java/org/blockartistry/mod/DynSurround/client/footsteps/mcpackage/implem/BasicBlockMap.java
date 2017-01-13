@@ -44,6 +44,7 @@ import gnu.trove.map.hash.TCustomHashMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import gnu.trove.strategy.IdentityHashingStrategy;
 import net.minecraft.block.Block;
+import net.minecraft.init.Blocks;
 
 @SideOnly(Side.CLIENT)
 public class BasicBlockMap implements IBlockMap {
@@ -112,6 +113,8 @@ public class BasicBlockMap implements IBlockMap {
 	}
 
 	public BasicBlockMap() {
+		// Air is not an emitter, always!
+		this.put(Blocks.air, -1, null, "NOT_EMITTER");
 	}
 
 	@Override
@@ -168,7 +171,7 @@ public class BasicBlockMap implements IBlockMap {
 		if (matcher.matches()) {
 			final String blockName = matcher.group(1);
 			final Block block = MCHelper.getBlockNameRaw(blockName);
-			if (block != null) {
+			if (block != null && block != Blocks.air) {
 				final int meta = matcher.group(2) == null ? -1 : Integer.parseInt(matcher.group(2));
 				final String substrate = matcher.group(3);
 				if (value.startsWith("#"))

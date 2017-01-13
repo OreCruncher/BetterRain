@@ -45,4 +45,8 @@ public final class MyUtils {
 
 		return result;
 	}
+	
+	public static long currentTimeMillis() {
+		return System.nanoTime() / 1000000L;
+	}
 }

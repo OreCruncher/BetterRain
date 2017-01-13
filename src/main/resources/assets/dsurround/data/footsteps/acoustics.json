@@ -1248,12 +1248,12 @@
 			"walk"  : {
 				"name"  : "metalbar.metalbar_walk",
 				"pitch_min" : 80,
-				"pitch_min" : 85
+				"pitch_max" : 85
 			},
 			"wander": {
 				"name"  : "metalbar.metalbar_wander",
 				"pitch_min" : 80,
-				"pitch_min" : 85
+				"pitch_max" : 85
 			},
 			"land"  : {
 				"type"  : "simultaneous",
@@ -1261,14 +1261,14 @@
 					{
 						"name"  : "metalbar.metalbar_walk",
 						"pitch_min" : 80,
-						"pitch_min" : 85
+						"pitch_max" : 85
 					},
 					{
 						"type"  : "delayed",
 						"delay" : 30,
 						"name"  : "metalbar.metalbar_walk",
 						"pitch_min" : 80,
-						"pitch_min" : 85
+						"pitch_max" : 85
 					}
 				]
 			}

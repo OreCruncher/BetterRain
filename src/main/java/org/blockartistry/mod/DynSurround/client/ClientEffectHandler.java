@@ -114,6 +114,7 @@ public class ClientEffectHandler {
 		}
 	}
 
+	@SuppressWarnings("unused")
 	private static boolean okToHook(final WorldProvider provider) {
 		if (provider.hasNoSky)
 			return false;
@@ -136,9 +137,9 @@ public class ClientEffectHandler {
 
 		// Shim the provider so we can tap into the
 		// sky and cloud stuff.
-		if (ModOptions.enableFancyCloudHandling && okToHook(e.world.provider)) {
-			e.world.provider = new WorldProviderShim(e.world, e.world.provider);
-		}
+//		if (ModOptions.enableFancyCloudHandling && okToHook(e.world.provider)) {
+//			e.world.provider = new WorldProviderShim(e.world, e.world.provider);
+//		}
 	}
 
 }

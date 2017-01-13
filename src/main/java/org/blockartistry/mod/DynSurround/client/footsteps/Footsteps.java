@@ -67,9 +67,11 @@ public class Footsteps implements IResourceManagerReloadListener, IClientEffectH
 	// System
 	private PFResourcePackDealer dealer = new PFResourcePackDealer();
 	private PFIsolator isolator;
+	private boolean isFirstTime = true;
 
 	public Footsteps() {
 		INSTANCE = this;
+		this.isolator = new PFIsolator();
 	}
 
 	public void reloadEverything() {
@@ -205,8 +207,10 @@ public class Footsteps implements IResourceManagerReloadListener, IClientEffectH
 
 	@Override
 	public void process(World world, EntityPlayer player) {
-		if (this.isolator == null)
+		if (this.isFirstTime) {
+			this.isFirstTime = false;
 			reloadEverything();
+		}
 		this.isolator.onFrame();
 		player.nextStepDistance = Integer.MAX_VALUE;
 	}

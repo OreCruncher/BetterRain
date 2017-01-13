@@ -30,6 +30,7 @@ import org.blockartistry.mod.DynSurround.client.footsteps.mcpackage.interfaces.I
 import org.blockartistry.mod.DynSurround.client.footsteps.mcpackage.interfaces.IIsolator;
 import org.blockartistry.mod.DynSurround.client.footsteps.mcpackage.interfaces.IVariator;
 import org.blockartistry.mod.DynSurround.client.footsteps.mcpackage.interfaces.IVariatorSettable;
+import org.blockartistry.mod.DynSurround.util.MyUtils;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -89,11 +90,11 @@ public class PFReaderH implements IGenerator, IVariatorSettable {
 		final float diff = lastReference - reference;
 		lastReference = reference;
 		if (!isImmobile && diff == 0f) {
-			timeImmobile = System.currentTimeMillis();
+			timeImmobile = MyUtils.currentTimeMillis();
 			isImmobile = true;
 		} else if (isImmobile && diff != 0f) {
 			isImmobile = false;
-			return System.currentTimeMillis() - timeImmobile > VAR.IMMOBILE_DURATION;
+			return MyUtils.currentTimeMillis() - timeImmobile > VAR.IMMOBILE_DURATION;
 		}
 
 		return false;
@@ -259,10 +260,10 @@ public class PFReaderH implements IGenerator, IVariatorSettable {
 	}
 
 	private void simulateBrushes(final EntityPlayer ply) {
-		if (brushesTime > System.currentTimeMillis())
+		if (brushesTime > MyUtils.currentTimeMillis())
 			return;
 
-		brushesTime = System.currentTimeMillis() + 100;
+		brushesTime = MyUtils.currentTimeMillis() + 100;
 
 		if ((ply.motionX == 0d && ply.motionZ == 0d) || ply.isSneaking())
 			return;

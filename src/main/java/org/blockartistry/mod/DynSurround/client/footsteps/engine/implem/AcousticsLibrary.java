@@ -36,7 +36,6 @@ import org.blockartistry.mod.DynSurround.client.footsteps.engine.interfaces.INam
 import org.blockartistry.mod.DynSurround.client.footsteps.engine.interfaces.IOptions;
 import org.blockartistry.mod.DynSurround.client.footsteps.engine.interfaces.ISoundPlayer;
 import org.blockartistry.mod.DynSurround.client.footsteps.game.system.Association;
-
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -60,7 +59,7 @@ public abstract class AcousticsLibrary implements ILibrary {
 	@Override
 	public void playAcoustic(final Object location, final String acousticName, final EventType event,
 			final IOptions inputOptions) {
-		if(StringUtils.isEmpty(acousticName)) {
+		if (StringUtils.isEmpty(acousticName)) {
 			ModLog.debug("Attempt to play acoustic with no name");
 			return;
 		}

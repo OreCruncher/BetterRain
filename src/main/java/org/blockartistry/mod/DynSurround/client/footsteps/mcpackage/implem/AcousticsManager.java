@@ -39,6 +39,7 @@ import org.blockartistry.mod.DynSurround.client.footsteps.engine.interfaces.ISou
 import org.blockartistry.mod.DynSurround.client.footsteps.game.system.Association;
 import org.blockartistry.mod.DynSurround.client.footsteps.mcpackage.interfaces.IDefaultStepPlayer;
 import org.blockartistry.mod.DynSurround.client.footsteps.mcpackage.interfaces.IIsolator;
+import org.blockartistry.mod.DynSurround.util.MyUtils;
 import org.blockartistry.mod.DynSurround.util.XorShiftRandom;
 
 import cpw.mods.fml.relauncher.Side;
@@ -59,7 +60,7 @@ public class AcousticsManager extends AcousticsLibrary implements ISoundPlayer, 
 	private static final Random RANDOM = new XorShiftRandom();
 	private static final boolean USING_LATENESS = true;
 	private static final boolean USING_EARLYNESS = true;
-	private static final float LATENESS_THRESHOLD_DIVIDER = 1.5f;
+	private static final float LATENESS_THRESHOLD_DIVIDER = 1.2f;
 	private static final double EARLYNESS_THRESHOLD_POW = 0.75d;
 
 	private final List<PendingSound> pending = new ArrayList<PendingSound>();
@@ -100,7 +101,7 @@ public class AcousticsManager extends AcousticsLibrary implements ISoundPlayer, 
 				}
 
 				pending.add(
-						new PendingSound(location, soundName, volume, pitch, null, System.currentTimeMillis() + delay,
+						new PendingSound(location, soundName, volume, pitch, null, MyUtils.currentTimeMillis() + delay,
 								options.hasOption(Option.SKIPPABLE) ? -1 : (Long) options.getOption(Option.DELAY_MAX)));
 			} else {
 				actuallyPlaySound((Entity) location, soundName, volume, pitch);
@@ -129,11 +130,11 @@ public class AcousticsManager extends AcousticsLibrary implements ISoundPlayer, 
 
 	@Override
 	public void think() {
-		if (pending.isEmpty() || System.currentTimeMillis() < minimum)
+		if (pending.isEmpty() || MyUtils.currentTimeMillis() < minimum)
 			return;
 
 		long newMinimum = Long.MAX_VALUE;
-		long time = System.currentTimeMillis();
+		long time = MyUtils.currentTimeMillis();
 
 		Iterator<PendingSound> iter = pending.iterator();
 		while (iter.hasNext()) {
