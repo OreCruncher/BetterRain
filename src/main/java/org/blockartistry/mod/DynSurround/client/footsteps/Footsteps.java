@@ -217,8 +217,10 @@ public class Footsteps implements IResourceManagerReloadListener, IClientEffectH
 
 	@SubscribeEvent(priority = EventPriority.LOWEST)
 	public void onWorldUnload(final WorldEvent.Unload event) {
-		if (event.world.provider.dimensionId == 0)
+		if (event.world.isRemote && event.world.provider.dimensionId == 0) {
+			this.isFirstTime = true;
 			this.isolator = null;
+		}
 	}
 
 	@Override
