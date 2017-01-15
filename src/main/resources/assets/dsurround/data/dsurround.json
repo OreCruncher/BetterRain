@@ -54,8 +54,7 @@
 			"sounds":[
 				{
 					"sound":"dsurround:crickets",
-					"conditions":"(?i)(?!.*#raining#.*).*#night#.*",
-					"volume":0.1
+					"conditions":"(?i)(?!.*#raining#.*).*#night#.*"
 				},
 				{
 					"sound":"dsurround:insectbuzz",
@@ -90,8 +89,7 @@
 				},
 				{
 					"sound":"dsurround:crickets",
-					"conditions":"(?i)(?!.*#raining#.*).*#night#.*",
-					"volume":0.1
+					"conditions":"(?i)(?!.*#raining#.*).*#night#.*"
 				},
 				{
 					"sound":"dsurround:owl",
@@ -190,8 +188,7 @@
 			"spotSoundChance":600,
 			"sounds":[
 				{
-					"sound":"dsurround:crickets",
-					"volume":0.1
+					"sound":"dsurround:crickets"
 				},
 				{
 					"sound":"dsurround:insectbuzz",
@@ -210,8 +207,7 @@
 			"sounds":[
 				{
 					"sound":"dsurround:crickets",
-					"conditions":"(?i).*#night#.*",
-					"volume":0.1
+					"conditions":"(?i).*#night#.*"
 				},
 				{
 					"sound":"dsurround:insectbuzz",
