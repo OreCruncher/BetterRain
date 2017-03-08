@@ -27,24 +27,28 @@ import java.util.Random;
 
 import org.blockartistry.mod.DynSurround.ModOptions;
 import org.blockartistry.mod.DynSurround.client.EnvironStateHandler.EnvironState;
+import org.blockartistry.mod.DynSurround.util.MyUtils;
 import org.blockartistry.mod.DynSurround.util.XorShiftRandom;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.audio.MovingSound;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.MathHelper;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Vec3;
 
 @SideOnly(Side.CLIENT)
 class PlayerSound extends MovingSound {
 
 	private static final float DONE_VOLUME_THRESHOLD = 0.001F;
-	private static final float FADE_AMOUNT = 0.01F;
+	private static final float FADE_AMOUNT = 0.015F;
 	private static final Random RANDOM = new XorShiftRandom();
 
 	private final SoundEffect sound;
 	private boolean isFading;
+	private float maxVolume;
+	private boolean isDonePlaying;
+	private long lastTick;
 
 	public PlayerSound(final SoundEffect sound) {
 		super(new ResourceLocation(sound.sound));
@@ -52,54 +56,88 @@ class PlayerSound extends MovingSound {
 		// Don't set volume to 0; MC will optimize out
 		this.sound = sound;
 		this.volume = sound.volume;
+		this.maxVolume = sound.getVolume();
+		this.volume = DONE_VOLUME_THRESHOLD * 2;
 		this.field_147663_c = sound.getPitch(RANDOM);
 		this.repeat = sound.repeatDelay == 0;
 
 		// Repeat delay
 		this.field_147665_h = 0;
+		
+		this.lastTick = EnvironState.getTickCounter() - 1;
 
-		final EntityPlayer player = EnvironState.getPlayer();
-		// Initial position
-		this.xPosF = MathHelper.floor_double(player.posX);
-		this.yPosF = MathHelper.floor_double(player.posY + 1);
-		this.zPosF = MathHelper.floor_double(player.posZ);
+		updateLocation();
 	}
 
 	public void fadeAway() {
 		this.isFading = true;
+	}
+	
+	public boolean isFading() {
+		return this.isFading;
+	}
+
+	public boolean isDonePlaying() {
+		return this.isDonePlaying;
 	}
 
 	public boolean sameSound(final SoundEffect snd) {
 		return this.sound.equals(snd);
 	}
 
+	public void updateLocation() {
+		final AxisAlignedBB box = EnvironState.getPlayer().boundingBox;
+		final Vec3 point = MyUtils.getCenter(box);
+		this.xPosF = (float) point.xCoord;
+		this.yPosF = (float) box.minY;
+		this.zPosF = (float) point.zCoord;
+	}
+
 	@Override
 	public void update() {
-		if (this.donePlaying)
+		if (this.isDonePlaying())
 			return;
 
-		if (this.isFading) {
-			this.volume -= FADE_AMOUNT;
+		if (!EnvironState.getPlayer().isEntityAlive()) {
+			this.isDonePlaying = true;
+			return;
+		}
+
+		final long tickDelta = EnvironState.getTickCounter() - this.lastTick;
+		if(tickDelta == 0)
+			return;
+		
+		this.lastTick = EnvironState.getTickCounter();
+		
+		if (this.isFading()) {
+			this.volume -= FADE_AMOUNT * tickDelta;
+		} else if (this.volume < this.maxVolume) {
+			this.volume += FADE_AMOUNT * tickDelta;
+		}
+		
+		if (this.volume > this.maxVolume) {
+			this.volume = this.maxVolume;
 		}
 
 		if (this.volume <= DONE_VOLUME_THRESHOLD) {
-			this.donePlaying = true;
-		} else if (EnvironState.getPlayer() != null) {
-			final EntityPlayer player = EnvironState.getPlayer();
-			this.xPosF = MathHelper.floor_double(player.posX);
-			this.yPosF = MathHelper.floor_double(player.posY + 1);
-			this.zPosF = MathHelper.floor_double(player.posZ);
+			// Make sure the volume is 0 so a repeating
+			// sound won't make a last gasp in the sound
+			// engine.
+			this.isDonePlaying = true;
+			this.volume = 0.0F;
+		} else {
+			updateLocation();
 		}
 	}
 
 	@Override
 	public float getVolume() {
-		return this.volume * ModOptions.masterSoundScaleFactor;
+		return super.getVolume() * ModOptions.masterSoundScaleFactor;
 	}
 
 	public void setVolume(final float volume) {
-		if (volume < this.volume || !this.isFading)
-			this.volume = volume;
+		if (volume < this.maxVolume || !this.isFading)
+			this.maxVolume = volume;
 	}
 
 	@Override

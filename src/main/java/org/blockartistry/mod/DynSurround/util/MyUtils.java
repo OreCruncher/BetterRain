@@ -25,6 +25,9 @@ package org.blockartistry.mod.DynSurround.util;
 
 import org.apache.commons.lang3.StringUtils;
 
+import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.Vec3;
+
 public final class MyUtils {
 
 	private static final int[] EMPTY = {};
@@ -45,8 +48,13 @@ public final class MyUtils {
 
 		return result;
 	}
-	
+
 	public static long currentTimeMillis() {
 		return System.nanoTime() / 1000000L;
+	}
+
+	public static Vec3 getCenter(final AxisAlignedBB box) {
+		return Vec3.createVectorHelper(box.minX + (box.maxX - box.minX) * 0.5D, box.minY + (box.maxY - box.minY) * 0.5D,
+				box.minZ + (box.maxZ - box.minZ) * 0.5D);
 	}
 }
