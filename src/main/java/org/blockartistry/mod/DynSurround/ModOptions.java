@@ -129,9 +129,8 @@ public final class ModOptions {
 	public static final String CONFIG_MIN_RAIN_STRENGTH = "Default Minimum Rain Strength";
 	public static final String CONFIG_MAX_RAIN_STRENGTH = "Default Maximum Rain Strength";
 	public static final String CONFIG_FX_RANGE = "Special Effect Range";
-	public static final String CONFIG_FANCY_CLOUD_HANDLING = "Fancy Cloud Handling";
 	private static final List<String> generalSort = ImmutableList.<String> builder()
-			.add(CONFIG_FANCY_CLOUD_HANDLING, CONFIG_FX_RANGE, CONFIG_MIN_RAIN_STRENGTH, CONFIG_MAX_RAIN_STRENGTH)
+			.add(CONFIG_FX_RANGE, CONFIG_MIN_RAIN_STRENGTH, CONFIG_MAX_RAIN_STRENGTH)
 			.build();
 
 	@Parameter(category = CATEGORY_GENERAL, property = CONFIG_MIN_RAIN_STRENGTH, defaultValue = "0.0")
@@ -146,10 +145,6 @@ public final class ModOptions {
 	@MinMaxInt(min = 16, max = 32)
 	@Comment("Block radius/range around player for special effect application")
 	public static int specialEffectRange = 16;
-	@Parameter(category = CATEGORY_GENERAL, property = CONFIG_FANCY_CLOUD_HANDLING, defaultValue = "true")
-	@Comment("Adjust cloud graphics based on configured cloud height")
-	@RestartRequired
-	public static boolean enableFancyCloudHandling = true;
 
 	public static final String CATEGORY_AURORA = "aurora";
 	public static final String CONFIG_AURORA_ENABLED = "Enabled";

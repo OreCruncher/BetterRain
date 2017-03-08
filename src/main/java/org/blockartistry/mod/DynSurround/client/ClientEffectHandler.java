@@ -26,8 +26,6 @@ package org.blockartistry.mod.DynSurround.client;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Pattern;
-
 import org.blockartistry.mod.DynSurround.ModOptions;
 import org.blockartistry.mod.DynSurround.client.footsteps.Footsteps;
 import org.blockartistry.mod.DynSurround.client.fx.BlockEffectHandler;
@@ -44,22 +42,13 @@ import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldProvider;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.world.WorldEvent;
 
 @SideOnly(Side.CLIENT)
 public class ClientEffectHandler {
 
-	// These dimensions will be excluded from shimming
-	private static final List<String> dimensionNamePatterns = new ArrayList<String>();
 	private static final List<IClientEffectHandler> effectHandlers = new ArrayList<IClientEffectHandler>();
-
-	static {
-		dimensionNamePatterns.add("^Nether");
-		dimensionNamePatterns.add("^The End");
-		dimensionNamePatterns.add("^Tardis Interior");
-	}
 
 	public static void register(final IClientEffectHandler handler) {
 		effectHandlers.add(handler);
@@ -114,18 +103,6 @@ public class ClientEffectHandler {
 		}
 	}
 
-	@SuppressWarnings("unused")
-	private static boolean okToHook(final WorldProvider provider) {
-		if (provider.hasNoSky)
-			return false;
-
-		final String name = provider.getDimensionName();
-		for (final String pattern : dimensionNamePatterns)
-			if (Pattern.matches(pattern, name))
-				return false;
-		return true;
-	}
-
 	@SubscribeEvent(priority = EventPriority.LOWEST)
 	public void onWorldLoad(final WorldEvent.Load e) {
 		if (!e.world.isRemote)
@@ -134,12 +111,6 @@ public class ClientEffectHandler {
 		// Tickle the Dimension Registry so it has the
 		// latest info.
 		DimensionRegistry.loading(e.world);
-
-		// Shim the provider so we can tap into the
-		// sky and cloud stuff.
-//		if (ModOptions.enableFancyCloudHandling && okToHook(e.world.provider)) {
-//			e.world.provider = new WorldProviderShim(e.world, e.world.provider);
-//		}
 	}
 
 }
