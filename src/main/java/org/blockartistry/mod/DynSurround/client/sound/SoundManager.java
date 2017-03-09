@@ -30,6 +30,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import javax.annotation.Nonnull;
+
 import org.blockartistry.mod.DynSurround.ModLog;
 import org.blockartistry.mod.DynSurround.ModOptions;
 import org.blockartistry.mod.DynSurround.client.EnvironStateHandler.EnvironState;
@@ -152,6 +155,12 @@ public class SoundManager {
 			pending.add(s);
 		else
 			playSound(s);
+	}
+
+	public static boolean isSoundPlaying(@Nonnull final ISound sound) {
+		final net.minecraft.client.audio.SoundManager manager = Minecraft.getMinecraft().getSoundHandler().sndManager;
+		return manager.isSoundPlaying(sound) || manager.playingSounds.containsValue(sound)
+				|| manager.delayedSounds.containsKey(sound);
 	}
 
 	public static List<String> getSounds() {

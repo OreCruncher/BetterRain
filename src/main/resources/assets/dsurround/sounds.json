@@ -782,11 +782,11 @@
 			}
 		]
 	},
-	"taiga": {
+	"plains": {
 		"category": "ambient",
 		"sounds": [
 			{
-				"name": "dsurround:ambient/outside/forest",
+				"name": "dsurround:ambient/outside/plains",
 				"stream": true
 			}
 		]
@@ -815,6 +815,31 @@
 				"name": "dsurround:ambient/end/end",
 				"stream": true
 			}
+		]
+	},
+	"bird": {
+		"category": "ambient",
+		"sounds": [
+			"dsurround:ambient/birds/bird1",
+			"dsurround:ambient/birds/bird2",
+			"dsurround:ambient/birds/bird3",
+			"dsurround:ambient/birds/bird4",
+			"dsurround:ambient/birds/bird5",
+			"dsurround:ambient/birds/bird6",
+			"dsurround:ambient/birds/bird7",
+			"dsurround:ambient/birds/bird8",
+			"dsurround:ambient/birds/bird9",
+			"dsurround:ambient/birds/bird10"
+		]
+	},
+	"woodpecker": {
+		"category": "ambient",
+		"sounds": [
+			"dsurround:ambient/birds/woodpecker1",
+			"dsurround:ambient/birds/woodpecker2",
+			"dsurround:ambient/birds/woodpecker3",
+			"dsurround:ambient/birds/woodpecker4",
+			"dsurround:ambient/birds/woodpecker5"
 		]
 	},
 	"owl": {
@@ -868,6 +893,17 @@
 		"sounds": [
 			"dsurround:ambient/seagulls/seagulls1",
 			"dsurround:ambient/seagulls/seagulls2"
+		]
+	},
+	"coyote": {
+		"category": "ambient",
+		"sounds": [
+			"dsurround:ambient/coyote/coyote1",
+			"dsurround:ambient/coyote/coyote2",
+			"dsurround:ambient/coyote/coyote3",
+			"dsurround:ambient/coyote/coyote4",
+			"dsurround:ambient/coyote/coyote5",
+			"dsurround:ambient/coyote/coyote6"
 		]
 	},
 	"wolf": {

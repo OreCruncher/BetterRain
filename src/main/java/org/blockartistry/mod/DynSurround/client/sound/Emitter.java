@@ -26,13 +26,10 @@ package org.blockartistry.mod.DynSurround.client.sound;
 import java.util.Random;
 
 import org.blockartistry.mod.DynSurround.ModLog;
-import org.blockartistry.mod.DynSurround.client.sound.SoundEffect.SoundType;
 import org.blockartistry.mod.DynSurround.util.XorShiftRandom;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.audio.SoundHandler;
 import paulscode.sound.SoundSystemConfig;
 
 /*
@@ -56,36 +53,22 @@ class Emitter {
 	}
 
 	public void update() {
-		final SoundHandler handler = Minecraft.getMinecraft().getSoundHandler();
-		if (this.activeSound != null) {
-			if (handler.isSoundPlaying(this.activeSound))
-				return;
-			ModLog.debug("FADE: " + this.activeSound.toString());
-			this.activeSound.fadeAway();
-			this.activeSound = null;
-			this.repeatDelay = this.effect.getRepeat(RANDOM);
-			if (this.repeatDelay > 0)
-				return;
-		} else if (this.repeatDelay > 0) {
-			if (--this.repeatDelay > 0)
-				return;
-		}
-
+		
 		// If the volume is turned off don't send
 		// down a sound.
 		if (SoundSystemConfig.getMasterGain() <= 0)
 			return;
 
-		final PlayerSound theSound = new PlayerSound(effect);
-		if (this.effect.type == SoundType.PERIODIC) {
-			this.repeatDelay = this.effect.getRepeat(RANDOM);
-		} else {
-			this.activeSound = theSound;
+		if(this.activeSound == null) {
+			this.activeSound = new PlayerSound(effect);
+		} else if(SoundManager.isSoundPlaying(this.activeSound)) {
+			return;
 		}
-
+		
 		try {
-			SoundManager.playSound(theSound);
+			SoundManager.playSound(this.activeSound);
 		} catch (final Throwable t) {
+			ModLog.error("Unable to play sound", t);
 			;
 		}
 	}

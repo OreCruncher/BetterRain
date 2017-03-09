@@ -53,8 +53,12 @@
 			"biomeName":"(?i)(?!.*ice.*)(.*plains.*|.*meadow.*|grassland|prairie|.*field.*|.*chaparral.*)",
 			"sounds":[
 				{
+					"sound": "dsurround:plains",
+					"conditions": "(?i)(?!.*#raining#.*)(.*#day#.*)"
+				},
+				{
 					"sound":"dsurround:crickets",
-					"conditions":"(?i)(?!.*#raining#.*).*#night#.*"
+					"conditions":"(?i)(?!.*#raining#.*)(.*#night#.*)"
 				},
 				{
 					"sound":"dsurround:insectbuzz",
@@ -62,6 +66,11 @@
 					"soundType":"spot",
 					"volume":0.5,
 					"variable":true
+				},
+				{
+					"sound": "dsurround:coyote",
+					"conditions": "(?i)(?!.*#raining#.*)(.*#night#.*)",
+					"soundType": "spot"
 				}
 				
 			]
@@ -88,6 +97,16 @@
 					"conditions":"(?i)(?!.*#raining#.*).*#day#.*"
 				},
 				{
+					"sound": "dsurround:bird",
+					"conditions": "(?i)(?!.*#raining#.*).*#day#.*",
+					"soundType": "spot"
+				},
+				{
+					"sound": "dsurround:woodpecker",
+					"conditions": "(?i)(?!.*#raining#.*).*#day#.*",
+					"soundType": "spot"
+				},
+				{
 					"sound":"dsurround:crickets",
 					"conditions":"(?i)(?!.*#raining#.*).*#night#.*"
 				},
@@ -105,9 +124,8 @@
 			"biomeName":"(?i)(?!.*cold.*|.*snow.*)(.*taiga.*)",
 			"sounds":[
 				{
-					"sound":"dsurround:taiga",
-					"conditions":"(?i)(?!.*#raining#.*).*#day#.*",
-					"volume":0.7
+					"sound":"dsurround:forest",
+					"conditions":"(?i)(?!.*#raining#.*).*#day#.*"
 				}
 				
 			]
@@ -247,6 +265,11 @@
 					"conditions":"(?i)(?!.*#raining#.*).*#day#.*",
 					"soundType":"spot",
 					"volume":1.0
+				},
+				{
+					"sound": "dsurround:coyote",
+					"conditions": "(?i)(?!.*#raining#.*).*#night#.*",
+					"soundType": "spot"
 				}
 				
 			]
