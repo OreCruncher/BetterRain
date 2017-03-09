@@ -73,15 +73,20 @@ public class AcousticsManager extends AcousticsLibrary implements ISoundPlayer, 
 
 	@Override
 	public void playStep(final EntityLivingBase entity, final Association assos) {
-		Block block = assos.getBlock();
-		if (!block.getMaterial().isLiquid() && block.stepSound != null) {
-			Block.SoundType soundType = block.stepSound;
 
-			if (EnvironState.getWorld().getBlock(assos.x, assos.y + 1, assos.z) == Blocks.snow_layer) {
-				soundType = Blocks.snow_layer.stepSound;
+		try {
+			Block block = assos.getBlock();
+			if (!block.getMaterial().isLiquid() && block.stepSound != null) {
+				Block.SoundType soundType = block.stepSound;
+
+				if (EnvironState.getWorld().getBlock(assos.x, assos.y + 1, assos.z) == Blocks.snow_layer) {
+					soundType = Blocks.snow_layer.stepSound;
+				}
+
+				entity.playSound(soundType.getStepResourcePath(), soundType.getVolume() * 0.15F, soundType.getPitch());
 			}
-
-			entity.playSound(soundType.getStepResourcePath(), soundType.getVolume() * 0.15F, soundType.getPitch());
+		} catch (final Throwable t) {
+			ModLog.error("Unable to play step", t);
 		}
 	}
 
@@ -116,7 +121,12 @@ public class AcousticsManager extends AcousticsLibrary implements ISoundPlayer, 
 		if (ModLog.DEBUGGING)
 			ModLog.debug("    Playing sound " + soundName + " ("
 					+ String.format(Locale.ENGLISH, "v%.2f, p%.2f", volume, pitch) + ")");
-		location.playSound(soundName, volume, pitch);
+
+		try {
+			location.playSound(soundName, volume, pitch);
+		} catch (final Throwable t) {
+			ModLog.error("Unable to play sound", t);
+		}
 	}
 
 	private long randAB(final Random rng, final long a, final long b) {
