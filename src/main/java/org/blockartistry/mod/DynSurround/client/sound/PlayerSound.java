@@ -32,6 +32,7 @@ import org.blockartistry.mod.DynSurround.util.XorShiftRandom;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.client.audio.ISound;
 import net.minecraft.client.audio.MovingSound;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.ResourceLocation;
@@ -65,6 +66,9 @@ class PlayerSound extends MovingSound {
 		this.field_147665_h = 0;
 		
 		this.lastTick = EnvironState.getTickCounter() - 1;
+
+		// No attenuation for sounds attached to the player
+		this.field_147666_i = ISound.AttenuationType.NONE;
 
 		updateLocation();
 	}
