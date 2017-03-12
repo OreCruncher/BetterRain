@@ -56,6 +56,9 @@ import paulscode.sound.SoundSystemConfig;
 @SideOnly(Side.CLIENT)
 public class SoundManager {
 
+	private static int normalChannelCount = 0;
+	private static int streamChannelCount = 0;
+
 	private static final int AGE_THRESHOLD_TICKS = 5;
 	private static final int SOUND_QUEUE_SLACK = 6;
 	private static final Map<SoundEffect, Emitter> emitters = new HashMap<SoundEffect, Emitter>();
@@ -188,19 +191,19 @@ public class SoundManager {
 			e.printStackTrace();
 		}
 
-		int normalChannels = ModOptions.normalSoundChannelCount;
-		int streamChannels = ModOptions.streamingSoundChannelCount;
+		normalChannelCount = ModOptions.normalSoundChannelCount;
+		streamChannelCount = ModOptions.streamingSoundChannelCount;
 
 		if (ModOptions.autoConfigureChannels && totalChannels > 64) {
-			final int maxCount = Math.max((totalChannels + 1) / 2, 32);
-			normalChannels = MathHelper.floor_float(maxCount * 0.875F);
-			streamChannels = maxCount - normalChannels;
+			totalChannels = ((totalChannels + 1) * 3) / 4;
+			streamChannelCount = totalChannels / 5;
+			normalChannelCount = totalChannels - streamChannelCount;
 		}
 
-		ModLog.info("Sound channels: %d normal, %d streaming (total avail: %s)", normalChannels, streamChannels,
+		ModLog.info("Sound channels: %d normal, %d streaming (total avail: %s)", normalChannelCount, streamChannelCount,
 				totalChannels == -1 ? "UNKNOWN" : Integer.toString(totalChannels));
-		SoundSystemConfig.setNumberNormalChannels(normalChannels);
-		SoundSystemConfig.setNumberStreamingChannels(streamChannels);
+		SoundSystemConfig.setNumberNormalChannels(normalChannelCount);
+		SoundSystemConfig.setNumberStreamingChannels(streamChannelCount);
 
 	}
 
