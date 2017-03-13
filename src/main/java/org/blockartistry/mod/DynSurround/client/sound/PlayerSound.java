@@ -27,16 +27,13 @@ import java.util.Random;
 
 import org.blockartistry.mod.DynSurround.ModOptions;
 import org.blockartistry.mod.DynSurround.client.EnvironStateHandler.EnvironState;
-import org.blockartistry.mod.DynSurround.util.MyUtils;
 import org.blockartistry.mod.DynSurround.util.XorShiftRandom;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.audio.ISound;
 import net.minecraft.client.audio.MovingSound;
-import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.Vec3;
 
 @SideOnly(Side.CLIENT)
 class PlayerSound extends MovingSound {
@@ -69,8 +66,6 @@ class PlayerSound extends MovingSound {
 
 		// No attenuation for sounds attached to the player
 		this.field_147666_i = ISound.AttenuationType.NONE;
-
-		updateLocation();
 	}
 
 	public void fadeAway() {
@@ -87,14 +82,6 @@ class PlayerSound extends MovingSound {
 
 	public boolean sameSound(final SoundEffect snd) {
 		return this.sound.equals(snd);
-	}
-
-	public void updateLocation() {
-		final AxisAlignedBB box = EnvironState.getPlayer().boundingBox;
-		final Vec3 point = MyUtils.getCenter(box);
-		this.xPosF = (float) point.xCoord;
-		this.yPosF = (float) box.minY;
-		this.zPosF = (float) point.zCoord;
 	}
 
 	@Override
@@ -129,8 +116,6 @@ class PlayerSound extends MovingSound {
 			// engine.
 			this.isDonePlaying = true;
 			this.volume = 0.0F;
-		} else {
-			updateLocation();
 		}
 	}
 
