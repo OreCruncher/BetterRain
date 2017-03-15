@@ -27,13 +27,16 @@ import java.util.Random;
 
 import org.blockartistry.mod.DynSurround.ModOptions;
 import org.blockartistry.mod.DynSurround.client.EnvironStateHandler.EnvironState;
+import org.blockartistry.mod.DynSurround.util.MyUtils;
 import org.blockartistry.mod.DynSurround.util.XorShiftRandom;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.audio.ISound;
 import net.minecraft.client.audio.MovingSound;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Vec3;
 
 @SideOnly(Side.CLIENT)
 class PlayerSound extends MovingSound {
@@ -61,17 +64,19 @@ class PlayerSound extends MovingSound {
 
 		// Repeat delay
 		this.field_147665_h = 0;
-		
+
 		this.lastTick = EnvironState.getTickCounter() - 1;
 
 		// No attenuation for sounds attached to the player
 		this.field_147666_i = ISound.AttenuationType.NONE;
+		
+		updateLocation();
 	}
 
 	public void fadeAway() {
 		this.isFading = true;
 	}
-	
+
 	public boolean isFading() {
 		return this.isFading;
 	}
@@ -82,6 +87,14 @@ class PlayerSound extends MovingSound {
 
 	public boolean sameSound(final SoundEffect snd) {
 		return this.sound.equals(snd);
+	}
+
+	public void updateLocation() {
+		final AxisAlignedBB box = EnvironState.getPlayer().boundingBox;
+		final Vec3 point = MyUtils.getCenter(box);
+		this.xPosF = (float) point.xCoord;
+		this.yPosF = (float) box.minY + 32F;
+		this.zPosF = (float) point.zCoord;
 	}
 
 	@Override
@@ -95,17 +108,17 @@ class PlayerSound extends MovingSound {
 		}
 
 		final long tickDelta = EnvironState.getTickCounter() - this.lastTick;
-		if(tickDelta == 0)
+		if (tickDelta == 0)
 			return;
-		
+
 		this.lastTick = EnvironState.getTickCounter();
-		
+
 		if (this.isFading()) {
 			this.volume -= FADE_AMOUNT * tickDelta;
 		} else if (this.volume < this.maxVolume) {
 			this.volume += FADE_AMOUNT * tickDelta;
 		}
-		
+
 		if (this.volume > this.maxVolume) {
 			this.volume = this.maxVolume;
 		}
@@ -116,6 +129,8 @@ class PlayerSound extends MovingSound {
 			// engine.
 			this.isDonePlaying = true;
 			this.volume = 0.0F;
+		} else {
+			updateLocation();
 		}
 	}
 
