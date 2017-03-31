@@ -27,7 +27,7 @@ package org.blockartistry.mod.DynSurround.data;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.blockartistry.mod.DynSurround.util.XorShiftRandom;
+import org.blockartistry.mod.DynSurround.util.random.XorShiftRandom;
 
 import net.minecraft.util.MathHelper;
 
@@ -65,7 +65,7 @@ public final class AuroraPreset {
 	}
 
 	public static int randomId() {
-		return XorShiftRandom.shared.nextInt(PRESET.size());
+		return XorShiftRandom.current().nextInt(PRESET.size());
 	}
 
 	public static int testId() {

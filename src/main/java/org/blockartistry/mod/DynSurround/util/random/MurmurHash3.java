@@ -1,5 +1,4 @@
-/*
- * This file is part of Dynamic Surroundings, licensed under the MIT License (MIT).
+/* This file is part of Dynamic Surroundings, licensed under the MIT License (MIT).
  *
  * Copyright (c) OreCruncher
  *
@@ -22,29 +21,39 @@
  * THE SOFTWARE.
  */
 
-package org.blockartistry.mod.DynSurround.client.fx.particle;
+package org.blockartistry.mod.DynSurround.util.random;
 
-import org.blockartistry.mod.DynSurround.util.Color;
-import org.blockartistry.mod.DynSurround.util.random.XorShiftRandom;
-
-import net.minecraft.world.World;
-import cpw.mods.fml.relauncher.SideOnly;
-import cpw.mods.fml.relauncher.Side;
-
-@SideOnly(Side.CLIENT)
-public class EntityCriticalPopOffFX extends EntityTextPopOffFX {
-
-	private static final String[] POWER_WORDS = new String[] { "BAM", "BANG", "BONK", "CRRACK", "CRASH", "KRUNCH",
-			"OOOOFF", "POWIE", "SPLATT", "THUNK", "TWAPE", "WHAMMM", "ZAP" };
-
-	private static String getPowerWord() {
-		return POWER_WORDS[XorShiftRandom.current().nextInt(POWER_WORDS.length)];
+/**
+ * @see "http://sites.google.com/site/murmurhash/"
+ */
+final class MurmurHash3 {
+	
+	private MurmurHash3() {
+		// no instances.
 	}
 
-	public EntityCriticalPopOffFX(final World world, final double x, final double y, final double z) {
-		super(world, getPowerWord(), Color.ORANGE, 1.0F, x, y, z, 0.001D, 0.05D * BOUNCE_STRENGTH, 0.001D);
-		this.shouldOnTop = true;
-		this.particleGravity = -0.04F;
-		this.scale = 0.5F;
+	/**
+	 * Hashes a 4-byte sequence (Java int).
+	 */
+	public static int hash(int k) {
+		k ^= k >>> 16;
+		k *= 0x85ebca6b;
+		k ^= k >>> 13;
+		k *= 0xc2b2ae35;
+		k ^= k >>> 16;
+		return k;
+	}
+
+	/**
+	 * Hashes an 8-byte sequence (Java long).
+	 */
+	public static long hash(long k) {
+		k ^= k >>> 33;
+		k *= 0xff51afd7ed558ccdL;
+		k ^= k >>> 33;
+		k *= 0xc4ceb9fe1a85ec53L;
+		k ^= k >>> 33;
+
+		return k;
 	}
 }

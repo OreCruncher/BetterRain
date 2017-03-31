@@ -24,6 +24,7 @@
 
 package org.blockartistry.mod.DynSurround.client.sound;
 
+import java.lang.reflect.Field;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -43,6 +44,7 @@ import org.lwjgl.openal.AL;
 import org.lwjgl.openal.ALC10;
 import org.lwjgl.openal.ALC11;
 
+import cpw.mods.fml.relauncher.ReflectionHelper;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
@@ -50,8 +52,12 @@ import net.minecraft.client.audio.ISound;
 import net.minecraft.client.audio.SoundCategory;
 import net.minecraft.client.audio.SoundPoolEntry;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.MathHelper;
+import paulscode.sound.Library;
+import paulscode.sound.SoundSystem;
 import paulscode.sound.SoundSystemConfig;
+import paulscode.sound.StreamThread;
 
 @SideOnly(Side.CLIENT)
 public class SoundManager {
@@ -64,6 +70,25 @@ public class SoundManager {
 	private static final Map<SoundEffect, Emitter> emitters = new HashMap<SoundEffect, Emitter>();
 
 	private static final List<SpotSound> pending = new ArrayList<SpotSound>();
+
+	private static Field sndSystem = null;
+	private static Field soundLibrary = null;
+	private static Field streamThread = null;
+
+	static {
+
+		try {
+			sndSystem = ReflectionHelper.findField(SoundManager.class, "field_148620_e", "sndSystem");
+			soundLibrary = ReflectionHelper.findField(SoundSystem.class, "soundLibrary");
+			streamThread = ReflectionHelper.findField(Library.class, "streamThread");
+		} catch (final Throwable t) {
+			ModLog.warn("Cannot find sound manager fields; auto restart not enabled");
+			sndSystem = null;
+			soundLibrary = null;
+			streamThread = null;
+		}
+
+	}
 
 	public static void clearSounds() {
 		for (final Emitter emit : emitters.values())
@@ -234,6 +259,32 @@ public class SoundManager {
 	public static float getSoundCategoryVolume(final SoundCategory category) {
 		return category != null && category != SoundCategory.MASTER
 				? Minecraft.getMinecraft().gameSettings.getSoundLevel(category) : 1.0F;
+	}
+
+	public static void keepAlive() {
+		if (streamThread == null)
+			return;
+
+		try {
+			final net.minecraft.client.audio.SoundManager manager = Minecraft.getMinecraft().getSoundHandler().sndManager;
+			final SoundSystem sys = (SoundSystem) sndSystem.get(manager);
+			if (sys != null) {
+				final Library l = (Library) soundLibrary.get(sys);
+				if (l != null) {
+					final StreamThread t = (StreamThread) streamThread.get(l);
+					if (t != null && !t.isAlive()) {
+						if (ModLog.DEBUGGING) {
+							EnvironState.getPlayer()
+									.addChatMessage(new ChatComponentText("Autorestart of sound system!"));
+						}
+						ModLog.warn("Autorestart of sound system!");
+						manager.reloadSoundSystem();
+					}
+				}
+			}
+		} catch (final Throwable t) {
+
+		}
 	}
 
 }

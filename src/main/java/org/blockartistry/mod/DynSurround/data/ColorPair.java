@@ -28,7 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.blockartistry.mod.DynSurround.util.Color;
-import org.blockartistry.mod.DynSurround.util.XorShiftRandom;
+import org.blockartistry.mod.DynSurround.util.random.XorShiftRandom;
 
 import net.minecraft.util.MathHelper;
 
@@ -71,7 +71,7 @@ public final class ColorPair {
 	}
 
 	public static int randomId() {
-		return XorShiftRandom.shared.nextInt(PAIRS.size());
+		return XorShiftRandom.current().nextInt(PAIRS.size());
 	}
 
 	public static int testId() {

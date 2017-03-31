@@ -29,7 +29,7 @@ import java.util.Random;
 import org.blockartistry.mod.DynSurround.ModLog;
 import org.blockartistry.mod.DynSurround.data.DimensionEffectData;
 import org.blockartistry.mod.DynSurround.data.DimensionEffectDataFile;
-import org.blockartistry.mod.DynSurround.util.XorShiftRandom;
+import org.blockartistry.mod.DynSurround.util.random.XorShiftRandom;
 
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;

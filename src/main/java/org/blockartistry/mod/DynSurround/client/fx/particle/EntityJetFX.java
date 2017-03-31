@@ -26,7 +26,7 @@ package org.blockartistry.mod.DynSurround.client.fx.particle;
 
 import java.util.Random;
 
-import org.blockartistry.mod.DynSurround.util.XorShiftRandom;
+import org.blockartistry.mod.DynSurround.util.random.XorShiftRandom;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -43,7 +43,7 @@ import net.minecraft.world.World;
 @SideOnly(Side.CLIENT)
 public abstract class EntityJetFX extends EntityFX {
 
-	protected static final Random RANDOM = new XorShiftRandom();
+	protected static final Random RANDOM = XorShiftRandom.current();
 	
 	protected final int jetStrength;
 	protected final int updateFrequency;
@@ -60,7 +60,7 @@ public abstract class EntityJetFX extends EntityFX {
 		this.setAlphaF(0.0F);
 		this.jetStrength = strength;
 		this.updateFrequency = freq;
-		this.particleMaxAge = (XorShiftRandom.shared.nextInt(strength) + 2) * 20;
+		this.particleMaxAge = (RANDOM.nextInt(strength) + 2) * 20;
 	}
 
 	/*
