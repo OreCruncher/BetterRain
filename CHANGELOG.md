@@ -1,3 +1,13 @@
+###DynamicSurroundings-1.7.10-1.0.5.11
+**Fixes**
+* No more sound clicking when moving fast; was noticeable when flying over a beach (backport)
+
+**Changes**
+* No sound attenuation for player centered sounds (backport)
+* Increase total number of sound channels (backport)
+* Attempt automatic restart of crashed sound system (backport)
+* Improve RNG used by scanning routines (backport)
+
 ###DynamicSurroundings-1.7.10-1.0.5.10
 **Fixes**
 * Backports from Dynamic Surroundings 1.10.2/1.11.x:
