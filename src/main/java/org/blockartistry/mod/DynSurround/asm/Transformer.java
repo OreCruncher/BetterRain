@@ -26,13 +26,17 @@ package org.blockartistry.mod.DynSurround.asm;
 
 import static org.objectweb.asm.Opcodes.*;
 
+import java.util.ListIterator;
+
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
+import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.InsnList;
 import org.objectweb.asm.tree.InsnNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
+import org.objectweb.asm.tree.TypeInsnNode;
 import org.objectweb.asm.tree.VarInsnNode;
 
 import net.minecraft.launchwrapper.IClassTransformer;
@@ -55,6 +59,9 @@ public class Transformer implements IClassTransformer {
 		} else if ("net.minecraft.world.World".equals(name) || "ahb".equals(name)) {
 			logger.debug("Transforming World...");
 			return transformWorld(basicClass);
+		} else if ("net.minecraft.client.audio.SoundHandler".equals(name) || "btp".equals(name)) {
+			logger.debug("Transforming SoundHandler...");
+			return transformSoundHandler(basicClass);
 		} else if ("net.minecraft.client.audio.SoundManager".equals(name) || "btj".equals(name)) {
 			logger.debug("Transforming SoundManager...");
 			return transformSoundManager(basicClass);
@@ -171,33 +178,70 @@ public class Transformer implements IClassTransformer {
 		return cw.toByteArray();
 	}
 
-	private byte[] transformSoundManager(final byte[] classBytes) {
-		final String names[];
-
-		if (TransformLoader.runtimeDeobEnabled)
-			names = new String[] { "func_148594_a" };
-		else
-			names = new String[] { "getNormalizedVolume" };
-
-		final String targetName[] = new String[] { "getNormalizedVolume" };
+	private byte[] transformSoundHandler(final byte[] classBytes) {
+		final String managerToReplace = "net/minecraft/client/audio/SoundManager";
+		final String newManager = "org/blockartistry/mod/DynSurround/client/sound/SoundManagerReplacement";
 
 		final ClassReader cr = new ClassReader(classBytes);
 		final ClassNode cn = new ClassNode(ASM5);
 		cr.accept(cn, 0);
 
 		for (final MethodNode m : cn.methods) {
-			if (m.name.equals(names[0])) {
-				logger.debug("Hooking " + names[0]);
-				final InsnList list = new InsnList();
-				list.add(new VarInsnNode(ALOAD, 1));
-				list.add(new VarInsnNode(ALOAD, 2));
-				list.add(new VarInsnNode(ALOAD, 3));
-				final String sig = "(Lnet/minecraft/client/audio/ISound;Lnet/minecraft/client/audio/SoundPoolEntry;Lnet/minecraft/client/audio/SoundCategory;)F";
-				list.add(new MethodInsnNode(INVOKESTATIC, "org/blockartistry/mod/DynSurround/client/sound/SoundManager",
-						targetName[0], sig, false));
-				list.add(new InsnNode(FRETURN));
+			final ListIterator<AbstractInsnNode> itr = m.instructions.iterator();
+			boolean foundNew = false;
+			while (itr.hasNext()) {
+				final AbstractInsnNode node = itr.next();
+				if (node.getOpcode() == NEW) {
+					final TypeInsnNode theNew = (TypeInsnNode) node;
+					if (managerToReplace.equals(theNew.desc)) {
+						m.instructions.set(node, new TypeInsnNode(NEW, newManager));
+						foundNew = true;
+					}
+				} else if (node.getOpcode() == INVOKESPECIAL) {
+					final MethodInsnNode theInvoke = (MethodInsnNode) node;
+					if (managerToReplace.equals(theInvoke.owner)) {
+						if (foundNew) {
+							m.instructions.set(node, new MethodInsnNode(INVOKESPECIAL, newManager, theInvoke.name,
+									theInvoke.desc, false));
+							foundNew = false;
+						}
+					}
+				}
+			}
+		}
+
+		final ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_MAXS);
+		cn.accept(cw);
+		return cw.toByteArray();
+	}
+
+	private byte[] transformSoundManager(final byte[] classBytes) {
+		final String urlNames[];
+
+		if (TransformLoader.runtimeDeobEnabled) {
+			urlNames = new String[] { "func_148612_a" };
+		} else {
+			urlNames = new String[] { "getURLForSoundResource" };
+		}
+
+		final String urlTargetName[] = new String[] { "getURLForSoundResource" };
+
+		final ClassReader cr = new ClassReader(classBytes);
+		final ClassNode cn = new ClassNode(ASM5);
+		cr.accept(cn, 0);
+
+		for (final MethodNode m : cn.methods) {
+			if (m.name.equals(urlNames[0])) {
+				logger.debug("Hooking " + m.name);
+				InsnList list = new InsnList();
+				list.add(new VarInsnNode(ALOAD, 0));
+				final String sig = "(Lnet/minecraft/util/ResourceLocation;)Ljava/net/URL;";
+				list.add(new MethodInsnNode(INVOKESTATIC,
+						"org/blockartistry/mod/DynSurround/client/sound/cache/SoundCache", urlTargetName[0], sig,
+						false));
+				list.add(new InsnNode(ARETURN));
 				m.instructions.insertBefore(m.instructions.getFirst(), list);
-				break;
+
 			}
 		}
 

@@ -81,6 +81,8 @@ public class PFSolver implements ISolver {
 	@Override
 	public Association findAssociationForPlayer(final EntityPlayer ply, final double verticalOffsetAsMinus,
 			final boolean isRightFoot) {
+		if (Math.abs(ply.motionY) < 0.02)
+			return null; // Don't play sounds on every tiny bounce
 		final int yy = MathHelper.floor_double(ply.boundingBox.minY - 0.1d - verticalOffsetAsMinus);
 		final double rot = MathStuff.toRadians(MathHelper.wrapAngleTo180_float(ply.rotationYaw));
 		final double xn = MathStuff.cos(rot);
@@ -102,8 +104,6 @@ public class PFSolver implements ISolver {
 
 	@Override
 	public Association findAssociationForLocation(final EntityPlayer player, final int x, final int y, final int z) {
-		if (Math.abs(player.motionY) < 0.02)
-			return null; // Don't play sounds on every tiny bounce
 		if (player.isInWater())
 			ModLog.debug(
 					"WARNING!!! Playing a sound while in the water! This is supposed to be halted by the stopping conditions!!");
@@ -176,16 +176,9 @@ public class PFSolver implements ISolver {
 		Block above = world.getBlock(xx, yy + 1, zz);
 		int aboveMeta = world.getBlockMetadata(xx, yy + 1, zz);
 
-		String association = this.isolator.getBlockMap().getBlockMapSubstrate(above, aboveMeta, "carpet"); // Try
-																											// to
-																											// see
-																											// if
-																											// the
-																											// block
-																											// above
-																											// is
-																											// a
-																											// carpet...
+		String association = null;
+		if (above != Blocks.air)
+			association = this.isolator.getBlockMap().getBlockMapSubstrate(above, aboveMeta, "carpet");
 
 		// PFLog.debugf("Walking on block: %0 -- Being in block: %1", in,
 		// above);
@@ -220,10 +213,12 @@ public class PFSolver implements ISolver {
 				// => this block of code is here, not outside this if else
 				// group.
 
-				String foliage = this.isolator.getBlockMap().getBlockMapSubstrate(above, aboveMeta, "foliage");
-				if (foliage != null && !foliage.equals("NOT_EMITTER")) {
-					association = association + "," + foliage;
-					ModLog.debug("Foliage detected: " + foliage);
+				if (above != Blocks.air) {
+					String foliage = this.isolator.getBlockMap().getBlockMapSubstrate(above, aboveMeta, "foliage");
+					if (foliage != null && !foliage.equals("NOT_EMITTER")) {
+						association = association + "," + foliage;
+						ModLog.debug("Foliage detected: " + foliage);
+					}
 				}
 			}
 		} else {
@@ -344,6 +339,10 @@ public class PFSolver implements ISolver {
 		 */
 
 		Block above = world.getBlock(xx, yy + 1, zz);
+
+		if (above == Blocks.air)
+			return null;
+
 		int aboveMeta = world.getBlockMetadata(xx, yy + 1, zz);
 
 		String association = null;

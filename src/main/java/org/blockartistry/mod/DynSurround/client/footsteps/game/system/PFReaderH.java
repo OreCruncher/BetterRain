@@ -28,6 +28,7 @@ import org.blockartistry.mod.DynSurround.client.footsteps.engine.interfaces.Even
 import org.blockartistry.mod.DynSurround.client.footsteps.mcpackage.implem.NormalVariator;
 import org.blockartistry.mod.DynSurround.client.footsteps.mcpackage.interfaces.IGenerator;
 import org.blockartistry.mod.DynSurround.client.footsteps.mcpackage.interfaces.IIsolator;
+import org.blockartistry.mod.DynSurround.client.footsteps.mcpackage.interfaces.ISolver;
 import org.blockartistry.mod.DynSurround.client.footsteps.mcpackage.interfaces.IVariator;
 import org.blockartistry.mod.DynSurround.client.footsteps.mcpackage.interfaces.IVariatorSettable;
 import org.blockartistry.mod.DynSurround.util.MyUtils;
@@ -268,8 +269,6 @@ public class PFReaderH implements IGenerator, IVariatorSettable {
 		if ((ply.motionX == 0d && ply.motionZ == 0d) || ply.isSneaking())
 			return;
 
-		// if (true || ply.onGround || ply.isOnLadder())
-		// {
 		final int yy = MathHelper.floor_double(ply.posY - 0.1d - ply.getYOffset() - (ply.onGround ? 0d : 0.25d));
 		final Association assos = mod.getSolver().findAssociationForBlock(MathHelper.floor_double(ply.posX), yy,
 				MathHelper.floor_double(ply.posZ), "find_messy_foliage");
@@ -279,14 +278,9 @@ public class PFReaderH implements IGenerator, IVariatorSettable {
 				this.mod.getSolver().playAssociation(ply, assos, EventType.WALK);
 			}
 		} else {
-			if (this.isMessyFoliage) {
-				this.isMessyFoliage = false;
-			}
+			this.isMessyFoliage = false;
 		}
-		// }
 	}
-
-	//
 
 	protected void playSinglefoot(final EntityPlayer ply, final double verticalOffsetAsMinus, final EventType eventType,
 			final boolean foot) {
@@ -297,16 +291,11 @@ public class PFReaderH implements IGenerator, IVariatorSettable {
 	protected void playMultifoot(final EntityPlayer ply, final double verticalOffsetAsMinus,
 			final EventType eventType) {
 		// STILL JUMP
-		final Association leftFoot = mod.getSolver().findAssociationForPlayer(ply, verticalOffsetAsMinus, false);
-		Association rightFoot = mod.getSolver().findAssociationForPlayer(ply, verticalOffsetAsMinus, true);
-
-		if (leftFoot != null && leftFoot.equals(rightFoot) && !leftFoot.getNoAssociation()) {
-			rightFoot = null; // If the two feet solve to the same sound, except
-								// NO_ASSOCIATION, only play the sound once
-		}
-
-		mod.getSolver().playAssociation(ply, leftFoot, eventType);
-		mod.getSolver().playAssociation(ply, rightFoot, eventType);
+		final ISolver s = this.mod.getSolver();
+		final Association leftFoot = s.findAssociationForPlayer(ply, verticalOffsetAsMinus, false);
+		Association rightFoot = s.findAssociationForPlayer(ply, verticalOffsetAsMinus, true);
+		s.playAssociation(ply, leftFoot, eventType);
+		s.playAssociation(ply, rightFoot, eventType);
 	}
 
 	protected float scalex(final float number, final float min, final float max) {

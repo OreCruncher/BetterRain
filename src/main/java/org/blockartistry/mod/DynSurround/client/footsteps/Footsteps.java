@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Scanner;
 
 import org.blockartistry.mod.DynSurround.ModLog;
+import org.blockartistry.mod.DynSurround.ModOptions;
 import org.blockartistry.mod.DynSurround.client.IClientEffectHandler;
 import org.blockartistry.mod.DynSurround.client.footsteps.game.system.ForgeDictionary;
 import org.blockartistry.mod.DynSurround.client.footsteps.game.system.PFIsolator;
@@ -212,7 +213,10 @@ public class Footsteps implements IResourceManagerReloadListener, IClientEffectH
 			reloadEverything();
 		}
 		this.isolator.onFrame();
-		player.nextStepDistance = Integer.MAX_VALUE;
+		if (ModOptions.footstepsSoundFactor > 0)
+			player.nextStepDistance = Integer.MAX_VALUE;
+		else if(player.nextStepDistance == Integer.MAX_VALUE)
+			player.nextStepDistance = 0;
 	}
 
 	@SubscribeEvent(priority = EventPriority.LOWEST)

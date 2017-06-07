@@ -24,8 +24,6 @@
 
 package org.blockartistry.mod.DynSurround.client.sound;
 
-import java.lang.reflect.Field;
-import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -38,57 +36,21 @@ import org.blockartistry.mod.DynSurround.ModLog;
 import org.blockartistry.mod.DynSurround.ModOptions;
 import org.blockartistry.mod.DynSurround.client.EnvironStateHandler.EnvironState;
 import org.blockartistry.mod.DynSurround.compat.BlockPos;
-import org.blockartistry.mod.DynSurround.data.SoundRegistry;
-import org.lwjgl.BufferUtils;
-import org.lwjgl.openal.AL;
-import org.lwjgl.openal.ALC10;
-import org.lwjgl.openal.ALC11;
-
-import cpw.mods.fml.relauncher.ReflectionHelper;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.ISound;
-import net.minecraft.client.audio.SoundCategory;
-import net.minecraft.client.audio.SoundPoolEntry;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.MathHelper;
-import paulscode.sound.Library;
-import paulscode.sound.SoundSystem;
 import paulscode.sound.SoundSystemConfig;
-import paulscode.sound.StreamThread;
 
 @SideOnly(Side.CLIENT)
 public class SoundManager {
-
-	private static int normalChannelCount = 0;
-	private static int streamChannelCount = 0;
 
 	private static final int AGE_THRESHOLD_TICKS = 5;
 	private static final int SOUND_QUEUE_SLACK = 6;
 	private static final Map<SoundEffect, Emitter> emitters = new HashMap<SoundEffect, Emitter>();
 
 	private static final List<SpotSound> pending = new ArrayList<SpotSound>();
-
-	private static Field sndSystem = null;
-	private static Field soundLibrary = null;
-	private static Field streamThread = null;
-
-	static {
-
-		try {
-			sndSystem = ReflectionHelper.findField(SoundManager.class, "field_148620_e", "sndSystem");
-			soundLibrary = ReflectionHelper.findField(SoundSystem.class, "soundLibrary");
-			streamThread = ReflectionHelper.findField(Library.class, "streamThread");
-		} catch (final Throwable t) {
-			ModLog.warn("Cannot find sound manager fields; auto restart not enabled");
-			sndSystem = null;
-			soundLibrary = null;
-			streamThread = null;
-		}
-
-	}
 
 	public static void clearSounds() {
 		for (final Emitter emit : emitters.values())
@@ -198,93 +160,6 @@ public class SoundManager {
 		for (final SpotSound effect : pending)
 			result.add((effect.getTickAge() < 0 ? "DELAYED: " : "PENDING: ") + effect.getSoundEffect().toString());
 		return result;
-	}
-
-	public static void configureSound() {
-		int totalChannels = -1;
-
-		try {
-			final boolean create = !AL.isCreated();
-			if (create)
-				AL.create();
-			final IntBuffer ib = BufferUtils.createIntBuffer(1);
-			ALC10.alcGetInteger(AL.getDevice(), ALC11.ALC_MONO_SOURCES, ib);
-			totalChannels = ib.get(0);
-			if (create)
-				AL.destroy();
-		} catch (final Throwable e) {
-			e.printStackTrace();
-		}
-
-		normalChannelCount = ModOptions.normalSoundChannelCount;
-		streamChannelCount = ModOptions.streamingSoundChannelCount;
-
-		if (ModOptions.autoConfigureChannels && totalChannels > 64) {
-			totalChannels = ((totalChannels + 1) * 3) / 4;
-			streamChannelCount = totalChannels / 5;
-			normalChannelCount = totalChannels - streamChannelCount;
-		}
-
-		ModLog.info("Sound channels: %d normal, %d streaming (total avail: %s)", normalChannelCount, streamChannelCount,
-				totalChannels == -1 ? "UNKNOWN" : Integer.toString(totalChannels));
-		SoundSystemConfig.setNumberNormalChannels(normalChannelCount);
-		SoundSystemConfig.setNumberStreamingChannels(streamChannelCount);
-
-	}
-
-	// Redirect hook from Minecraft's SoundManager so we can scale the volume
-	// for each individual sound.
-	public static float getNormalizedVolume(final ISound sound, final SoundPoolEntry poolEntry,
-			final SoundCategory category) {
-		float result = 0.0F;
-		if (sound == null) {
-			ModLog.warn("getNormalizedVolume(): Null sound parameter");
-		} else if (poolEntry == null) {
-			ModLog.warn("getNormalizedVolume(): Null poolEntry parameter");
-		} else if (category == null) {
-			ModLog.warn("getNormalizedVolume(): Null category parameter");
-		} else {
-			final String soundName = sound.getPositionedSoundLocation().toString();
-			try {
-				final float volumeScale = SoundRegistry.getVolumeScale(soundName);
-				result = (float) MathHelper.clamp_double((double) sound.getVolume() * poolEntry.getVolume()
-						* (double) getSoundCategoryVolume(category) * volumeScale, 0.0D, 1.0D);
-			} catch (final Throwable t) {
-				ModLog.error("getNormalizedVolume(): Unable to calculate " + soundName, t);
-			}
-		}
-		return result;
-	}
-
-	public static float getSoundCategoryVolume(final SoundCategory category) {
-		return category != null && category != SoundCategory.MASTER
-				? Minecraft.getMinecraft().gameSettings.getSoundLevel(category) : 1.0F;
-	}
-
-	public static void keepAlive() {
-		if (streamThread == null)
-			return;
-
-		try {
-			final net.minecraft.client.audio.SoundManager manager = Minecraft.getMinecraft().getSoundHandler().sndManager;
-			final SoundSystem sys = (SoundSystem) sndSystem.get(manager);
-			if (sys != null) {
-				final Library l = (Library) soundLibrary.get(sys);
-				if (l != null) {
-					final StreamThread t = (StreamThread) streamThread.get(l);
-					if (t != null && !t.isAlive()) {
-						if (ModLog.DEBUGGING) {
-							EnvironState.getPlayer()
-									.addChatMessage(new ChatComponentText("Autorestart of sound system!"));
-						}
-						ModLog.warn("Autorestart of sound system!");
-						manager.reloadSoundSystem();
-					}
-				}
-			}
-		} catch (final Throwable t) {
-
-		}
 	}
 
 }

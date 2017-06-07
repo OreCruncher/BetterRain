@@ -92,8 +92,6 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 	@Override
 	public void process(final World world, final EntityPlayer player) {
 		
-		SoundManager.keepAlive();
-		
 		// Dead players hear no sounds
 		if (player.isDead) {
 			resetSounds();
