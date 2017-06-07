@@ -44,7 +44,7 @@ public class Module {
 	public static final String MOD_ID = "dsurround";
 	public static final String MOD_NAME = "Dynamic Surroundings";
 	public static final String VERSION = "@VERSION@";
-	public static final String DEPENDENCIES = "";
+	public static final String DEPENDENCIES = "required-after:Forge@[10.13.4.1614,)";
 	public static final String GUI_FACTORY = "org.blockartistry.mod.DynSurround.client.gui.ConfigGuiFactory";
 
 	@Instance(MOD_ID)
