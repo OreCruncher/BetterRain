@@ -233,7 +233,7 @@ public class StormRenderer implements IAtmosRenderer {
 							Color color = new Color(1.0F, 1.0F, 1.0F);
 							if(world.provider.dimensionId == -1) {
 								final Color c = BiomeRegistry.getDustColor(biome);
-								if(color != null)
+								if(c != null)
 									color.mix(c);
 							}
 							tessellator.setColorRGBA_F(color.red, color.green, color.blue,
