@@ -89,10 +89,14 @@ public class PotionHUD extends Gui implements IGuiOverlay {
 
 			for (final Iterator<PotionEffect> iterator = collection.iterator(); iterator.hasNext(); guiTop += k) {
 				final PotionEffect potioneffect = iterator.next();
+				final int potionId = potioneffect.getPotionID();
+				if (potionId < 0 || potionId >= Potion.potionTypes.length)
+					continue;
+
 				final Potion potion = Potion.potionTypes[potioneffect.getPotionID()];
-				
+
 				// Because mods can be silly...
-				if(potion == null)
+				if (potion == null)
 					continue;
 
 				GL11.glColor4f(1.0F, 1.0F, 1.0F, ModOptions.potionHudTransparency);
