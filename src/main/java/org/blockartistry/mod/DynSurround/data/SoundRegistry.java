@@ -32,6 +32,7 @@ import org.blockartistry.mod.DynSurround.ModLog;
 import org.blockartistry.mod.DynSurround.ModOptions;
 import org.blockartistry.mod.DynSurround.event.SoundConfigEvent;
 
+import gnu.trove.impl.Constants;
 import gnu.trove.map.hash.TObjectFloatHashMap;
 import net.minecraftforge.common.MinecraftForge;
 
@@ -39,7 +40,8 @@ public final class SoundRegistry {
 
 	private static final List<Pattern> cullSoundNamePatterns = new ArrayList<Pattern>();
 	private static final List<Pattern> blockSoundNamePatterns = new ArrayList<Pattern>();
-	private static final TObjectFloatHashMap<String> volumeControl = new TObjectFloatHashMap<String>();
+	private static final TObjectFloatHashMap<String> volumeControl = new TObjectFloatHashMap<String>(
+			Constants.DEFAULT_CAPACITY, Constants.DEFAULT_LOAD_FACTOR, 1.0F);
 
 	public static void initialize() {
 		cullSoundNamePatterns.clear();
@@ -73,7 +75,7 @@ public final class SoundRegistry {
 				}
 			}
 		}
-		
+
 		MinecraftForge.EVENT_BUS.post(new SoundConfigEvent.Reload());
 	}
 
@@ -96,7 +98,7 @@ public final class SoundRegistry {
 	}
 
 	public static float getVolumeScale(final String soundName) {
-		return volumeControl.contains(soundName) ? volumeControl.get(soundName) : 1.0F;
+		return volumeControl.get(soundName);
 	}
 
 }

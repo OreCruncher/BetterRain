@@ -36,6 +36,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
 public class ProbabilityWeightsAcoustic implements IAcoustic {
+	
 	protected final List<IAcoustic> acoustics;
 	protected final int[] weights;
 	protected final int totalWeight;

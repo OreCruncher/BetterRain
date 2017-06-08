@@ -24,8 +24,8 @@
 
 package org.blockartistry.mod.DynSurround.client;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.blockartistry.mod.DynSurround.ModLog;
 import org.blockartistry.mod.DynSurround.ModOptions;
@@ -47,7 +47,7 @@ import net.minecraftforge.client.event.sound.PlaySoundEvent17;
 @SideOnly(Side.CLIENT)
 public class SoundBlockHandler implements IClientEffectHandler {
 
-	private final List<String> soundsToBlock = new ArrayList<String>();
+	private final Set<String> soundsToBlock = new HashSet<String>();
 	private final TObjectIntHashMap<String> soundCull = new TObjectIntHashMap<String>();
 
 	public SoundBlockHandler() {
@@ -82,7 +82,7 @@ public class SoundBlockHandler implements IClientEffectHandler {
 	
 	@SubscribeEvent(priority = EventPriority.HIGHEST)
 	public void soundEvent(final PlaySoundEvent17 event) {
-		if (event.sound == null)
+		if (event.sound == null || event.sound.getPositionedSoundLocation() == null)
 			return;
 
 		final String resource = event.sound.getPositionedSoundLocation().toString();

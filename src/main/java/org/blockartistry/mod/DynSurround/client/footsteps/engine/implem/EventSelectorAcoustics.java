@@ -24,6 +24,7 @@
 
 package org.blockartistry.mod.DynSurround.client.footsteps.engine.implem;
 
+import java.util.EnumMap;
 import java.util.Map;
 
 import org.blockartistry.mod.DynSurround.client.footsteps.engine.interfaces.IAcoustic;
@@ -34,15 +35,12 @@ import org.blockartistry.mod.DynSurround.client.footsteps.engine.interfaces.ISou
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import gnu.trove.map.hash.TCustomHashMap;
-import gnu.trove.strategy.IdentityHashingStrategy;
 
 @SideOnly(Side.CLIENT)
 public class EventSelectorAcoustics implements INamedAcoustic {
-	private final String name;
 
-	private final Map<EventType, IAcoustic> pairs = new TCustomHashMap<EventType, IAcoustic>(
-			IdentityHashingStrategy.INSTANCE);
+	private final String name;
+	private final Map<EventType, IAcoustic> pairs = new EnumMap<EventType, IAcoustic>(EventType.class);
 
 	public EventSelectorAcoustics(final String acousticName) {
 		this.name = acousticName;
@@ -57,9 +55,9 @@ public class EventSelectorAcoustics implements INamedAcoustic {
 	public void playSound(final ISoundPlayer player, final Object location, final EventType event,
 			final IOptions inputOptions) {
 		final IAcoustic acoustic = this.pairs.get(event);
-		if(acoustic != null)
+		if (acoustic != null)
 			acoustic.playSound(player, location, event, inputOptions);
-		else if(event.canTransition())
+		else if (event.canTransition())
 			playSound(player, location, event.getTransitionDestination(), inputOptions);
 	}
 

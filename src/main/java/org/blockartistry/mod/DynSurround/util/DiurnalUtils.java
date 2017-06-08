@@ -23,85 +23,63 @@
 
 package org.blockartistry.mod.DynSurround.util;
 
+import javax.annotation.Nonnull;
+
 import net.minecraft.world.World;
 
 public final class DiurnalUtils {
 
+	public static enum DayCycle {
+		NO_SKY, SUNRISE, SUNSET, DAYTIME, NIGHTTIME
+	}
+
 	private DiurnalUtils() {
 	}
 
-	public static boolean isDaytime(final World world) {
-		// Special case for The End
-		if(world.provider.dimensionId == 1)
-			return false;
-		
-		final float celestialAngle = getCelestialAngle(world, 0.0F);
-		// 0.785 0.260
-		return celestialAngle >= 0.785F || celestialAngle < 0.285F;
+	public static boolean isDaytime(@Nonnull final World world) {
+		return getCycle(world) == DayCycle.DAYTIME;
 	}
 
-	public static boolean isNighttime(final World world) {
-		// Special case for The End
-		if(world.provider.dimensionId == 1)
-			return true;
-
-		final float celestialAngle = getCelestialAngle(world, 0.0F);
-		// 0.260 0.705
-		return celestialAngle >= 0.285F && celestialAngle < 0.701F;
+	public static boolean isNighttime(@Nonnull final World world) {
+		return getCycle(world) == DayCycle.NIGHTTIME;
 	}
 
-	public static boolean isSunrise(final World world) {
-		// Special case for The End
-		if(world.provider.dimensionId == 1)
-			return false;
-		
-		final float celestialAngle = getCelestialAngle(world, 0.0F);
-		// 0.705
-		return celestialAngle >= 0.701F && celestialAngle < 0.785F;
+	public static boolean isSunrise(@Nonnull final World world) {
+		return getCycle(world) == DayCycle.SUNRISE;
 	}
 
-	public static boolean isSunset(final World world) {
-		// Special case for The End
-		if(world.provider.dimensionId == 1)
-			return false;
-		
-		final float celestialAngle = getCelestialAngle(world, 0.0F);
-		return celestialAngle > 0.215 && celestialAngle <= 0.306F;
+	public static boolean isSunset(@Nonnull final World world) {
+		return getCycle(world) == DayCycle.SUNSET;
 	}
 
-	public static float getCelestialAngle(final World world, final float partialTickTime) {
-		final float angle = world.getCelestialAngle(partialTickTime);
-		return angle >= 1.0F ? angle - 1.0F : angle;
+	public static DayCycle getCycle(@Nonnull final World world) {
+		if (world == null || world.provider.hasNoSky)
+			return DayCycle.NO_SKY;
+
+		final float brFactor = world.provider.getSunBrightnessFactor(1.0f);
+		if (brFactor > 0.6f)
+			return DayCycle.DAYTIME;
+		if (brFactor < 0.1f)
+			return DayCycle.NIGHTTIME;
+		if (MathStuff.sin(world.getCelestialAngleRadians(1.0f)) > 0.0)
+			return DayCycle.SUNSET;
+		return DayCycle.SUNRISE;
 	}
 
-	public static float getMoonPhaseFactor(final World world) {
-		return world.getCurrentMoonPhaseFactor();
+	public static float getMoonPhaseFactor(@Nonnull final World world) {
+		return world == null ? 0F : world.getCurrentMoonPhaseFactor();
+	}
+
+	public static boolean isAuroraVisible(@Nonnull final World world) {
+		return !isAuroraInvisible(world);
+	}
+
+	public static boolean isAuroraInvisible(@Nonnull final World world) {
+		final DayCycle cycle = getCycle(world);
+		return cycle == DayCycle.SUNRISE || cycle == DayCycle.DAYTIME;
 	}
 
 	public static long getClockTime(final World world) {
 		return world.getWorldTime() % 24000L;
 	}
-	
-	
-/*	
-	public boolean isDaytime(final World world) {
-		final long time = DiurnalUtils.getClockTime(world);
-		return time < 13000;
-	}
-
-	public boolean isNighttime(final World world) {
-		final long time = DiurnalUtils.getClockTime(world);
-		return time >= 13000 && time < 22220L;
-	}
-
-	public boolean isSunrise(final World world) {
-		final long time = DiurnalUtils.getClockTime(world);
-		return time >= 22220L;
-	}
-
-	public boolean isSunset(final World world) {
-		final long time = DiurnalUtils.getClockTime(world);
-		return time >= 12000 && time < 14000;
-	}
-	*/
 }

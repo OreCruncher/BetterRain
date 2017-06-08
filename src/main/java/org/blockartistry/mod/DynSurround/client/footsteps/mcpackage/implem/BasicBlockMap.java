@@ -26,6 +26,7 @@ package org.blockartistry.mod.DynSurround.client.footsteps.mcpackage.implem;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.IdentityHashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,9 +41,7 @@ import org.blockartistry.mod.DynSurround.compat.MCHelper;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import gnu.trove.map.hash.TCustomHashMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
-import gnu.trove.strategy.IdentityHashingStrategy;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 
@@ -50,10 +49,8 @@ import net.minecraft.init.Blocks;
 public class BasicBlockMap implements IBlockMap {
 	private static final Pattern pattern = Pattern.compile("([^:]+:[^^+]+)\\^?(\\d+)?\\+?(\\w+)?");
 
-	private final Map<Block, TIntObjectHashMap<String>> metaMap = new TCustomHashMap<Block, TIntObjectHashMap<String>>(
-			IdentityHashingStrategy.INSTANCE);
-	private final Map<Block, Map<String, String>> substrateMap = new TCustomHashMap<Block, Map<String, String>>(
-			IdentityHashingStrategy.INSTANCE);
+	private final Map<Block, TIntObjectHashMap<String>> metaMap = new IdentityHashMap<Block, TIntObjectHashMap<String>>();
+	private final Map<Block, Map<String, String>> substrateMap = new IdentityHashMap<Block, Map<String, String>>();
 
 	private static class MacroEntry {
 		public final int meta;
