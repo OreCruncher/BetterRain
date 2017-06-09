@@ -24,10 +24,11 @@
 
 package org.blockartistry.mod.DynSurround.client;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
+
+import javax.annotation.Nonnull;
 
 import org.blockartistry.mod.DynSurround.ModOptions;
 import org.blockartistry.mod.DynSurround.client.sound.SoundEffect;
@@ -61,6 +62,7 @@ import net.minecraft.potion.Potion;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
+import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingJumpEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
@@ -101,11 +103,7 @@ public class EnvironStateHandler implements IClientEffectHandler {
 	}
 
 	// Diagnostic strings to display in the debug HUD
-	private static List<String> diagnostics = new ArrayList<String>();
-
-	public static List<String> getDiagnostics() {
-		return diagnostics;
-	}
+	private List<String> diagnostics;
 
 	public static class EnvironState {
 
@@ -372,10 +370,12 @@ public class EnvironStateHandler implements IClientEffectHandler {
 		EnvironState.tick(world, player);
 
 		// Gather diagnostics if needed
-		if (ModOptions.enableDebugLogging) {
+		if (Minecraft.getMinecraft().gameSettings.showDebugInfo && ModOptions.enableDebugLogging) {
 			final DiagnosticEvent.Gather gather = new DiagnosticEvent.Gather(world, player);
 			MinecraftForge.EVENT_BUS.post(gather);
 			diagnostics = gather.output;
+		} else {
+			diagnostics = null;
 		}
 	}
 
@@ -438,6 +438,14 @@ public class EnvironStateHandler implements IClientEffectHandler {
 
 		if (event.entityPlayer.worldObj.isRemote && event.item.getItem() instanceof ItemBow) {
 			SoundManager.playSoundAtPlayer(EnvironState.getPlayer(), BOW_PULL);
+		}
+	}
+
+	@SubscribeEvent
+	public void onGatherText(@Nonnull final RenderGameOverlayEvent.Text event) {
+		if (diagnostics != null && !diagnostics.isEmpty()) {
+			event.left.add("");
+			event.left.addAll(diagnostics);
 		}
 	}
 

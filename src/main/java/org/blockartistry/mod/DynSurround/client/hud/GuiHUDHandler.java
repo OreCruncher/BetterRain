@@ -53,8 +53,6 @@ public final class GuiHUDHandler {
 	}
 
 	public static void initialize() {
-		if(ModOptions.enableDebugLogging)
-			register(new DebugHUD());
 		if(ModOptions.potionHudEnabled)
 			register(new PotionHUD());
 
