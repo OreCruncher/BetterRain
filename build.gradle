@@ -32,11 +32,6 @@ repositories {
 		url = "http://maven.ic2.player.to/"
 	}
 
-    maven {
-        name "Foxiehost"
-        url "http://maven.foxiehost.eu"
-    }
-    
     ivy {
         name "BuildCraft"
         artifactPattern "http://www.mod-buildcraft.com/releases/BuildCraft/[revision]/[module]-[revision]-[classifier].[ext]"
@@ -72,8 +67,6 @@ dependencies {
     // http://chickenbones.net/maven
     compile "codechicken:CodeChickenCore:1.7.10-1.0.7.47:dev"
     compile "codechicken:NotEnoughItems:1.7.10-1.0.5.120:dev"
-    
-    compile "foxie:Calendar:1.7.10-1.0-3:deobf"
     
     compile "mcp.mobius.waila:Waila:1.5.10_1.7.10:dev"
     // compile 'net.sengir.forestry:forestry_1.7.10:3.6.3.20:dev'
