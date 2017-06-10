@@ -31,10 +31,12 @@ import java.util.Map;
 
 import javax.annotation.Nonnull;
 
+import org.blockartistry.mod.DynSurround.ModLog;
+
 import com.google.common.io.ByteStreams;
 
-import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import cpw.mods.fml.relauncher.Side;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.util.ResourceLocation;
@@ -47,6 +49,8 @@ public final class SoundCache {
 	private static final IResourceManager manager = Minecraft.getMinecraft().getResourceManager();
 	private static final Map<ResourceLocation, URL> cache = new HashMap<ResourceLocation, URL>(256);
 
+	private static final byte[] SILENCE = getBuffer(new ResourceLocation("dsurround:sounds/ambient/silence.ogg"));
+
 	private static byte[] getBuffer(@Nonnull final ResourceLocation resource) {
 		InputStream stream = null;
 
@@ -55,7 +59,10 @@ public final class SoundCache {
 			// It's possible that available() returns 0. This generally means
 			// the stream has no idea about the number of bytes. If it reports
 			// 64K or greater assume it needs to be streamed from the JAR.
-			if (stream != null && stream.available() < BUFFER_SIZE) {
+			if(stream == null) {
+				ModLog.warn("No stream returned for [%s]", resource.toString());
+				return SILENCE;
+			} else if (stream.available() < BUFFER_SIZE) {
 				final int bytesRead = ByteStreams.read(stream, BUFFER, 0, BUFFER_SIZE);
 				// If no bytes were returned, or the total read was 64K, assume
 				// that it needs to be streamed.
@@ -66,7 +73,8 @@ public final class SoundCache {
 				return Arrays.copyOf(BUFFER, bytesRead);
 			}
 		} catch (@Nonnull final Throwable t) {
-			return null;
+			ModLog.warn("Error reading stream [%s]", resource.toString());
+			return SILENCE;
 		} finally {
 			if (stream != null)
 				try {

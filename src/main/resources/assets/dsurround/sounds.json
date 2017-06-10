@@ -1160,5 +1160,11 @@
 				"pitch": 1.75
 			}
 		]
+	},
+	"silence": {
+		"category": "ambient",
+		"sounds": [
+			"dsurround:ambient/silence"
+		]
 	}
 }
