@@ -25,23 +25,22 @@
 package org.blockartistry.mod.DynSurround.client.footsteps.mcpackage.implem;
 
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.HashMap;
-import java.util.IdentityHashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
 import org.blockartistry.mod.DynSurround.ModLog;
+import org.blockartistry.mod.DynSurround.client.footsteps.mcpackage.implem.BlockInfo.BlockInfoMutable;
 import org.blockartistry.mod.DynSurround.client.footsteps.mcpackage.interfaces.IBlockMap;
 import org.blockartistry.mod.DynSurround.compat.MCHelper;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import gnu.trove.map.hash.TIntObjectHashMap;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 
@@ -49,8 +48,10 @@ import net.minecraft.init.Blocks;
 public class BasicBlockMap implements IBlockMap {
 	private static final Pattern pattern = Pattern.compile("([^:]+:[^^+]+)\\^?(\\d+)?\\+?(\\w+)?");
 
-	private final Map<Block, TIntObjectHashMap<String>> metaMap = new IdentityHashMap<Block, TIntObjectHashMap<String>>();
-	private final Map<Block, Map<String, String>> substrateMap = new IdentityHashMap<Block, Map<String, String>>();
+	private final BlockInfoMutable mutable = new BlockInfoMutable();
+	private final Map<BlockInfo, String> metaMap = new HashMap<BlockInfo, String>();
+	private final Map<Substrate, Map<BlockInfo, String>> substrateMap = new EnumMap<Substrate, Map<BlockInfo, String>>(
+			Substrate.class);
 
 	private static class MacroEntry {
 		public final int meta;
@@ -116,39 +117,36 @@ public class BasicBlockMap implements IBlockMap {
 
 	@Override
 	public String getBlockMap(final Block block, final int meta) {
-		final TIntObjectHashMap<String> metas = this.metaMap.get(block);
-		if (metas != null) {
-			String result = metas.get(meta);
-			if (result == null)
-				result = metas.get(-1);
-			return result;
-		}
-		return null;
+		this.mutable.setBlock(block).setMeta(meta);
+		String acoustic = this.metaMap.get(this.mutable);
+		if (acoustic == null)
+			acoustic = this.metaMap.get(this.mutable.asGeneric());
+		return acoustic;
 	}
 
 	@Override
-	public String getBlockMapSubstrate(final Block block, final int meta, final String substrate) {
-		final Map<String, String> sub = this.substrateMap.get(block);
+	public String getBlockMapSubstrate(final Block block, final int meta, final Substrate substrate) {
+		final Map<BlockInfo, String> sub = this.substrateMap.get(substrate);
 		if (sub != null) {
-			String result = sub.get(substrate + "." + meta);
+			this.mutable.setBlock(block).setMeta(meta);
+			String result = sub.get(this.mutable);
 			if (result == null)
-				result = sub.get(substrate + ".-1");
+				result = sub.get(this.mutable.asGeneric());
 			return result;
 		}
 		return null;
 	}
 
 	private void put(final Block block, final int meta, final String substrate, final String value) {
+		final BlockInfo info = new BlockInfo(block, meta);
 		if (StringUtils.isEmpty(substrate)) {
-			TIntObjectHashMap<String> metas = this.metaMap.get(block);
-			if (metas == null)
-				this.metaMap.put(block, metas = new TIntObjectHashMap<String>());
-			metas.put(meta, value);
+			this.metaMap.put(info, value);
 		} else {
-			Map<String, String> sub = this.substrateMap.get(block);
+			final Substrate s = Substrate.get(substrate);
+			Map<BlockInfo, String> sub = this.substrateMap.get(s);
 			if (sub == null)
-				this.substrateMap.put(block, sub = new HashMap<String, String>());
-			sub.put(substrate + "." + meta, value);
+				this.substrateMap.put(s, sub = new HashMap<BlockInfo, String>());
+			sub.put(info, value);
 		}
 	}
 
@@ -184,29 +182,7 @@ public class BasicBlockMap implements IBlockMap {
 	}
 
 	@Override
-	public boolean hasEntryForBlock(final Block block) {
-		return this.metaMap.containsKey(block) || this.substrateMap.containsKey(block);
-	}
-
-	@Override
 	public void collectData(final Block block, final int meta, final List<String> data) {
-		String temp = this.getBlockMap(block, meta);
-		if (temp != null)
-			data.add(temp);
 
-		final Map<String, String> subs = this.substrateMap.get(block);
-		if (subs != null) {
-			final int len = data.size();
-			temp = "." + meta;
-			for (final Entry<String, String> entry : subs.entrySet())
-				if (entry.getKey().endsWith(temp))
-					data.add(entry.getValue());
-			if (data.size() == len) {
-				temp = ".-1";
-				for (final Entry<String, String> entry : subs.entrySet())
-					if (entry.getKey().endsWith(temp))
-						data.add(entry.getKey() + ":" + entry.getValue());
-			}
-		}
 	}
 }

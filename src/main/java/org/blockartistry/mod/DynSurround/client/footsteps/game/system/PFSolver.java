@@ -31,6 +31,7 @@ import org.blockartistry.mod.DynSurround.client.EnvironStateHandler.EnvironState
 import org.blockartistry.mod.DynSurround.client.footsteps.engine.implem.ConfigOptions;
 import org.blockartistry.mod.DynSurround.client.footsteps.engine.interfaces.EventType;
 import org.blockartistry.mod.DynSurround.client.footsteps.engine.interfaces.IOptions.Option;
+import org.blockartistry.mod.DynSurround.client.footsteps.mcpackage.implem.Substrate;
 import org.blockartistry.mod.DynSurround.client.footsteps.mcpackage.interfaces.IIsolator;
 import org.blockartistry.mod.DynSurround.client.footsteps.mcpackage.interfaces.ISolver;
 import org.blockartistry.mod.DynSurround.util.MathStuff;
@@ -178,7 +179,7 @@ public class PFSolver implements ISolver {
 
 		String association = null;
 		if (above != Blocks.air)
-			association = this.isolator.getBlockMap().getBlockMapSubstrate(above, aboveMeta, "carpet");
+			association = this.isolator.getBlockMap().getBlockMapSubstrate(above, aboveMeta, Substrate.CARPET);
 
 		// PFLog.debugf("Walking on block: %0 -- Being in block: %1", in,
 		// above);
@@ -193,7 +194,7 @@ public class PFSolver implements ISolver {
 
 				Block below = world.getBlock(xx, yy - 1, zz);
 				int belowMeta = world.getBlockMetadata(xx, yy - 1, zz);
-				association = isolator.getBlockMap().getBlockMapSubstrate(below, belowMeta, "bigger");
+				association = isolator.getBlockMap().getBlockMapSubstrate(below, belowMeta, Substrate.FENCE);
 				if (association != null) {
 					yy--;
 					in = below;
@@ -214,7 +215,8 @@ public class PFSolver implements ISolver {
 				// group.
 
 				if (above != Blocks.air) {
-					String foliage = this.isolator.getBlockMap().getBlockMapSubstrate(above, aboveMeta, "foliage");
+					String foliage = this.isolator.getBlockMap().getBlockMapSubstrate(above, aboveMeta,
+							Substrate.FOLIAGE);
 					if (foliage != null && !foliage.equals("NOT_EMITTER")) {
 						association = association + "," + foliage;
 						ModLog.debug("Foliage detected: " + foliage);
@@ -370,13 +372,13 @@ public class PFSolver implements ISolver {
 		 * => this block of code is here, not outside this if else group.
 		 */
 
-		String foliage = this.isolator.getBlockMap().getBlockMapSubstrate(above, aboveMeta, "foliage");
+		String foliage = this.isolator.getBlockMap().getBlockMapSubstrate(above, aboveMeta, Substrate.FOLIAGE);
 		if (foliage != null && !foliage.equals("NOT_EMITTER")) {
 			// we discard the normal block association, and mark the foliage as
 			// detected
 			// association = association + "," + foliage;
 			association = foliage;
-			String isMessy = this.isolator.getBlockMap().getBlockMapSubstrate(above, aboveMeta, "messy");
+			String isMessy = this.isolator.getBlockMap().getBlockMapSubstrate(above, aboveMeta, Substrate.MESSY);
 
 			if (isMessy != null && isMessy.equals("MESSY_GROUND"))
 				found = true;

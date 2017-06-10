@@ -22,30 +22,43 @@
  * THE SOFTWARE.
  */
 
-package org.blockartistry.mod.DynSurround.client.footsteps.mcpackage.interfaces;
+package org.blockartistry.mod.DynSurround.client.footsteps.mcpackage.implem;
 
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
-import org.blockartistry.mod.DynSurround.client.footsteps.mcpackage.implem.Substrate;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
-import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraft.block.Block;
+import cpw.mods.fml.relauncher.Side;
 
 @SideOnly(Side.CLIENT)
-public interface IBlockMap extends IRegistration {
-	
-	/**
-	 * This will return null if the block is not defined, and NOT_EMITTER if the block is a non-emitting block,
-	 * meaning block resolution must continue on its neighbours.
-	 */
-	public String getBlockMap(final Block block, final int meta);
-	
-	/**
-	 * This will return null if the substrate does not resolve in the selected carpet.
-	 */
-	public String getBlockMapSubstrate(final Block block, final int meta, final Substrate substrate);
-	
-	public void collectData(final Block block, final int meta, final List<String> data);
+public enum Substrate {
 
+	//
+	CARPET("carpet"),
+	//
+	FOLIAGE("foliage"),
+	//
+	MESSY("messy"),
+	//
+	FENCE("bigger");
+
+	private static final Map<String, Substrate> lookup = new HashMap<String, Substrate>();
+	static {
+		for (final Substrate s : Substrate.values())
+			lookup.put(s.name, s);
+	}
+
+	private final String name;
+
+	Substrate(@Nonnull final String name) {
+		this.name = name;
+	}
+
+	@Nullable
+	public static Substrate get(@Nonnull final String name) {
+		return lookup.get(name);
+	}
 }
