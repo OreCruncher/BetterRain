@@ -1,3 +1,16 @@
+###DynamicSurroundings-1.7.10-1.0.5.12
+**Fixes**
+* Setting footstep sound scale factor to 0 reverts to vanilla footstep sounds (backport)
+* [OpenEye](https://openeye.openmods.info/crashes/4a99da03285429c87ec8d9347210268e): Fix NPE in storm render when calculating color
+* [OpenEye](https://openeye.openmods.info/crashes/35c791f2c48ae15e0a8c42b832c38aac): Defensive code for bad potion IDs
+* [OpenEye](https://openeye.openmods.info/crashes/ef9cee918b144eaa128da318420d6dbf): Hard requirement of [Forge 10.13.4.1614](https://files.minecraftforge.net/maven/net/minecraftforge/forge/index_1.7.10.html) or later for Minecraft 1.7.10
+
+**Changes**
+* Footstep sound processing performance changes (backport)
+* Use ASM to hook Minecraft sound stream loading to improve responsiveness and reduce stream errors; can be turned off in config if needed (backport)
+* Pumpkin/Melon footstep sounds no longer squishy (backport)
+* Display diagnostic info only when debug screen is active and debug logging is enabled in config
+
 ###DynamicSurroundings-1.7.10-1.0.5.11
 **Fixes**
 * No more sound clicking when moving fast; was noticeable when flying over a beach (backport)
