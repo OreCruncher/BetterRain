@@ -24,21 +24,18 @@
 
 package org.blockartistry.mod.DynSurround.client.sound;
 
-import java.lang.reflect.Field;
 import java.nio.IntBuffer;
 import java.util.Iterator;
 import java.util.Map.Entry;
 
 import org.blockartistry.mod.DynSurround.ModLog;
 import org.blockartistry.mod.DynSurround.ModOptions;
-import org.blockartistry.mod.DynSurround.client.EnvironStateHandler.EnvironState;
 import org.blockartistry.mod.DynSurround.data.SoundRegistry;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.openal.AL;
 import org.lwjgl.openal.ALC10;
 import org.lwjgl.openal.ALC11;
 
-import cpw.mods.fml.relauncher.ReflectionHelper;
 import cpw.mods.fml.relauncher.SideOnly;
 import cpw.mods.fml.relauncher.Side;
 import net.minecraft.client.audio.ISound;
@@ -48,13 +45,10 @@ import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.client.audio.SoundManager;
 import net.minecraft.client.audio.SoundPoolEntry;
 import net.minecraft.client.settings.GameSettings;
-import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.MathHelper;
 import net.minecraftforge.common.MinecraftForge;
-import paulscode.sound.Library;
 import paulscode.sound.SoundSystem;
 import paulscode.sound.SoundSystemConfig;
-import paulscode.sound.StreamThread;
 
 @SideOnly(Side.CLIENT)
 public class SoundManagerReplacement extends SoundManager {
@@ -62,55 +56,11 @@ public class SoundManagerReplacement extends SoundManager {
 	private static int normalChannelCount = 0;
 	private static int streamChannelCount = 0;
 
-	private static Field soundLibrary = null;
-	private static Field streamThread = null;
-
-	static {
-
-		try {
-			soundLibrary = ReflectionHelper.findField(SoundSystem.class, "soundLibrary");
-			streamThread = ReflectionHelper.findField(Library.class, "streamThread");
-		} catch (final Throwable t) {
-			ModLog.warn("Cannot find sound manager fields; auto-restart not enabled");
-			soundLibrary = null;
-			streamThread = null;
-		}
-
-	}
-
-	private final static int CHECK_INTERVAL = 30 * 20; // 30 seconds
-	private int nextCheck = 0;
-
 	public SoundManagerReplacement(final SoundHandler handler, final GameSettings settings) {
 		super(handler, settings);
 		MinecraftForge.EVENT_BUS.register(this);
 
 		configureSound();
-	}
-
-	private void keepAlive() {
-		if (!this.loaded || streamThread == null)
-			return;
-
-		// Don't want to spam attempts
-		if (this.playTime < this.nextCheck)
-			return;
-
-		this.nextCheck = this.playTime + CHECK_INTERVAL;
-
-		try {
-			final Library l = (Library) soundLibrary.get(this.sndSystem);
-			final StreamThread t = (StreamThread) streamThread.get(l);
-			if (t != null && !t.isAlive()) {
-				if (ModLog.DEBUGGING) {
-					EnvironState.getPlayer().addChatMessage(new ChatComponentText("Autorestart of sound system!"));
-				}
-				ModLog.warn("Autorestart of sound system!");
-				this.reloadSoundSystem();
-			}
-		} catch (final Throwable t) {
-			;
-		}
 	}
 
 	@Override
@@ -126,8 +76,12 @@ public class SoundManagerReplacement extends SoundManager {
 
 	@Override
 	public void playSound(final ISound sound) {
-		if (sound != null)
+		if (sound != null) {
 			super.playSound(sound);
+			final SoundSystem sndSystem = this.sndSystem;
+			// Flush the sounds
+			sndSystem.CommandQueue(null);
+		}
 	}
 
 	@Override
@@ -139,8 +93,6 @@ public class SoundManagerReplacement extends SoundManager {
 	@SuppressWarnings("unchecked")
 	@Override
 	public void updateAllSounds() {
-
-		keepAlive();
 
 		final SoundSystem sndSystem = this.sndSystem;
 
