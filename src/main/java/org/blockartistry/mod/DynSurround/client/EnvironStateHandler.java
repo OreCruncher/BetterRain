@@ -390,7 +390,7 @@ public class EnvironStateHandler implements IClientEffectHandler {
 			return;
 
 		if (event.entity.worldObj.isRemote && EnvironState.isPlayer(event.entity))
-			SoundManager.playSoundAtPlayer(EnvironState.getPlayer(), JUMP);
+			SoundManager.playSoundAtPlayer(JUMP);
 	}
 
 	@SubscribeEvent
@@ -409,7 +409,7 @@ public class EnvironStateHandler implements IClientEffectHandler {
 					sound = AXE;
 
 				if (sound != null)
-					SoundManager.playSoundAtPlayer(EnvironState.getPlayer(), sound);
+					SoundManager.playSoundAtPlayer(sound);
 			}
 		}
 	}
@@ -424,7 +424,7 @@ public class EnvironStateHandler implements IClientEffectHandler {
 		if (event.player.worldObj.isRemote && EnvironState.isPlayer(event.player)) {
 			if (craftSoundThrottle < (EnvironState.getTickCounter() - 30)) {
 				craftSoundThrottle = EnvironState.getTickCounter();
-				SoundManager.playSoundAtPlayer(EnvironState.getPlayer(), CRAFTING);
+				SoundManager.playSoundAtPlayer(CRAFTING);
 			}
 		}
 
@@ -437,7 +437,7 @@ public class EnvironStateHandler implements IClientEffectHandler {
 			return;
 
 		if (event.entityPlayer.worldObj.isRemote && event.item.getItem() instanceof ItemBow) {
-			SoundManager.playSoundAtPlayer(EnvironState.getPlayer(), BOW_PULL);
+			SoundManager.playSoundAtPlayer(BOW_PULL);
 		}
 	}
 

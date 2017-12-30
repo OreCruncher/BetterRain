@@ -122,6 +122,11 @@ public class SoundManager {
 		}
 	}
 
+	public static void playSoundAtPlayer(final SoundEffect sound) {
+		final SpotSound s = new SpotSound(sound);
+		playSound(s);
+	}
+	
 	public static void playSoundAtPlayer(EntityPlayer player, final SoundEffect sound) {
 
 		if (player == null)
