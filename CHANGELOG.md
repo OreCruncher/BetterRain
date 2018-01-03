@@ -1,3 +1,11 @@
+###DynamicSurroundings-1.7.10-1.0.6.0
+* Removed all that sound engine restart stuff and replaced with patches to the underlying Minecraft sound engine to avoid the situation all together.  Thanks to CreativeMD and his work on getting to the bottom of things!  This should eliminate a variety of reported problems up through and including:
+    * Sound Engine restart lag
+    * Frequency of the sound engine crashes
+    * Various repeating errors in the client log related to sound muting and sounds not being found
+    * Crashes due to sound engine being yanked out from under other mods (such as IC2) 
+* Sometimes a sound instance would not play.  When this occurs something like "Error in class 'LibraryLWJGLOpenAL'" would show in the log.  Put in some additional code to make sure the sound information is flushed down into the sound engine. 
+
 ###DynamicSurroundings-1.7.10-1.0.5.12
 **Fixes**
 * Setting footstep sound scale factor to 0 reverts to vanilla footstep sounds (backport)
