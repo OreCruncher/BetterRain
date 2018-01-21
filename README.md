@@ -1,10 +1,10 @@
-###Build Status
+### Build Status
 Master Branch: [![Master Branch](https://travis-ci.org/OreCruncher/BetterRain.svg?branch=master)](https://travis-ci.org/OreCruncher/BetterRain)
 
 ### BetterRain
 Minecraft mod that improves the rain experience.
 
-###License
+### License
 The MIT License (MIT)
 
 Copyright (c) 2015 OreCruncher
