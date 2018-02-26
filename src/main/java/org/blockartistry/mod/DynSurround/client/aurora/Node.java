@@ -70,6 +70,7 @@ public final class Node {
 		this.angle = theta;
 	}
 
+	/*
 	// -----------------------------------------------
 	// Fast atan2:
 	// http://dspguru.com/dsp/tricks/fixed-point-atan2-with-self-normalization
@@ -88,7 +89,8 @@ public final class Node {
 
 		return y < 0.0 ? -angle : angle;
 	}
-
+*/
+	
 	public void setDeltaZ(final float f) {
 		this.dZ = f;
 	}
@@ -116,9 +118,9 @@ public final class Node {
 	public void findAngles(final Node next) {
 		this.tetX = this.tetX2 = this.posX;
 		this.tetZ = this.tetZ2 = getModdedZ();
-		this.angle = 0.0F;
+		//this.angle = 0.0F;
 		if (next != null) {
-			this.angle = atan2_fast(getModdedZ() - next.getModdedZ(), this.posX - next.posX);
+			//this.angle = atan2_fast(getModdedZ() - next.getModdedZ(), this.posX - next.posX);
 			this.tetX += this.cosDeg90;
 			this.tetX2 += this.cosDeg270;
 			this.tetZ += this.sinDeg90;
