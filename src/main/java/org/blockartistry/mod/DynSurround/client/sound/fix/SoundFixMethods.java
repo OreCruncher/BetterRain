@@ -7,6 +7,7 @@
 package org.blockartistry.mod.DynSurround.client.sound.fix;
 
 import java.lang.reflect.Field;
+
 import paulscode.sound.Source;
 
 public class SoundFixMethods {

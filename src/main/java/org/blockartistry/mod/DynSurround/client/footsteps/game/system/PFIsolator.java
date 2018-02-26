@@ -147,7 +147,7 @@ public class PFIsolator implements IIsolator, IVariatorSettable, IGeneratorSetta
 
 	/**
 	 * Propagate variators.
-	 * 
+	 *
 	 * @param possiblyAVariator
 	 */
 	private void fixVariator(final Object possiblyAVariator) {

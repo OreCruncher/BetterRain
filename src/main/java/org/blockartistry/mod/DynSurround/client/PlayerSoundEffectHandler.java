@@ -26,6 +26,7 @@ package org.blockartistry.mod.DynSurround.client;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import org.blockartistry.mod.DynSurround.ModOptions;
 import org.blockartistry.mod.DynSurround.client.EnvironStateHandler.EnvironState;
 import org.blockartistry.mod.DynSurround.client.sound.SoundEffect;
@@ -91,7 +92,7 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 
 	@Override
 	public void process(final World world, final EntityPlayer player) {
-		
+
 		// Dead players hear no sounds
 		if (player.isDead) {
 			resetSounds();
@@ -109,12 +110,12 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 		SoundManager.queueAmbientSounds(sounds);
 
 		if (doBiomeSounds()) {
-			SoundEffect sound = BiomeRegistry.getSpotSound(playerBiome, conditions, EnvironState.RANDOM);
+			final SoundEffect sound = BiomeRegistry.getSpotSound(playerBiome, conditions, EnvironState.RANDOM);
 			if (sound != null)
 				SoundManager.playSoundAtPlayer(player, sound);
 		}
 
-		SoundEffect sound = BiomeRegistry.getSpotSound(BiomeRegistry.PLAYER, conditions, EnvironState.RANDOM);
+		final SoundEffect sound = BiomeRegistry.getSpotSound(BiomeRegistry.PLAYER, conditions, EnvironState.RANDOM);
 		if (sound != null)
 			SoundManager.playSoundAtPlayer(player, sound);
 

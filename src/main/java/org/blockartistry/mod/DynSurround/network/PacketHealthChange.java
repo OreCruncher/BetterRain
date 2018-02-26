@@ -56,6 +56,7 @@ public class PacketHealthChange implements IMessage, IMessageHandler<PacketHealt
 		this.amount = data.amount;
 	}
 
+	@Override
 	public IMessage onMessage(final PacketHealthChange message, final MessageContext ctx) {
 		DamageEffectHandler.handleEvent(new HealthData(message.entityId, message.posX, message.posY, message.posZ,
 				message.isCritical, message.amount));

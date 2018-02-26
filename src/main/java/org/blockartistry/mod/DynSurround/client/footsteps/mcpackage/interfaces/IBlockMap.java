@@ -34,18 +34,20 @@ import net.minecraft.block.Block;
 
 @SideOnly(Side.CLIENT)
 public interface IBlockMap extends IRegistration {
-	
+
 	/**
-	 * This will return null if the block is not defined, and NOT_EMITTER if the block is a non-emitting block,
-	 * meaning block resolution must continue on its neighbours.
+	 * This will return null if the block is not defined, and NOT_EMITTER if the
+	 * block is a non-emitting block, meaning block resolution must continue on its
+	 * neighbours.
 	 */
 	public String getBlockMap(final Block block, final int meta);
-	
+
 	/**
-	 * This will return null if the substrate does not resolve in the selected carpet.
+	 * This will return null if the substrate does not resolve in the selected
+	 * carpet.
 	 */
 	public String getBlockMapSubstrate(final Block block, final int meta, final Substrate substrate);
-	
+
 	public void collectData(final Block block, final int meta, final List<String> data);
 
 }

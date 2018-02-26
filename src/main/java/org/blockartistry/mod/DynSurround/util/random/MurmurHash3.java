@@ -27,7 +27,7 @@ package org.blockartistry.mod.DynSurround.util.random;
  * @see "http://sites.google.com/site/murmurhash/"
  */
 final class MurmurHash3 {
-	
+
 	private MurmurHash3() {
 		// no instances.
 	}

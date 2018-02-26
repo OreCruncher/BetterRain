@@ -94,15 +94,14 @@ public class BlockPos {
 	 * Add the given coordinates to the coordinates of this BlockPos
 	 */
 	public BlockPos add(double x, double y, double z) {
-		return x == 0.0D && y == 0.0D && z == 0.0D ? this
-				: new BlockPos((double) this.getX() + x, (double) this.getY() + y, (double) this.getZ() + z);
+		return x == 0.0D && y == 0.0D && z == 0.0D ? this : new BlockPos(getX() + x, getY() + y, getZ() + z);
 	}
 
 	/**
 	 * Add the given coordinates to the coordinates of this BlockPos
 	 */
 	public BlockPos add(int x, int y, int z) {
-		return x == 0 && y == 0 && z == 0 ? this : new BlockPos(this.getX() + x, this.getY() + y, this.getZ() + z);
+		return x == 0 && y == 0 && z == 0 ? this : new BlockPos(getX() + x, getY() + y, getZ() + z);
 	}
 
 	/**
@@ -201,25 +200,24 @@ public class BlockPos {
 	 */
 	public BlockPos offset(EnumFacing facing, int n) {
 		return n == 0 ? this
-				: new BlockPos(this.getX() + facing.getFrontOffsetX() * n, this.getY() + facing.getFrontOffsetY() * n,
-						this.getZ() + facing.getFrontOffsetZ() * n);
+				: new BlockPos(getX() + facing.getFrontOffsetX() * n, getY() + facing.getFrontOffsetY() * n,
+						getZ() + facing.getFrontOffsetZ() * n);
 	}
 
 	/**
 	 * Serialize this BlockPos into a long value
 	 */
 	public long toLong() {
-		return ((long) this.getX() & X_MASK) << X_SHIFT | ((long) this.getY() & Y_MASK) << Y_SHIFT
-				| ((long) this.getZ() & Z_MASK) << 0;
+		return (getX() & X_MASK) << X_SHIFT | (getY() & Y_MASK) << Y_SHIFT | (getZ() & Z_MASK) << 0;
 	}
 
 	/**
 	 * Create a BlockPos from a serialized long value (created by toLong)
 	 */
 	public static BlockPos fromLong(long serialized) {
-		int i = (int) (serialized << 64 - X_SHIFT - NUM_X_BITS >> 64 - NUM_X_BITS);
-		int j = (int) (serialized << 64 - Y_SHIFT - NUM_Y_BITS >> 64 - NUM_Y_BITS);
-		int k = (int) (serialized << 64 - NUM_Z_BITS >> 64 - NUM_Z_BITS);
+		final int i = (int) (serialized << 64 - X_SHIFT - NUM_X_BITS >> 64 - NUM_X_BITS);
+		final int j = (int) (serialized << 64 - Y_SHIFT - NUM_Y_BITS >> 64 - NUM_Y_BITS);
+		final int k = (int) (serialized << 64 - NUM_Z_BITS >> 64 - NUM_Z_BITS);
 		return new BlockPos(i, j, k);
 	}
 
@@ -229,16 +227,18 @@ public class BlockPos {
 		final BlockPos blockpos1 = new BlockPos(Math.max(from.getX(), to.getX()), Math.max(from.getY(), to.getY()),
 				Math.max(from.getZ(), to.getZ()));
 		return new Iterable<BlockPos>() {
+			@Override
 			public Iterator<BlockPos> iterator() {
 				return new AbstractIterator<BlockPos>() {
 					private BlockPos lastReturned = null;
 
+					@Override
 					protected BlockPos computeNext() {
 						if (this.lastReturned == null) {
 							this.lastReturned = blockpos;
 							return this.lastReturned;
 						} else if (this.lastReturned.equals(blockpos1)) {
-							return (BlockPos) this.endOfData();
+							return endOfData();
 						} else {
 							int i = this.lastReturned.getX();
 							int j = this.lastReturned.getY();
@@ -270,17 +270,19 @@ public class BlockPos {
 		final BlockPos blockpos1 = new BlockPos(Math.max(from.getX(), to.getX()), Math.max(from.getY(), to.getY()),
 				Math.max(from.getZ(), to.getZ()));
 		return new Iterable<BlockPos.MutableBlockPos>() {
+			@Override
 			public Iterator<BlockPos.MutableBlockPos> iterator() {
 				return new AbstractIterator<BlockPos.MutableBlockPos>() {
 					private BlockPos.MutableBlockPos theBlockPos = null;
 
+					@Override
 					protected BlockPos.MutableBlockPos computeNext() {
 						if (this.theBlockPos == null) {
 							this.theBlockPos = new BlockPos.MutableBlockPos(blockpos.getX(), blockpos.getY(),
 									blockpos.getZ());
 							return this.theBlockPos;
 						} else if (this.theBlockPos.equals(blockpos1)) {
-							return (BlockPos.MutableBlockPos) this.endOfData();
+							return endOfData();
 						} else {
 							int i = this.theBlockPos.getX();
 							int j = this.theBlockPos.getY();
@@ -314,8 +316,8 @@ public class BlockPos {
 	 * MutableBlockPos it will return a new instance of BlockPos with the same
 	 * values.
 	 *
-	 * When storing a parameter given to you for an extended period of time,
-	 * make sure you use this in case the value is changed internally.
+	 * When storing a parameter given to you for an extended period of time, make
+	 * sure you use this in case the value is changed internally.
 	 *
 	 * @return An immutable BlockPos.
 	 */
@@ -345,6 +347,7 @@ public class BlockPos {
 		/**
 		 * Get the X coordinate
 		 */
+		@Override
 		public int getX() {
 			return this.x;
 		}
@@ -352,6 +355,7 @@ public class BlockPos {
 		/**
 		 * Get the Y coordinate
 		 */
+		@Override
 		public int getY() {
 			return this.y;
 		}
@@ -359,13 +363,14 @@ public class BlockPos {
 		/**
 		 * Get the Z coordinate
 		 */
+		@Override
 		public int getZ() {
 			return this.z;
 		}
 
 		/**
 		 * Set the values
-		 * 
+		 *
 		 * @param xIn
 		 *            The X value
 		 * @param yIn

@@ -32,7 +32,7 @@ import net.minecraft.entity.EntityLivingBase;
 
 /**
  * Can generate footsteps using the default Minecraft function.
- * 
+ *
  * @author Hurry
  */
 @SideOnly(Side.CLIENT)

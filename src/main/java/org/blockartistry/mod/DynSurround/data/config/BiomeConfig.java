@@ -50,7 +50,7 @@ public final class BiomeConfig {
 		@SerializedName("fogColor")
 		public String fogColor = null;
 		@SerializedName("fogDensity")
-		public Float fogDensity= null;
+		public Float fogDensity = null;
 		@SerializedName("soundReset")
 		public Boolean soundReset = null;
 		@SerializedName("spotSoundChance")

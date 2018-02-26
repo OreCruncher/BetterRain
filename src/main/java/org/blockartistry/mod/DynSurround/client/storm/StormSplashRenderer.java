@@ -26,8 +26,8 @@ package org.blockartistry.mod.DynSurround.client.storm;
 
 import org.apache.commons.lang3.StringUtils;
 import org.blockartistry.mod.DynSurround.ModOptions;
-import org.blockartistry.mod.DynSurround.client.WeatherUtils;
 import org.blockartistry.mod.DynSurround.client.EnvironStateHandler.EnvironState;
+import org.blockartistry.mod.DynSurround.client.WeatherUtils;
 import org.blockartistry.mod.DynSurround.client.fx.particle.ParticleFactory;
 import org.blockartistry.mod.DynSurround.compat.IParticleFactory;
 import org.blockartistry.mod.DynSurround.data.BiomeRegistry;
@@ -152,7 +152,7 @@ public class StormSplashRenderer {
 		if (rainStrengthFactor <= 0.0F)
 			return;
 
-		RANDOM.setSeed((long) theThis.rendererUpdateCount * 312987231L);
+		RANDOM.setSeed(theThis.rendererUpdateCount * 312987231L);
 		final EntityLivingBase entity = theThis.mc.renderViewEntity;
 		final WorldClient worldclient = theThis.mc.theWorld;
 		final int playerX = MathHelper.floor_double(entity.posX);

@@ -26,6 +26,7 @@ package org.blockartistry.mod.DynSurround.client;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import org.blockartistry.mod.DynSurround.ModOptions;
 import org.blockartistry.mod.DynSurround.client.footsteps.Footsteps;
 import org.blockartistry.mod.DynSurround.client.fx.BlockEffectHandler;

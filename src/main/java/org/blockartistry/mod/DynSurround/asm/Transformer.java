@@ -30,7 +30,7 @@ import org.apache.logging.log4j.Logger;
 public class Transformer extends MyTransformer {
 
 	private static final Logger logger = LogManager.getLogger("dsurround Transform");
-	
+
 	public static Logger log() {
 		return logger;
 	}
@@ -41,16 +41,16 @@ public class Transformer extends MyTransformer {
 
 	@Override
 	protected void initTransmorgrifiers() {
-		this.addTransmorgrifier(new PatchEntityRenderer());
-		this.addTransmorgrifier(new PatchWorld());
-		this.addTransmorgrifier(new PatchWorldServer());
-		this.addTransmorgrifier(new PatchSoundHandler());
-		this.addTransmorgrifier(new PatchSoundManager());
-		
+		addTransmorgrifier(new PatchEntityRenderer());
+		addTransmorgrifier(new PatchWorld());
+		addTransmorgrifier(new PatchWorldServer());
+		addTransmorgrifier(new PatchSoundHandler());
+		addTransmorgrifier(new PatchSoundManager());
+
 		// Sound engine crash patches
-		this.addTransmorgrifier(new SoundCrashFixSource());
-		this.addTransmorgrifier(new SoundCrashFixLibrary());
-		this.addTransmorgrifier(new SoundCrashFixStreamThread());
+		addTransmorgrifier(new SoundCrashFixSource());
+		addTransmorgrifier(new SoundCrashFixLibrary());
+		addTransmorgrifier(new SoundCrashFixStreamThread());
 	}
 
 }

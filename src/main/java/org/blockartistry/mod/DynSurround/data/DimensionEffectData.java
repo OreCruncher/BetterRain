@@ -61,7 +61,7 @@ public final class DimensionEffectData implements INBTSerialization {
 	private float intensity = 0.0F;
 	private float minIntensity = ModOptions.defaultMinRainStrength;
 	private float maxIntensity = ModOptions.defaultMaxRainStrength;
-	private Set<AuroraData> auroras = new HashSet<AuroraData>();
+	private final Set<AuroraData> auroras = new HashSet<AuroraData>();
 
 	public DimensionEffectData() {
 	}
@@ -106,7 +106,7 @@ public final class DimensionEffectData implements INBTSerialization {
 		float result = 0.0F;
 		final float delta = this.maxIntensity - this.minIntensity;
 		if (delta <= 0.0F) {
-			result = (float) this.minIntensity;
+			result = this.minIntensity;
 		} else {
 			final float mid = delta / 2.0F;
 			result = random.nextFloat() * mid + random.nextFloat() * mid;

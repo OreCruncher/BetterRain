@@ -34,7 +34,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
 public class ConfigOptions implements IOptions {
-	
+
 	private final Map<Option, Object> map = new EnumMap<Option, Object>(Option.class);
 
 	public ConfigOptions() {

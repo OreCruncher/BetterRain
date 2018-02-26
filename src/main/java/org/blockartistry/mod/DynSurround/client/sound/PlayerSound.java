@@ -69,7 +69,7 @@ class PlayerSound extends MovingSound {
 
 		// No attenuation for sounds attached to the player
 		this.field_147666_i = ISound.AttenuationType.NONE;
-		
+
 		updateLocation();
 	}
 
@@ -81,6 +81,7 @@ class PlayerSound extends MovingSound {
 		return this.isFading;
 	}
 
+	@Override
 	public boolean isDonePlaying() {
 		return this.isDonePlaying;
 	}
@@ -99,7 +100,7 @@ class PlayerSound extends MovingSound {
 
 	@Override
 	public void update() {
-		if (this.isDonePlaying())
+		if (isDonePlaying())
 			return;
 
 		if (!EnvironState.getPlayer().isEntityAlive()) {
@@ -113,7 +114,7 @@ class PlayerSound extends MovingSound {
 
 		this.lastTick = EnvironState.getTickCounter();
 
-		if (this.isFading()) {
+		if (isFading()) {
 			this.volume -= FADE_AMOUNT * tickDelta;
 		} else if (this.volume < this.maxVolume) {
 			this.volume += FADE_AMOUNT * tickDelta;
@@ -154,9 +155,9 @@ class PlayerSound extends MovingSound {
 		if (this == anObj)
 			return true;
 		if (anObj instanceof PlayerSound)
-			return this.sameSound(((PlayerSound) anObj).sound);
+			return sameSound(((PlayerSound) anObj).sound);
 		if (anObj instanceof SoundEffect)
-			return this.sameSound((SoundEffect) anObj);
+			return sameSound((SoundEffect) anObj);
 		return false;
 	}
 }

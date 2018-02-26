@@ -37,27 +37,25 @@ public abstract class BlockEffect {
 	public BlockEffect() {
 		this(100);
 	}
-	
+
 	public BlockEffect(final int chance) {
 		this.chance = chance;
 	}
-	
+
 	public void setChance(final int chance) {
 		this.chance = chance;
 	}
-	
+
 	public int getChance() {
 		return this.chance;
 	}
 
-	public boolean trigger(final Block block, final World world, final BlockPos pos,
-			final Random random) {
+	public boolean trigger(final Block block, final World world, final BlockPos pos, final Random random) {
 		return random.nextInt(getChance()) == 0;
 	}
 
-	public abstract void doEffect(final Block block, final World world, final BlockPos pos,
-			final Random random);
-	
+	public abstract void doEffect(final Block block, final World world, final BlockPos pos, final Random random);
+
 	@Override
 	public String toString() {
 		final StringBuilder builder = new StringBuilder();

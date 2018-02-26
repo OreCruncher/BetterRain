@@ -43,14 +43,14 @@ public abstract class Transmorgrifier {
 	}
 
 	/*
-	 * Name of the Transmorgrifier. Used in logging to identify which set of
-	 * logic was operating.
+	 * Name of the Transmorgrifier. Used in logging to identify which set of logic
+	 * was operating.
 	 */
 	public abstract String name();
 
 	/*
-	 * Indicates whether the transmorgrification process should executed.
-	 * Override to provide custom behavior, such as configuration control.
+	 * Indicates whether the transmorgrification process should executed. Override
+	 * to provide custom behavior, such as configuration control.
 	 */
 	public boolean isEnabled() {
 		return true;

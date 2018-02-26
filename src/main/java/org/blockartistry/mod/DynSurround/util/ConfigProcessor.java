@@ -83,7 +83,7 @@ public final class ConfigProcessor {
 	public static @interface Hidden {
 
 	}
-	
+
 	public static void process(final Configuration config, final Class<?> clazz) {
 		process(config, clazz, null);
 	}
@@ -95,7 +95,8 @@ public final class ConfigProcessor {
 				final String category = annotation.category();
 				final String property = annotation.property();
 				final String comment = field.getAnnotation(Comment.class) != null
-						? field.getAnnotation(Comment.class).value() : "";
+						? field.getAnnotation(Comment.class).value()
+						: "";
 
 				try {
 					final Object defaultValue = field.get(parameters);
@@ -129,7 +130,7 @@ public final class ConfigProcessor {
 						field.set(parameters, config.getStringList(property, category,
 								StringUtils.split(annotation.defaultValue(), ','), comment));
 					}
-					
+
 					// Configure restart settings
 					final Property prop = config.getCategory(category).get(property);
 					if (field.getAnnotation(RestartRequired.class) != null) {
@@ -140,7 +141,7 @@ public final class ConfigProcessor {
 						prop.setRequiresMcRestart(false);
 						prop.setRequiresWorldRestart(false);
 					}
-					
+
 					prop.setShowInGui(field.getAnnotation(Hidden.class) == null);
 
 				} catch (final Throwable t) {

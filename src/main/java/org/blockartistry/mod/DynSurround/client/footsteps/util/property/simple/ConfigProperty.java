@@ -27,6 +27,7 @@ package org.blockartistry.mod.DynSurround.client.footsteps.util.property.simple;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
+
 import org.blockartistry.mod.DynSurround.util.JsonUtils;
 
 import cpw.mods.fml.relauncher.Side;
@@ -53,7 +54,7 @@ public class ConfigProperty {
 
 		try {
 			return Boolean.parseBoolean(this.properties.get(name));
-		} catch (NumberFormatException e) {
+		} catch (final NumberFormatException e) {
 			throw new PropertyTypeException();
 		}
 	}
@@ -64,7 +65,7 @@ public class ConfigProperty {
 
 		try {
 			return Integer.parseInt(this.properties.get(name));
-		} catch (NumberFormatException e) {
+		} catch (final NumberFormatException e) {
 			throw new PropertyTypeException();
 		}
 	}
@@ -75,7 +76,7 @@ public class ConfigProperty {
 
 		try {
 			return Float.parseFloat(this.properties.get(name));
-		} catch (NumberFormatException e) {
+		} catch (final NumberFormatException e) {
 			throw new PropertyTypeException();
 		}
 	}
@@ -86,7 +87,7 @@ public class ConfigProperty {
 
 		try {
 			return Long.parseLong(this.properties.get(name));
-		} catch (NumberFormatException e) {
+		} catch (final NumberFormatException e) {
 			throw new PropertyTypeException();
 		}
 	}
@@ -97,7 +98,7 @@ public class ConfigProperty {
 
 		try {
 			return Double.parseDouble(this.properties.get(name));
-		} catch (NumberFormatException e) {
+		} catch (final NumberFormatException e) {
 			throw new PropertyTypeException();
 		}
 	}
@@ -118,7 +119,7 @@ public class ConfigProperty {
 
 	@SuppressWarnings("unchecked")
 	public static boolean loadStream(final ConfigProperty properties, final InputStream stream) {
-		if(stream == null)
+		if (stream == null)
 			return false;
 		properties.properties = JsonUtils.load(stream, properties.properties.getClass());
 		return true;

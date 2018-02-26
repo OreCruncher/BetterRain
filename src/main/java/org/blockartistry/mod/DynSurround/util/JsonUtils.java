@@ -50,7 +50,7 @@ public class JsonUtils {
 				;
 			}
 		}
-		return (T) clazz.newInstance();
+		return clazz.newInstance();
 	}
 
 	public static <T> T load(final String modId, final Class<T> clazz) throws Exception {
@@ -69,7 +69,7 @@ public class JsonUtils {
 				;
 			}
 		}
-		return (T) clazz.newInstance();
+		return clazz.newInstance();
 	}
 
 	public static <T> T load(final InputStream stream, final Class<T> clazz) {
@@ -79,7 +79,7 @@ public class JsonUtils {
 		try {
 			reader = new InputStreamReader(stream);
 			reader2 = new JsonReader(reader);
-			return (T) new Gson().fromJson(reader, clazz);
+			return new Gson().fromJson(reader, clazz);
 		} finally {
 			try {
 				if (reader2 != null)

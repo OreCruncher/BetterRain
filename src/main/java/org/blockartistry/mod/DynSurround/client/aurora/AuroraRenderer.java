@@ -24,6 +24,14 @@
 
 package org.blockartistry.mod.DynSurround.client.aurora;
 
+import org.blockartistry.mod.DynSurround.ModOptions;
+import org.blockartistry.mod.DynSurround.client.AuroraEffectHandler;
+import org.blockartistry.mod.DynSurround.client.IAtmosRenderer;
+import org.blockartistry.mod.DynSurround.data.DimensionRegistry;
+import org.blockartistry.mod.DynSurround.util.Color;
+import org.blockartistry.mod.DynSurround.util.DiurnalUtils;
+import org.lwjgl.opengl.GL11;
+
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -32,14 +40,6 @@ import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
-
-import org.blockartistry.mod.DynSurround.ModOptions;
-import org.blockartistry.mod.DynSurround.client.AuroraEffectHandler;
-import org.blockartistry.mod.DynSurround.client.IAtmosRenderer;
-import org.blockartistry.mod.DynSurround.data.DimensionRegistry;
-import org.blockartistry.mod.DynSurround.util.Color;
-import org.blockartistry.mod.DynSurround.util.DiurnalUtils;
-import org.lwjgl.opengl.GL11;
 
 @SideOnly(Side.CLIENT)
 public final class AuroraRenderer implements IAtmosRenderer {

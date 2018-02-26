@@ -94,12 +94,12 @@ public class NormalVariator implements IVariator {
 		}
 
 		// I am feeling SUPER LAZY today
-		Field[] fields = NormalVariator.class.getDeclaredFields();
-		for (Field field : fields) {
+		final Field[] fields = NormalVariator.class.getDeclaredFields();
+		for (final Field field : fields) {
 			try {
-				String fieldName = field.getName();
+				final String fieldName = field.getName();
 				if (keys.contains(fieldName)) {
-					String lowercaseField = fieldName.toLowerCase();
+					final String lowercaseField = fieldName.toLowerCase();
 					if (field.getType() == Float.TYPE) {
 						field.setFloat(this, config.getFloat(lowercaseField));
 					} else if (field.getType() == Integer.TYPE) {
@@ -108,7 +108,7 @@ public class NormalVariator implements IVariator {
 						field.setBoolean(this, config.getBoolean(lowercaseField));
 					}
 				}
-			} catch (Throwable e) {
+			} catch (final Throwable e) {
 				ModLog.info("Incompatible type: " + e.getClass().getName() + ": " + field.getName());
 			}
 		}

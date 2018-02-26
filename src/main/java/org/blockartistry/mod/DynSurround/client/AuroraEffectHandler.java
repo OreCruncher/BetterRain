@@ -24,8 +24,6 @@
 
 package org.blockartistry.mod.DynSurround.client;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -35,6 +33,9 @@ import org.blockartistry.mod.DynSurround.client.EnvironStateHandler.EnvironState
 import org.blockartistry.mod.DynSurround.client.aurora.Aurora;
 import org.blockartistry.mod.DynSurround.data.AuroraData;
 import org.blockartistry.mod.DynSurround.util.DiurnalUtils;
+
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 

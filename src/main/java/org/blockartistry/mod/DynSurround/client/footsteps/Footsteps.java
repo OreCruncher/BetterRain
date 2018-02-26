@@ -66,7 +66,7 @@ public class Footsteps implements IResourceManagerReloadListener, IClientEffectH
 	public static Footsteps INSTANCE = null;
 
 	// System
-	private PFResourcePackDealer dealer = new PFResourcePackDealer();
+	private final PFResourcePackDealer dealer = new PFResourcePackDealer();
 	private PFIsolator isolator;
 	private boolean isFirstTime = true;
 
@@ -88,8 +88,8 @@ public class Footsteps implements IResourceManagerReloadListener, IClientEffectH
 
 		this.isolator.setGenerator(new PFReaderH(this.isolator));
 		/*
-		 * this.isolator.setGenerator(getConfig().getInteger("custom.stance") ==
-		 * 0 ? new PFReaderH(this.isolator) : new PFReaderQP(this.isolator));
+		 * this.isolator.setGenerator(getConfig().getInteger("custom.stance") == 0 ? new
+		 * PFReaderH(this.isolator) : new PFReaderQP(this.isolator));
 		 */
 	}
 
@@ -168,7 +168,7 @@ public class Footsteps implements IResourceManagerReloadListener, IClientEffectH
 	}
 
 	private void reloadAcoustics(final List<IResourcePack> repo) {
-		AcousticsManager acoustics = new AcousticsManager(this.isolator);
+		final AcousticsManager acoustics = new AcousticsManager(this.isolator);
 		Scanner scanner = null;
 		InputStream stream = null;
 
@@ -215,7 +215,7 @@ public class Footsteps implements IResourceManagerReloadListener, IClientEffectH
 		this.isolator.onFrame();
 		if (ModOptions.footstepsSoundFactor > 0)
 			player.nextStepDistance = Integer.MAX_VALUE;
-		else if(player.nextStepDistance == Integer.MAX_VALUE)
+		else if (player.nextStepDistance == Integer.MAX_VALUE)
 			player.nextStepDistance = 0;
 	}
 

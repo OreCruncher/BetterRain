@@ -36,6 +36,7 @@ import org.blockartistry.mod.DynSurround.ModLog;
 import org.blockartistry.mod.DynSurround.ModOptions;
 import org.blockartistry.mod.DynSurround.client.EnvironStateHandler.EnvironState;
 import org.blockartistry.mod.DynSurround.compat.BlockPos;
+
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
@@ -126,7 +127,7 @@ public class SoundManager {
 		final SpotSound s = new SpotSound(sound);
 		playSound(s);
 	}
-	
+
 	public static void playSoundAtPlayer(EntityPlayer player, final SoundEffect sound) {
 
 		if (player == null)

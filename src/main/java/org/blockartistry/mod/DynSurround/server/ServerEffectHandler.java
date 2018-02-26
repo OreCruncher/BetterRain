@@ -24,14 +24,6 @@
 
 package org.blockartistry.mod.DynSurround.server;
 
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.gameevent.TickEvent;
-import cpw.mods.fml.common.gameevent.TickEvent.Phase;
-import gnu.trove.map.hash.TIntIntHashMap;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.world.World;
 import java.util.List;
 import java.util.Set;
 
@@ -46,6 +38,15 @@ import org.blockartistry.mod.DynSurround.data.DimensionRegistry;
 import org.blockartistry.mod.DynSurround.network.Network;
 import org.blockartistry.mod.DynSurround.util.DiurnalUtils;
 import org.blockartistry.mod.DynSurround.util.PlayerUtils;
+
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.common.gameevent.TickEvent;
+import cpw.mods.fml.common.gameevent.TickEvent.Phase;
+import gnu.trove.map.hash.TIntIntHashMap;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.World;
 
 public final class ServerEffectHandler {
 
@@ -69,7 +70,8 @@ public final class ServerEffectHandler {
 
 		final World world = event.world;
 		final int dimensionId = world.provider.dimensionId;
-		final float sendIntensity = DimensionRegistry.hasWeather(world) ? DimensionEffectData.get(world).getRainIntensity()
+		final float sendIntensity = DimensionRegistry.hasWeather(world)
+				? DimensionEffectData.get(world).getRainIntensity()
 				: RESET;
 
 		// Set the rain intensity for all players in the current
@@ -90,8 +92,8 @@ public final class ServerEffectHandler {
 	}
 
 	/*
-	 * Only OK to spawn an aurora when it is night time and the moon brightness
-	 * is less than half full.
+	 * Only OK to spawn an aurora when it is night time and the moon brightness is
+	 * less than half full.
 	 */
 	private static boolean okToSpawnAurora(final World world) {
 		return DiurnalUtils.isNighttime(world);
@@ -132,7 +134,8 @@ public final class ServerEffectHandler {
 						final int preset = AuroraPreset.randomId();
 						// final int colorSet = ColorPair.testId();
 						// final int preset = AuroraPreset.testId();
-						final AuroraData aurora = new AuroraData(player, -ModOptions.auroraSpawnOffset, colorSet, preset);
+						final AuroraData aurora = new AuroraData(player, -ModOptions.auroraSpawnOffset, colorSet,
+								preset);
 						if (data.add(aurora)) {
 							ModLog.debug("Spawned new aurora: " + aurora.toString());
 						}

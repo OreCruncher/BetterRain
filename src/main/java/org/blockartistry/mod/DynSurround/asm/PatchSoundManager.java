@@ -56,15 +56,15 @@ public class PatchSoundManager extends Transmorgrifier {
 
 		final MethodNode m = findMethod(cn, names, sigs);
 		if (m != null) {
-			this.logMethod(Transformer.log(), m, "Found!");
+			logMethod(Transformer.log(), m, "Found!");
 
-			InsnList list = new InsnList();
+			final InsnList list = new InsnList();
 			list.add(new VarInsnNode(ALOAD, 0));
 
 			final String owner = "org/blockartistry/mod/DynSurround/client/sound/cache/SoundCache";
 			final String targetName = "getURLForSoundResource";
 			final String sig = "(Lnet/minecraft/util/ResourceLocation;)Ljava/net/URL;";
-			
+
 			list.add(new MethodInsnNode(INVOKESTATIC, owner, targetName, sig, false));
 			list.add(new InsnNode(ARETURN));
 			m.instructions.insert(m.instructions.getFirst(), list);

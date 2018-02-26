@@ -51,6 +51,7 @@ public class PotionHUD extends Gui implements IGuiOverlay {
 
 	private static final ResourceLocation TEXTURE = new ResourceLocation("textures/gui/container/inventory.png");
 
+	@Override
 	public void doRender(final RenderGameOverlayEvent event) {
 
 		if (event.isCancelable() || event.type != ElementType.EXPERIENCE) {
@@ -68,7 +69,7 @@ public class PotionHUD extends Gui implements IGuiOverlay {
 		final FontRenderer font = mc.fontRenderer;
 		final EntityPlayer player = Minecraft.getMinecraft().thePlayer;
 
-		int guiLeft = 2;
+		final int guiLeft = 2;
 		int guiTop = 2;
 
 		@SuppressWarnings("unchecked")
@@ -101,11 +102,11 @@ public class PotionHUD extends Gui implements IGuiOverlay {
 
 				GL11.glColor4f(1.0F, 1.0F, 1.0F, ModOptions.potionHudTransparency);
 				mc.getTextureManager().bindTexture(TEXTURE);
-				this.drawTexturedModalRect(guiLeft, guiTop, 0, 166, 140, 32);
+				drawTexturedModalRect(guiLeft, guiTop, 0, 166, 140, 32);
 
 				if (potion.hasStatusIcon()) {
 					final int l = potion.getStatusIconIndex();
-					this.drawTexturedModalRect(guiLeft + 6, guiTop + 7, 0 + l % 8 * 18, 198 + l / 8 * 18, 18, 18);
+					drawTexturedModalRect(guiLeft + 6, guiTop + 7, 0 + l % 8 * 18, 198 + l / 8 * 18, 18, 18);
 				}
 
 				try {

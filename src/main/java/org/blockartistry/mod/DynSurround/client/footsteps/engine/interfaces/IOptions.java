@@ -29,16 +29,12 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
 public interface IOptions {
-	
+
 	public static enum Option {
-		DELAY_MIN,
-		DELAY_MAX,
-		SKIPPABLE,
-		GLIDING_VOLUME,
-		GLIDING_PITCH
-		
+		DELAY_MIN, DELAY_MAX, SKIPPABLE, GLIDING_VOLUME, GLIDING_PITCH
+
 	};
-	
+
 	public boolean hasOption(final Option option);
 
 	public Object getOption(final Option option);

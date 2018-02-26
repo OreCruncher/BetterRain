@@ -35,8 +35,8 @@ import org.blockartistry.mod.DynSurround.ModLog;
 
 import com.google.common.io.ByteStreams;
 
-import cpw.mods.fml.relauncher.SideOnly;
 import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.util.ResourceLocation;
@@ -59,7 +59,7 @@ public final class SoundCache {
 			// It's possible that available() returns 0. This generally means
 			// the stream has no idea about the number of bytes. If it reports
 			// 64K or greater assume it needs to be streamed from the JAR.
-			if(stream == null) {
+			if (stream == null) {
 				ModLog.warn("No stream returned for [%s]", resource.toString());
 				return SILENCE;
 			} else if (stream.available() < BUFFER_SIZE) {

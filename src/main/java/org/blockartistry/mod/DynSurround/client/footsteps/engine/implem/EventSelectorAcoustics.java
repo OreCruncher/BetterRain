@@ -27,8 +27,8 @@ package org.blockartistry.mod.DynSurround.client.footsteps.engine.implem;
 import java.util.EnumMap;
 import java.util.Map;
 
-import org.blockartistry.mod.DynSurround.client.footsteps.engine.interfaces.IAcoustic;
 import org.blockartistry.mod.DynSurround.client.footsteps.engine.interfaces.EventType;
+import org.blockartistry.mod.DynSurround.client.footsteps.engine.interfaces.IAcoustic;
 import org.blockartistry.mod.DynSurround.client.footsteps.engine.interfaces.INamedAcoustic;
 import org.blockartistry.mod.DynSurround.client.footsteps.engine.interfaces.IOptions;
 import org.blockartistry.mod.DynSurround.client.footsteps.engine.interfaces.ISoundPlayer;

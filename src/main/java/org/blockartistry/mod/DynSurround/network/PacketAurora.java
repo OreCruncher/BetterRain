@@ -58,6 +58,7 @@ public final class PacketAurora implements IMessage, IMessageHandler<PacketAuror
 		this.preset = preset;
 	}
 
+	@Override
 	public void fromBytes(final ByteBuf buf) {
 		this.dimension = buf.readInt();
 		this.seed = buf.readLong();
@@ -67,6 +68,7 @@ public final class PacketAurora implements IMessage, IMessageHandler<PacketAuror
 		this.preset = buf.readByte();
 	}
 
+	@Override
 	public void toBytes(final ByteBuf buf) {
 		buf.writeInt(this.dimension);
 		buf.writeLong(this.seed);

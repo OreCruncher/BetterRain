@@ -29,7 +29,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 /**
  * Something that has the ability to play sounds.
- * 
+ *
  * @author Hurry
  */
 @SideOnly(Side.CLIENT)

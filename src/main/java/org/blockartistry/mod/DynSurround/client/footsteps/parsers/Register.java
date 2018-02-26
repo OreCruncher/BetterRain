@@ -36,11 +36,11 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
 public final class Register {
-	
+
 	private Register() {
-		
+
 	}
-	
+
 	public static void setup(final ConfigProperty props, final IRegistration registration) {
 		final Map<String, String> properties = props.getAllProperties();
 		for (final Entry<String, String> entry : properties.entrySet()) {

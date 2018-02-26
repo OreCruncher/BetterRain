@@ -36,7 +36,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 @SideOnly(Side.CLIENT)
 public class UserConfigSoundPlayerWrapper implements ISoundPlayer {
 
-	private ISoundPlayer wrapped;
+	private final ISoundPlayer wrapped;
 
 	public UserConfigSoundPlayerWrapper(final ISoundPlayer wrapped) {
 		this.wrapped = wrapped;

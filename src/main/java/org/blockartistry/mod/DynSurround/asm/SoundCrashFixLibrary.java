@@ -48,16 +48,16 @@ public class SoundCrashFixLibrary extends Transmorgrifier {
 
 	@Override
 	public boolean transmorgrify(final ClassNode cn) {
-		MethodNode m = findMethod(cn, "removeSource", "(Ljava/lang/String;)V");
+		final MethodNode m = findMethod(cn, "removeSource", "(Ljava/lang/String;)V");
 		if (m != null) {
-			for (Iterator<?> iterator = m.instructions.iterator(); iterator.hasNext();) {
+			for (final Iterator<?> iterator = m.instructions.iterator(); iterator.hasNext();) {
 				final AbstractInsnNode insn = (AbstractInsnNode) iterator.next();
 				if (insn instanceof MethodInsnNode && ((MethodInsnNode) insn).owner.equals("paulscode/sound/Source")
 						&& ((MethodInsnNode) insn).name.equals("cleanup")) {
 					m.instructions.insertBefore(insn,
 							new MethodInsnNode(Opcodes.INVOKESTATIC,
-									"org/blockartistry/mod/DynSurround/client/sound/fix/SoundFixMethods", "cleanupSource",
-									"(Lpaulscode/sound/Source;)V", false));
+									"org/blockartistry/mod/DynSurround/client/sound/fix/SoundFixMethods",
+									"cleanupSource", "(Lpaulscode/sound/Source;)V", false));
 					m.instructions.remove(insn);
 					return true;
 				}

@@ -28,16 +28,17 @@ import java.io.File;
 
 import org.apache.logging.log4j.LogManager;
 import org.blockartistry.mod.DynSurround.proxy.Proxy;
-import net.minecraftforge.common.config.Configuration;
+
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
+import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
+import net.minecraftforge.common.config.Configuration;
 
 @Mod(modid = Module.MOD_ID, useMetadata = true, dependencies = Module.DEPENDENCIES, version = Module.VERSION, guiFactory = Module.GUI_FACTORY)
 public class Module {
@@ -81,7 +82,7 @@ public class Module {
 	public void preInit(final FMLPreInitializationEvent event) {
 
 		FMLCommonHandler.instance().bus().register(this);
-		
+
 		// Load up our configuration
 		dataDirectory = new File(event.getModConfigurationDirectory(), Module.MOD_ID);
 		dataDirectory.mkdirs();
@@ -111,5 +112,5 @@ public class Module {
 	public void serverStarting(final FMLServerStartingEvent event) {
 		proxy.serverStarting(event);
 	}
-	
+
 }

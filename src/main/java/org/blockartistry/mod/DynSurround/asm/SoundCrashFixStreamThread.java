@@ -52,7 +52,7 @@ public class SoundCrashFixStreamThread extends Transmorgrifier {
 	public boolean transmorgrify(final ClassNode cn) {
 		final MethodNode m = findMethod(cn, "run", "()V");
 		if (m != null) {
-			for (Iterator<?> iterator = m.instructions.iterator(); iterator.hasNext();) {
+			for (final Iterator<?> iterator = m.instructions.iterator(); iterator.hasNext();) {
 				AbstractInsnNode insn = (AbstractInsnNode) iterator.next();
 				if (insn instanceof MethodInsnNode && ((MethodInsnNode) insn).owner.equals("java/util/ListIterator")
 						&& ((MethodInsnNode) insn).name.equals("next")) {

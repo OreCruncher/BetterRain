@@ -58,7 +58,7 @@ public final class DimensionConfig {
 	public static DimensionConfig load(final File file) throws Exception {
 		return JsonUtils.load(file, DimensionConfig.class);
 	}
-	
+
 	public static DimensionConfig load(final String modId) throws Exception {
 		return JsonUtils.load(modId, DimensionConfig.class);
 	}

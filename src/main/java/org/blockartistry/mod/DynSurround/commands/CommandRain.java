@@ -43,7 +43,7 @@ import net.minecraft.world.World;
 
 public final class CommandRain extends CommandBase {
 
-	private static final List<String> ALIAS = ImmutableList.<String> builder().add("r", "br").build();
+	private static final List<String> ALIAS = ImmutableList.<String>builder().add("r", "br").build();
 	private static final DecimalFormat FORMATTER = new DecimalFormat("0.0");
 
 	public static String statusOutput(final World world, final DimensionEffectData data) {

@@ -112,7 +112,7 @@ public class BasicBlockMap implements IBlockMap {
 
 	public BasicBlockMap() {
 		// Air is not an emitter, always!
-		this.put(Blocks.air, -1, null, "NOT_EMITTER");
+		put(Blocks.air, -1, null, "NOT_EMITTER");
 	}
 
 	@Override

@@ -53,18 +53,18 @@ class Emitter {
 	}
 
 	public void update() {
-		
+
 		// If the volume is turned off don't send
 		// down a sound.
 		if (SoundSystemConfig.getMasterGain() <= 0)
 			return;
 
-		if(this.activeSound == null) {
-			this.activeSound = new PlayerSound(effect);
-		} else if(SoundManager.isSoundPlaying(this.activeSound)) {
+		if (this.activeSound == null) {
+			this.activeSound = new PlayerSound(this.effect);
+		} else if (SoundManager.isSoundPlaying(this.activeSound)) {
 			return;
 		}
-		
+
 		try {
 			SoundManager.playSound(this.activeSound);
 		} catch (final Throwable t) {

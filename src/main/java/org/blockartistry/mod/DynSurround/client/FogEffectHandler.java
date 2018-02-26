@@ -34,9 +34,9 @@ import org.blockartistry.mod.DynSurround.util.Color;
 import org.blockartistry.mod.DynSurround.util.PlayerUtils;
 import org.lwjgl.opengl.GL11;
 
+import cpw.mods.fml.common.eventhandler.Event.Result;
 import cpw.mods.fml.common.eventhandler.EventPriority;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.eventhandler.Event.Result;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import gnu.trove.map.hash.TObjectIntHashMap;
@@ -162,8 +162,8 @@ public class FogEffectHandler implements IClientEffectHandler {
 
 	/*
 	 * Hook the fog density event so that the fog settings can be reset based on
-	 * rain intensity. This routine will overwrite what the vanilla code has
-	 * done in terms of fog.
+	 * rain intensity. This routine will overwrite what the vanilla code has done in
+	 * terms of fog.
 	 */
 	@SubscribeEvent(priority = EventPriority.LOWEST)
 	public void fogRenderEvent(final EntityViewRenderEvent.RenderFogEvent event) {
@@ -173,7 +173,7 @@ public class FogEffectHandler implements IClientEffectHandler {
 		if (currentFogLevel == 0)
 			return;
 
-		float level = currentFogLevel;
+		final float level = currentFogLevel;
 		final float factor = 1.0F + level * 100.0F;
 		final float near = (event.farPlaneDistance * 0.75F) / (factor * factor) + insideFogOffset;
 		final float horizon = event.farPlaneDistance / (factor) + insideFogOffset;

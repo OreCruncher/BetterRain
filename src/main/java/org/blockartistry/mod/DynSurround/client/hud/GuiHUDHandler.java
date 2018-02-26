@@ -53,7 +53,7 @@ public final class GuiHUDHandler {
 	}
 
 	public static void initialize() {
-		if(ModOptions.potionHudEnabled)
+		if (ModOptions.potionHudEnabled)
 			register(new PotionHUD());
 
 		MinecraftForge.EVENT_BUS.register(new GuiHUDHandler());

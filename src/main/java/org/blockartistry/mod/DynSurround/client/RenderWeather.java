@@ -31,6 +31,7 @@ import org.blockartistry.mod.DynSurround.client.EnvironStateHandler.EnvironState
 import org.blockartistry.mod.DynSurround.client.aurora.AuroraRenderer;
 import org.blockartistry.mod.DynSurround.client.storm.StormRenderer;
 import org.blockartistry.mod.DynSurround.client.storm.StormSplashRenderer;
+
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.renderer.EntityRenderer;
@@ -51,7 +52,7 @@ public final class RenderWeather {
 
 	/*
 	 * Render rain particles.
-	 * 
+	 *
 	 * Redirect from EntityRenderer.
 	 */
 	public static void addRainParticles(final EntityRenderer theThis) {
@@ -60,7 +61,7 @@ public final class RenderWeather {
 
 	/*
 	 * Render atmospheric effects.
-	 * 
+	 *
 	 * Redirect from EntityRenderer.
 	 */
 	public static void renderRainSnow(final EntityRenderer theThis, final float partialTicks) {

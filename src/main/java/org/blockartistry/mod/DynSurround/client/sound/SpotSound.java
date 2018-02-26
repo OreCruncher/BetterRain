@@ -72,9 +72,9 @@ public class SpotSound extends PositionedSound {
 		this.repeat = false;
 		this.field_147665_h = 0;
 
-		this.xPosF = (float) pos.getX() + 0.5F;
-		this.yPosF = (float) pos.getY() + 0.5F;
-		this.zPosF = (float) pos.getZ() + 0.5F;
+		this.xPosF = pos.getX() + 0.5F;
+		this.yPosF = pos.getY() + 0.5F;
+		this.zPosF = pos.getZ() + 0.5F;
 
 		this.timeMark = EnvironState.getTickCounter() + delay;
 	}

@@ -40,11 +40,11 @@ import org.blockartistry.mod.DynSurround.event.DiagnosticEvent;
 import org.blockartistry.mod.DynSurround.util.PlayerUtils;
 import org.blockartistry.mod.DynSurround.util.random.XorShiftRandom;
 
-import cpw.mods.fml.relauncher.SideOnly;
 import cpw.mods.fml.common.eventhandler.EventPriority;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.PlayerEvent.ItemCraftedEvent;
 import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
@@ -373,9 +373,9 @@ public class EnvironStateHandler implements IClientEffectHandler {
 		if (Minecraft.getMinecraft().gameSettings.showDebugInfo && ModOptions.enableDebugLogging) {
 			final DiagnosticEvent.Gather gather = new DiagnosticEvent.Gather(world, player);
 			MinecraftForge.EVENT_BUS.post(gather);
-			diagnostics = gather.output;
+			this.diagnostics = gather.output;
 		} else {
-			diagnostics = null;
+			this.diagnostics = null;
 		}
 	}
 
@@ -422,8 +422,8 @@ public class EnvironStateHandler implements IClientEffectHandler {
 			return;
 
 		if (event.player.worldObj.isRemote && EnvironState.isPlayer(event.player)) {
-			if (craftSoundThrottle < (EnvironState.getTickCounter() - 30)) {
-				craftSoundThrottle = EnvironState.getTickCounter();
+			if (this.craftSoundThrottle < (EnvironState.getTickCounter() - 30)) {
+				this.craftSoundThrottle = EnvironState.getTickCounter();
 				SoundManager.playSoundAtPlayer(CRAFTING);
 			}
 		}
@@ -443,9 +443,9 @@ public class EnvironStateHandler implements IClientEffectHandler {
 
 	@SubscribeEvent
 	public void onGatherText(@Nonnull final RenderGameOverlayEvent.Text event) {
-		if (diagnostics != null && !diagnostics.isEmpty()) {
+		if (this.diagnostics != null && !this.diagnostics.isEmpty()) {
 			event.left.add("");
-			event.left.addAll(diagnostics);
+			event.left.addAll(this.diagnostics);
 		}
 	}
 

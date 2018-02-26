@@ -27,6 +27,7 @@ package org.blockartistry.mod.DynSurround.proxy;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
 import org.blockartistry.mod.DynSurround.ModLog;
 import org.blockartistry.mod.DynSurround.ModOptions;
 import org.blockartistry.mod.DynSurround.client.ClientEffectHandler;
@@ -81,7 +82,7 @@ public class ProxyClient extends Proxy {
 			for (final String entry : report.getBlockNames()) {
 				ModLog.info(entry);
 			}
-			
+
 			ForgeDictionary.dumpOreNames();
 		}
 	}

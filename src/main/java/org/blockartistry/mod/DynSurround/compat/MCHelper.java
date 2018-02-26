@@ -36,23 +36,23 @@ public class MCHelper {
 	public static String nameOf(final Block block) {
 		return Block.blockRegistry.getNameForObject(block);
 	}
-	
+
 	public static Block getBlockNameRaw(final String blockName) {
 		return GameData.getBlockRegistry().getRaw(blockName);
 	}
-	
+
 	public static Block getBlock(final World world, final BlockPos pos) {
 		return world.getBlock(pos.getX(), pos.getY(), pos.getZ());
 	}
-	
+
 	public static int getBlockMetadata(final World world, final BlockPos pos) {
 		return world.getBlockMetadata(pos.getX(), pos.getY(), pos.getZ());
 	}
-	
+
 	public static boolean isAirBlock(final World world, final BlockPos pos) {
 		return world.isAirBlock(pos.getX(), pos.getY(), pos.getZ());
 	}
-	
+
 	public static boolean isLeafBlock(final World world, final BlockPos pos) {
 		return getBlock(world, pos).isLeaves(world, pos.getX(), pos.getY(), pos.getZ());
 	}

@@ -27,7 +27,7 @@ package org.blockartistry.mod.DynSurround.util;
 /**
  * Replacement algos for SIN_TABLE/cos in Minecraft's MathStuff routines. Use
  * the Riven method:
- * 
+ *
  * http://riven8192.blogspot.com/2009/08/fastmath-sincos-lookup-tables.html
  * http://riven8192.blogspot.com/2009/08/fastmath-atan2-lookup-table.html
  */
@@ -139,7 +139,7 @@ public class MathStuff {
 	public static final double atan2(final double y, final double x) {
 		final float tmp1 = (float) y;
 		final float tmp2 = (float) x;
-		return (double) atan2(tmp1, tmp2);
+		return atan2(tmp1, tmp2);
 	}
 
 	// Misc functions

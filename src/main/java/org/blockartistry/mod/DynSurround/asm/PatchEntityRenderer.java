@@ -53,7 +53,7 @@ public class PatchEntityRenderer extends Transmorgrifier {
 	public boolean transmorgrify(final ClassNode cn) {
 
 		boolean failed = false;
-		
+
 		final String names1[] = { "func_78484_h", "addRainParticles" };
 		final String sigs1[] = { "()V", "()V" };
 
@@ -62,7 +62,7 @@ public class PatchEntityRenderer extends Transmorgrifier {
 
 		MethodNode m = findMethod(cn, names1, sigs1);
 		if (m != null) {
-			this.logMethod(Transformer.log(), m, "Found!");
+			logMethod(Transformer.log(), m, "Found!");
 
 			m.localVariables = null;
 			final InsnList list = new InsnList();
@@ -81,7 +81,7 @@ public class PatchEntityRenderer extends Transmorgrifier {
 
 		m = findMethod(cn, names2, sigs2);
 		if (m != null) {
-			this.logMethod(Transformer.log(), m, "Found!");
+			logMethod(Transformer.log(), m, "Found!");
 
 			final InsnList list = new InsnList();
 			list.add(new VarInsnNode(ALOAD, 0));

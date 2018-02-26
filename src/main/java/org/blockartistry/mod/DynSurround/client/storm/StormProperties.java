@@ -24,9 +24,9 @@
 
 package org.blockartistry.mod.DynSurround.client.storm;
 
+import org.blockartistry.mod.DynSurround.ModOptions;
 import org.blockartistry.mod.DynSurround.Module;
 import org.blockartistry.mod.DynSurround.client.EnvironStateHandler.EnvironState;
-import org.blockartistry.mod.DynSurround.ModOptions;
 import org.blockartistry.mod.DynSurround.data.DimensionEffectData;
 
 import cpw.mods.fml.relauncher.Side;
@@ -110,9 +110,9 @@ public enum StormProperties {
 	}
 
 	/**
-	 * Sets the rain intensity based on the intensityLevel level provided. This
-	 * is called by the packet handler when the server wants to set the
-	 * intensity level on the client.
+	 * Sets the rain intensity based on the intensityLevel level provided. This is
+	 * called by the packet handler when the server wants to set the intensity level
+	 * on the client.
 	 */
 	public static void setIntensity(float level) {
 

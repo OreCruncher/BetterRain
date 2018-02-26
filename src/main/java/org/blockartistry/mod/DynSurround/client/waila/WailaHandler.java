@@ -37,6 +37,15 @@ import org.blockartistry.mod.DynSurround.ModOptions;
 import org.blockartistry.mod.DynSurround.client.footsteps.Footsteps;
 import org.blockartistry.mod.DynSurround.client.footsteps.mcpackage.interfaces.IBlockMap;
 
+import cpw.mods.fml.common.Optional;
+import cpw.mods.fml.common.event.FMLInterModComms;
+import cpw.mods.fml.common.eventhandler.EventPriority;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.common.registry.GameData;
+import mcp.mobius.waila.api.IWailaConfigHandler;
+import mcp.mobius.waila.api.IWailaDataAccessor;
+import mcp.mobius.waila.api.IWailaDataProvider;
+import mcp.mobius.waila.api.IWailaRegistrar;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
@@ -47,15 +56,6 @@ import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
-import mcp.mobius.waila.api.IWailaConfigHandler;
-import mcp.mobius.waila.api.IWailaDataAccessor;
-import mcp.mobius.waila.api.IWailaDataProvider;
-import mcp.mobius.waila.api.IWailaRegistrar;
-import cpw.mods.fml.common.Optional;
-import cpw.mods.fml.common.event.FMLInterModComms;
-import cpw.mods.fml.common.eventhandler.EventPriority;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.registry.GameData;
 
 @Optional.Interface(iface = "mcp.mobius.waila.api.IWailaDataProvider", modid = "Waila")
 public final class WailaHandler implements IWailaDataProvider {

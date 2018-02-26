@@ -44,7 +44,7 @@ public abstract class MyTransformer implements IClassTransformer {
 
 	public MyTransformer(final Logger logger) {
 		this.logger = logger;
-		this.initTransmorgrifiers();
+		initTransmorgrifiers();
 	}
 
 	protected abstract void initTransmorgrifiers();
@@ -74,7 +74,7 @@ public abstract class MyTransformer implements IClassTransformer {
 					if (modified) {
 						this.logger.info(String.format("Transmorgrified [%s]: %s", transformedName, t.name()));
 					}
-					
+
 				} catch (final Throwable ex) {
 					ex.printStackTrace();
 				}

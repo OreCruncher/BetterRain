@@ -30,9 +30,9 @@ import net.minecraft.entity.player.EntityPlayer;
 
 /**
  * Has the ability to generate footsteps based on a Player.
- * 
+ *
  * @author Hurry
- * 
+ *
  */
 @SideOnly(Side.CLIENT)
 public interface IGenerator {

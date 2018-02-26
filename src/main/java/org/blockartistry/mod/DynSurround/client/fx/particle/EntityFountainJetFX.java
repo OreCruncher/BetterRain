@@ -39,8 +39,8 @@ public class EntityFountainJetFX extends EntityJetFX {
 		public EntityFoundtainParitcleFX(final World world, final double x, final double y, final double z,
 				final double dX, final double dY, final double dZ, final Block block) {
 			super(world, x + RANDOM.nextGaussian() * 0.2D, y, z + RANDOM.nextGaussian() * 0.2D, dX, dY, dZ, block, 0);
-			this.multipleParticleScaleBy((float) (0.3F + RANDOM.nextGaussian() / 10.0F));
-			this.setPosition(this.posX, this.posY, this.posZ);
+			multipleParticleScaleBy((float) (0.3F + RANDOM.nextGaussian() / 10.0F));
+			setPosition(this.posX, this.posY, this.posZ);
 		}
 
 	}

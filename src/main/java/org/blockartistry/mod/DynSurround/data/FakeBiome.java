@@ -34,7 +34,7 @@ public class FakeBiome extends BiomeGenBase {
 
 	public FakeBiome(final int biomeId, final String biomeName) {
 		super(biomeId, false);
-		this.setBiomeName(biomeName);
+		setBiomeName(biomeName);
 		this.theBiomeDecorator = null;
 		this.flowers = null;
 		this.spawnableCaveCreatureList = null;
@@ -45,12 +45,12 @@ public class FakeBiome extends BiomeGenBase {
 		this.worldGeneratorSwamp = null;
 		this.worldGeneratorTrees = null;
 	}
-	
+
 	@Override
 	public boolean canSpawnLightningBolt() {
 		return false;
 	}
-	
+
 	@Override
 	public boolean getEnableSnow() {
 		return false;

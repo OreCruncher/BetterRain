@@ -86,6 +86,7 @@ public abstract class JetEffect extends BlockEffect {
 			return super.trigger(block, world, pos, random) && world.isAirBlock(pos.getX(), pos.getY() + 1, pos.getZ());
 		}
 
+		@Override
 		public void doEffect(final Block block, final World world, final BlockPos pos, final Random random) {
 			final int lavaBlocks = countBlocks(world, pos, block, -1);
 			final double spawnHeight = jetSpawnHeight(world, pos);
@@ -106,6 +107,7 @@ public abstract class JetEffect extends BlockEffect {
 					&& world.getBlock(pos.getX(), pos.getY() - 1, pos.getZ()).getMaterial().isSolid();
 		}
 
+		@Override
 		public void doEffect(final Block block, final World world, final BlockPos pos, final Random random) {
 			final int waterBlocks = countBlocks(world, pos, block, 1);
 			final EntityJetFX effect = new EntityBubbleJetFX(waterBlocks, world, pos.getX() + 0.5D, pos.getY() + 0.1D,
@@ -138,6 +140,7 @@ public abstract class JetEffect extends BlockEffect {
 			return lavaCount(world, pos) != 0;
 		}
 
+		@Override
 		public void doEffect(final Block block, final World world, final BlockPos pos, final Random random) {
 			final int strength = lavaCount(world, pos);
 			final double spawnHeight = jetSpawnHeight(world, pos);
@@ -158,6 +161,7 @@ public abstract class JetEffect extends BlockEffect {
 			return super.trigger(block, world, pos, random) && world.isAirBlock(pos.getX(), pos.getY() - 1, pos.getZ());
 		}
 
+		@Override
 		public void doEffect(final Block block, final World world, final BlockPos pos, final Random random) {
 			final EntityJetFX effect = new EntityDustJetFX(2, world, pos.getX() + 0.5D, pos.getY() - 0.2D,
 					pos.getZ() + 0.5D, block);
@@ -175,6 +179,7 @@ public abstract class JetEffect extends BlockEffect {
 			return super.trigger(block, world, pos, random) && world.isAirBlock(pos.getX(), pos.getY() + 1, pos.getZ());
 		}
 
+		@Override
 		public void doEffect(final Block block, final World world, final BlockPos pos, final Random random) {
 			final EntityJetFX effect = new EntityFountainJetFX(5, world, pos.getX() + 0.5D, pos.getY() + 1.1D,
 					pos.getZ() + 0.5D, block);

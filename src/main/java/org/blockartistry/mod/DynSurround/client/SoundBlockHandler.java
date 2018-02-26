@@ -79,7 +79,7 @@ public class SoundBlockHandler implements IClientEffectHandler {
 			}
 		}
 	}
-	
+
 	@SubscribeEvent(priority = EventPriority.HIGHEST)
 	public void soundEvent(final PlaySoundEvent17 event) {
 		if (event.sound == null || event.sound.getPositionedSoundLocation() == null)

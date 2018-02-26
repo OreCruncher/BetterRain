@@ -129,7 +129,7 @@ public final class SoundEffect {
 	}
 
 	public boolean matches(final String conditions) {
-		return pattern.matcher(conditions).matches();
+		return this.pattern.matcher(conditions).matches();
 	}
 
 	public float getVolume() {
@@ -173,6 +173,7 @@ public final class SoundEffect {
 		return newEffect;
 	}
 
+	@Override
 	public String toString() {
 		final StringBuilder builder = new StringBuilder();
 		builder.append('[').append(this.sound);

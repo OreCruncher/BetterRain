@@ -56,10 +56,10 @@ public class PatchWorldServer extends Transmorgrifier {
 
 		final MethodNode m = findMethod(cn, names, sigs);
 		if (m != null) {
-			this.logMethod(Transformer.log(), m, "Found!");
+			logMethod(Transformer.log(), m, "Found!");
 
 			m.localVariables = null;
-			InsnList list = new InsnList();
+			final InsnList list = new InsnList();
 			list.add(new VarInsnNode(ALOAD, 0));
 
 			final String owner = "org/blockartistry/mod/DynSurround/server/PlayerSleepHandler";

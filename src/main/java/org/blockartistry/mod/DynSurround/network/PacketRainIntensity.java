@@ -52,16 +52,19 @@ public final class PacketRainIntensity implements IMessage, IMessageHandler<Pack
 		this.dimension = dimension;
 	}
 
+	@Override
 	public void fromBytes(final ByteBuf buf) {
 		this.intensity = buf.readFloat();
 		this.dimension = buf.readInt();
 	}
 
+	@Override
 	public void toBytes(final ByteBuf buf) {
 		buf.writeFloat(this.intensity);
 		buf.writeInt(this.dimension);
 	}
 
+	@Override
 	public IMessage onMessage(final PacketRainIntensity message, final MessageContext ctx) {
 		// If the player is in the dimension set the intensity. Otherwise
 		// ignore.

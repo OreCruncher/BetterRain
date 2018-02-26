@@ -27,9 +27,9 @@ package org.blockartistry.mod.DynSurround.client.fx.particle;
 import org.blockartistry.mod.DynSurround.util.Color;
 import org.blockartistry.mod.DynSurround.util.random.XorShiftRandom;
 
-import net.minecraft.world.World;
-import cpw.mods.fml.relauncher.SideOnly;
 import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.world.World;
 
 @SideOnly(Side.CLIENT)
 public class EntityCriticalPopOffFX extends EntityTextPopOffFX {

@@ -92,12 +92,12 @@ public final class VersionCheck implements Runnable {
 			assert versionString != null;
 			assert versionString.length() > 0;
 
-			isAlpha = StringUtils.containsIgnoreCase(versionString, "ALPHA");
-			if (isAlpha)
+			this.isAlpha = StringUtils.containsIgnoreCase(versionString, "ALPHA");
+			if (this.isAlpha)
 				versionString = StringUtils.remove(versionString, "ALPHA");
 
-			isBeta = StringUtils.containsIgnoreCase(versionString, "BETA");
-			if (isBeta)
+			this.isBeta = StringUtils.containsIgnoreCase(versionString, "BETA");
+			if (this.isBeta)
 				versionString = StringUtils.remove(versionString, "BETA");
 
 			final String[] parts = StringUtils.split(versionString, ".");
@@ -173,7 +173,7 @@ public final class VersionCheck implements Runnable {
 			if (status == UpdateStatus.OUTDATED) {
 				final String msg = StatCollector.translateToLocalFormatted("msg.NewVersionAvailable.dsurround",
 						Module.MOD_NAME, currentVersion, CURSE_PROJECT_NAME);
-				IChatComponent component = IChatComponent.Serializer.func_150699_a(msg);
+				final IChatComponent component = IChatComponent.Serializer.func_150699_a(msg);
 				event.player.addChatMessage(component);
 			}
 		}
@@ -185,7 +185,7 @@ public final class VersionCheck implements Runnable {
 			String location = REMOTE_VERSION_FILE;
 			HttpURLConnection conn = null;
 			while (location != null && !location.isEmpty()) {
-				URL url = new URL(location);
+				final URL url = new URL(location);
 
 				if (conn != null) {
 					conn.disconnect();
@@ -202,11 +202,11 @@ public final class VersionCheck implements Runnable {
 				throw new NullPointerException();
 			}
 
-			BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+			final BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
 
 			String line;
 			while ((line = reader.readLine()) != null) {
-				String[] tokens = line.split(":");
+				final String[] tokens = line.split(":");
 				if (mcVersion.matches(tokens[0])) {
 					currentVersion = new SoftwareVersion(tokens[1]);
 					break;
@@ -220,7 +220,7 @@ public final class VersionCheck implements Runnable {
 			conn.disconnect();
 			reader.close();
 
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			ModLog.warn("Unable to read remote version data", e);
 			status = UpdateStatus.COMM_ERROR;
 		}
@@ -244,7 +244,7 @@ public final class VersionCheck implements Runnable {
 				count++;
 			} while (count < VERSION_CHECK_RETRIES && status == UpdateStatus.COMM_ERROR);
 
-		} catch (InterruptedException e) {
+		} catch (final InterruptedException e) {
 			e.printStackTrace();
 		}
 

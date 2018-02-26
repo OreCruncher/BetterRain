@@ -55,7 +55,7 @@ public final class Network {
 	public static void sendAurora(final AuroraData data, final int dimension) {
 		network.sendToDimension(new PacketAurora(data), dimension);
 	}
-	
+
 	public static void sendHealthUpdate(final HealthData data, final int dimension) {
 		network.sendToDimension(new PacketHealthChange(data), dimension);
 	}

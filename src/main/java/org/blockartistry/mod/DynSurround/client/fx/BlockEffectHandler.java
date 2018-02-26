@@ -29,11 +29,12 @@ import java.util.Random;
 
 import org.blockartistry.mod.DynSurround.ModOptions;
 import org.blockartistry.mod.DynSurround.client.EnvironStateHandler.EnvironState;
+import org.blockartistry.mod.DynSurround.client.IClientEffectHandler;
 import org.blockartistry.mod.DynSurround.client.sound.SoundEffect;
 import org.blockartistry.mod.DynSurround.compat.BlockPos;
 import org.blockartistry.mod.DynSurround.compat.MCHelper;
-import org.blockartistry.mod.DynSurround.client.IClientEffectHandler;
 import org.blockartistry.mod.DynSurround.data.BlockRegistry;
+import org.blockartistry.mod.DynSurround.util.random.LCGRandom;
 import org.blockartistry.mod.DynSurround.util.random.XorShiftRandom;
 
 import cpw.mods.fml.relauncher.Side;
@@ -51,7 +52,12 @@ import net.minecraft.world.World;
 public class BlockEffectHandler implements IClientEffectHandler {
 
 	private static final Random random = new XorShiftRandom();
+	private static final LCGRandom lcg = new LCGRandom();
 	private static final double RATIO = 0.0335671847202175D;
+
+	private static int randomRange(final int range) {
+		return lcg.nextInt(range) - lcg.nextInt(range);
+	}
 
 	@Override
 	public void process(final World world, final EntityPlayer player) {
@@ -62,10 +68,9 @@ public class BlockEffectHandler implements IClientEffectHandler {
 		final String conditions = EnvironState.getConditions();
 		final int RANGE = ModOptions.specialEffectRange;
 		final int CHECK_COUNT = (int) (Math.pow(RANGE * 2 - 1, 3) * RATIO);
-		
+
 		for (int i = 0; i < CHECK_COUNT; i++) {
-			final BlockPos pos = playerPos.add(random.nextInt(RANGE) - random.nextInt(RANGE),
-					random.nextInt(RANGE) - random.nextInt(RANGE), random.nextInt(RANGE) - random.nextInt(RANGE));
+			final BlockPos pos = playerPos.add(randomRange(RANGE), randomRange(RANGE), randomRange(RANGE));
 			final Block block = MCHelper.getBlock(world, pos);
 			if (block != Blocks.air) {
 				final List<BlockEffect> chain = BlockRegistry.getEffects(block);

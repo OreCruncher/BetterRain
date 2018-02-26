@@ -49,7 +49,7 @@ public final class Aurora {
 	public float posZ;
 
 	private Node[][] bands;
-	private long seed;
+	private final long seed;
 	private float cycle = 0.0F;
 	private int fadeTimer = 0;
 	private boolean isAlive = true;

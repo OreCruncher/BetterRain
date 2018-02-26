@@ -1,5 +1,4 @@
-/*
- * This file is part of Dynamic Surroundings, licensed under the MIT License (MIT).
+/* This file is part of Dynamic Surroundings, licensed under the MIT License (MIT).
  *
  * Copyright (c) OreCruncher
  *
@@ -21,37 +20,44 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+package org.blockartistry.mod.DynSurround.util.random;
 
-package org.blockartistry.mod.DynSurround.client.gui;
+/**
+ * Simple Linear congruential generator for integer psuedo random numbers.
+ * Intended to be fast. Limit is that it can only generate random numbers 0 -
+ * 32K.
+ */
+public final class LCGRandom {
 
-import java.util.Set;
+	private int v;
 
-import cpw.mods.fml.client.IModGuiFactory;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiScreen;
-
-@SideOnly(Side.CLIENT)
-public class ConfigGuiFactory implements IModGuiFactory {
-
-	@Override
-	public void initialize(final Minecraft minecraftInstance) {
+	/**
+	 * Creates and seeds an LCG using an integer from XorShiftRandom.
+	 */
+	public LCGRandom() {
+		this(XorShiftRandom.current().nextInt());
+	}
+	
+	/**
+	 * Creates and initializes an LCG generator using a seed value.
+	 * 
+	 * @param seed
+	 *            Seed to initialize the LCG generator with
+	 */
+	public LCGRandom(final int seed) {
+		this.v = seed;
 	}
 
-	@Override
-	public Class<? extends GuiScreen> mainConfigGuiClass() {
-		return DynSurroundConfigGui.class;
+	/**
+	 * Generates a random number between 0 and the bound specified. The bound can be
+	 * at most 32K.
+	 * 
+	 * @param bound
+	 *            upper bound of the random integer generated
+	 * @return Pseudo random integer between 0 and bound
+	 */
+	public int nextInt(final int bound) {
+		this.v = (214013 * this.v + 2531011);
+		return ((this.v >> 16) & 0x7FFF) % bound;
 	}
-
-	@Override
-	public Set<RuntimeOptionCategoryElement> runtimeGuiCategories() {
-		return null;
-	}
-
-	@Override
-	public RuntimeOptionGuiHandler getHandlerFor(RuntimeOptionCategoryElement element) {
-		return null;
-	}
-
 }

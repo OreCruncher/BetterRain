@@ -29,19 +29,20 @@ import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.blockartistry.mod.DynSurround.ModLog;
-import org.blockartistry.mod.DynSurround.client.footsteps.engine.interfaces.IAcoustic;
 import org.blockartistry.mod.DynSurround.client.footsteps.engine.interfaces.EventType;
+import org.blockartistry.mod.DynSurround.client.footsteps.engine.interfaces.IAcoustic;
 import org.blockartistry.mod.DynSurround.client.footsteps.engine.interfaces.ILibrary;
 import org.blockartistry.mod.DynSurround.client.footsteps.engine.interfaces.INamedAcoustic;
 import org.blockartistry.mod.DynSurround.client.footsteps.engine.interfaces.IOptions;
 import org.blockartistry.mod.DynSurround.client.footsteps.engine.interfaces.ISoundPlayer;
 import org.blockartistry.mod.DynSurround.client.footsteps.game.system.Association;
+
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
 public abstract class AcousticsLibrary implements ILibrary {
-	private Map<String, IAcoustic> acoustics = new LinkedHashMap<String, IAcoustic>();
+	private final Map<String, IAcoustic> acoustics = new LinkedHashMap<String, IAcoustic>();
 
 	public AcousticsLibrary() {
 	}

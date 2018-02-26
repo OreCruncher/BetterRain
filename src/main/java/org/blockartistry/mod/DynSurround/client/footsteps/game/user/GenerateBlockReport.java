@@ -50,16 +50,16 @@ import net.minecraft.block.BlockTorch;
 
 @SideOnly(Side.CLIENT)
 public class GenerateBlockReport {
-	private List<String> justNames;
-	private List<String> results;
+	private final List<String> justNames;
+	private final List<String> results;
 
 	public GenerateBlockReport() {
 		this.justNames = new ArrayList<String>();
 		this.results = new ArrayList<String>();
 
-		for (Object o : Block.blockRegistry) {
-			Block block = (Block) o;
-			String name = MCHelper.nameOf(block);
+		for (final Object o : Block.blockRegistry) {
+			final Block block = (Block) o;
+			final String name = MCHelper.nameOf(block);
 
 			// stepSound.stepSoundName
 			String soundName;
@@ -114,8 +114,7 @@ public class GenerateBlockReport {
 				soundName += "," + "EXTENDS_TORCH";
 			}
 			/*
-			 * if (!block.func_149662_c()) { soundName += "," + "FUNC_POPPABLE";
-			 * }
+			 * if (!block.func_149662_c()) { soundName += "," + "FUNC_POPPABLE"; }
 			 */
 			if (!block.isOpaqueCube()) {
 				soundName += "," + "HITBOX";
@@ -132,7 +131,7 @@ public class GenerateBlockReport {
 	public List<String> getResults() {
 		return this.results;
 	}
-	
+
 	public List<String> getBlockNames() {
 		return this.justNames;
 	}

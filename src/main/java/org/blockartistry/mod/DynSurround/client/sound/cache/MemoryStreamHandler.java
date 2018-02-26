@@ -28,9 +28,8 @@ import java.net.URLConnection;
 
 import javax.annotation.Nonnull;
 
-import cpw.mods.fml.relauncher.SideOnly;
 import cpw.mods.fml.relauncher.Side;
-
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.util.ResourceLocation;
 
 @SideOnly(Side.CLIENT)

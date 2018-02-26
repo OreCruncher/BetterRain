@@ -99,8 +99,8 @@ public class Color {
 	}
 
 	/*
-	 * Calculates the RGB adjustments to make to the color to arrive at the
-	 * target color after the specified number of iterations.
+	 * Calculates the RGB adjustments to make to the color to arrive at the target
+	 * color after the specified number of iterations.
 	 */
 	public Vec3 transitionTo(final Color target, final int iterations) {
 		final double deltaRed = (target.red - this.red) / iterations;
@@ -133,18 +133,18 @@ public class Color {
 	public static Color anaglyph(final Color color) {
 		return new Color(color).anaglyph();
 	}
-	
+
 	public Color add(final Color color) {
 		this.red += color.red;
 		this.green += color.green;
 		this.blue += color.blue;
 		return this;
 	}
-	
+
 	private static float blend(final float c1, final float c2, final float factor) {
 		return (float) Math.sqrt((1.0F - factor) * c1 * c1 + factor * c2 * c2);
 	}
-	
+
 	public Color blend(final Color color, final float factor) {
 		this.red = blend(this.red, color.red, factor);
 		this.green = blend(this.green, color.green, factor);

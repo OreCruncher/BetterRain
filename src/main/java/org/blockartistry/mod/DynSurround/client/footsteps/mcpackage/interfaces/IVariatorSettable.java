@@ -29,9 +29,9 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 /**
  * Can have a IVariator.
- * 
+ *
  * @author Hurry
- * 
+ *
  */
 @SideOnly(Side.CLIENT)
 public interface IVariatorSettable {

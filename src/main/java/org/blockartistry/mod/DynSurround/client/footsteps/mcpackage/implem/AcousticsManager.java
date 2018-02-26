@@ -51,7 +51,7 @@ import net.minecraft.init.Blocks;
 
 /**
  * A ILibrary that can also play sounds and default footsteps.
- * 
+ *
  * @author Hurry
  */
 @SideOnly(Side.CLIENT)
@@ -75,7 +75,7 @@ public class AcousticsManager extends AcousticsLibrary implements ISoundPlayer, 
 	public void playStep(final EntityLivingBase entity, final Association assos) {
 
 		try {
-			Block block = assos.getBlock();
+			final Block block = assos.getBlock();
 			if (!block.getMaterial().isLiquid() && block.stepSound != null) {
 				Block.SoundType soundType = block.stepSound;
 
@@ -98,14 +98,14 @@ public class AcousticsManager extends AcousticsLibrary implements ISoundPlayer, 
 
 		if (options != null) {
 			if (options.hasOption(Option.DELAY_MIN) && options.hasOption(Option.DELAY_MAX)) {
-				long delay = randAB(RANDOM, (Long) options.getOption(Option.DELAY_MIN),
+				final long delay = randAB(RANDOM, (Long) options.getOption(Option.DELAY_MIN),
 						(Long) options.getOption(Option.DELAY_MAX));
 
-				if (delay < minimum) {
-					minimum = delay;
+				if (delay < this.minimum) {
+					this.minimum = delay;
 				}
 
-				pending.add(
+				this.pending.add(
 						new PendingSound(location, soundName, volume, pitch, null, MyUtils.currentTimeMillis() + delay,
 								options.hasOption(Option.SKIPPABLE) ? -1 : (Long) options.getOption(Option.DELAY_MAX)));
 			} else {
@@ -140,15 +140,15 @@ public class AcousticsManager extends AcousticsLibrary implements ISoundPlayer, 
 
 	@Override
 	public void think() {
-		if (pending.isEmpty() || MyUtils.currentTimeMillis() < minimum)
+		if (this.pending.isEmpty() || MyUtils.currentTimeMillis() < this.minimum)
 			return;
 
 		long newMinimum = Long.MAX_VALUE;
-		long time = MyUtils.currentTimeMillis();
+		final long time = MyUtils.currentTimeMillis();
 
-		Iterator<PendingSound> iter = pending.iterator();
+		final Iterator<PendingSound> iter = this.pending.iterator();
 		while (iter.hasNext()) {
-			PendingSound sound = iter.next();
+			final PendingSound sound = iter.next();
 
 			if (time >= sound.getTimeToPlay() || USING_EARLYNESS
 					&& time >= sound.getTimeToPlay() - Math.pow(sound.getMaximumBase(), EARLYNESS_THRESHOLD_POW)) {
@@ -157,7 +157,7 @@ public class AcousticsManager extends AcousticsLibrary implements ISoundPlayer, 
 							+ "ms, tolerence is " + Math.pow(sound.getMaximumBase(), EARLYNESS_THRESHOLD_POW));
 				}
 
-				long lateness = time - sound.getTimeToPlay();
+				final long lateness = time - sound.getTimeToPlay();
 				if (!USING_LATENESS || sound.getMaximumBase() < 0
 						|| lateness <= sound.getMaximumBase() / LATENESS_THRESHOLD_DIVIDER) {
 					sound.playSound(this);
@@ -172,11 +172,11 @@ public class AcousticsManager extends AcousticsLibrary implements ISoundPlayer, 
 			}
 		}
 
-		minimum = newMinimum;
+		this.minimum = newMinimum;
 	}
 
 	@Override
 	protected ISoundPlayer mySoundPlayer() {
-		return isolator.getSoundPlayer();
+		return this.isolator.getSoundPlayer();
 	}
 }

@@ -43,7 +43,7 @@ public class WorldHandler {
 	private static int nextThunderInterval(final boolean isThundering) {
 		return random.nextInt(isThundering ? 12000 : 168000) + (isThundering ? 3600 : 12000);
 	}
-	
+
 	private static int nextRainInterval(final boolean isRaining) {
 		return random.nextInt(isRaining ? 12000 : 168000) + 12000;
 	}

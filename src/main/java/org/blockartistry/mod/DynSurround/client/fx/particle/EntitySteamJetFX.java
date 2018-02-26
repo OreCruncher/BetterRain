@@ -46,11 +46,11 @@ public class EntitySteamJetFX extends EntityJetFX {
 			this.prevPosZ = this.posZ;
 
 			if (this.particleAge++ >= this.particleMaxAge) {
-				this.setDead();
+				setDead();
 			}
 
-			this.setParticleTextureIndex(7 - this.particleAge * 8 / this.particleMaxAge);
-			this.moveEntity(this.motionX, this.motionY, this.motionZ);
+			setParticleTextureIndex(7 - this.particleAge * 8 / this.particleMaxAge);
+			moveEntity(this.motionX, this.motionY, this.motionZ);
 			this.motionX *= 0.9599999785423279D;
 			this.motionY *= 0.9599999785423279D;
 			this.motionZ *= 0.9599999785423279D;

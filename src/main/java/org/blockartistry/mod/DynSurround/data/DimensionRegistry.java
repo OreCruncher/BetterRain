@@ -67,7 +67,7 @@ public final class DimensionRegistry {
 	public static void initialize() {
 		try {
 			process(DimensionConfig.load("dimensions"));
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 		}
 
@@ -170,7 +170,7 @@ public final class DimensionRegistry {
 			if (this.spaceHeight == null)
 				this.spaceHeight = this.skyHeight + SPACE_HEIGHT_OFFSET;
 			this.initialized = true;
-			ModLog.info("Dimension initialized " + this.toString());
+			ModLog.info("Dimension initialized " + toString());
 		}
 		return this;
 	}

@@ -57,7 +57,7 @@ import net.minecraft.world.World;
  * is the location of the incriminated block.<br>
  * Any other association string returned by the findAssociation* methods
  * correspond to an IAcoustic name.
- * 
+ *
  * @author Hurry
  */
 @SideOnly(Side.CLIENT)
@@ -122,8 +122,8 @@ public class PFSolver implements ISolver {
 		if (worked == null) {
 			// Create a trigo. mark contained inside the block the player is
 			// over
-			double xdang = (player.posX - x) * 2 - 1;
-			double zdang = (player.posZ - z) * 2 - 1;
+			final double xdang = (player.posX - x) * 2 - 1;
+			final double zdang = (player.posZ - z) * 2 - 1;
 			// -1 0 1
 			// ------- -1
 			// | o |
@@ -136,7 +136,7 @@ public class PFSolver implements ISolver {
 			// If the player is at the edge of that
 			if (Math.max(Math.abs(xdang), Math.abs(zdang)) > 0.2f) {
 				// Find the maximum absolute value of X or Z
-				boolean isXdangMax = Math.abs(xdang) > Math.abs(zdang);
+				final boolean isXdangMax = Math.abs(xdang) > Math.abs(zdang);
 				// --------------------- ^ maxofZ-
 				// | . . |
 				// | . . |
@@ -170,12 +170,12 @@ public class PFSolver implements ISolver {
 
 	@Override
 	public Association findAssociationForBlock(final int xx, int yy, final int zz) {
-		World world = EnvironState.getWorld();
+		final World world = EnvironState.getWorld();
 
 		Block in = world.getBlock(xx, yy, zz);
-		int inMeta = world.getBlockMetadata(xx, yy, zz);
-		Block above = world.getBlock(xx, yy + 1, zz);
-		int aboveMeta = world.getBlockMetadata(xx, yy + 1, zz);
+		final int inMeta = world.getBlockMetadata(xx, yy, zz);
+		final Block above = world.getBlock(xx, yy + 1, zz);
+		final int aboveMeta = world.getBlockMetadata(xx, yy + 1, zz);
 
 		String association = null;
 		if (above != Blocks.air)
@@ -192,9 +192,9 @@ public class PFSolver implements ISolver {
 
 			if (in == Blocks.air) {
 
-				Block below = world.getBlock(xx, yy - 1, zz);
-				int belowMeta = world.getBlockMetadata(xx, yy - 1, zz);
-				association = isolator.getBlockMap().getBlockMapSubstrate(below, belowMeta, Substrate.FENCE);
+				final Block below = world.getBlock(xx, yy - 1, zz);
+				final int belowMeta = world.getBlockMetadata(xx, yy - 1, zz);
+				association = this.isolator.getBlockMap().getBlockMapSubstrate(below, belowMeta, Substrate.FENCE);
 				if (association != null) {
 					yy--;
 					in = below;
@@ -215,7 +215,7 @@ public class PFSolver implements ISolver {
 				// group.
 
 				if (above != Blocks.air) {
-					String foliage = this.isolator.getBlockMap().getBlockMapSubstrate(above, aboveMeta,
+					final String foliage = this.isolator.getBlockMap().getBlockMapSubstrate(above, aboveMeta,
 							Substrate.FOLIAGE);
 					if (foliage != null && !foliage.equals("NOT_EMITTER")) {
 						association = association + "," + foliage;
@@ -242,7 +242,7 @@ public class PFSolver implements ISolver {
 				return (new Association(in, inMeta, xx, yy, zz)).setAssociation(association);
 			}
 		} else {
-			String primitive = resolvePrimitive(in);
+			final String primitive = resolvePrimitive(in);
 			if (primitive != null) {
 				if (primitive.equals("NOT_EMITTER")) {
 					// PFLog.debugf("Primitive for %0 : %1 : %2 is NOT_EMITTER!
@@ -270,7 +270,7 @@ public class PFSolver implements ISolver {
 			soundName = "UNDEFINED";
 		}
 
-		String substrate = String.format(Locale.ENGLISH, "%.2f_%.2f", block.stepSound.volume,
+		final String substrate = String.format(Locale.ENGLISH, "%.2f_%.2f", block.stepSound.volume,
 				block.stepSound.frequency);
 
 		String primitive = this.isolator.getPrimitiveMap().getPrimitiveMapSubstrate(soundName, substrate); // Check
@@ -326,66 +326,62 @@ public class PFSolver implements ISolver {
 		if (!strategy.equals("find_messy_foliage"))
 			return null;
 
-		World world = EnvironState.getWorld();
+		final World world = EnvironState.getWorld();
 
 		/*
 		 * Block block = PF172Helper.getBlockAt(xx, yy, zz); int metadata =
 		 * world.getBlockMetadata(xx, yy, zz); // air block if (block ==
-		 * Blocks.field_150350_a) { //int mm = world.blockGetRenderType(xx, yy -
-		 * 1, zz); // see Entity, line 885 int mm = PF172Helper.getBlockAt(xx,
-		 * yy - 1, zz).func_149645_b();
-		 * 
-		 * if (mm == 11 || mm == 32 || mm == 21) { block =
-		 * PF172Helper.getBlockAt(xx, yy - 1, zz); metadata =
-		 * world.getBlockMetadata(xx, yy - 1, zz); } }
+		 * Blocks.field_150350_a) { //int mm = world.blockGetRenderType(xx, yy - 1, zz);
+		 * // see Entity, line 885 int mm = PF172Helper.getBlockAt(xx, yy - 1,
+		 * zz).func_149645_b();
+		 *
+		 * if (mm == 11 || mm == 32 || mm == 21) { block = PF172Helper.getBlockAt(xx, yy
+		 * - 1, zz); metadata = world.getBlockMetadata(xx, yy - 1, zz); } }
 		 */
 
-		Block above = world.getBlock(xx, yy + 1, zz);
+		final Block above = world.getBlock(xx, yy + 1, zz);
 
 		if (above == Blocks.air)
 			return null;
 
-		int aboveMeta = world.getBlockMetadata(xx, yy + 1, zz);
+		final int aboveMeta = world.getBlockMetadata(xx, yy + 1, zz);
 
 		String association = null;
 		boolean found = false;
 		// Try to see if the block above is a carpet...
 		/*
-		 * String association =
-		 * this.isolator.getBlockMap().getBlockMapSubstrate(
+		 * String association = this.isolator.getBlockMap().getBlockMapSubstrate(
 		 * PF172Helper.nameOf(xblock), xmetadata, "carpet");
-		 * 
-		 * if (association == null || association.equals("NOT_EMITTER")) { //
-		 * This condition implies that // if the carpet is NOT_EMITTER, solving
-		 * will CONTINUE with the actual // block surface the player is walking
-		 * on // > NOT_EMITTER carpets will not cause solving to skip
-		 * 
+		 *
+		 * if (association == null || association.equals("NOT_EMITTER")) { // This
+		 * condition implies that // if the carpet is NOT_EMITTER, solving will CONTINUE
+		 * with the actual // block surface the player is walking on // > NOT_EMITTER
+		 * carpets will not cause solving to skip
+		 *
 		 * // Not a carpet association =
-		 * this.isolator.getBlockMap().getBlockMap(PF172Helper.nameOf(block),
-		 * metadata);
-		 * 
-		 * if (association != null && !association.equals("NOT_EMITTER")) { //
-		 * This condition implies that // foliage over a NOT_EMITTER block
-		 * CANNOT PLAY
-		 * 
-		 * // This block most not be executed if the association is a carpet //
-		 * => this block of code is here, not outside this if else group.
+		 * this.isolator.getBlockMap().getBlockMap(PF172Helper.nameOf(block), metadata);
+		 *
+		 * if (association != null && !association.equals("NOT_EMITTER")) { // This
+		 * condition implies that // foliage over a NOT_EMITTER block CANNOT PLAY
+		 *
+		 * // This block most not be executed if the association is a carpet // => this
+		 * block of code is here, not outside this if else group.
 		 */
 
-		String foliage = this.isolator.getBlockMap().getBlockMapSubstrate(above, aboveMeta, Substrate.FOLIAGE);
+		final String foliage = this.isolator.getBlockMap().getBlockMapSubstrate(above, aboveMeta, Substrate.FOLIAGE);
 		if (foliage != null && !foliage.equals("NOT_EMITTER")) {
 			// we discard the normal block association, and mark the foliage as
 			// detected
 			// association = association + "," + foliage;
 			association = foliage;
-			String isMessy = this.isolator.getBlockMap().getBlockMapSubstrate(above, aboveMeta, Substrate.MESSY);
+			final String isMessy = this.isolator.getBlockMap().getBlockMapSubstrate(above, aboveMeta, Substrate.MESSY);
 
 			if (isMessy != null && isMessy.equals("MESSY_GROUND"))
 				found = true;
 		}
 		/*
-		 * } // else { the information is discarded anyways, the method returns
-		 * null or no association } } else // Is a carpet return null;
+		 * } // else { the information is discarded anyways, the method returns null or
+		 * no association } } else // Is a carpet return null;
 		 */
 
 		if (found && association != null) {

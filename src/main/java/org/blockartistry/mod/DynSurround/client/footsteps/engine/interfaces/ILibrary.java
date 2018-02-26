@@ -35,17 +35,18 @@ public interface ILibrary {
 	 * Adds an acoustic to the library.
 	 */
 	public void addAcoustic(final INamedAcoustic acoustic);
-	
+
 	/**
 	 * Plays an acoustic.
 	 */
 	public void playAcoustic(final Object location, final Association acousticName, final EventType event);
-	
+
 	/**
 	 * Plays an acoustic with additional options.
 	 */
-	public void playAcoustic(final Object location, final String acousticName, final EventType event, final IOptions options);
-	
+	public void playAcoustic(final Object location, final String acousticName, final EventType event,
+			final IOptions options);
+
 	/**
 	 * Run various things, such as queued sounds.
 	 */

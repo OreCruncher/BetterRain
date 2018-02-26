@@ -156,61 +156,64 @@ public final class BiomeRegistry {
 	}
 
 	public static void initialize() {
-
-		biomeAliases.clear();
-		for (final String entry : ModOptions.biomeAliases) {
-			final String[] parts = StringUtils.split(entry, "=");
-			if (parts.length == 2) {
-				biomeAliases.put(parts[0], parts[1]);
-			}
-		}
-
-		registry.clear();
-
-		final BiomeGenBase[] biomeArray = BiomeGenBase.getBiomeGenArray();
-		for (int i = 0; i < biomeArray.length; i++)
-			if (biomeArray[i] != null) {
-				registry.put(biomeArray[i].biomeID, new Entry(biomeArray[i]));
+		synchronized (registry) {
+			biomeAliases.clear();
+			for (final String entry : ModOptions.biomeAliases) {
+				final String[] parts = StringUtils.split(entry, "=");
+				if (parts.length == 2) {
+					biomeAliases.put(parts[0], parts[1]);
+				}
 			}
 
-		// Add our fake biomes
-		registry.put(UNDERGROUND.biomeID, new Entry(UNDERGROUND));
-		registry.put(UNDERWATER.biomeID, new Entry(UNDERWATER));
-		registry.put(UNDEROCEAN.biomeID, new Entry(UNDEROCEAN));
-		registry.put(UNDERDEEPOCEAN.biomeID, new Entry(UNDERDEEPOCEAN));
-		registry.put(UNDERRIVER.biomeID, new Entry(UNDERRIVER));
-		registry.put(OUTERSPACE.biomeID, new Entry(OUTERSPACE));
-		registry.put(CLOUDS.biomeID, new Entry(CLOUDS));
-		registry.put(PLAYER.biomeID, new Entry(PLAYER));
-		registry.put(WTF.biomeID, new Entry(WTF));
+			registry.clear();
 
-		processConfig();
+			final BiomeGenBase[] biomeArray = BiomeGenBase.getBiomeGenArray();
+			for (int i = 0; i < biomeArray.length; i++)
+				if (biomeArray[i] != null) {
+					registry.put(biomeArray[i].biomeID, new Entry(biomeArray[i]));
+				}
 
-		if (ModOptions.enableDebugLogging) {
-			ModLog.info("*** BIOME REGISTRY ***");
-			for (final Entry entry : registry.valueCollection())
-				ModLog.info(entry.toString());
+			// Add our fake biomes
+			registry.put(UNDERGROUND.biomeID, new Entry(UNDERGROUND));
+			registry.put(UNDERWATER.biomeID, new Entry(UNDERWATER));
+			registry.put(UNDEROCEAN.biomeID, new Entry(UNDEROCEAN));
+			registry.put(UNDERDEEPOCEAN.biomeID, new Entry(UNDERDEEPOCEAN));
+			registry.put(UNDERRIVER.biomeID, new Entry(UNDERRIVER));
+			registry.put(OUTERSPACE.biomeID, new Entry(OUTERSPACE));
+			registry.put(CLOUDS.biomeID, new Entry(CLOUDS));
+			registry.put(PLAYER.biomeID, new Entry(PLAYER));
+			registry.put(WTF.biomeID, new Entry(WTF));
+
+			processConfig();
+
+			if (ModOptions.enableDebugLogging) {
+				ModLog.info("*** BIOME REGISTRY ***");
+				for (final Entry entry : registry.valueCollection())
+					ModLog.info(entry.toString());
+			}
+
+			// Free memory because we no longer need
+			biomeAliases.clear();
 		}
 
-		// Free memory because we no longer need
-		biomeAliases.clear();
-		
 		MinecraftForge.EVENT_BUS.post(new RegistryReloadEvent.Biome());
 	}
 
 	private static Entry get(final BiomeGenBase biome) {
-		Entry entry = registry.get(biome == null ? WTF.biomeID : biome.biomeID);
-		if (entry == null) {
-			ModLog.warn("Biome [%s] was not detected during initial scan! Reloading config...", resolveName(biome));
-			initialize();
-			entry = registry.get(biome.biomeID);
+		synchronized (registry) {
+			Entry entry = registry.get(biome == null ? WTF.biomeID : biome.biomeID);
 			if (entry == null) {
-				ModLog.warn("Still can't find biome [%s]! Explicitly adding at defaults", resolveName(biome));
-				entry = new Entry(biome);
-				registry.put(biome.biomeID, entry);
+				ModLog.warn("Biome [%s] was not detected during initial scan! Reloading config...", resolveName(biome));
+				initialize();
+				entry = registry.get(biome.biomeID);
+				if (entry == null) {
+					ModLog.warn("Still can't find biome [%s]! Explicitly adding at defaults", resolveName(biome));
+					entry = new Entry(biome);
+					registry.put(biome.biomeID, entry);
+				}
 			}
+			return entry;
 		}
-		return entry;
 	}
 
 	public static boolean hasDust(final BiomeGenBase biome) {

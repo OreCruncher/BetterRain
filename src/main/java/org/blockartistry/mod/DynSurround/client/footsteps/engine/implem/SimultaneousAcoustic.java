@@ -28,8 +28,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.blockartistry.mod.DynSurround.client.footsteps.engine.interfaces.IAcoustic;
 import org.blockartistry.mod.DynSurround.client.footsteps.engine.interfaces.EventType;
+import org.blockartistry.mod.DynSurround.client.footsteps.engine.interfaces.IAcoustic;
 import org.blockartistry.mod.DynSurround.client.footsteps.engine.interfaces.IOptions;
 import org.blockartistry.mod.DynSurround.client.footsteps.engine.interfaces.ISoundPlayer;
 
@@ -38,7 +38,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
 public class SimultaneousAcoustic implements IAcoustic {
-	
+
 	protected final List<IAcoustic> acoustics;
 
 	public SimultaneousAcoustic(final Collection<IAcoustic> acoustics) {
@@ -46,7 +46,8 @@ public class SimultaneousAcoustic implements IAcoustic {
 	}
 
 	@Override
-	public void playSound(final ISoundPlayer player, final Object location, final EventType event, final IOptions inputOptions) {
+	public void playSound(final ISoundPlayer player, final Object location, final EventType event,
+			final IOptions inputOptions) {
 		for (final IAcoustic acoustic : this.acoustics) {
 			acoustic.playSound(player, location, event, inputOptions);
 		}

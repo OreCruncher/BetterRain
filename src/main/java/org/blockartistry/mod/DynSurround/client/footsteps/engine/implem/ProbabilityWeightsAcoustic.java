@@ -27,16 +27,17 @@ package org.blockartistry.mod.DynSurround.client.footsteps.engine.implem;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.blockartistry.mod.DynSurround.client.footsteps.engine.interfaces.IAcoustic;
 import org.blockartistry.mod.DynSurround.client.footsteps.engine.interfaces.EventType;
+import org.blockartistry.mod.DynSurround.client.footsteps.engine.interfaces.IAcoustic;
 import org.blockartistry.mod.DynSurround.client.footsteps.engine.interfaces.IOptions;
 import org.blockartistry.mod.DynSurround.client.footsteps.engine.interfaces.ISoundPlayer;
+
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
 public class ProbabilityWeightsAcoustic implements IAcoustic {
-	
+
 	protected final List<IAcoustic> acoustics;
 	protected final int[] weights;
 	protected final int totalWeight;

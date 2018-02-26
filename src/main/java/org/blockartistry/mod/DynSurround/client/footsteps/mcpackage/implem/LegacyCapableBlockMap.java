@@ -54,7 +54,7 @@ public class LegacyCapableBlockMap extends BasicBlockMap {
 			} else {
 				super.register(key, value);
 			}
-		} catch (NumberFormatException e) {
+		} catch (final NumberFormatException e) {
 			super.register(key, value);
 		}
 	}

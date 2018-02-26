@@ -129,9 +129,8 @@ public final class ModOptions {
 	public static final String CONFIG_MIN_RAIN_STRENGTH = "Default Minimum Rain Strength";
 	public static final String CONFIG_MAX_RAIN_STRENGTH = "Default Maximum Rain Strength";
 	public static final String CONFIG_FX_RANGE = "Special Effect Range";
-	private static final List<String> generalSort = ImmutableList.<String> builder()
-			.add(CONFIG_FX_RANGE, CONFIG_MIN_RAIN_STRENGTH, CONFIG_MAX_RAIN_STRENGTH)
-			.build();
+	private static final List<String> generalSort = ImmutableList.<String>builder()
+			.add(CONFIG_FX_RANGE, CONFIG_MIN_RAIN_STRENGTH, CONFIG_MAX_RAIN_STRENGTH).build();
 
 	@Parameter(category = CATEGORY_GENERAL, property = CONFIG_MIN_RAIN_STRENGTH, defaultValue = "0.0")
 	@MinMaxFloat(min = 0.0F, max = 1.0F)
