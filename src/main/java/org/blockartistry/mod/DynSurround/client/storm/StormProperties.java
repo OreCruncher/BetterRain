@@ -45,7 +45,6 @@ public enum StormProperties {
 
 	private static float intensityLevel = 0.0F;
 	private static StormProperties intensity = VANILLA;
-	private static float fogDensity = 0.0F;
 
 	private final float level;
 	private final ResourceLocation rainTexture;
@@ -84,6 +83,10 @@ public enum StormProperties {
 	}
 
 	public static float getIntensityLevel() {
+		return Math.min(getWorld().rainingStrength, intensityLevel);
+	}
+	
+	public static float getMaxIntensityLevel() {
 		return intensityLevel;
 	}
 
@@ -91,12 +94,12 @@ public enum StormProperties {
 		return getIntensityLevel() > 0F;
 	}
 
+	public static float getRainStrength() {
+		return getWorld().rainingStrength;
+	}
+	
 	public static float getThunderStrength() {
 		return getWorld().thunderingStrength;
-	}
-
-	public static float getFogDensity() {
-		return fogDensity;
 	}
 
 	public String getStormSound() {
@@ -136,7 +139,6 @@ public enum StormProperties {
 		if (level == VANILLA.level) {
 			intensity = VANILLA;
 			intensityLevel = 0.0F;
-			fogDensity = 0.0F;
 			setTextures();
 			return;
 		}
@@ -147,9 +149,6 @@ public enum StormProperties {
 			intensityLevel = level;
 			if (level > 0) {
 				level += 0.01;
-				fogDensity = level * level * 0.13F;
-			} else {
-				fogDensity = 0.0F;
 			}
 			if (intensityLevel <= NONE.level)
 				intensity = NONE;
@@ -179,7 +178,6 @@ public enum StormProperties {
 		final StringBuilder builder = new StringBuilder();
 		builder.append("Storm: ").append(intensity.name());
 		builder.append(" level:").append(intensityLevel);
-		builder.append(" dust:").append(fogDensity);
 		builder.append(" str:").append(EnvironState.getWorld().getRainStrength(1.0F));
 		return builder.toString();
 	}

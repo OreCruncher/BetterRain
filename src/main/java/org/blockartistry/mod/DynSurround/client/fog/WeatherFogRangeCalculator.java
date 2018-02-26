@@ -48,7 +48,7 @@ public class WeatherFogRangeCalculator extends VanillaFogRangeCalculator {
 	public FogResult calculate(@Nonnull final EntityViewRenderEvent.RenderFogEvent event) {
 		// Start with what vanilla thinks
 		this.cache.set(event);
-		final float rainStr = StormProperties.getIntensityLevel();
+		final float rainStr = StormProperties.getRainStrength();
 		if (rainStr > 0) {
 			// Calculate our scaling factor
 			final float startScale = 1F - (START_IMPACT * rainStr);

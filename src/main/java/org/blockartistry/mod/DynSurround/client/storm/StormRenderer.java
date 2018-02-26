@@ -97,8 +97,8 @@ public class StormRenderer implements IAtmosRenderer {
 			return;
 
 		final float alphaRatio;
-		if (StormProperties.getIntensityLevel() > 0.0F)
-			alphaRatio = world.rainingStrength / StormProperties.getIntensityLevel();
+		if (StormProperties.isRaining())
+			alphaRatio = StormProperties.getIntensityLevel() / StormProperties.getMaxIntensityLevel();
 		else
 			alphaRatio = rainStrength;
 
