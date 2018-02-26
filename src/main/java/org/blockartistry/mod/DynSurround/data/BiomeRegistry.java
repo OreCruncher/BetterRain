@@ -25,6 +25,7 @@
 package org.blockartistry.mod.DynSurround.data;
 
 import java.io.File;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -44,6 +45,7 @@ import org.blockartistry.mod.DynSurround.event.RegistryReloadEvent;
 import org.blockartistry.mod.DynSurround.util.Color;
 import org.blockartistry.mod.DynSurround.util.MyUtils;
 
+import cpw.mods.fml.relauncher.ReflectionHelper;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.MinecraftForge;
@@ -70,6 +72,22 @@ public final class BiomeRegistry {
 
 	private static class Entry {
 
+		private static Class<?> bopBiome = null;
+		private static Field bopBiomeFogDensity = null;
+		private static Field bopBiomeFogColor = null;
+
+		static {
+			try {
+				bopBiome = Class.forName("biomesoplenty.common.biome.BOPBiome");
+				bopBiomeFogDensity = ReflectionHelper.findField(bopBiome, "fogDensity");
+				bopBiomeFogColor = ReflectionHelper.findField(bopBiome, "fogColor");
+			} catch (final Throwable t) {
+				bopBiome = null;
+				bopBiomeFogDensity = null;
+				bopBiomeFogColor = null;
+			}
+		}
+
 		public final BiomeGenBase biome;
 		public boolean hasPrecipitation;
 		public boolean hasDust;
@@ -91,6 +109,21 @@ public final class BiomeRegistry {
 			this.sounds = new ArrayList<SoundEffect>();
 			this.spotSounds = new ArrayList<SoundEffect>();
 			this.spotSoundChance = 1200;
+
+			// If it is a BOP biome initialize from the BoP Biome
+			// instance. May be overwritten by DS config.
+			if (bopBiome != null && bopBiome.isInstance(biome)) {
+				try {
+					final int color = bopBiomeFogColor.getInt(biome);
+					if (color > 0) {
+						this.hasFog = true;
+						this.fogColor = new Color(color);
+						this.fogDensity = bopBiomeFogDensity.getFloat(biome);
+					}
+				} catch (final Exception ex) {
+
+				}
+			}
 		}
 
 		public SoundEffect findSoundMatch(final String conditions) {

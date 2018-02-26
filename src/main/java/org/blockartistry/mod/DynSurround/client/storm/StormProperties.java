@@ -31,9 +31,11 @@ import org.blockartistry.mod.DynSurround.data.DimensionEffectData;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.World;
 
 @SideOnly(Side.CLIENT)
 public enum StormProperties {
@@ -73,12 +75,24 @@ public enum StormProperties {
 		this.dustSound = String.format("%s:%s", Module.MOD_ID, "dust");
 	}
 
+	private static World getWorld() {
+		return Minecraft.getMinecraft().theWorld;
+	}
+
 	public static StormProperties getIntensity() {
 		return intensity;
 	}
 
 	public static float getIntensityLevel() {
 		return intensityLevel;
+	}
+
+	public static boolean isRaining() {
+		return getIntensityLevel() > 0F;
+	}
+
+	public static float getThunderStrength() {
+		return getWorld().thunderingStrength;
 	}
 
 	public static float getFogDensity() {
@@ -169,4 +183,5 @@ public enum StormProperties {
 		builder.append(" str:").append(EnvironState.getWorld().getRainStrength(1.0F));
 		return builder.toString();
 	}
+
 }

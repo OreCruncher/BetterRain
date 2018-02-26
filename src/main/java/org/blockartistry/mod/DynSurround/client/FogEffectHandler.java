@@ -24,45 +24,33 @@
 
 package org.blockartistry.mod.DynSurround.client;
 
+import javax.annotation.Nonnull;
+
 import org.blockartistry.mod.DynSurround.ModOptions;
-import org.blockartistry.mod.DynSurround.client.EnvironStateHandler.EnvironState;
-import org.blockartistry.mod.DynSurround.client.storm.StormProperties;
-import org.blockartistry.mod.DynSurround.data.BiomeRegistry;
-import org.blockartistry.mod.DynSurround.data.DimensionRegistry;
+import org.blockartistry.mod.DynSurround.client.fog.BiomeFogColorCalculator;
+import org.blockartistry.mod.DynSurround.client.fog.BiomeFogRangeCalculator;
+import org.blockartistry.mod.DynSurround.client.fog.FogResult;
+import org.blockartistry.mod.DynSurround.client.fog.HazeFogRangeCalculator;
+import org.blockartistry.mod.DynSurround.client.fog.HolisticFogColorCalculator;
+import org.blockartistry.mod.DynSurround.client.fog.HolisticFogRangeCalculator;
+import org.blockartistry.mod.DynSurround.client.fog.MorningFogRangeCalculator;
+import org.blockartistry.mod.DynSurround.client.fog.WeatherFogRangeCalculator;
 import org.blockartistry.mod.DynSurround.event.DiagnosticEvent;
 import org.blockartistry.mod.DynSurround.util.Color;
-import org.blockartistry.mod.DynSurround.util.PlayerUtils;
 import org.lwjgl.opengl.GL11;
 
-import cpw.mods.fml.common.eventhandler.Event.Result;
 import cpw.mods.fml.common.eventhandler.EventPriority;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import gnu.trove.map.hash.TObjectIntHashMap;
-import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.ActiveRenderInfo;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
-import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.client.event.EntityViewRenderEvent;
+import net.minecraftforge.event.world.WorldEvent;
 
 @SideOnly(Side.CLIENT)
 public class FogEffectHandler implements IClientEffectHandler {
-
-	private static final int HAZE_THRESHOLD = 15;
-
-	// The delta indicates how much per tick the density will shift
-	// toward the target.
-	private static float currentFogLevel = 0.0F;
-	private static float insideFogOffset = 0.0F;
-	private static Color currentFogColor = null;
-
-	public static float currentFogLevel() {
-		return currentFogLevel;
-	}
 
 	public FogEffectHandler() {
 	}
@@ -72,135 +60,85 @@ public class FogEffectHandler implements IClientEffectHandler {
 		return true;
 	}
 
-	private static float calcHazeBand(final World world, final EntityPlayer player) {
-		final float distance = MathHelper
-				.abs(DimensionRegistry.getCloudHeight(world) - (float) (player.posY + player.getEyeHeight()));
-		final float hazeBandRange = HAZE_THRESHOLD * (1.0F + world.getRainStrength(1.0F) * 2);
-		if (distance < hazeBandRange)
-			return (hazeBandRange - distance) / 50.0F / hazeBandRange * ModOptions.elevationHazeFactor;
-
-		return 0.0F;
-	}
-
-	private static float calcHazeGradient(final World world, final EntityPlayer player) {
-		final float factor = 1.0F + world.getRainStrength(1.0F);
-		final float skyHeight = DimensionRegistry.getSkyHeight(world) / factor;
-		final float groundLevel = DimensionRegistry.getSeaLevel(world);
-		final float ratio = (MathHelper.floor_double(player.posY + player.getEyeHeight()) - groundLevel)
-				/ (skyHeight - groundLevel);
-		return ratio * ratio * ratio * ratio * ModOptions.elevationHazeFactor;
+	private boolean doFog() {
+		return ModOptions.enableBiomeFog || ModOptions.allowDesertFog;
 	}
 
 	@Override
-	public void process(final World world, final EntityPlayer player) {
+	public void process(World world, EntityPlayer player) {
+		if (doFog()) {
+			this.fogRange.tick();
+			this.fogColor.tick();
+		}
+	}
 
-		currentFogColor = new Color(world.getFogColor(1.0F));
+	protected HolisticFogColorCalculator fogColor = new HolisticFogColorCalculator();
+	protected HolisticFogRangeCalculator fogRange = new HolisticFogRangeCalculator();
 
-		float biomeFog = 0.0F;
-		float dustFog = 0.0F;
-		float heightFog = 0.0F;
-
-		if (ModOptions.enableBiomeFog || ModOptions.allowDesertFog) {
-			final float brightnessFactor = world.getSunBrightnessBody(1.0F);
-			final Color tint = new Color(0, 0, 0);
-			final TObjectIntHashMap<BiomeGenBase> weights = BiomeSurveyHandler.getBiomes();
-			final int area = BiomeSurveyHandler.getArea();
-
-			for (final BiomeGenBase b : weights.keySet()) {
-				final int weight = weights.get(b);
-				final float scale = ((float) weight / (float) area);
-				if (ModOptions.enableBiomeFog && BiomeRegistry.hasFog(b)) {
-					biomeFog += BiomeRegistry.getFogDensity(b) * scale;
-					tint.add(Color.scale(BiomeRegistry.getFogColor(b), brightnessFactor).scale(scale));
-				} else if (ModOptions.allowDesertFog && BiomeRegistry.hasDust(b)) {
-					final float str = EnvironState.getWorld().getRainStrength(1.0F);
-					dustFog += StormProperties.getFogDensity() * scale * str;
-					tint.add(Color.scale(BiomeRegistry.getDustColor(b), brightnessFactor).scale(scale));
-				} else {
-					tint.add(Color.scale(currentFogColor, scale));
+	@SubscribeEvent(priority = EventPriority.HIGHEST)
+	public void fogColorEvent(final EntityViewRenderEvent.FogColors event) {
+		if (doFog()) {
+			final Material material = event.block.getMaterial();
+			if (material != Material.lava && material != Material.water) {
+				final Color color = this.fogColor.calculate(event);
+				if (color != null) {
+					event.red = color.red;
+					event.green = color.green;
+					event.blue = color.blue;
 				}
 			}
-
-			currentFogColor = tint;
 		}
-
-		biomeFog *= ModOptions.biomeFogFactor;
-		dustFog *= ModOptions.desertFogFactor;
-
-		if (ModOptions.enableElevationHaze && DimensionRegistry.hasHaze(world)) {
-			heightFog = ModOptions.elevationHazeAsBand ? calcHazeBand(world, player) : calcHazeGradient(world, player);
-		}
-
-		// Get the max fog level between the three fog types
-		currentFogLevel = Math.max(biomeFog, Math.max(dustFog, heightFog));
-		insideFogOffset = PlayerUtils.ceilingCoverageRatio(player) * 15.0F;
 	}
 
-	/*
-	 * Hook the fog color event so we can tell the renderer what color the fog
-	 * should be.
-	 */
-	@SubscribeEvent(priority = EventPriority.LOWEST)
-	public void fogColorEvent(final EntityViewRenderEvent.FogColors event) {
-		// Timing is everything...
-		if (currentFogColor == null || event.getResult() != Result.DEFAULT)
-			return;
-
-		if (currentFogLevel == 0)
-			return;
-
-		final Block block = ActiveRenderInfo.getBlockAtEntityViewpoint(event.entity.worldObj, event.entity,
-				(float) event.renderPartialTicks);
-		if (block.getMaterial() == Material.lava || block.getMaterial() == Material.water)
-			return;
-
-		event.red = currentFogColor.red;
-		event.green = currentFogColor.green;
-		event.blue = currentFogColor.blue;
-		event.setResult(Result.ALLOW);
-	}
-
-	/*
-	 * Hook the fog density event so that the fog settings can be reset based on
-	 * rain intensity. This routine will overwrite what the vanilla code has done in
-	 * terms of fog.
-	 */
 	@SubscribeEvent(priority = EventPriority.LOWEST)
 	public void fogRenderEvent(final EntityViewRenderEvent.RenderFogEvent event) {
-		if (event.getResult() != Result.DEFAULT)
-			return;
-
-		if (currentFogLevel == 0)
-			return;
-
-		final float level = currentFogLevel;
-		final float factor = 1.0F + level * 100.0F;
-		final float near = (event.farPlaneDistance * 0.75F) / (factor * factor) + insideFogOffset;
-		final float horizon = event.farPlaneDistance / (factor) + insideFogOffset;
-
-		final float start = GL11.glGetFloat(GL11.GL_FOG_START);
-		final float end = GL11.glGetFloat(GL11.GL_FOG_END);
-
-		boolean didFog = false;
-		if (near < start) {
-			GL11.glFogf(GL11.GL_FOG_START, near);
-			didFog = true;
+		if (doFog()) {
+			final Material material = event.block.getMaterial();
+			if (material != Material.lava && material != Material.water) {
+				final FogResult result = this.fogRange.calculate(event);
+				if (result != null) {
+					GL11.glFogf(GL11.GL_FOG_START, result.getStart());
+					GL11.glFogf(GL11.GL_FOG_END, result.getEnd());
+				}
+			}
 		}
-		if (horizon < end) {
-			GL11.glFogf(GL11.GL_FOG_END, horizon);
-			didFog = true;
-		}
-
-		if (didFog)
-			event.setResult(Result.ALLOW);
 	}
 
 	@SubscribeEvent
 	public void diagnostics(final DiagnosticEvent.Gather event) {
-		final StringBuilder builder = new StringBuilder();
-		builder.append("Fog:");
-		builder.append(" c:").append(currentFogLevel);
-		event.output.add(builder.toString());
+		if (doFog()) {
+			event.output.add("Fog Range: " + this.fogRange.toString());
+			event.output.add("Fog Color: " + this.fogColor.toString());
+		} else
+			event.output.add("FOG: IGNORED");
 	}
 
+	@SubscribeEvent(receiveCanceled = false, priority = EventPriority.LOWEST)
+	public void onWorldLoad(@Nonnull final WorldEvent.Load event) {
+		// Only want client side world things
+		if (!event.world.isRemote)
+			return;
+
+		setupTheme(event.world);
+	}
+
+	protected void setupTheme(@Nonnull final World world) {
+
+		this.fogColor = new HolisticFogColorCalculator();
+		this.fogRange = new HolisticFogRangeCalculator();
+
+		if (ModOptions.enableBiomeFog) {
+			this.fogColor.add(new BiomeFogColorCalculator());
+			this.fogRange.add(new BiomeFogRangeCalculator());
+		}
+
+		if (ModOptions.enableElevationHaze)
+			this.fogRange.add(new HazeFogRangeCalculator());
+
+		if (ModOptions.enableMorningFog)
+			this.fogRange.add(new MorningFogRangeCalculator());
+
+		if (ModOptions.enableWeatherFog)
+			this.fogRange.add(new WeatherFogRangeCalculator());
+	}
 }

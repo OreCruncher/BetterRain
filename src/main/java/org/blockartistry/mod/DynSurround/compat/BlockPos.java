@@ -378,7 +378,7 @@ public class BlockPos {
 		 * @param zIn
 		 *            The Z value
 		 */
-		public BlockPos.MutableBlockPos set(int xIn, int yIn, int zIn) {
+		public BlockPos.MutableBlockPos setPos(int xIn, int yIn, int zIn) {
 			this.x = xIn;
 			this.y = yIn;
 			this.z = zIn;

@@ -114,6 +114,7 @@ public class EnvironStateHandler implements IClientEffectHandler {
 		private static String conditions = "";
 		private static String biomeName = "";
 		private static BiomeGenBase playerBiome = null;
+		private static DimensionRegistry dimensionInfo = null;
 		private static int dimensionId;
 		private static String dimensionName;
 		private static EntityPlayer player;
@@ -204,9 +205,9 @@ public class EnvironStateHandler implements IClientEffectHandler {
 			EnvironState.conditions = DimensionRegistry.getConditions(world) + getPlayerConditions(player);
 			EnvironState.playerBiome = PlayerUtils.getPlayerBiome(player, false);
 			EnvironState.biomeName = BiomeRegistry.resolveName(EnvironState.playerBiome);
+			EnvironState.dimensionInfo = DimensionRegistry.getData(player.worldObj);
 			EnvironState.dimensionId = world.provider.dimensionId;
 			EnvironState.dimensionName = world.provider.getDimensionName();
-			EnvironState.fog = FogEffectHandler.currentFogLevel() >= 0.01F;
 			EnvironState.inside = PlayerUtils.isReallyInside(EnvironState.player);
 
 			final int posX = MathHelper.floor_double(player.posX);
@@ -234,6 +235,10 @@ public class EnvironStateHandler implements IClientEffectHandler {
 			return biomeName;
 		}
 
+		public static DimensionRegistry getDimensionInfo() {
+			return dimensionInfo;
+		}
+		
 		public static int getDimensionId() {
 			return dimensionId;
 		}

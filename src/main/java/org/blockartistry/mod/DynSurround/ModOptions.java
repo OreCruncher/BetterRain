@@ -90,40 +90,34 @@ public final class ModOptions {
 
 	public static final String CATEGORY_FOG = "fog";
 	public static final String CONFIG_ALLOW_DESERT_FOG = "Desert Fog";
-	public static final String CONFIG_DESERT_FOG_FACTOR = "Desert Fog Factor";
 	public static final String CONFIG_ENABLE_ELEVATION_HAZE = "Elevation Haze";
-	public static final String CONFIG_ELEVATION_HAZE_FACTOR = "Elevation Haze Factor";
-	public static final String CONFIG_ELEVATION_HAZE_AS_BAND = "Elevation Haze as Band";
 	public static final String CONFIG_ENABLE_BIOME_FOG = "Biome Fog";
-	public static final String CONFIG_BIOME_FOG_FACTOR = "Biome Fog Factor";
-	private static final List<String> fogSort = Arrays.asList(CONFIG_ALLOW_DESERT_FOG, CONFIG_DESERT_FOG_FACTOR,
-			CONFIG_ENABLE_BIOME_FOG, CONFIG_BIOME_FOG_FACTOR, CONFIG_ENABLE_ELEVATION_HAZE,
-			CONFIG_ELEVATION_HAZE_FACTOR, CONFIG_ELEVATION_HAZE_AS_BAND);
+	public static final String CONFIG_ENABLE_MORNING_FOG = "Morning Fog";
+	public static final String CONFIG_MORNING_FOG_CHANCE = "Morning Fog Chance";
+	public static final String CONFIG_ENABLE_WEATHER_FOG = "Weather Fog";
+	private static final List<String> fogSort = Arrays.asList(CONFIG_ALLOW_DESERT_FOG,
+			CONFIG_ENABLE_ELEVATION_HAZE, CONFIG_ENABLE_BIOME_FOG, CONFIG_ENABLE_MORNING_FOG,
+			CONFIG_MORNING_FOG_CHANCE, CONFIG_ENABLE_WEATHER_FOG);
 
 	@Parameter(category = CATEGORY_FOG, property = CONFIG_ALLOW_DESERT_FOG, defaultValue = "true")
 	@Comment("Allow desert fog when raining")
 	public static boolean allowDesertFog = true;
-	@Parameter(category = CATEGORY_FOG, property = CONFIG_DESERT_FOG_FACTOR, defaultValue = "1.0")
-	@MinMaxFloat(min = 0.0F, max = 5.0F)
-	@Comment("Visibility factor to apply to desert fog (higher is thicker)")
-	public static float desertFogFactor = 1.0F;
 	@Parameter(category = CATEGORY_FOG, property = CONFIG_ENABLE_ELEVATION_HAZE, defaultValue = "true")
 	@Comment("Higher the player elevation the more haze that is experienced")
 	public static boolean enableElevationHaze = true;
-	@Parameter(category = CATEGORY_FOG, property = CONFIG_ELEVATION_HAZE_FACTOR, defaultValue = "1.0")
-	@MinMaxFloat(min = 0.0F, max = 5.0F)
-	@Comment("Visibility factor to apply to elevation haze (higher is thicker)")
-	public static float elevationHazeFactor = 1.0F;
-	@Parameter(category = CATEGORY_FOG, property = CONFIG_ELEVATION_HAZE_AS_BAND, defaultValue = "true")
-	@Comment("Calculate haze as a band at cloud height rather than gradient to build height")
-	public static boolean elevationHazeAsBand = true;
 	@Parameter(category = CATEGORY_FOG, property = CONFIG_ENABLE_BIOME_FOG, defaultValue = "true")
 	@Comment("Enable biome specific fog density and color")
 	public static boolean enableBiomeFog = true;
-	@Parameter(category = CATEGORY_FOG, property = CONFIG_BIOME_FOG_FACTOR, defaultValue = "1.0")
-	@MinMaxFloat(min = 0.0F, max = 5.0F)
-	@Comment("Visibility factor to apply to biome fog (higher is thicker)")
-	public static float biomeFogFactor = 1.0F;
+	@Parameter(category = CATEGORY_FOG, property = CONFIG_ENABLE_MORNING_FOG, defaultValue = "true")
+	@Comment("Enable morning fog")
+	public static boolean enableMorningFog = true;
+	@Parameter(category = CATEGORY_FOG, property = CONFIG_MORNING_FOG_CHANCE, defaultValue = "1")
+	@Comment("Enable morning fog")
+	@MinMaxInt(min = 1, max = 10)
+	public static int morningFogChance = 1;
+	@Parameter(category = CATEGORY_FOG, property = CONFIG_ENABLE_WEATHER_FOG, defaultValue = "true")
+	@Comment("Enable morning fog")
+	public static boolean enableWeatherFog = true;
 
 	public static final String CATEGORY_GENERAL = "general";
 	public static final String CONFIG_MIN_RAIN_STRENGTH = "Default Minimum Rain Strength";

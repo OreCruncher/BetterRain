@@ -24,6 +24,12 @@
 
 package org.blockartistry.mod.DynSurround.util;
 
+import java.util.EnumMap;
+import java.util.Map;
+
+import javax.annotation.Nonnull;
+
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.Vec3;
 
 /**
@@ -31,9 +37,17 @@ import net.minecraft.util.Vec3;
  */
 public class Color {
 
-	private static class ImmutableColor extends Color {
+	public static final class ImmutableColor extends Color {
 
-		public ImmutableColor(final int red, final int green, final int blue) {
+		ImmutableColor(@Nonnull final Color color) {
+			super(color);
+		}
+
+		ImmutableColor(final int red, final int green, final int blue) {
+			super(red, green, blue);
+		}
+
+		ImmutableColor(final float red, final float green, final float blue) {
 			super(red, green, blue);
 		}
 
@@ -48,7 +62,7 @@ public class Color {
 		}
 
 		@Override
-		public Color adjust(final Vec3 adjust, final Color target) {
+		public Color adjust(@Nonnull final Vec3 adjust, @Nonnull final Color target) {
 			throw new UnsupportedOperationException();
 		}
 	}
@@ -71,12 +85,65 @@ public class Color {
 	public static final Color INDIGO = new ImmutableColor(75, 0, 130);
 	public static final Color NAVY = new ImmutableColor(0, 0, 128);
 	public static final Color TAN = new ImmutableColor(210, 180, 140);
+	public static final Color GOLD = new ImmutableColor(255, 215, 0);
+	public static final Color GRAY = new ImmutableColor(128, 128, 128);
+	public static final Color LGRAY = new ImmutableColor(192, 192, 192);
+	public static final Color SLATEGRAY = new ImmutableColor(112, 128, 144);
+	public static final Color DARKSLATEGRAY = new ImmutableColor(47, 79, 79);
+
+	// Minecraft colors mapped to codes
+	public static final Color MC_BLACK = new ImmutableColor(0, 0, 0);
+	public static final Color MC_DARKBLUE = new ImmutableColor(0, 0, 170);
+	public static final Color MC_DARKGREEN = new ImmutableColor(0, 170, 0);
+	public static final Color MC_DARKAQUA = new ImmutableColor(0, 170, 170);
+	public static final Color MC_DARKRED = new ImmutableColor(170, 0, 0);
+	public static final Color MC_DARKPURPLE = new ImmutableColor(170, 0, 170);
+	public static final Color MC_GOLD = new ImmutableColor(255, 170, 0);
+	public static final Color MC_GRAY = new ImmutableColor(170, 170, 170);
+	public static final Color MC_DARKGRAY = new ImmutableColor(85, 85, 85);
+	public static final Color MC_BLUE = new ImmutableColor(85, 85, 255);
+	public static final Color MC_GREEN = new ImmutableColor(85, 255, 85);
+	public static final Color MC_AQUA = new ImmutableColor(85, 255, 255);
+	public static final Color MC_RED = new ImmutableColor(255, 85, 85);
+	public static final Color MC_LIGHTPURPLE = new ImmutableColor(255, 85, 255);
+	public static final Color MC_YELLOW = new ImmutableColor(255, 255, 85);
+	public static final Color MC_WHITE = new ImmutableColor(255, 255, 255);
+
+	// Basic Aurora color
+	public static final Color AURORA_RED = new ImmutableColor(1.0F, 0F, 0F);
+	public static final Color AURORA_GREEN = new ImmutableColor(0.5F, 1.0F, 0.0F);
+	public static final Color AURORA_BLUE = new ImmutableColor(0F, 0.8F, 1.0F);
+
+	private static final Map<EnumChatFormatting, Color> colorLookup = new EnumMap<EnumChatFormatting, Color>(
+			EnumChatFormatting.class);
+	static {
+		colorLookup.put(EnumChatFormatting.BLACK, MC_BLACK);
+		colorLookup.put(EnumChatFormatting.DARK_BLUE, MC_DARKBLUE);
+		colorLookup.put(EnumChatFormatting.DARK_GREEN, MC_DARKGREEN);
+		colorLookup.put(EnumChatFormatting.DARK_AQUA, MC_DARKAQUA);
+		colorLookup.put(EnumChatFormatting.DARK_RED, MC_DARKRED);
+		colorLookup.put(EnumChatFormatting.DARK_PURPLE, MC_DARKPURPLE);
+		colorLookup.put(EnumChatFormatting.GOLD, MC_GOLD);
+		colorLookup.put(EnumChatFormatting.GRAY, MC_GRAY);
+		colorLookup.put(EnumChatFormatting.DARK_GRAY, MC_DARKGRAY);
+		colorLookup.put(EnumChatFormatting.BLUE, MC_BLUE);
+		colorLookup.put(EnumChatFormatting.GREEN, MC_GREEN);
+		colorLookup.put(EnumChatFormatting.AQUA, MC_AQUA);
+		colorLookup.put(EnumChatFormatting.RED, MC_RED);
+		colorLookup.put(EnumChatFormatting.LIGHT_PURPLE, MC_LIGHTPURPLE);
+		colorLookup.put(EnumChatFormatting.YELLOW, MC_YELLOW);
+		colorLookup.put(EnumChatFormatting.WHITE, MC_WHITE);
+	}
+
+	public static Color getColor(final EnumChatFormatting format) {
+		return colorLookup.get(format);
+	}
 
 	public float red;
 	public float green;
 	public float blue;
 
-	public Color(final Color color) {
+	public Color(@Nonnull final Color color) {
 		this(color.red, color.green, color.blue);
 	}
 
@@ -84,8 +151,12 @@ public class Color {
 		this(red / 255.0F, green / 255.0F, blue / 255.0F);
 	}
 
-	public Color(final Vec3 vec) {
+	public Color(@Nonnull final Vec3 vec) {
 		this((float) vec.xCoord, (float) vec.yCoord, (float) vec.zCoord);
+	}
+
+	public Color(final int rgb) {
+		this((rgb >> 16) & 0xff, (rgb >> 8) & 0xff, rgb & 0xff);
 	}
 
 	public Color(final float red, final float green, final float blue) {
@@ -94,7 +165,12 @@ public class Color {
 		this.blue = blue;
 	}
 
-	public Vec3 toVec3() {
+	public Color(final double red, final double green, final double blue) {
+		this((float) red, (float) green, (float) blue);
+	}
+
+	@Nonnull
+	public Vec3 toVec3d() {
 		return Vec3.createVectorHelper(this.red, this.green, this.blue);
 	}
 
@@ -102,42 +178,45 @@ public class Color {
 	 * Calculates the RGB adjustments to make to the color to arrive at the target
 	 * color after the specified number of iterations.
 	 */
-	public Vec3 transitionTo(final Color target, final int iterations) {
+	@Nonnull
+	public Vec3 transitionTo(@Nonnull final Color target, final int iterations) {
 		final double deltaRed = (target.red - this.red) / iterations;
 		final double deltaGreen = (target.green - this.green) / iterations;
 		final double deltaBlue = (target.blue - this.blue) / iterations;
 		return Vec3.createVectorHelper(deltaRed, deltaGreen, deltaBlue);
 	}
 
+	@Nonnull
 	public Color scale(final float scaleFactor) {
-		this.red *= scaleFactor;
-		this.green *= scaleFactor;
-		this.blue *= scaleFactor;
+		return scale(scaleFactor, scaleFactor, scaleFactor);
+	}
+
+	@Nonnull
+	public Color scale(final float scaleRed, final float scaleGreen, final float scaleBlue) {
+		this.red *= scaleRed;
+		this.green *= scaleGreen;
+		this.blue *= scaleBlue;
 		return this;
 	}
 
-	public static Color scale(final Color color, final float scaleFactor) {
+	@Nonnull
+	public static Color scale(@Nonnull final Color color, final float scaleFactor) {
 		return new Color(color).scale(scaleFactor);
 	}
 
-	public Color anaglyph() {
-		final float r = (this.red * 30.0F + this.green * 59.0F + this.blue * 11.0F) / 100.0F;
-		final float g = (this.red * 30.0F + this.green * 70.0F) / 100.0F;
-		final float b = (this.red * 30.0F + this.blue * 70.0F) / 100.0F;
-		this.red = r;
-		this.green = g;
-		this.blue = b;
-		return this;
-	}
-
-	public static Color anaglyph(final Color color) {
-		return new Color(color).anaglyph();
-	}
-
-	public Color add(final Color color) {
+	@Nonnull
+	public Color add(@Nonnull final Color color) {
 		this.red += color.red;
 		this.green += color.green;
 		this.blue += color.blue;
+		return this;
+	}
+
+	@Nonnull
+	public Color add(final float red, final float green, final float blue) {
+		this.red += red;
+		this.green += green;
+		this.blue += blue;
 		return this;
 	}
 
@@ -145,17 +224,20 @@ public class Color {
 		return (float) Math.sqrt((1.0F - factor) * c1 * c1 + factor * c2 * c2);
 	}
 
-	public Color blend(final Color color, final float factor) {
+	@Nonnull
+	public Color blend(@Nonnull final Color color, final float factor) {
 		this.red = blend(this.red, color.red, factor);
 		this.green = blend(this.green, color.green, factor);
 		this.blue = blend(this.blue, color.blue, factor);
 		return this;
 	}
 
-	public Color mix(final Color color) {
+	@Nonnull
+	public Color mix(@Nonnull final Color color) {
 		return mix(color.red, color.green, color.blue);
 	}
 
+	@Nonnull
 	public Color mix(final float red, final float green, final float blue) {
 		this.red = (this.red + red) / 2.0F;
 		this.green = (this.green + green) / 2.0F;
@@ -163,7 +245,8 @@ public class Color {
 		return this;
 	}
 
-	public Color adjust(final Vec3 adjust, final Color target) {
+	@Nonnull
+	public Color adjust(@Nonnull final Vec3 adjust, @Nonnull final Color target) {
 		this.red += adjust.xCoord;
 		if ((adjust.xCoord < 0.0F && this.red < target.red) || (adjust.xCoord > 0.0F && this.red > target.red)) {
 			this.red = target.red;
@@ -180,6 +263,16 @@ public class Color {
 			this.blue = target.blue;
 		}
 		return this;
+	}
+
+	// Adjust luminance based on the specified percent. > 0 brightens; < 0
+	// darkens
+	@Nonnull
+	public Color luminance(final float percent) {
+		final float r = Math.min(Math.max(0, this.red + (this.red * percent)), 1.0F);
+		final float g = Math.min(Math.max(0, this.green + (this.green * percent)), 1.0F);
+		final float b = Math.min(Math.max(0, this.blue + (this.blue * percent)), 1.0F);
+		return new Color(r, g, b);
 	}
 
 	public int rgb() {
@@ -202,7 +295,13 @@ public class Color {
 		return this.red == color.red && this.green == color.green && this.blue == color.blue;
 	}
 
+	@Nonnull
+	public Color asImmutable() {
+		return new ImmutableColor(this);
+	}
+
 	@Override
+	@Nonnull
 	public String toString() {
 		final StringBuilder builder = new StringBuilder();
 		builder.append("[r:").append((int) (this.red * 255));

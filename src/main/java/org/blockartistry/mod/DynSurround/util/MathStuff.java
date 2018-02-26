@@ -55,6 +55,7 @@ public class MathStuff {
 	private static final float DEG_TO_RAD = (float) (Math.PI / 180.0D);
 
 	public static final float PI_F = (float) Math.PI;
+	public static final float E_F = (float) Math.E;
 
 	static {
 
@@ -143,6 +144,7 @@ public class MathStuff {
 	}
 
 	// Misc functions
+
 	public static final float toRadians(final float degrees) {
 		return degrees * DEG_TO_RAD;
 	}
@@ -151,7 +153,78 @@ public class MathStuff {
 		return radians * RAD_TO_DEG;
 	}
 
+	public static float wrapDegrees(float value) {
+		value = value % 360.0F;
+
+		if (value >= 180.0F) {
+			value -= 360.0F;
+		}
+
+		if (value < -180.0F) {
+			value += 360.0F;
+		}
+
+		return value;
+	}
+
+	public static double wrapDegrees(double value) {
+		value = value % 360.0D;
+
+		if (value >= 180.0D) {
+			value -= 360.0D;
+		}
+
+		if (value < -180.0D) {
+			value += 360.0D;
+		}
+
+		return value;
+	}
+
 	public static final float abs(final float val) {
 		return val < 0.0F ? -val : val;
 	}
+
+	public static final double abs(final double val) {
+		return val < 0.0F ? -val : val;
+	}
+
+	public static final long abs(final long val) {
+		return val < 1L ? -val : val;
+	}
+
+	public static final int abs(final int val) {
+		return val < 1 ? -val : val;
+	}
+
+	public static float sqrt(final float value) {
+		return (float) Math.sqrt(value);
+	}
+
+	public static double sqrt(final double value) {
+		return (float) Math.sqrt(value);
+	}
+
+	public static int floor(final double value) {
+		final int i = (int) value;
+		return value < i ? i - 1 : i;
+	}
+
+	public static int floor(final float value) {
+		final int i = (int) value;
+		return value < i ? i - 1 : i;
+	}
+
+	public static float clamp(final float num, final float min, final float max) {
+		return num < min ? min : (num > max ? max : num);
+	}
+
+	public static double clamp(final double num, final double min, final double max) {
+		return num < min ? min : (num > max ? max : num);
+	}
+
+	public static int clamp(final int num, final int min, final int max) {
+		return num < min ? min : (num > max ? max : num);
+	}
+
 }
