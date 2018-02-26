@@ -24,12 +24,8 @@
 
 package org.blockartistry.mod.DynSurround.util;
 
-import java.util.EnumMap;
-import java.util.Map;
-
 import javax.annotation.Nonnull;
 
-import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.Vec3;
 
 /**
@@ -113,31 +109,6 @@ public class Color {
 	public static final Color AURORA_RED = new ImmutableColor(1.0F, 0F, 0F);
 	public static final Color AURORA_GREEN = new ImmutableColor(0.5F, 1.0F, 0.0F);
 	public static final Color AURORA_BLUE = new ImmutableColor(0F, 0.8F, 1.0F);
-
-	private static final Map<EnumChatFormatting, Color> colorLookup = new EnumMap<EnumChatFormatting, Color>(
-			EnumChatFormatting.class);
-	static {
-		colorLookup.put(EnumChatFormatting.BLACK, MC_BLACK);
-		colorLookup.put(EnumChatFormatting.DARK_BLUE, MC_DARKBLUE);
-		colorLookup.put(EnumChatFormatting.DARK_GREEN, MC_DARKGREEN);
-		colorLookup.put(EnumChatFormatting.DARK_AQUA, MC_DARKAQUA);
-		colorLookup.put(EnumChatFormatting.DARK_RED, MC_DARKRED);
-		colorLookup.put(EnumChatFormatting.DARK_PURPLE, MC_DARKPURPLE);
-		colorLookup.put(EnumChatFormatting.GOLD, MC_GOLD);
-		colorLookup.put(EnumChatFormatting.GRAY, MC_GRAY);
-		colorLookup.put(EnumChatFormatting.DARK_GRAY, MC_DARKGRAY);
-		colorLookup.put(EnumChatFormatting.BLUE, MC_BLUE);
-		colorLookup.put(EnumChatFormatting.GREEN, MC_GREEN);
-		colorLookup.put(EnumChatFormatting.AQUA, MC_AQUA);
-		colorLookup.put(EnumChatFormatting.RED, MC_RED);
-		colorLookup.put(EnumChatFormatting.LIGHT_PURPLE, MC_LIGHTPURPLE);
-		colorLookup.put(EnumChatFormatting.YELLOW, MC_YELLOW);
-		colorLookup.put(EnumChatFormatting.WHITE, MC_WHITE);
-	}
-
-	public static Color getColor(final EnumChatFormatting format) {
-		return colorLookup.get(format);
-	}
 
 	public float red;
 	public float green;

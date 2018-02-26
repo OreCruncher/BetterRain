@@ -52,6 +52,11 @@ version = "${config.version.minecraft}-${modVersion}"
 group= "${config.group}"
 archivesBaseName = "${config.archive}"
 
+sourceCompatibility = targetCompatibility = "1.7" // Need this here so eclipse task generates correctly.
+compileJava {
+    sourceCompatibility = targetCompatibility = "1.7"
+}
+
 minecraft {
     version = "${config.version.minecraft}-${config.version.forge}"
     runDir = "eclipse"
