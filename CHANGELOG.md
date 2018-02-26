@@ -1,3 +1,17 @@
+###DynamicSurroundings-1.7.10-1.0.6.1
+**What's New**
+* Backported the fog changes made in the 1.10.x+ branches.  Summary of impact:
+    * Various fog factors have been removed from the config.  They don't work with the new system, and they were little used.
+    * Elevation haze calculation is fixed in a band about cloud height.  Elevation haze can be disabled in the config.
+    * Much better compatibility with other mods such as Biomes O'Plenty.
+    * Added morning fog - sets in about 3AM, peaks at dawn, and burns off in the morning.  By default it happens every morning, but that can be changed using the config.
+    * Added weather fog.  The density of the fog is based on the intensity of the rain fall.  Can be disabled in the config.
+* Backported some sound manager changes from 1.10.x+ branches.  Specifically, put in synchronization to guard against bad mods submitting sounds from the server thread causing client crashes.  Though these bad mods should be fixed the chances of that happening for 1.7.10 are a snowballs chance.
+* Backport some aurora rendering performance tweaks.
+
+**Fixes**
+* Several NPEs/race conditions reported via OpenEye.
+    
 ###DynamicSurroundings-1.7.10-1.0.6.0
 * Removed all that sound engine restart stuff and replaced with patches to the underlying Minecraft sound engine to avoid the situation all together.  Thanks to CreativeMD and his work on getting to the bottom of things!  This should eliminate a variety of reported problems up through and including:
     * Sound Engine restart lag
