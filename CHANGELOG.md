@@ -11,6 +11,9 @@
 
 **Fixes**
 * Several NPEs/race conditions reported via OpenEye.
+
+**Changes**
+* Use LCG random number generator for block scan coordinates.  Bottom line is that the process of doing the area block scan is faster.
     
 ###DynamicSurroundings-1.7.10-1.0.6.0
 * Removed all that sound engine restart stuff and replaced with patches to the underlying Minecraft sound engine to avoid the situation all together.  Thanks to CreativeMD and his work on getting to the bottom of things!  This should eliminate a variety of reported problems up through and including:
