@@ -31,6 +31,7 @@ import org.blockartistry.mod.DynSurround.data.DimensionRegistry;
 import org.blockartistry.mod.DynSurround.util.Color;
 import org.blockartistry.mod.DynSurround.util.DiurnalUtils;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL14;
 
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.relauncher.Side;
@@ -98,12 +99,15 @@ public final class AuroraRenderer implements IAtmosRenderer {
 		GL11.glTranslatef((float) tranX, tranY, (float) tranZ);
 		GL11.glScaled(0.5D, 8.0D, 0.5D);
 		GL11.glDisable(GL11.GL_TEXTURE_2D);
+		GL11.glDisable(GL11.GL_LIGHTING);
 		GL11.glShadeModel(GL11.GL_SMOOTH);
 		GL11.glEnable(GL11.GL_BLEND);
-		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, 1);
+		GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, 1, 1, 0);
 		GL11.glDisable(GL11.GL_ALPHA_TEST);
 		GL11.glDisable(GL11.GL_CULL_FACE);
 		GL11.glDepthMask(false);
+
+		tess.startDrawing(GL11.GL_TRIANGLES);
 
 		for (final Node[] array : aurora.getNodeList()) {
 			for (int i = 0; i < array.length - 1; i++) {
@@ -135,39 +139,45 @@ public final class AuroraRenderer implements IAtmosRenderer {
 					posY2 = 0.0D;
 				}
 
-				tess.startDrawing(GL11.GL_TRIANGLE_FAN);
+				// Front
 				setColor(base, alpha);
 				tess.addVertex(posX, lowY, posZ);
 				setColor(fade, 0);
 				tess.addVertex(posX, posY, posZ);
 				tess.addVertex(posX2, posY2, posZ2);
+				tess.addVertex(posX2, posY2, posZ2);
 				setColor(base, alpha);
 				tess.addVertex(posX2, lowY2, posZ2);
-				tess.draw();
+				tess.addVertex(posX, lowY, posZ);
 
-				tess.startDrawing(GL11.GL_TRIANGLE_FAN);
+				// Bottom
 				setColor(base, alpha);
 				tess.addVertex(posX, lowY, posZ);
 				tess.addVertex(posX2, lowY2, posZ2);
 				tess.addVertex(tetX2, lowY2, tetZ2);
+				tess.addVertex(tetX2, lowY2, tetZ2);
 				tess.addVertex(tetX, lowY, tetZ);
-				tess.draw();
+				tess.addVertex(posX, lowY, posZ);
 
-				tess.startDrawing(GL11.GL_TRIANGLE_FAN);
+				// Back
 				setColor(base, alpha);
 				tess.addVertex(tetX, lowY, tetZ);
 				setColor(fade, 0);
 				tess.addVertex(tetX, posY, tetZ);
 				tess.addVertex(tetX2, posY2, tetZ2);
+				tess.addVertex(tetX2, posY2, tetZ2);
 				setColor(base, alpha);
 				tess.addVertex(tetX2, lowY2, tetZ2);
-				tess.draw();
+				tess.addVertex(tetX, lowY, tetZ);
 			}
 		}
+
+		tess.draw();
 
 		GL11.glScaled(3.5D, 25.0D, 3.5D);
 		GL11.glDepthMask(true);
 		GL11.glEnable(GL11.GL_CULL_FACE);
+		GL11.glEnable(GL11.GL_LIGHTING);
 		GL11.glDisable(GL11.GL_BLEND);
 		GL11.glShadeModel(GL11.GL_FLAT);
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
