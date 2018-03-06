@@ -24,17 +24,19 @@
 
 package org.blockartistry.mod.DynSurround.asm;
 
+import java.io.File;
 import java.util.Map;
 
+import org.blockartistry.mod.DynSurround.ModOptions;
+
 import cpw.mods.fml.relauncher.IFMLLoadingPlugin;
+import net.minecraftforge.common.config.Configuration;
 
 @IFMLLoadingPlugin.MCVersion("1.7.10")
 @IFMLLoadingPlugin.TransformerExclusions({ "org.blockartistry.mod.DynSurround.asm." })
 @IFMLLoadingPlugin.SortingIndex(10001)
 @IFMLLoadingPlugin.Name("dsurroundcore")
 public class TransformLoader implements IFMLLoadingPlugin {
-
-	public static boolean runtimeDeobEnabled = true;
 
 	@Override
 	public String[] getASMTransformerClass() {
@@ -53,11 +55,10 @@ public class TransformLoader implements IFMLLoadingPlugin {
 
 	@Override
 	public void injectData(final Map<String, Object> map) {
-
-		final Object v = map.get("runtimeDeobfuscationEnabled");
-		if (v != null) {
-			runtimeDeobEnabled = ((Boolean) v).booleanValue();
-		}
+		// Tickle the configuration so we can get some options initialized
+		final File configFile = new File((File) map.get("mcLocation"), "/config/dsurround/dsurround.cfg");
+		final Configuration config = new Configuration(configFile);
+		ModOptions.load(config);
 	}
 
 	@Override

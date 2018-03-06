@@ -65,18 +65,24 @@ public final class ModOptions {
 	public static boolean enableVersionChecking = true;
 
 	public static final String CATEGORY_RAIN = "rain";
+	public static final String CONFIG_DISABLE_WEATHER_EFFECTS = "Disable Weather Effects";
 	public static final String CONFIG_RAIN_VOLUME = "Sound Level";
 	public static final String CONFIG_RAIN_PARTICLE_BASE = "Particle Count Base";
 	public static final String CONFIG_ALWAYS_OVERRIDE_SOUND = "Always Override Sound";
 	public static final String CONFIG_ALLOW_DESERT_DUST = "Desert Dust";
 	public static final String CONFIG_RESET_RAIN_ON_SLEEP = "Reset Rain on Sleep";
-	private static final List<String> rainSort = Arrays.asList(CONFIG_RAIN_VOLUME, CONFIG_ALLOW_DESERT_DUST,
-			CONFIG_RESET_RAIN_ON_SLEEP, CONFIG_ALWAYS_OVERRIDE_SOUND, CONFIG_RAIN_PARTICLE_BASE);
+	private static final List<String> rainSort = Arrays.asList(CONFIG_RAIN_VOLUME, CONFIG_DISABLE_WEATHER_EFFECTS,
+			CONFIG_ALLOW_DESERT_DUST, CONFIG_RESET_RAIN_ON_SLEEP, CONFIG_ALWAYS_OVERRIDE_SOUND,
+			CONFIG_RAIN_PARTICLE_BASE);
 
 	@Parameter(category = CATEGORY_RAIN, property = CONFIG_RAIN_VOLUME, defaultValue = "1.0")
 	@MinMaxFloat(min = 0.0F, max = 1.0F)
 	@Comment("Factor to apply to rain sound level to adjust")
 	public static float soundLevel = 1.0F;
+	@Parameter(category = CATEGORY_RAIN, property = CONFIG_DISABLE_WEATHER_EFFECTS, defaultValue = "false")
+	@Comment("Disable ASM related to weather effects")
+	@RestartRequired
+	public static boolean disableWeatherEffects = false;
 	@Parameter(category = CATEGORY_RAIN, property = CONFIG_RAIN_PARTICLE_BASE, defaultValue = "100")
 	@MinMaxInt(min = 0, max = 500)
 	@Comment("Base count of rain splash particles to generate per tick")
@@ -95,9 +101,8 @@ public final class ModOptions {
 	public static final String CONFIG_ENABLE_MORNING_FOG = "Morning Fog";
 	public static final String CONFIG_MORNING_FOG_CHANCE = "Morning Fog Chance";
 	public static final String CONFIG_ENABLE_WEATHER_FOG = "Weather Fog";
-	private static final List<String> fogSort = Arrays.asList(CONFIG_ALLOW_DESERT_FOG,
-			CONFIG_ENABLE_ELEVATION_HAZE, CONFIG_ENABLE_BIOME_FOG, CONFIG_ENABLE_MORNING_FOG,
-			CONFIG_MORNING_FOG_CHANCE, CONFIG_ENABLE_WEATHER_FOG);
+	private static final List<String> fogSort = Arrays.asList(CONFIG_ALLOW_DESERT_FOG, CONFIG_ENABLE_ELEVATION_HAZE,
+			CONFIG_ENABLE_BIOME_FOG, CONFIG_ENABLE_MORNING_FOG, CONFIG_MORNING_FOG_CHANCE, CONFIG_ENABLE_WEATHER_FOG);
 
 	@Parameter(category = CATEGORY_FOG, property = CONFIG_ALLOW_DESERT_FOG, defaultValue = "true")
 	@Comment("Allow desert fog when raining")

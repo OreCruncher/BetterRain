@@ -123,7 +123,7 @@ public enum StormProperties {
 	}
 
 	public static boolean doVanilla() {
-		return intensity == VANILLA;
+		return intensity == VANILLA || ModOptions.disableWeatherEffects;
 	}
 
 	/**

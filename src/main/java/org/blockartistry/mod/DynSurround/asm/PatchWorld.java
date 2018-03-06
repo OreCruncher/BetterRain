@@ -28,6 +28,7 @@ import static org.objectweb.asm.Opcodes.ALOAD;
 import static org.objectweb.asm.Opcodes.INVOKESTATIC;
 import static org.objectweb.asm.Opcodes.RETURN;
 
+import org.blockartistry.mod.DynSurround.ModOptions;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.InsnList;
 import org.objectweb.asm.tree.InsnNode;
@@ -46,6 +47,11 @@ public class PatchWorld extends Transmorgrifier {
 	@Override
 	public String name() {
 		return "updateWeatherBody";
+	}
+
+	@Override
+	public boolean isEnabled() {
+		return !ModOptions.disableWeatherEffects;
 	}
 
 	@Override

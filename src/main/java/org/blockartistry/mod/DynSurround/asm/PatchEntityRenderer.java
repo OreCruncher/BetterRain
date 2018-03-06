@@ -29,6 +29,7 @@ import static org.objectweb.asm.Opcodes.FLOAD;
 import static org.objectweb.asm.Opcodes.INVOKESTATIC;
 import static org.objectweb.asm.Opcodes.RETURN;
 
+import org.blockartistry.mod.DynSurround.ModOptions;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.InsnList;
 import org.objectweb.asm.tree.InsnNode;
@@ -47,6 +48,11 @@ public class PatchEntityRenderer extends Transmorgrifier {
 	@Override
 	public String name() {
 		return "addRainParticles";
+	}
+	
+	@Override
+	public boolean isEnabled() {
+		return !ModOptions.disableWeatherEffects;
 	}
 
 	@Override

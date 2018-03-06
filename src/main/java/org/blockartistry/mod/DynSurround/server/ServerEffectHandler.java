@@ -68,15 +68,17 @@ public final class ServerEffectHandler {
 			return;
 		}
 
-		final World world = event.world;
-		final int dimensionId = world.provider.dimensionId;
-		final float sendIntensity = DimensionRegistry.hasWeather(world)
-				? DimensionEffectData.get(world).getRainIntensity()
-				: RESET;
+		if (!ModOptions.disableWeatherEffects) {
+			final World world = event.world;
+			final int dimensionId = world.provider.dimensionId;
+			final float sendIntensity = DimensionRegistry.hasWeather(world)
+					? DimensionEffectData.get(world).getRainIntensity()
+					: RESET;
 
-		// Set the rain intensity for all players in the current
-		// dimension.
-		Network.sendRainIntensity(sendIntensity, dimensionId);
+			// Set the rain intensity for all players in the current
+			// dimension.
+			Network.sendRainIntensity(sendIntensity, dimensionId);
+		}
 	}
 
 	private static boolean isAuroraInRange(final EntityPlayerMP player, final Set<AuroraData> data) {
