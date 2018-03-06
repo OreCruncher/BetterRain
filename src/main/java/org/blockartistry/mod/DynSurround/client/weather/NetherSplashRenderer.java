@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package org.blockartistry.mod.DynSurround.client.storm;
+package org.blockartistry.mod.DynSurround.client.weather;
 
 import org.blockartistry.mod.DynSurround.client.EnvironStateHandler.EnvironState;
 import org.blockartistry.mod.DynSurround.client.fx.particle.ParticleFactory;
@@ -37,7 +37,7 @@ public class NetherSplashRenderer extends StormSplashRenderer {
 
 	@Override
 	protected String getBlockSoundFX(final Block block, final boolean hasDust, final World world) {
-		return hasDust ? StormProperties.getIntensity().getDustSound() : null;
+		return hasDust ? Weather.getIntensity().getDustSound() : null;
 	}
 
 	@Override

@@ -33,7 +33,7 @@ import javax.annotation.Nonnull;
 import org.blockartistry.mod.DynSurround.ModOptions;
 import org.blockartistry.mod.DynSurround.client.sound.SoundEffect;
 import org.blockartistry.mod.DynSurround.client.sound.SoundManager;
-import org.blockartistry.mod.DynSurround.client.storm.StormProperties;
+import org.blockartistry.mod.DynSurround.client.weather.Weather;
 import org.blockartistry.mod.DynSurround.data.BiomeRegistry;
 import org.blockartistry.mod.DynSurround.data.DimensionRegistry;
 import org.blockartistry.mod.DynSurround.event.DiagnosticEvent;
@@ -460,7 +460,7 @@ public class EnvironStateHandler implements IClientEffectHandler {
 		event.output.add("Dim: " + EnvironState.getDimensionId() + "/" + EnvironState.getDimensionName());
 		event.output.add("Player: h " + player.getHealth() + "/" + player.getMaxHealth() + "; f "
 				+ player.getFoodStats().getFoodLevel() + "; s " + player.getFoodStats().getSaturationLevel());
-		event.output.add(StormProperties.diagnostic());
+		event.output.add(Weather.diagnostic());
 		event.output.add("Biome: " + EnvironState.getBiomeName());
 		event.output.add("Conditions: " + EnvironState.getConditions());
 	}

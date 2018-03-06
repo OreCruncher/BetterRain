@@ -29,8 +29,8 @@ import java.util.List;
 
 import org.blockartistry.mod.DynSurround.client.EnvironStateHandler.EnvironState;
 import org.blockartistry.mod.DynSurround.client.aurora.AuroraRenderer;
-import org.blockartistry.mod.DynSurround.client.storm.StormRenderer;
-import org.blockartistry.mod.DynSurround.client.storm.StormSplashRenderer;
+import org.blockartistry.mod.DynSurround.client.weather.StormRenderer;
+import org.blockartistry.mod.DynSurround.client.weather.StormSplashRenderer;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;

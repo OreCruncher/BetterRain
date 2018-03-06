@@ -31,7 +31,7 @@ import org.blockartistry.mod.DynSurround.ModOptions;
 import org.blockartistry.mod.DynSurround.client.EnvironStateHandler.EnvironState;
 import org.blockartistry.mod.DynSurround.client.sound.SoundEffect;
 import org.blockartistry.mod.DynSurround.client.sound.SoundManager;
-import org.blockartistry.mod.DynSurround.client.storm.StormProperties;
+import org.blockartistry.mod.DynSurround.client.weather.Weather;
 import org.blockartistry.mod.DynSurround.compat.BlockPos;
 import org.blockartistry.mod.DynSurround.data.BiomeRegistry;
 import org.blockartistry.mod.DynSurround.event.DiagnosticEvent;
@@ -209,10 +209,10 @@ public class PlayerSoundEffectHandler implements IClientEffectHandler {
 		if (event.sound == null)
 			return;
 
-		if ((ModOptions.alwaysOverrideSound || !StormProperties.doVanilla()) && replaceRainSound(event.name)) {
+		if ((ModOptions.alwaysOverrideSound || !Weather.doVanilla()) && replaceRainSound(event.name)) {
 			final ISound sound = event.sound;
-			event.result = new PositionedSoundRecord(StormProperties.getCurrentStormSound(),
-					StormProperties.getCurrentVolume(), sound.getPitch(), sound.getXPosF(), sound.getYPosF(),
+			event.result = new PositionedSoundRecord(Weather.getCurrentStormSound(),
+					Weather.getCurrentVolume(), sound.getPitch(), sound.getXPosF(), sound.getYPosF(),
 					sound.getZPosF());
 		}
 	}

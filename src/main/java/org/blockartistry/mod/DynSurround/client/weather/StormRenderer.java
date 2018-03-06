@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package org.blockartistry.mod.DynSurround.client.storm;
+package org.blockartistry.mod.DynSurround.client.weather;
 
 import org.blockartistry.mod.DynSurround.Module;
 import org.blockartistry.mod.DynSurround.client.IAtmosRenderer;
@@ -80,7 +80,7 @@ public class StormRenderer implements IAtmosRenderer {
 	@Override
 	public void render(final EntityRenderer renderer, final float partialTicks) {
 		// Set our rain/snow/dust textures
-		StormProperties.setTextures();
+		Weather.setTextures();
 		final WorldClient world = renderer.mc.theWorld;
 
 		IRenderHandler r = null;
@@ -97,8 +97,8 @@ public class StormRenderer implements IAtmosRenderer {
 			return;
 
 		final float alphaRatio;
-		if (StormProperties.isRaining())
-			alphaRatio = StormProperties.getIntensityLevel() / StormProperties.getMaxIntensityLevel();
+		if (Weather.isRaining())
+			alphaRatio = Weather.getIntensityLevel() / Weather.getMaxIntensityLevel();
 		else
 			alphaRatio = rainStrength;
 

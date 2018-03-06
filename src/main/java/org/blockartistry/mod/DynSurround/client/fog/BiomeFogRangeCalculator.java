@@ -26,7 +26,7 @@ package org.blockartistry.mod.DynSurround.client.fog;
 import javax.annotation.Nonnull;
 
 import org.blockartistry.mod.DynSurround.client.EnvironStateHandler.EnvironState;
-import org.blockartistry.mod.DynSurround.client.storm.StormProperties;
+import org.blockartistry.mod.DynSurround.client.weather.Weather;
 import org.blockartistry.mod.DynSurround.data.BiomeRegistry;
 import org.blockartistry.mod.DynSurround.util.MathStuff;
 
@@ -75,7 +75,7 @@ public class BiomeFogRangeCalculator extends VanillaFogRangeCalculator {
 		final World world = EnvironState.getWorld();
 		final int playerX = MathStuff.floor(player.posX);
 		final int playerZ = MathStuff.floor(player.posZ);
-		final float rainStr = StormProperties.getIntensityLevel();
+		final float rainStr = Weather.getIntensityLevel();
 
 		final Context ctx = this.context[event.fogMode == -1 ? 0 : 1];
 
@@ -85,7 +85,7 @@ public class BiomeFogRangeCalculator extends VanillaFogRangeCalculator {
 		float fpDistanceBiomeFog = 0F;
 		float weightBiomeFog = 0;
 
-		final boolean isRaining = StormProperties.isRaining();
+		final boolean isRaining = Weather.isRaining();
 		ctx.rain = rainStr;
 		ctx.doScan = false;
 

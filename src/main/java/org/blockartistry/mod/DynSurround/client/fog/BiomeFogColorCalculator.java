@@ -25,7 +25,7 @@ package org.blockartistry.mod.DynSurround.client.fog;
 
 import javax.annotation.Nonnull;
 
-import org.blockartistry.mod.DynSurround.client.storm.StormProperties;
+import org.blockartistry.mod.DynSurround.client.weather.Weather;
 import org.blockartistry.mod.DynSurround.client.EnvironStateHandler.EnvironState;
 import org.blockartistry.mod.DynSurround.compat.BlockPos;
 import org.blockartistry.mod.DynSurround.data.BiomeRegistry;
@@ -123,14 +123,14 @@ public class BiomeFogColorCalculator extends VanillaFogColorCalculator {
 
 		// EntityRenderer.updateFogColor() - adjust the scale further
 		// based on rain and thunder.
-		final float rainStrength = StormProperties.getIntensityLevel();
+		final float rainStrength = Weather.getIntensityLevel();
 		if (rainStrength > 0) {
 			rScale *= 1 - rainStrength * 0.5f;
 			gScale *= 1 - rainStrength * 0.5f;
 			bScale *= 1 - rainStrength * 0.4f;
 		}
 
-		final float thunderStrength = StormProperties.getThunderStrength();
+		final float thunderStrength = Weather.getThunderStrength();
 		if (thunderStrength > 0) {
 			rScale *= 1 - thunderStrength * 0.5f;
 			gScale *= 1 - thunderStrength * 0.5f;

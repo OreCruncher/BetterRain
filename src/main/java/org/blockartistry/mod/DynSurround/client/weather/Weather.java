@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package org.blockartistry.mod.DynSurround.client.storm;
+package org.blockartistry.mod.DynSurround.client.weather;
 
 import org.blockartistry.mod.DynSurround.ModOptions;
 import org.blockartistry.mod.DynSurround.Module;
@@ -38,13 +38,13 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
 @SideOnly(Side.CLIENT)
-public enum StormProperties {
+public enum Weather {
 
 	VANILLA, NONE(0.0F, "calm"), CALM(0.1F, "calm"), LIGHT(0.33F, "light"), NORMAL(0.66F, "normal"), HEAVY(1.0F,
 			"heavy");
 
 	private static float intensityLevel = 0.0F;
-	private static StormProperties intensity = VANILLA;
+	private static Weather intensity = VANILLA;
 
 	private final float level;
 	private final ResourceLocation rainTexture;
@@ -53,7 +53,7 @@ public enum StormProperties {
 	private final String rainSound;
 	private final String dustSound;
 
-	private StormProperties() {
+	private Weather() {
 		this.level = -10.0F;
 		this.rainTexture = EntityRenderer.locationRainPng;
 		this.snowTexture = EntityRenderer.locationSnowPng;
@@ -62,7 +62,7 @@ public enum StormProperties {
 		this.dustSound = String.format("%s:%s", Module.MOD_ID, "dust");
 	}
 
-	private StormProperties(final float level, final String intensity) {
+	private Weather(final float level, final String intensity) {
 		this.level = level;
 		this.rainTexture = new ResourceLocation(Module.MOD_ID,
 				String.format("textures/environment/rain_%s.png", intensity));
@@ -78,7 +78,7 @@ public enum StormProperties {
 		return Minecraft.getMinecraft().theWorld;
 	}
 
-	public static StormProperties getIntensity() {
+	public static Weather getIntensity() {
 		return intensity;
 	}
 

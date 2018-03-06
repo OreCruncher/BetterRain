@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package org.blockartistry.mod.DynSurround.client.storm;
+package org.blockartistry.mod.DynSurround.client.weather;
 
 import org.apache.commons.lang3.StringUtils;
 import org.blockartistry.mod.DynSurround.ModOptions;
@@ -81,7 +81,7 @@ public class StormSplashRenderer {
 	protected static float calculateRainSoundVolume(final World world) {
 		return MathHelper
 				.clamp_float(
-						(float) (StormProperties.getCurrentVolume()
+						(float) (Weather.getCurrentVolume()
 								+ GENERATOR.func_151605_a(DiurnalUtils.getClockTime(world) / 100, 1) / 5.0F),
 						0.0F, 1.0F);
 	}
@@ -107,10 +107,10 @@ public class StormSplashRenderer {
 
 	protected String getBlockSoundFX(final Block block, final boolean hasDust, final World world) {
 		if (hasDust)
-			return StormProperties.getIntensity().getDustSound();
+			return Weather.getIntensity().getDustSound();
 		if (block == Blocks.netherrack)
 			return "minecraft:liquid.lavapop";
-		return StormProperties.getIntensity().getStormSound();
+		return Weather.getIntensity().getStormSound();
 	}
 
 	protected int getPrecipitationHeight(final World world, final int range, final int x, final int z) {

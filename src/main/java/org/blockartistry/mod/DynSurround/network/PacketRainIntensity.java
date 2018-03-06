@@ -24,7 +24,7 @@
 
 package org.blockartistry.mod.DynSurround.network;
 
-import org.blockartistry.mod.DynSurround.client.storm.StormProperties;
+import org.blockartistry.mod.DynSurround.client.weather.Weather;
 import org.blockartistry.mod.DynSurround.util.PlayerUtils;
 
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
@@ -69,7 +69,7 @@ public final class PacketRainIntensity implements IMessage, IMessageHandler<Pack
 		// If the player is in the dimension set the intensity. Otherwise
 		// ignore.
 		if (message.dimension == PlayerUtils.getClientPlayerDimension()) {
-			StormProperties.setIntensity(message.intensity);
+			Weather.setIntensity(message.intensity);
 		}
 		return null;
 	}

@@ -23,7 +23,7 @@
  */
 package org.blockartistry.mod.DynSurround.client.fog;
 
-import org.blockartistry.mod.DynSurround.client.storm.StormProperties;
+import org.blockartistry.mod.DynSurround.client.weather.Weather;
 
 import javax.annotation.Nonnull;
 
@@ -48,7 +48,7 @@ public class WeatherFogRangeCalculator extends VanillaFogRangeCalculator {
 	public FogResult calculate(@Nonnull final EntityViewRenderEvent.RenderFogEvent event) {
 		// Start with what vanilla thinks
 		this.cache.set(event);
-		final float rainStr = StormProperties.getRainStrength();
+		final float rainStr = Weather.getRainStrength();
 		if (rainStr > 0) {
 			// Calculate our scaling factor
 			final float startScale = 1F - (START_IMPACT * rainStr);
