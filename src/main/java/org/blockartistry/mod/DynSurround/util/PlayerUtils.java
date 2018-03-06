@@ -34,6 +34,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.MathHelper;
+import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
 
 public final class PlayerUtils {
@@ -50,58 +51,51 @@ public final class PlayerUtils {
 	public static BiomeGenBase getPlayerBiome(final EntityPlayer player, final boolean getTrue) {
 
 		final int theX = MathHelper.floor_double(player.posX);
-		final int theY = MathHelper.floor_double(player.posY);
 		final int theZ = MathHelper.floor_double(player.posZ);
 		BiomeGenBase biome = player.worldObj.getBiomeGenForCoords(theX, theZ);
 
 		if (!getTrue) {
-			if (isUnderWater(player)) {
-				if (REGEX_DEEP_OCEAN.matcher(biome.biomeName).matches())
-					biome = BiomeRegistry.UNDERDEEPOCEAN;
+			if (player.isInsideOfMaterial(Material.water)) {
+				if (REGEX_RIVER.matcher(biome.biomeName).matches())
+					biome = BiomeRegistry.UNDERRIVER;
 				else if (REGEX_OCEAN.matcher(biome.biomeName).matches())
 					biome = BiomeRegistry.UNDEROCEAN;
-				else if (REGEX_RIVER.matcher(biome.biomeName).matches())
-					biome = BiomeRegistry.UNDERRIVER;
+				else if (REGEX_DEEP_OCEAN.matcher(biome.biomeName).matches())
+					biome = BiomeRegistry.UNDERDEEPOCEAN;
 				else
 					biome = BiomeRegistry.UNDERWATER;
-			} else if (isUnderGround(player, INSIDE_Y_ADJUST))
-				biome = BiomeRegistry.UNDERGROUND;
-			else if (theY >= DimensionRegistry.getSpaceHeight(player.worldObj))
-				biome = BiomeRegistry.OUTERSPACE;
-			else if (theY >= DimensionRegistry.getCloudHeight(player.worldObj))
-				biome = BiomeRegistry.CLOUDS;
+			} else {
+				final DimensionRegistry info = DimensionRegistry.getData(player.getEntityWorld());
+				final int theY = MathHelper.floor_double(player.posY);
+				if ((theY + INSIDE_Y_ADJUST) < info.getSeaLevel())
+					biome = BiomeRegistry.UNDERGROUND;
+				else if (theY >= info.getSpaceHeight())
+					biome = BiomeRegistry.OUTERSPACE;
+				else if (theY >= info.getCloudHeight())
+					biome = BiomeRegistry.CLOUDS;
+			}
 		}
 		return biome;
 	}
 
-	public static int getPlayerDimension(final EntityPlayer player) {
+	private static int getPlayerDimension(final EntityPlayer player) {
 		if (player == null || player.worldObj == null)
 			return -256;
-		return player.worldObj.provider.dimensionId;
-	}
-
-	public static boolean isUnderWater(final EntityPlayer player) {
-		final int x = MathHelper.floor_double(player.posX);
-		final int y = MathHelper.floor_double(player.posY + player.getEyeHeight());
-		final int z = MathHelper.floor_double(player.posZ);
-		return player.worldObj.getBlock(x, y, z).getMaterial() == Material.water;
-	}
-
-	public static boolean isUnderGround(final EntityPlayer player, final int offset) {
-		return MathHelper.floor_double(player.posY + offset) < DimensionRegistry.getSeaLevel(player.worldObj);
+		return player.getEntityWorld().provider.dimensionId;
 	}
 
 	private static final int RANGE = 3;
 	private static final int AREA = (RANGE * 2 + 1) * (RANGE * 2 + 1);
 
-	public static float ceilingCoverageRatio(final EntityPlayer entity) {
-		final int targetY = (int) entity.posY;
+	private static float ceilingCoverageRatio(final EntityPlayer entity) {
+		final World world = entity.getEntityWorld();
+		final int targetY = MathHelper.floor_double(entity.posY);
+		final int baseX = MathHelper.floor_double(entity.posX);
+		final int baseZ = MathHelper.floor_double(entity.posZ);
 		int seeSky = 0;
 		for (int x = -RANGE; x <= RANGE; x++)
 			for (int z = -RANGE; z <= RANGE; z++) {
-				final int theX = MathHelper.floor_double(x + entity.posX);
-				final int theZ = MathHelper.floor_double(z + entity.posZ);
-				final int y = entity.worldObj.getTopSolidOrLiquidBlock(theX, theZ);
+				final int y = world.getTopSolidOrLiquidBlock(baseX + x, baseZ + z);
 				if ((y - targetY) < 2)
 					++seeSky;
 			}
