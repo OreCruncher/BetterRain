@@ -38,10 +38,8 @@ import org.objectweb.asm.tree.VarInsnNode;
 
 public class PatchWorldServer extends Transmorgrifier {
 
-	private static final String[] classNames = { "net.minecraft.world.WorldServer", "mt" };
-
 	public PatchWorldServer() {
-		super(classNames);
+		super("net.minecraft.world.WorldServer");
 	}
 
 	@Override
@@ -58,9 +56,9 @@ public class PatchWorldServer extends Transmorgrifier {
 	public boolean transmorgrify(final ClassNode cn) {
 
 		final String names[] = { "func_73051_P", "resetRainAndThunder" };
-		final String sigs[] = { "()V", "()V" };
+		final String sigs = "()V";
 
-		final MethodNode m = findMethod(cn, names, sigs);
+		final MethodNode m = findMethod(cn, sigs, names);
 		if (m != null) {
 			logMethod(Transformer.log(), m, "Found!");
 

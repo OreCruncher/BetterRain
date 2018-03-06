@@ -21,28 +21,34 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 package org.blockartistry.mod.DynSurround.asm;
 
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.ClassNode;
-import org.objectweb.asm.tree.FieldNode;
+import org.objectweb.asm.tree.MethodNode;
 
-//Based on patches by CreativeMD
-public class SoundCrashFixSource extends Transmorgrifier {
+public class PatchSoundManagerSync extends Transmorgrifier {
 
-	public SoundCrashFixSource() {
-		super("paulscode.sound.Source");
+	public PatchSoundManagerSync() {
+		super("net.minecraft.client.audio.SoundManager");
 	}
 
 	@Override
 	public String name() {
-		return "Add removed field";
+		return "SoundManager synchronization";
 	}
 
 	@Override
 	public boolean transmorgrify(final ClassNode cn) {
-		cn.fields.add(new FieldNode(Opcodes.ACC_PUBLIC, "removed", "Z", null, null));
+		// Loop through the method nodes setting the synchronized bit
+		for (final MethodNode m : cn.methods) {
+			if (!m.name.startsWith("<") && (m.access & Opcodes.ACC_PUBLIC) != 0
+					&& (m.access & Opcodes.ACC_SYNCHRONIZED) == 0) {
+				logMethod(Transformer.log(), m, "Synchronized!");
+				m.access |= Opcodes.ACC_SYNCHRONIZED;
+			}
+		}
+
 		return true;
 	}
 

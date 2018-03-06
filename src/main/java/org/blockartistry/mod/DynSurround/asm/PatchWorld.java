@@ -38,10 +38,8 @@ import org.objectweb.asm.tree.VarInsnNode;
 
 public class PatchWorld extends Transmorgrifier {
 
-	private static final String[] classNames = { "net.minecraft.world.World", "ahb" };
-
 	public PatchWorld() {
-		super(classNames);
+		super("net.minecraft.world.World");
 	}
 
 	@Override
@@ -57,7 +55,7 @@ public class PatchWorld extends Transmorgrifier {
 	@Override
 	public boolean transmorgrify(final ClassNode cn) {
 
-		final MethodNode m = findMethod(cn, "updateWeatherBody", "()V");
+		final MethodNode m = findMethod(cn, "()V", "updateWeatherBody");
 		if (m != null) {
 			final InsnList list = new InsnList();
 			list.add(new VarInsnNode(ALOAD, 0));

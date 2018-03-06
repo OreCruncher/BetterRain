@@ -35,10 +35,8 @@ import org.objectweb.asm.tree.MethodNode;
 //Based on patches by CreativeMD
 public class SoundCrashFixLibrary extends Transmorgrifier {
 
-	private static final String[] classNames = { "paulscode.sound.Library" };
-
 	public SoundCrashFixLibrary() {
-		super(classNames);
+		super("paulscode.sound.Library");
 	}
 
 	@Override
@@ -48,7 +46,7 @@ public class SoundCrashFixLibrary extends Transmorgrifier {
 
 	@Override
 	public boolean transmorgrify(final ClassNode cn) {
-		final MethodNode m = findMethod(cn, "removeSource", "(Ljava/lang/String;)V");
+		final MethodNode m = findMethod(cn, "(Ljava/lang/String;)V", "removeSource");
 		if (m != null) {
 			for (final Iterator<?> iterator = m.instructions.iterator(); iterator.hasNext();) {
 				final AbstractInsnNode insn = (AbstractInsnNode) iterator.next();

@@ -21,15 +21,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 package org.blockartistry.mod.DynSurround.asm;
 
 import static org.objectweb.asm.Opcodes.ALOAD;
-import static org.objectweb.asm.Opcodes.FLOAD;
-import static org.objectweb.asm.Opcodes.INVOKESTATIC;
-import static org.objectweb.asm.Opcodes.RETURN;
 
-import org.blockartistry.mod.DynSurround.ModOptions;
+import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.InsnList;
 import org.objectweb.asm.tree.InsnNode;
@@ -37,73 +33,45 @@ import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.VarInsnNode;
 
-public class PatchEntityRenderer extends Transmorgrifier {
+public class PatchSoundManagerClampVolume  extends Transmorgrifier {
 
-	public PatchEntityRenderer() {
-		super("net.minecraft.client.renderer.EntityRenderer");
+	public PatchSoundManagerClampVolume() {
+		super("net.minecraft.client.audio.SoundManager");
 	}
 
 	@Override
 	public String name() {
-		return "addRainParticles";
-	}
-
-	@Override
-	public boolean isEnabled() {
-		return !ModOptions.disableWeatherEffects;
+		return "SoundManager getClampedVolume";
 	}
 
 	@Override
 	public boolean transmorgrify(final ClassNode cn) {
+		final String names[] = { "getNormalizedVolume", "func_148594_a" };
+		final String sig = "(Lnet/minecraft/client/audio/ISound;Lnet/minecraft/client/audio/SoundPoolEntry;Lnet/minecraft/client/audio/SoundCategory;)F";
 
-		boolean failed = false;
-
-		final String names1[] = { "func_78484_h", "addRainParticles" };
-		final String sigs1 = "()V";
-
-		final String names2[] = { "func_78474_d", "renderRainSnow" };
-		final String sigs2 = "(F)V";
-
-		MethodNode m = findMethod(cn, sigs1, names1);
+		final MethodNode m = findMethod(cn, sig, names);
 		if (m != null) {
 			logMethod(Transformer.log(), m, "Found!");
 
-			m.localVariables = null;
+			final String owner = "org/blockartistry/mod/DynSurround/client/sound/SoundManager";
+			final String targetName = "getNormalizedVolume";
+			
 			final InsnList list = new InsnList();
-			list.add(new VarInsnNode(ALOAD, 0));
-
-			final String owner = "org/blockartistry/mod/DynSurround/client/RenderWeather";
-			final String targetName = "addRainParticles";
-			final String sig = "(Lnet/minecraft/client/renderer/EntityRenderer;)V";
-
-			list.add(new MethodInsnNode(INVOKESTATIC, owner, targetName, sig, false));
-			list.add(new InsnNode(RETURN));
+			list.add(new VarInsnNode(ALOAD, 1));
+			list.add(new VarInsnNode(ALOAD, 2));
+			list.add(new VarInsnNode(ALOAD, 3));
+			list.add(new MethodInsnNode(Opcodes.INVOKESTATIC, owner, targetName, sig, false));
+			list.add(new InsnNode(Opcodes.FRETURN));
 			m.instructions = list;
+			
+			return true;
 		} else {
-			failed = true;
+			Transformer.log().error("Unable to locate method {}{}", names[0], sig);
 		}
 
-		m = findMethod(cn, sigs2, names2);
-		if (m != null) {
-			logMethod(Transformer.log(), m, "Found!");
+		Transformer.log().info("Unable to patch [{}]!", getClassName());
 
-			final InsnList list = new InsnList();
-			list.add(new VarInsnNode(ALOAD, 0));
-			list.add(new VarInsnNode(FLOAD, 1));
-
-			final String owner = "org/blockartistry/mod/DynSurround/client/RenderWeather";
-			final String targetName = "renderRainSnow";
-			final String sig = "(Lnet/minecraft/client/renderer/EntityRenderer;F)V";
-
-			list.add(new MethodInsnNode(INVOKESTATIC, owner, targetName, sig, false));
-			list.add(new InsnNode(RETURN));
-			m.instructions.insertBefore(m.instructions.getFirst(), list);
-
-		} else {
-			failed = true;
-		}
-
-		return !failed;
+		return false;
 	}
 
 }

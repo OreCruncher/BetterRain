@@ -24,6 +24,7 @@
 
 package org.blockartistry.mod.DynSurround.client.sound;
 
+import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -36,12 +37,21 @@ import org.blockartistry.mod.DynSurround.ModLog;
 import org.blockartistry.mod.DynSurround.ModOptions;
 import org.blockartistry.mod.DynSurround.client.EnvironStateHandler.EnvironState;
 import org.blockartistry.mod.DynSurround.compat.BlockPos;
+import org.blockartistry.mod.DynSurround.data.SoundRegistry;
+import org.lwjgl.BufferUtils;
+import org.lwjgl.openal.AL;
+import org.lwjgl.openal.ALC10;
+import org.lwjgl.openal.ALC11;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.ISound;
+import net.minecraft.client.audio.SoundCategory;
+import net.minecraft.client.audio.SoundPoolEntry;
+import net.minecraft.client.settings.GameSettings;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.MathHelper;
 import paulscode.sound.SoundSystemConfig;
 
 @SideOnly(Side.CLIENT)
@@ -50,8 +60,10 @@ public class SoundManager {
 	private static final int AGE_THRESHOLD_TICKS = 5;
 	private static final int SOUND_QUEUE_SLACK = 6;
 	private static final Map<SoundEffect, Emitter> emitters = new HashMap<SoundEffect, Emitter>();
-
 	private static final List<SpotSound> pending = new ArrayList<SpotSound>();
+
+	private static int normalChannelCount = 0;
+	private static int streamChannelCount = 0;
 
 	public static void clearSounds() {
 		for (final Emitter emit : emitters.values())
@@ -166,6 +178,68 @@ public class SoundManager {
 		for (final SpotSound effect : pending)
 			result.add((effect.getTickAge() < 0 ? "DELAYED: " : "PENDING: ") + effect.getSoundEffect().toString());
 		return result;
+	}
+
+	private static float getVolume(@Nonnull final SoundCategory category) {
+		final GameSettings settings = Minecraft.getMinecraft().gameSettings;
+		return settings != null && category != null && category != SoundCategory.MASTER
+				? settings.getSoundLevel(category)
+				: 1.0F;
+	}
+
+	// Redirect via ASM
+	public static float getNormalizedVolume(final ISound sound, final SoundPoolEntry poolEntry, final SoundCategory category) {
+		float result = 0.0F;
+		if (sound == null) {
+			ModLog.warn("getNormalizedVolume(): Null sound parameter");
+		} else if (poolEntry == null) {
+			ModLog.warn("getNormalizedVolume(): Null poolEntry parameter");
+		} else if (category == null) {
+			ModLog.warn("getNormalizedVolume(): Null category parameter");
+		} else {
+			final String soundName = sound.getPositionedSoundLocation().toString();
+			try {
+				final float volumeScale = SoundRegistry.getVolumeScale(soundName);
+				result = (float) MathHelper.clamp_double(
+						sound.getVolume() * poolEntry.getVolume() * getVolume(category) * volumeScale,
+						0.0D, 1.0D);
+			} catch (final Throwable t) {
+				ModLog.error("getNormalizedVolume(): Unable to calculate " + soundName, t);
+			}
+		}
+		return result;
+	}
+
+	public static void configureSound() {
+		int totalChannels = -1;
+
+		try {
+			final boolean create = !AL.isCreated();
+			if (create)
+				AL.create();
+			final IntBuffer ib = BufferUtils.createIntBuffer(1);
+			ALC10.alcGetInteger(AL.getDevice(), ALC11.ALC_MONO_SOURCES, ib);
+			totalChannels = ib.get(0);
+			if (create)
+				AL.destroy();
+		} catch (final Throwable e) {
+			e.printStackTrace();
+		}
+
+		normalChannelCount = ModOptions.normalSoundChannelCount;
+		streamChannelCount = ModOptions.streamingSoundChannelCount;
+
+		if (ModOptions.autoConfigureChannels && totalChannels > 64) {
+			totalChannels = ((totalChannels + 1) * 3) / 4;
+			streamChannelCount = totalChannels / 5;
+			normalChannelCount = totalChannels - streamChannelCount;
+		}
+
+		ModLog.info("Sound channels: %d normal, %d streaming (total avail: %s)", normalChannelCount, streamChannelCount,
+				totalChannels == -1 ? "UNKNOWN" : Integer.toString(totalChannels));
+		SoundSystemConfig.setNumberNormalChannels(normalChannelCount);
+		SoundSystemConfig.setNumberStreamingChannels(streamChannelCount);
+
 	}
 
 }

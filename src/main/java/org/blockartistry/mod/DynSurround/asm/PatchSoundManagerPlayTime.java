@@ -21,29 +21,51 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-
 package org.blockartistry.mod.DynSurround.asm;
 
 import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
-import org.objectweb.asm.tree.FieldNode;
+import org.objectweb.asm.tree.IntInsnNode;
+import org.objectweb.asm.tree.MethodNode;
 
-//Based on patches by CreativeMD
-public class SoundCrashFixSource extends Transmorgrifier {
+public class PatchSoundManagerPlayTime extends Transmorgrifier {
 
-	public SoundCrashFixSource() {
-		super("paulscode.sound.Source");
+	public PatchSoundManagerPlayTime() {
+		super("net.minecraft.client.audio.SoundManager");
 	}
 
 	@Override
 	public String name() {
-		return "Add removed field";
+		return "SoundManager playTime";
 	}
 
 	@Override
 	public boolean transmorgrify(final ClassNode cn) {
-		cn.fields.add(new FieldNode(Opcodes.ACC_PUBLIC, "removed", "Z", null, null));
-		return true;
+		final String names[] = { "playSound", "func_148611_c" };
+		final String sig = "(Lnet/minecraft/client/audio/ISound;)V";
+
+		final MethodNode m = findMethod(cn, sig, names);
+		if (m != null) {
+			logMethod(Transformer.log(), m, "Found!");
+
+			for (int i = 0; i < m.instructions.size(); i++) {
+				final AbstractInsnNode node = m.instructions.get(i);
+				if (node instanceof IntInsnNode) {
+					final IntInsnNode intNode = (IntInsnNode) node;
+					if (intNode.operand == 20) {
+						m.instructions.set(node, new IntInsnNode(Opcodes.BIPUSH, 0));
+						return true;
+					}
+				}
+			}
+		} else {
+			Transformer.log().error("Unable to locate method {}{}", names[0], sig);
+		}
+
+		Transformer.log().info("Unable to patch [{}]!", getClassName());
+
+		return false;
 	}
 
 }

@@ -37,10 +37,8 @@ import org.objectweb.asm.tree.VarInsnNode;
 // Based on patches by CreativeMD
 public class SoundCrashFixStreamThread extends Transmorgrifier {
 
-	private static final String[] classNames = { "paulscode.sound.StreamThread" };
-
 	public SoundCrashFixStreamThread() {
-		super(classNames);
+		super("paulscode.sound.StreamThread");
 	}
 
 	@Override
@@ -50,7 +48,7 @@ public class SoundCrashFixStreamThread extends Transmorgrifier {
 
 	@Override
 	public boolean transmorgrify(final ClassNode cn) {
-		final MethodNode m = findMethod(cn, "run", "()V");
+		final MethodNode m = findMethod(cn, "()V", "run");
 		if (m != null) {
 			for (final Iterator<?> iterator = m.instructions.iterator(); iterator.hasNext();) {
 				AbstractInsnNode insn = (AbstractInsnNode) iterator.next();

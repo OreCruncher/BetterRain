@@ -40,7 +40,7 @@ public abstract class MyTransformer implements IClassTransformer {
 
 	protected final Logger logger;
 
-	private final List<Transmorgrifier> morgers = new ArrayList<Transmorgrifier>();
+	private final List<Transmorgrifier> morgers = new ArrayList<>();
 
 	public MyTransformer(final Logger logger) {
 		this.logger = logger;
@@ -77,6 +77,7 @@ public abstract class MyTransformer implements IClassTransformer {
 
 				} catch (final Throwable ex) {
 					ex.printStackTrace();
+					throw ex;
 				}
 			}
 
