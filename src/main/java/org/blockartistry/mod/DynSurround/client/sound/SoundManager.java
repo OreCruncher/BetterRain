@@ -48,10 +48,12 @@ import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.ISound;
 import net.minecraft.client.audio.SoundCategory;
+import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.client.audio.SoundPoolEntry;
 import net.minecraft.client.settings.GameSettings;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.MathHelper;
+import paulscode.sound.SoundSystem;
 import paulscode.sound.SoundSystemConfig;
 
 @SideOnly(Side.CLIENT)
@@ -131,7 +133,9 @@ public class SoundManager {
 		if (sound != null) {
 			if (ModOptions.enableDebugLogging)
 				ModLog.debug("PLAYING: " + sound.toString());
-			Minecraft.getMinecraft().getSoundHandler().playSound(sound);
+			final SoundHandler h = Minecraft.getMinecraft().getSoundHandler();
+			h.playSound(sound);
+			((SoundSystem) h.sndManager.sndSystem).CommandQueue(null);
 		}
 	}
 
@@ -188,7 +192,8 @@ public class SoundManager {
 	}
 
 	// Redirect via ASM
-	public static float getNormalizedVolume(final ISound sound, final SoundPoolEntry poolEntry, final SoundCategory category) {
+	public static float getNormalizedVolume(final ISound sound, final SoundPoolEntry poolEntry,
+			final SoundCategory category) {
 		float result = 0.0F;
 		if (sound == null) {
 			ModLog.warn("getNormalizedVolume(): Null sound parameter");
@@ -201,8 +206,7 @@ public class SoundManager {
 			try {
 				final float volumeScale = SoundRegistry.getVolumeScale(soundName);
 				result = (float) MathHelper.clamp_double(
-						sound.getVolume() * poolEntry.getVolume() * getVolume(category) * volumeScale,
-						0.0D, 1.0D);
+						sound.getVolume() * poolEntry.getVolume() * getVolume(category) * volumeScale, 0.0D, 1.0D);
 			} catch (final Throwable t) {
 				ModLog.error("getNormalizedVolume(): Unable to calculate " + soundName, t);
 			}
