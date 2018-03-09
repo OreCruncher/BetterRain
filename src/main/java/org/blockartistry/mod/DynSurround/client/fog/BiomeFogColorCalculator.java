@@ -86,6 +86,7 @@ public class BiomeFogColorCalculator extends VanillaFogColorCalculator {
 				for (int z = -distance; z <= distance; ++z) {
 					pos.setPos(playerX + x, 0, playerZ + z);
 
+					this.doScan = this.doScan | world.blockExists(pos.getX(), pos.getY(), pos.getZ());
 					final BiomeGenBase biome = world.getBiomeGenForCoords(pos.getX(), pos.getZ());
 					final Color color;
 					
