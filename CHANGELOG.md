@@ -6,8 +6,11 @@
     * Much better compatibility with other mods such as Biomes O'Plenty.
     * Added morning fog - sets in about 3AM, peaks at dawn, and burns off in the morning.  By default it happens every morning, but that can be changed using the config.
     * Added weather fog.  The density of the fog is based on the intensity of the rain fall.  Can be disabled in the config.
-* Backported some sound manager changes from 1.10.x+ branches.  Specifically, put in synchronization to guard against bad mods submitting sounds from the server thread causing client crashes.  Though these bad mods should be fixed the chances of that happening for 1.7.10 are a snowballs chance.
+* Backported some sound manager changes from 1.10.x+ branches:
+    * Add method synchronization to eliminate a common cause of comodification errors reported from  SoundManager.
+    * IC2 sounds will work better, or at least work. :)
 * Backport some aurora rendering performance tweaks.
+* Added config option "Disable Weather Effects" when set to **true** will disable all weather related ASM and handling.  Essentially you get Vanilla weather patterns.
 
 **Fixes**
 * Several NPEs/race conditions reported via OpenEye.
