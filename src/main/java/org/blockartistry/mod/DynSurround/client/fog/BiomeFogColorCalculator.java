@@ -180,7 +180,7 @@ public class BiomeFogColorCalculator extends VanillaFogColorCalculator {
 
 		// EntityRenderer.updateFogColor() - If the player has nightvision going
 		// need to lighten it a bit
-		if (player.isPotionActive(Potion.blindness)) {
+		if (player.isPotionActive(Potion.nightVision)) {
 			final int duration = player.getActivePotionEffect(Potion.nightVision).getDuration();
 			final float brightness = (duration > 200) ? 1
 					: 0.7f + MathStuff.sin((duration - renderPartialTicks) * MathStuff.PI_F * 0.2f) * 0.3f;
