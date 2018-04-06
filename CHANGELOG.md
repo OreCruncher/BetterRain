@@ -1,3 +1,10 @@
+###DynamicSurroundings-1.7.10-1.0.6.2
+**Fixes**
+* Fixed NPE related to fog calculations when having the blindness effect.
+
+**Changes**
+* Pulled in ambient sounds from the 1.10.x+ branches.  Biome sounds for crickets, forest, plains, jungle, river, and wind have been updated. 
+
 ###DynamicSurroundings-1.7.10-1.0.6.1
 **What's New**
 * Backported the fog changes made in the 1.10.x+ branches.  Summary of impact:
