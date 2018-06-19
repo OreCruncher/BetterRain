@@ -129,13 +129,18 @@ public class SoundManager {
 		return currentSoundCount() < (SoundSystemConfig.getNumberNormalChannels() - SOUND_QUEUE_SLACK);
 	}
 
+	// ASM hook for SoundManager::playSound
+	public static void flushSound() {
+		final SoundHandler h = Minecraft.getMinecraft().getSoundHandler();
+		((SoundSystem) h.sndManager.sndSystem).CommandQueue(null);
+	}
+	
 	static void playSound(final ISound sound) {
 		if (sound != null) {
 			if (ModOptions.enableDebugLogging)
 				ModLog.debug("PLAYING: " + sound.toString());
 			final SoundHandler h = Minecraft.getMinecraft().getSoundHandler();
 			h.playSound(sound);
-			((SoundSystem) h.sndManager.sndSystem).CommandQueue(null);
 		}
 	}
 
