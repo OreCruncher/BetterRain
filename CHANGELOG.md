@@ -1,11 +1,19 @@
-###DynamicSurroundings-1.7.10-1.0.6.2
+### DynamicSurroundings-1.7.10-1.0.6.3
+**Fixes**
+* Sounds sporadically do not play.  Added ASM to patch up Minecraft's SoundManager to flush the sound engine command queue to mitigate potential concurrency issues.
+
+**Changes**
+* Backport genGaussian changes for performance
+* Stone block no longer has dust drop effect
+
+### DynamicSurroundings-1.7.10-1.0.6.2
 **Fixes**
 * Fixed NPE related to fog calculations when having the blindness effect.
 
 **Changes**
 * Pulled in ambient sounds from the 1.10.x+ branches.  Biome sounds for crickets, forest, plains, jungle, river, and wind have been updated. 
 
-###DynamicSurroundings-1.7.10-1.0.6.1
+### DynamicSurroundings-1.7.10-1.0.6.1
 **What's New**
 * Backported the fog changes made in the 1.10.x+ branches.  Summary of impact:
     * Various fog factors have been removed from the config.  They don't work with the new system, and they were little used.
@@ -25,7 +33,7 @@
 **Changes**
 * Use LCG random number generator for block scan coordinates.  Bottom line is that the process of doing the area block scan is faster.
     
-###DynamicSurroundings-1.7.10-1.0.6.0
+### DynamicSurroundings-1.7.10-1.0.6.0
 * Removed all that sound engine restart stuff and replaced with patches to the underlying Minecraft sound engine to avoid the situation all together.  Thanks to CreativeMD and his work on getting to the bottom of things!  This should eliminate a variety of reported problems up through and including:
     * Sound Engine restart lag
     * Frequency of the sound engine crashes
@@ -33,7 +41,7 @@
     * Crashes due to sound engine being yanked out from under other mods (such as IC2) 
 * Sometimes a sound instance would not play.  When this occurs something like "Error in class 'LibraryLWJGLOpenAL'" would show in the log.  Put in some additional code to make sure the sound information is flushed down into the sound engine. 
 
-###DynamicSurroundings-1.7.10-1.0.5.12
+### DynamicSurroundings-1.7.10-1.0.5.12
 **Fixes**
 * Setting footstep sound scale factor to 0 reverts to vanilla footstep sounds (backport)
 * [OpenEye](https://openeye.openmods.info/crashes/4a99da03285429c87ec8d9347210268e): Fix NPE in storm render when calculating color
@@ -46,7 +54,7 @@
 * Pumpkin/Melon footstep sounds no longer squishy (backport)
 * Display diagnostic info only when debug screen is active and debug logging is enabled in config
 
-###DynamicSurroundings-1.7.10-1.0.5.11
+### DynamicSurroundings-1.7.10-1.0.5.11
 **Fixes**
 * No more sound clicking when moving fast; was noticeable when flying over a beach (backport)
 
@@ -56,7 +64,7 @@
 * Attempt automatic restart of crashed sound system (backport)
 * Improve RNG used by scanning routines (backport)
 
-###DynamicSurroundings-1.7.10-1.0.5.10
+### DynamicSurroundings-1.7.10-1.0.5.10
 **Fixes**
 * Backports from Dynamic Surroundings 1.10.2/1.11.x:
     * Sounds at biome transition boundaries were "edgy"; new logic fades in/out to specified volumes
