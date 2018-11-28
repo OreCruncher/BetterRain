@@ -267,7 +267,7 @@ public class PFSolver implements ISolver {
 
 		String soundName = block.stepSound.soundName;
 		if (soundName == null || soundName.isEmpty()) {
-			soundName = "UNDEFINED";
+			return "NOT_EMITTER";
 		}
 
 		final String substrate = String.format(Locale.ENGLISH, "%.2f_%.2f", block.stepSound.volume,

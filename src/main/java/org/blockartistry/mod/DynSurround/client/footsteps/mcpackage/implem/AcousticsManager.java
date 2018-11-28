@@ -76,7 +76,7 @@ public class AcousticsManager extends AcousticsLibrary implements ISoundPlayer, 
 
 		try {
 			final Block block = assos.getBlock();
-			if (!block.getMaterial().isLiquid() && block.stepSound != null) {
+			if (!block.getMaterial().isLiquid() && block.stepSound != null && block.stepSound.soundName != null) {
 				Block.SoundType soundType = block.stepSound;
 
 				if (EnvironState.getWorld().getBlock(assos.x, assos.y + 1, assos.z) == Blocks.snow_layer) {
