@@ -134,7 +134,7 @@ public class SoundManager {
 		final SoundHandler h = Minecraft.getMinecraft().getSoundHandler();
 		((SoundSystem) h.sndManager.sndSystem).CommandQueue(null);
 	}
-	
+
 	static void playSound(final ISound sound) {
 		if (sound != null) {
 			if (ModOptions.enableDebugLogging)
@@ -202,18 +202,42 @@ public class SoundManager {
 		float result = 0.0F;
 		if (sound == null) {
 			ModLog.warn("getNormalizedVolume(): Null sound parameter");
-		} else if (poolEntry == null) {
-			ModLog.warn("getNormalizedVolume(): Null poolEntry parameter");
+			return result;
+		}
+
+		final String soundName = sound.getPositionedSoundLocation().toString();
+		if (poolEntry == null) {
+			ModLog.warn("getNormalizedVolume(%s): Null poolEntry parameter", soundName);
 		} else if (category == null) {
-			ModLog.warn("getNormalizedVolume(): Null category parameter");
+			ModLog.warn("getNormalizedVolume(%s): Null category parameter", soundName);
 		} else {
-			final String soundName = sound.getPositionedSoundLocation().toString();
 			try {
 				final float volumeScale = SoundRegistry.getVolumeScale(soundName);
 				result = (float) MathHelper.clamp_double(
 						sound.getVolume() * poolEntry.getVolume() * getVolume(category) * volumeScale, 0.0D, 1.0D);
 			} catch (final Throwable t) {
 				ModLog.error("getNormalizedVolume(): Unable to calculate " + soundName, t);
+			}
+		}
+		return result;
+	}
+
+	// Redirect via ASM
+	public static float getNormalizedPitch(final ISound sound, final SoundPoolEntry poolEntry) {
+		float result = 0F;
+		if (sound == null) {
+			ModLog.warn("getNormalizedPitch(): Null sound parameter");
+			return result;
+		}
+
+		final String soundName = sound.getPositionedSoundLocation().toString();
+		if (poolEntry == null) {
+			ModLog.warn("getNormalizedPitch(%s): Null poolEntry parameter", soundName);
+		} else {
+			try {
+				result = (float) MathHelper.clamp_double(sound.getPitch() * poolEntry.getPitch(), 0.5D, 2.0D);
+			} catch (final Throwable t) {
+				ModLog.error("getNormalizedPitch(): Unable to calculate " + soundName, t);
 			}
 		}
 		return result;

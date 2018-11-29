@@ -33,33 +33,32 @@ import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.VarInsnNode;
 
-public class PatchSoundManagerClampVolume  extends Transmorgrifier {
+public class PatchSoundManagerClampPitch  extends Transmorgrifier {
 
-	public PatchSoundManagerClampVolume() {
+	public PatchSoundManagerClampPitch() {
 		super("net.minecraft.client.audio.SoundManager");
 	}
 
 	@Override
 	public String name() {
-		return "SoundManager getNormalizedVolume";
+		return "SoundManager getNormalizedPitch";
 	}
 
 	@Override
 	public boolean transmorgrify(final ClassNode cn) {
-		final String names[] = { "getNormalizedVolume", "func_148594_a" };
-		final String sig = "(Lnet/minecraft/client/audio/ISound;Lnet/minecraft/client/audio/SoundPoolEntry;Lnet/minecraft/client/audio/SoundCategory;)F";
+		final String names[] = { "getNormalizedPitch", "func_148606_a" };
+		final String sig = "(Lnet/minecraft/client/audio/ISound;Lnet/minecraft/client/audio/SoundPoolEntry;)F";
 
 		final MethodNode m = findMethod(cn, sig, names);
 		if (m != null) {
 			logMethod(Transformer.log(), m, "Found!");
 
 			final String owner = "org/blockartistry/mod/DynSurround/client/sound/SoundManager";
-			final String targetName = "getNormalizedVolume";
+			final String targetName = "getNormalizedPitch";
 			
 			final InsnList list = new InsnList();
 			list.add(new VarInsnNode(ALOAD, 1));
 			list.add(new VarInsnNode(ALOAD, 2));
-			list.add(new VarInsnNode(ALOAD, 3));
 			list.add(new MethodInsnNode(Opcodes.INVOKESTATIC, owner, targetName, sig, false));
 			list.add(new InsnNode(Opcodes.FRETURN));
 			m.instructions = list;
