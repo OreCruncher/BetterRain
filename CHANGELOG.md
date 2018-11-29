@@ -1,3 +1,8 @@
+### DynamicSurroundings-1.7.10-1.0.6.4
+**Fixes**
+* Added defensive code to protect against bad SoundType entries.
+* Patch getNormalizedPitch() to catch invalid parameters to avoid NPE.
+
 ### DynamicSurroundings-1.7.10-1.0.6.3
 **Fixes**
 * Sounds sporadically do not play.  Added ASM to patch up Minecraft's SoundManager to flush the sound engine command queue to mitigate potential concurrency issues.
